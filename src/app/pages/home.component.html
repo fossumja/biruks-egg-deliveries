@@ -1,0 +1,61 @@
+<section class="hero">
+  <div>
+    <h1>Welcome</h1>
+    <p class="lede">
+      Import your delivery CSV, pick a route, and start the run. Data is stored locally for offline use.
+    </p>
+    <div class="actions">
+      <button type="button" (click)="fileInput.click()" [disabled]="isImporting">
+        {{ isImporting ? 'Importing…' : 'Import CSV' }}
+      </button>
+      <button type="button" class="ghost" (click)="exportCsv()" [disabled]="isExporting">
+        {{ isExporting ? 'Preparing…' : 'Backup (CSV)' }}
+      </button>
+      <input
+        #fileInput
+        type="file"
+        accept=".csv,text/csv"
+        hidden
+        (change)="onFileSelected($event)"
+      />
+    </div>
+    <div class="subtext" *ngIf="lastBackupAt">
+      Last backup: {{ lastBackupAt | date : 'short' }}
+    </div>
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</section>
+
+<section *ngIf="routes.length; else noData" class="routes">
+  <h2>Select delivery day</h2>
+  <div class="select-row">
+    <select [(ngModel)]="selectedRouteDate" (ngModelChange)="onSelectRoute($event)">
+      <option [ngValue]="null" disabled selected>Choose a route…</option>
+      <option *ngFor="let r of routes" [ngValue]="r.routeDate">
+        {{ r.routeDate }} ({{ r.totalStops }} stops)
+      </option>
+    </select>
+    <button type="button" (click)="startRoute()" [disabled]="!selectedRouteDate">
+      {{ selectedRouteDate && selectedRouteDate === currentRoute ? 'Continue Route' : 'Start Route' }}
+    </button>
+  </div>
+
+  <div class="route-summary" *ngIf="selectedRouteSummary">
+    <div class="route-name">
+      {{ selectedRouteSummary.routeDate }}
+      <span *ngIf="selectedRouteSummary.completed" class="tag">Completed</span>
+    </div>
+    <div class="route-meta">
+      {{ selectedRouteSummary.deliveredCount }} delivered ·
+      {{ selectedRouteSummary.skippedCount }} skipped ·
+      {{ selectedRouteSummary.totalStops }} total
+    </div>
+  </div>
+</section>
+
+<ng-template #noData>
+  <div class="empty">
+    <p>No routes loaded.</p>
+    <button type="button" (click)="fileInput.click()">Import CSV</button>
+  </div>
+</ng-template>

@@ -1,0 +1,18 @@
+<div class="amount-dialog">
+  <h3>Donation amount</h3>
+  <p class="text-muted">Suggested: ${{ suggestedAmount | number: '1.0-0' }}</p>
+  <div class="amount-scroll">
+    <button
+      type="button"
+      *ngFor="let val of amountOptions"
+      [class.selected]="val === selectedAmount"
+      (click)="selectedAmount = val"
+    >
+      ${{ val }}
+    </button>
+  </div>
+  <div class="amount-actions">
+    <button type="button" class="ghost" (click)="onCancel()">Cancel</button>
+    <button type="button" (click)="onSave()">Save</button>
+  </div>
+</div>

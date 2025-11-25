@@ -1,0 +1,239 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sub {
+  color: #475569;
+}
+
+button {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status {
+  margin-top: 1rem;
+  color: #475569;
+}
+
+.status.error {
+  color: #b91c1c;
+}
+
+.list {
+  margin-top: 1rem;
+}
+
+.drop-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+}
+
+.handle {
+  cursor: grab;
+  color: #94a3b8;
+  user-select: none;
+  font-weight: 700;
+}
+
+.content .top,
+.content .bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.qty {
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mini-btn {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.55rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qty-display {
+  min-width: 2.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.unit {
+  color: #475569;
+}
+
+.addr {
+  color: #475569;
+}
+
+.status {
+  color: #0ea5e9;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ghost {
+  background: transparent;
+  color: #2563eb;
+  justify-self: end;
+}
+
+.actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.warn {
+  color: #b91c1c;
+}
+
+.pill-btn span {
+  display: inline-block;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.pill-muted {
+  color: #475569;
+}
+
+.pill-neutral {
+  color: #0f172a;
+}
+
+.pill-cash {
+  color: #15803d;
+}
+
+.pill-venmo {
+  color: #2563eb;
+}
+
+.pill-donated {
+  color: #0f172a;
+}
+
+.donation-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.donation-dialog {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.text-muted {
+  color: #475569;
+}
+
+.donation-toggle,
+.donation-methods {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-chip {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+}
+
+.btn-chip.active {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #2563eb;
+  padding: 0;
+}
+
+.donation-amount-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #0f172a;
+}
+
+.donation-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.amount-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.small {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+}

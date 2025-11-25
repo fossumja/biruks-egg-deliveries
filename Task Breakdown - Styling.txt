@@ -1,0 +1,553 @@
+---
+
+## Phase 0 – Prep & Safety Net
+
+**Goal:** Be able to refactor aggressively without fear.
+
+**Tasks**
+
+1. **Create a feature branch**
+
+   * `git checkout -b feature/ui-refresh-style-system`
+   * Protect `main` so you can ship bugfixes without mixing in UI work.
+
+2. **Add/verify basic tests**
+
+   * Make sure you have:
+
+     * A smoke test (Cypress/Playwright or Protractor) that:
+
+       * Loads the PWA.
+       * Imports a CSV.
+       * Starts a route.
+       * Marks a stop delivered / skipped.
+   * Even one happy-path E2E is enough to catch “UI refactor broke core flow”.
+
+3. **Inventory the screens & components**
+
+   * In a doc or `README-ux.md`, list what you currently have:
+
+     * Home / dashboard component(s).
+     * Route planner list component(s).
+     * Delivery run / current stop component(s).
+     * Shared components: buttons, cards, toasts, header, etc. (if any).
+   * Note **what is custom CSS vs. Angular Material vs. whatever**, so we know what we’re replacing vs. re-skinning.
+
+---
+
+## Phase 1 – Foundations in Code (Tokens, Base Styles)
+
+**Goal:** Introduce the design system primitives without changing layouts yet.
+
+**Files likely touched:**
+
+- `src/styles.scss` (or `.css`)
+- Possibly `app.component.scss` if you have global layout there.
+
+**Tasks**
+
+1. **Add CSS variable token block**
+
+   - In `styles.scss`:
+
+     - Add `:root` block with all the tokens we defined:
+
+       - Colors (`--color-bg`, `--color-surface`, `--color-primary`, etc.).
+       - Typography (`--font-family-base`, `--font-size-base`, etc.).
+       - Spacing/radius/shadow/motion tokens.
+
+   - Set `body` to:
+
+     - `background: var(--color-bg);`
+     - `color: var(--color-text);`
+     - `font-family: var(--font-family-base);`
+     - `margin: 0;` etc.
+
+2. **Define global utility classes**
+
+   - In `styles.scss`, create a small “utility” section:
+
+     - `.card`
+     - `.btn`, `.btn-primary`, `.btn-secondary`, `.btn-text`
+     - `.text-muted`
+     - `.page-title`, `.section-title`, `.stop-name`, etc. (or keep those per-component if you prefer)
+
+   - Wire these to the tokens:
+
+     - `.card { background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--spacing-4); }`
+     - `.btn { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); border-radius: var(--radius-lg); min-height: var(--size-min-tap); padding: 12px 16px; }`
+     - etc.
+
+3. **Set base layout container**
+
+   - Create `.app-shell`:
+
+     ```css
+     .app-shell {
+       min-height: 100vh;
+       background: var(--color-bg);
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+     }
+     .app-shell-inner {
+       width: 100%;
+       max-width: 420px;
+       padding: 0 var(--spacing-4);
+     }
+     ```
+
+   - Then in `app.component.html`, wrap your root router outlet in:
+
+     ```html
+     <div class="app-shell">
+       <div class="app-shell-inner">
+         <router-outlet></router-outlet>
+       </div>
+     </div>
+     ```
+
+4. **Safe area helpers**
+
+   - In global styles, create classes:
+
+     ```css
+     .safe-top {
+       padding-top: env(safe-area-inset-top, 16px);
+     }
+     .safe-bottom {
+       padding-bottom: env(safe-area-inset-bottom, 16px);
+     }
+     ```
+
+   - Later, use these on header/footer.
+
+**Checkpoint:** App should look almost the same, but text/font and background might already feel more iOS-like.
+
+---
+
+## Phase 2 – App Shell, Header, and Basic Layout
+
+**Goal:** Make the _frame_ match the design (header + background + max-width column) without touching screen content much.
+
+**Tasks**
+
+1. **Implement the top app header**
+
+   - Create `AppHeaderComponent` (or similar) if you don’t have one:
+
+     - Contains:
+
+       - Optional logo (small icon).
+       - App title on home, smaller titles on sub-screens.
+
+     - Use `.safe-top` for padding.
+
+   - Add header to `app.component.html` above `router-outlet`. For pages that don’t want it, you can either:
+
+     - Use `*ngIf` based on current route, or
+     - Have header take input for title/back button visibility.
+
+2. **Set background & “card on gray” look**
+
+   - Confirm:
+
+     - Body / `.app-shell` background = `var(--color-bg)`.
+     - All existing “white panels” get `.card` class (or equivalent).
+
+   - For any old random borders/shadows, remove them in favor of `card` token-based style.
+
+3. **Clean up old global CSS**
+
+   - Comment out or delete legacy fonts, colors, and random margin hacks that conflict.
+   - If you used something like Bootstrap or Angular Material theming, decide:
+
+     - Either keep it but heavily override.
+     - Or incrementally remove it as you migrate to custom styles.
+
+**Checkpoint:** At this point, navigation + global frame look consistent, and nothing functional should be broken.
+
+---
+
+## Phase 3 – Home / Dashboard Refactor
+
+**Goal:** Apply the new design system to the Home screen.
+
+**Tasks**
+
+1. **Identify Home component**
+
+   - e.g. `home.component.ts/html/scss` or `dashboard.component.*`.
+   - Confirm it currently handles:
+
+     - CSV import.
+     - Week selection.
+     - Route summary.
+     - Start route.
+     - Backup last-run time / backup now.
+
+2. **Implement title + week toggle layout**
+
+   - Use `h1.page-title` bound to “Deliveries” or app name.
+   - Add Week A / Week B segmented control:
+
+     - Rebuild existing week selector as:
+
+       ```html
+       <div class="week-toggle">
+         <button [class.active]="week === 'A'">Week A</button>
+         <button [class.active]="week === 'B'">Week B</button>
+       </div>
+       ```
+
+     - Hook it to your existing `week` state / logic.
+     - Style using tokens: pill-style container, amber active segment, etc.
+
+3. **Wrap route summary in a card**
+
+   - Turn whatever summary display you have into a `.card`.
+   - Ensure visual hierarchy:
+
+     - Label text muted.
+     - Numbers slightly larger or medium weight.
+
+4. **Refactor buttons to system components**
+
+   - Replace any ad-hoc button markup with:
+
+     - `class="btn btn-primary"` for “Start Route”.
+     - `class="btn btn-secondary"` for “Import CSV” and maybe “Backup now” (or `.btn-text` if you want it more subtle).
+
+   - Remove old inline styles on buttons.
+
+5. **Adjust layout spacing**
+
+   - Use spacing tokens for margins:
+
+     - e.g. `margin-top: var(--spacing-4);` between sections.
+
+   - Make sure content fits nicely on 320px iPhone SE (simulate in dev tools).
+
+6. **Quick test**
+
+   - Run your E2E for:
+
+     - Import CSV.
+     - Select Week.
+     - Start route.
+
+**Checkpoint:** Home screen should visually align with the style guide and still function exactly as before.
+
+---
+
+## Phase 4 – Route Planner Screen Refactor
+
+**Goal:** Make the route list use the new list row / card styles, while keeping all logic intact (sorting, reordering, etc.).
+
+**Tasks**
+
+1. **Identify Route Planner component**
+
+   - e.g. `route-planner.component.*` or similar.
+   - Confirm where it gets its stops array from (service, store, etc.).
+
+2. **Apply header + title**
+
+   - If this is a “drill-down” screen:
+
+     - Use the header component with:
+
+       - A back button (wired to router `navigateBack()`).
+       - Title “Route Planner”.
+
+   - Or, if you use a larger title pattern, use `.section-title` at top of content.
+
+3. **Rebuild stop row template**
+
+   - Update the `*ngFor` template to use the new list layout:
+
+     ```html
+     <div class="route-item" *ngFor="let stop of stops">
+       <div class="stop-info">
+         <div class="stop-name">{{ stop.name }}</div>
+         <div class="stop-city text-muted">
+           {{ stop.city }}, {{ stop.state }}
+         </div>
+       </div>
+       <div class="stop-meta">
+         <span class="stop-count">{{ stop.dozens }} dz</span>
+         <span class="drag-handle" *ngIf="allowReorder">&#8942;&#8942;</span>
+       </div>
+     </div>
+     ```
+
+   - Keep the underlying `cdkDrag`, click handlers, etc., but move them into the new markup (`cdkDragHandle` on `.drag-handle`, for example).
+
+4. **Attach styles using tokens**
+
+   - In the planner component’s SCSS:
+
+     - Apply `.route-item`, `.stop-info`, `.stop-name`, etc. per the guide, using variables.
+
+   - Remove legacy list styling (borders, weird rows, etc.).
+
+5. **Sort controls (optional)**
+
+   - If you already have sort toggles, restyle them as:
+
+     - A small secondary button: `class="btn btn-secondary btn-small"`.
+     - Or a segmented control if you have 2 states (e.g. “City / Name”).
+
+6. **Test interactions**
+
+   - Reordering (if present).
+   - Clicking a row (if it selects something).
+   - Starting from the planner (if you support “start from this stop”).
+
+**Checkpoint:** Route planner matches the list design, is scannable, and all logic still works.
+
+---
+
+## Phase 5 – Delivery Run Screen Refactor
+
+**Goal:** Implement the new Delivery card layout + bottom action bar + progress, wired into your existing “current stop” logic.
+
+**Tasks**
+
+1. **Identify Delivery Run component**
+
+   - e.g. `run.component.*`, `current-stop.component.*`, etc.
+   - It should already:
+
+     - Show current stop.
+     - Handle Deliver / Skip.
+     - Move to next stop.
+
+2. **Restructure template into: header (optional) + progress section + card + bottom bar**
+
+   - Template rough structure:
+
+     ```html
+     <header class="run-header safe-top">
+       <button class="back-btn" (click)="onExit()">Back</button>
+       <div class="route-label text-muted">{{ activeWeek }} Route</div>
+     </header>
+
+     <main class="delivery-run-screen">
+       <div class="progress-section">
+         <span class="stop-count-label">
+           Stop {{ currentIndex + 1 }} of {{ totalStops }}
+         </span>
+         <div class="progress-bar-bg">
+           <div
+             class="progress-bar-fill"
+             [style.width.%]="progressPercent"
+           ></div>
+         </div>
+       </div>
+
+       <div class="delivery-card card">
+         <!-- Name, address, quantity, notes mapped to new layout -->
+       </div>
+     </main>
+
+     <div class="bottom-bar safe-bottom">
+       <button class="btn btn-primary" (click)="onDeliver()">Deliver</button>
+       <button class="btn btn-secondary" (click)="onSkip()">Skip</button>
+     </div>
+     ```
+
+   - Map your existing variables: `currentStop`, `currentIndex`, `totalStops`, etc.
+
+3. **Apply the delivery card content mapping**
+
+   - Ensure:
+
+     - `stop.name` ➜ `.stop-name`.
+     - Address fields formatted & displayed with line breaks.
+     - `dozens` displayed prominently.
+     - `note` if present in smaller, muted text.
+
+   - Remove old inline styles.
+
+4. **Add progress bar logic**
+
+   - In TS:
+
+     ```ts
+     get progressPercent(): number {
+       return this.totalStops ? ((this.currentIndex + 1) / this.totalStops) * 100 : 0;
+     }
+     ```
+
+   - Hook this into `[style.width.%]` on the `.progress-bar-fill` element.
+
+5. **Wire up the bottom actions**
+
+   - Reuse your **existing** deliver/skip methods:
+
+     - Just call them from the new button handlers.
+
+   - Make sure moving to next stop triggers your animation classes (phase 6).
+
+6. **Test**
+
+   - Run a full route:
+
+     - Start route from home.
+     - Tap Deliver/Skip repeatedly through all stops.
+     - Confirm updates & any data persistence are unchanged.
+
+**Checkpoint:** The main daily-use screen now reflects the new card design and button layout, without logical changes.
+
+---
+
+## Phase 6 – Motion, Toasts, and Interaction Polish
+
+**Goal:** Add the subtle animations and toasts that make it feel “finished” and iOS-y.
+
+**Tasks**
+
+1. **Implement toasts as a shared component**
+
+   - Create `ToastService` + `ToastComponent`:
+
+     - `ToastService.show(message: string, type: 'success'|'error'|'info' = 'success')`
+     - `ToastComponent` subscribes to messages and shows a small pill at bottom.
+
+   - Style as per guide:
+
+     - Dark semi-transparent background.
+     - White text.
+     - Rounded pill.
+     - Fixed at bottom center above bottom safe-area.
+
+2. **Hook to Deliver / Skip / Backup**
+
+   - After successful `onDeliver()`, show e.g. “Marked as delivered”.
+   - After `onSkip()`, show “Skipped stop”.
+   - After backup completes, show “Backup created”.
+
+3. **Add card transition animations**
+
+   - Option 1 (simple CSS):
+
+     - Use a `@fadeSlide` class that:
+
+       - On “out”: translateY(-8px), opacity 0.
+       - On “in”: translateY(8px → 0), opacity 0 → 1.
+
+     - Use an `*ngIf` with `@angular/animations` to animate between stops.
+
+   - Option 2 (Angular animations):
+
+     - Define `trigger('cardChange', [...])` in component, keyed on `currentStop.id`.
+     - Very small durations (~200–250ms).
+
+4. **Button tap feedback**
+
+   - Update `.btn` CSS to:
+
+     ```css
+     .btn:active {
+       transform: scale(0.97);
+       transition: transform var(--duration-fast) var(--easing-ease-out);
+     }
+     .btn-primary:active {
+       background: var(--color-primary-dark);
+     }
+     ```
+
+   - Ensure `-webkit-tap-highlight-color: transparent;` on `body` or `.app-shell` so Safari doesn’t add its blue flash.
+
+5. **Progress Bar animation**
+
+   - Add CSS:
+
+     ```css
+     .progress-bar-fill {
+       transition: width var(--duration-base) var(--easing-ease-out);
+     }
+     ```
+
+   - So progress animates smoothly when you advance.
+
+6. **prefers-reduced-motion support**
+
+   - Add global override:
+
+     ```css
+     @media (prefers-reduced-motion: reduce) {
+       * {
+         scroll-behavior: auto !important;
+         transition: none !important;
+         animation-duration: 0.001ms !important;
+       }
+     }
+     ```
+
+   - If you want more granular control, you can instead only target card/toast transitions.
+
+**Checkpoint:** App now feels “alive” but not flashy, with tactile feedback and quick, subtle movement.
+
+---
+
+## Phase 7 – Polish, Accessibility, and QA
+
+**Goal:** Make sure it’s accessible, robust, and nice across devices.
+
+**Tasks**
+
+1. **Accessibility sweep**
+
+   - Check:
+
+     - Button labels are clear & descriptive (no icon-only primary actions).
+     - Text contrast: run a quick check (or eyeball) for light-on-dark and dark-on-light.
+     - Semantic markup (use `<button>` for buttons, headings, etc.).
+
+   - Ensure all tappable controls are ≥ 44px in height.
+
+2. **Device testing**
+
+   - Simulate:
+
+     - iPhone SE (320 width).
+     - Modern larger iPhones (e.g. 390/430 width).
+
+   - Test PWA installed as standalone:
+
+     - Add to Home Screen.
+     - Launch outside Safari and run through main flow.
+     - Verify safe area and bottom bar.
+
+3. **Offline flow**
+
+   - Confirm UI behaves well when offline:
+
+     - No spinners that spin forever.
+     - Toast messages that say “Saved locally” or similar when sync isn’t possible.
+
+   - If you surface offline status, style it with tokens (e.g., a small banner).
+
+4. **Code cleanup & docs**
+
+   - Remove old CSS that is no longer used.
+   - Add short docs:
+
+     - `STYLEGUIDE.md` or a section in README summarizing:
+
+       - Token usage.
+       - Utility classes.
+       - Component patterns (card, buttons).
+
+   - This helps future you (and AI helpers) keep everything consistent.
+
+5. **Merge & milestone**
+
+   - Once tests pass and you’re happy with visuals:
+
+     - Squash or organize commits.
+     - Merge `feature/ui-refresh-style-system` into main branch.
+
+---

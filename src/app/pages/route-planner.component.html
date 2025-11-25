@@ -1,0 +1,133 @@
+<div class="header">
+  <div>
+    <h1>Route Planner</h1>
+    <div class="sub" *ngIf="routeDate">Route: {{ routeDate }}</div>
+  </div>
+  <div class="header-actions">
+    <button class="ghost" type="button" (click)="resetRoute()" [disabled]="!deliveries.length">Reset route</button>
+    <button type="button" (click)="startRun()" [disabled]="!deliveries.length">Start Run</button>
+  </div>
+</div>
+
+<div *ngIf="loading" class="status">Loading…</div>
+<div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
+
+<div class="list" *ngIf="!loading && !errorMessage && deliveries.length; else empty">
+  <div
+    cdkDropList
+    [cdkDropListData]="deliveries"
+    (cdkDropListDropped)="drop($event)"
+    class="drop-list"
+  >
+    <div class="item" *ngFor="let stop of deliveries; let i = index" cdkDrag>
+      <div class="handle" cdkDragHandle>::</div>
+      <div class="content">
+        <div class="top">
+          <span class="name">{{ stop.name }}</span>
+          <span class="qty">
+            <button type="button" class="mini-btn" (click)="adjustPlanned(stop, -1)">-</button>
+            <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
+            <button type="button" class="mini-btn" (click)="adjustPlanned(stop, 1)">+</button>
+            <span class="unit">dz</span>
+          </span>
+        </div>
+        <div class="bottom">
+          <span class="addr">{{ stop.city }}, {{ stop.state }}</span>
+          <span class="status" *ngIf="stop.status">{{ stop.status | titlecase }}</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="ghost small warn" type="button" (click)="skipStop(stop)">Skip</button>
+        <button class="ghost small" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+        <button class="ghost small pill-btn" type="button" (click)="openDonationDetails(stop)">
+          <span [ngClass]="getDonationPillClass(stop)">{{ getDonationPillLabel(stop) }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #empty>
+  <div class="status">No deliveries found for this route.</div>
+</ng-template>
+
+<div class="donation-overlay" *ngIf="donationModalStop">
+  <div class="donation-dialog">
+    <h3>Donation for {{ donationModalStop!.name }}</h3>
+    <p class="text-muted">
+      Suggested: ${{ donationModalStop!.dozens * 4 }} ({{ donationModalStop!.dozens }} dz &#64; $4/dozen)
+    </p>
+    <div class="donation-toggle">
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.status === 'NotRecorded'"
+        (click)="setDonationStatus('NotRecorded')"
+      >
+        Not recorded
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.status === 'Donated'"
+        (click)="setDonationStatus('Donated')"
+      >
+        Donated
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.status === 'NoDonation'"
+        (click)="setDonationStatus('NoDonation')"
+      >
+        No donation
+      </button>
+    </div>
+
+    <div *ngIf="donationDraft?.donation?.status === 'Donated'" class="donation-methods">
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.method === 'cash'"
+        (click)="setDonationMethod('cash')"
+      >
+        Cash
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.method === 'venmo'"
+        (click)="setDonationMethod('venmo')"
+      >
+        Venmo
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.method === 'other'"
+        (click)="setDonationMethod('other')"
+      >
+        Other
+      </button>
+    </div>
+
+    <div class="donation-amount-row" *ngIf="donationDraft?.donation?.status === 'Donated'">
+      <span>Amount: ${{ donationDraft?.donation?.amount ?? donationDraft?.donation?.suggestedAmount }}</span>
+      <button type="button" class="btn-link" (click)="openAmountPicker()">Adjust amount</button>
+    </div>
+
+    <div class="donation-actions">
+      <button type="button" class="ghost" (click)="closeDonationModal()">Cancel</button>
+      <button type="button" (click)="saveDonation()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="amount-overlay" *ngIf="showAmountPicker">
+  <app-donation-amount-picker
+    [currentAmount]="selectedAmount"
+    [suggestedAmount]="donationDraft?.donation?.suggestedAmount ?? 0"
+    (cancel)="closeAmountPicker()"
+    (save)="confirmAmountFromPicker($event)"
+  />
+</div>

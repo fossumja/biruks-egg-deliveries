@@ -1,0 +1,109 @@
+<div class="header">
+  <div>
+    <h1>Delivery Run</h1>
+    <div class="sub" *ngIf="routeDate">Route: {{ routeDate }}</div>
+  </div>
+  <div class="progress" *ngIf="total">
+    <span>{{ doneCount }} / {{ total }} done</span>
+    <div class="bar">
+      <div class="fill" [style.width.%]="(doneCount / total) * 100"></div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="status">Loading…</div>
+<div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
+
+  <div class="stop-card" *ngIf="!loading && !errorMessage && !finished && currentStop">
+    <div class="stop-name">{{ currentStop.name }}</div>
+    <div class="stop-address">
+      {{ currentStop.address }}<br />
+      {{ currentStop.city }}, {{ currentStop.state }} {{ currentStop.zip }}
+    </div>
+    <button class="maps" type="button" (click)="openMaps()">Open in Maps</button>
+    <div class="spacer"></div>
+    <div class="stop-qty">
+      <div class="qty-input">
+        <button type="button" class="mini-btn" (click)="adjustDelivered(-1)">-</button>
+        <span class="qty-display" aria-label="Delivered dozens">{{ deliveredQty }}</span>
+        <button type="button" class="mini-btn" (click)="adjustDelivered(1)">+</button>
+        <span class="unit">dz</span>
+      </div>
+    </div>
+    <div class="stop-note" *ngIf="currentStop.notes">Note: {{ currentStop.notes }}</div>
+  </div>
+
+  <section class="donation" *ngIf="!loading && !errorMessage && !finished && currentStop">
+    <div class="donation-header">
+      <div class="donation-title">Donation (optional)</div>
+      <div class="donation-suggested">Suggested: ${{ suggestedDonationAmount | number: '1.0-0' }}</div>
+    </div>
+    <div class="donation-choices">
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="currentDonation.status === 'NoDonation'"
+        (click)="setDonationStatus('NoDonation')"
+      >
+        No donation
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'cash'"
+        (click)="setDonationDonated('cash')"
+      >
+        Cash
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'venmo'"
+        (click)="setDonationDonated('venmo')"
+      >
+        Venmo
+      </button>
+    </div>
+    <div class="donation-amount-row" *ngIf="currentDonation.status === 'Donated'">
+      <span>Amount: ${{ (currentDonation.amount ?? suggestedDonationAmount) | number: '1.2-2' }}</span>
+      <button type="button" class="btn-link" (click)="openDonationAmountPicker()">Adjust amount</button>
+    </div>
+  </section>
+
+  <div class="status" *ngIf="finished && !loading && !errorMessage">
+    🎉 All deliveries completed.
+  </div>
+
+<div class="actions" *ngIf="!loading && !errorMessage && !finished">
+  <button class="deliver" type="button" (click)="markDelivered()">Deliver</button>
+  <button class="skip" type="button" (click)="openSkipDialog()">Skip</button>
+</div>
+
+<div class="amount-overlay" *ngIf="showAmountPicker">
+  <app-donation-amount-picker
+    [currentAmount]="selectedAmount"
+    [suggestedAmount]="suggestedDonationAmount"
+    (cancel)="closeAmountPicker()"
+    (save)="confirmAmountFromPicker($event)"
+  />
+</div>
+
+<div class="actions" *ngIf="finished && !loading && !errorMessage">
+  <button type="button" (click)="backupNow()">Backup now</button>
+  <button class="ghost" type="button" (click)="finishRoute()">Done</button>
+</div>
+
+<div class="skip-overlay" *ngIf="showSkipDialog">
+  <div class="skip-dialog">
+    <h3>Skip reason</h3>
+    <div class="reason-buttons">
+      <button type="button" (click)="confirmSkip('Not home')">Not home</button>
+      <button type="button" (click)="confirmSkip('Canceled')">Canceled</button>
+    </div>
+    <div class="custom-reason">
+      <input [(ngModel)]="otherReason" placeholder="Other reason" />
+      <button type="button" (click)="confirmSkip(otherReason)">Save</button>
+    </div>
+    <button class="ghost" type="button" (click)="cancelSkip()">Cancel</button>
+  </div>
+</div>

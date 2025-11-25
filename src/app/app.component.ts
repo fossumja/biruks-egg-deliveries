@@ -1,12 +1,24 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+function getCurrentRouteLink(base: string[]): string[] {
+  const current = localStorage.getItem('currentRoute');
+  return current ? [...base, current] : base;
+}
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'egg-delivery-app';
+  get plannerLink(): string[] {
+    return getCurrentRouteLink(['/plan']);
+  }
+
+  get runLink(): string[] {
+    return getCurrentRouteLink(['/run']);
+  }
 }

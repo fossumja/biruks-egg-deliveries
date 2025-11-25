@@ -1,0 +1,40 @@
+.amount-dialog {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.text-muted {
+  color: #475569;
+}
+
+.amount-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 0.5rem;
+}
+
+.amount-scroll button {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.amount-scroll button.selected {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.amount-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}

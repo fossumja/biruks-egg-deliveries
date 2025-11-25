@@ -1,0 +1,281 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sub {
+  color: #475569;
+}
+
+.progress {
+  min-width: 160px;
+}
+
+.bar {
+  margin-top: 0.25rem;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: #22c55e;
+}
+
+.status {
+  margin-top: 1rem;
+  color: #475569;
+}
+
+.status.error {
+  color: #b91c1c;
+}
+
+.stop-card {
+  margin-top: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #f8fafc;
+}
+
+.stop-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.stop-address {
+  margin-top: 0.4rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.spacer {
+  height: 0.6rem;
+}
+
+.stop-qty {
+  margin-top: 0.6rem;
+  font-weight: 600;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.qty-input {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.qty-display {
+  min-width: 2.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.mini-btn {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.55rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.unit {
+  color: #475569;
+}
+
+.planned-qty {
+  margin-top: 0.3rem;
+  color: #475569;
+}
+.stop-note {
+  margin-top: 0.4rem;
+  color: #334155;
+  font-style: italic;
+}
+
+button {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.ghost,
+.ghost {
+  background: transparent;
+  color: #2563eb;
+}
+
+.maps {
+  margin-top: 0.6rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.deliver {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.skip {
+  background: #f97316;
+  border-color: #f97316;
+}
+
+.skip-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.skip-dialog {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.reason-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.custom-reason {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.custom-reason input {
+  flex: 1;
+  padding: 0.55rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+}
+
+.donation {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #fff;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.donation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.donation-title {
+  font-weight: 700;
+}
+
+.donation-suggested {
+  color: #475569;
+}
+
+.donation-choices {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-chip {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+}
+
+.btn-chip.active {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #2563eb;
+  padding: 0;
+}
+
+.donation-amount-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #0f172a;
+}
+
+.amount-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.amount-dialog {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.amount-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 0.5rem;
+}
+
+.amount-scroll button {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.amount-scroll button.selected {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.amount-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}

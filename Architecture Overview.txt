@@ -1,0 +1,743 @@
+Architecture Overview
+The application will be a 100% client-side Angular PWA designed for offline-first operation on an iPhone. It consists of an Angular frontend that runs in the browser (as a standalone app when “Added to Home Screen”), leveraging a local database for all data. All functionality – from selecting a delivery route to marking deliveries as complete – works offline with no server dependency during normal use. Key architectural elements include:
+• Angular PWA Frontend: The Angular app (built with the latest Angular) is configured with the Angular Service Worker (via @angular/pwa) to cache the app shell (HTML/JS/CSS) for offline use. This means once the app is installed on the phone, it can launch and function without network. The web app manifest and iOS meta tags will ensure it runs in full-screen mode like a native app, with a custom icon and branding.
+• Local Database (IndexedDB via Dexie): All delivery data is stored in the browser’s IndexedDB database for persistence. We use Dexie.js (a lightweight IndexedDB wrapper) for a robust and developer-friendly data layer. Dexie provides a simple promise-based API and handles schema versioning and migrations gracefully[1]. This local datastore is the source of truth during a delivery route – every action (e.g. marking a delivery) is immediately written to IndexedDB in a transaction for durability.
+• Offline Workflow & Sync: The app follows a Local-First design. The primary workflow is: the user imports a CSV of deliveries (which is parsed into the local DB), performs route operations offline, and later exports or syncs results. There is an optional lightweight backend only for backup purposes (not for real-time operation). If enabled, the frontend will queue changes and sync them to a cloud backup when a connection is available, but the app never waits on or requires the server to function. All crucial data is kept locally to avoid data loss if connectivity drops.
+• CSV Import/Export Integration: The system treats CSV as the interchange format with Excel (the user’s comfort tool). The app includes functionality to import a CSV file (via the iOS Files picker) to load delivery plans, and to export updated delivery data as CSV for backup or reporting. This allows the aunt to continue using Excel for planning or records – the PWA simply helps during delivery runs and produces output she can open in Excel later.
+• Simplicity and Reliability: The architecture avoids over-engineering. We have a single trusted user (or a small handful of trusted users), so there is no complex user authentication or multi-tenant considerations in the app. The focus is on data safety and usability. For example, rather than a complex cloud sync solution, we prioritize local writes, on-demand CSV backups, and a simple optional upload to a personal server. All writes to the database are idempotent and safe – even if the app or phone crashes mid-route, the data recorded up to that point remains in IndexedDB and will be there when the app is reopened.
+In summary, the app’s architecture centers on an installable Angular PWA with an offline-first client (Angular + IndexedDB), using CSV for data input/output. A minimal backend API can be added for peace-of-mind backups, secured via a shared secret. This architecture ensures that no data is lost even in poor connectivity conditions, and that the user’s workflow (Excel planning → offline delivery tracking → Excel reporting) is fully supported with minimal friction.
+Data Model
+We define clear TypeScript interfaces for the core data entities. The data model is kept simple to match the CSV structure and capture delivery outcomes:
+• DeliveryStatus: an enum or union type for delivery status. For example:
+
+type DeliveryStatus = "" | "delivered" | "skipped";
+(Empty string or "" will denote “not yet delivered/skipped” i.e. pending.)
+• Delivery: represents a single delivery stop (one row from the spreadsheet). Fields include:
+• id: string – A unique identifier for this delivery. We will generate a UUID for each row upon import (to uniquely identify it across devices and for syncing).
+• routeDate: string – The date or route identifier for this delivery (e.g. "2025-07-15"). This groups deliveries into a “route” or delivery day. If the CSV uses a non-date route name or code, we can store that instead.
+• name: string – Recipient name or business name.
+• address: string – Street address (e.g. "123 Elm St"). We might store the full address in one field or split it if needed.
+• city: string
+• state: string
+• zip?: string – ZIP code (optional, if included in CSV).
+• dozens: number – Number of dozens of eggs to deliver.
+• notes?: string – Additional notes or special instructions (if any, from CSV or added later).
+• sortIndex: number – The sort/order position for this stop in the route. Initially, this can be the original CSV order (0,1,2,…) but the user can reorder stops, updating this index. This ensures we preserve custom route ordering.
+• status: DeliveryStatus – Current status: "" (pending) by default, becomes "delivered" or "skipped" when the user takes action.
+• deliveredAt?: string – Timestamp (ISO string) of when delivery was marked delivered (set if status=="delivered").
+• skippedReason?: string – If status=="skipped", a short reason text (e.g. "Not home" or custom note) explaining the skip.
+• createdAt: string – Timestamp when this entry was created/imported. This helps track data currency and could be used for sorting or debugging.
+• updatedAt: string – Timestamp of the last update to this delivery (e.g., when status or notes changed). On marking delivered/skipped, we update this.
+• synced?: boolean – For use with the optional backend. This starts as false for new or changed records, and we set it to true once the record is backed up to the server. (Records imported from CSV might start as synced=true if we treat the CSV import as already captured elsewhere, or simply start everything as false and treat the initial import as unsynced data to back up as well.)
+• Route (optional): We can define a higher-level entity to represent a delivery route or day. This could be stored separately or derived. A Route object might include:
+• routeDate: string (or routeId): the key for the route (date or name).
+• name?: string – A human-readable name if needed (e.g. "July 15, 2025 – Morning Route"), though often the date is enough.
+• totalStops: number – Total deliveries in this route (for summary).
+• deliveredCount: number – How many have status delivered (can be computed on the fly, but we might store for convenience).
+• skippedCount: number – How many skipped (also computed or stored).
+• lastStopIndex: number – The index of the last delivered/skipped stop (for resume logic). This helps us resume where we left off.
+• completed: boolean – Flag if the route is fully done (all deliveries have a status). This could be derived by checking if deliveredCount + skippedCount == totalStops.
+We can generate Route entries after CSV import by grouping deliveries by date. In practice, we might not need a separate IndexedDB store for routes – we can derive the list of routes by querying distinct routeDate values from the Delivery store. However, maintaining a Route store can simplify tracking summary info and last active route state. For example, we could update the delivered/skipped counts in a Route record on each delivery action, making it easy to display stats without recomputing every time.
+• DeliveryLog (optional advanced): This would be an append-only log of actions. Each entry might have id (uuid), deliveryId, action ("delivered" or "skipped"), timestamp, and perhaps details (like the skippedReason or new values). This log is not strictly required, but it can be useful for redundancy and auditing. For instance, we could log every time a delivery is marked delivered or skipped. This provides a secondary record (which could be backed up) and could help in reconstructing what happened if needed. In v1, we might skip this for simplicity, but it’s worth noting as a future enhancement (especially if multi-user or more complex sync were introduced).
+Data Relationships & Behavior: Each Delivery belongs to a Route identified by routeDate (or routeId). We assume the CSV provides that grouping (likely a date column). If a CSV can contain multiple dates, the app will import all of them and let the user choose one route/day to work on at a time. Deliveries themselves are mostly independent rows; relationships are simple (mostly grouping by route). We might also consider linking deliveries: e.g., if the same person appears on multiple days, we might assign them the sameidacross imports to track history, but that’s outside our current scope. For now, treat every CSV row as a distinctDelivery` with a new id each import.
+ID strategy: We will generate unique IDs on import (for example, using crypto.randomUUID() or a library like UUID). These IDs ensure that if the same CSV row appears in multiple imports (say the same address next week), they will be treated as separate delivery instances in the app. The ID is also used for syncing and log referencing. (Dexie can auto-generate numeric keys, but using a UUID string as the primary key is convenient for consistency between client and any server backup, and avoids issues with autoincrement in a potentially reinitialized DB.)
+Refinements for Robustness: We added createdAt and updatedAt timestamps to help with debugging and potential future features (like showing when a record was last modified). We also plan to track some app-level state: for example, the last active route and current stop index (to support resume). This isn’t a field on Delivery per se, but we’ll store it either in IndexedDB (e.g., a special “state” store or in the Route object) or simply in localStorage for quick access on startup. By storing e.g. lastRouteDate and lastStopIndex, the app can automatically resume the correct screen and delivery when reopened.
+In summary, the data model is a flat list of Delivery records stored in IndexedDB, optionally accompanied by a Route summary store. Each record captures all info from the spreadsheet plus the real-time status updates. This structure aligns with the CSV (one row per delivery) and is easy to use for building the UI (lists and detail views).
+Storage & Offline Design
+Ensuring offline functionality and data durability is paramount. We will leverage IndexedDB via Dexie for robust local storage, and implement patterns to maximize reliability (immediate writes, backups, and persistence). Here’s the plan:
+IndexedDB Structure and Usage
+We will create an IndexedDB database (let’s call it "EggDeliveriesDB"). Using Dexie, we define object stores (tables) and indexes for our data. Dexie allows us to declare the schema upfront and handles versioning. For example, we may define in our Dexie subclass constructor:
+this.version(1).stores({
+deliveries: "id, routeDate, status", // primary key is 'id'. Index on routeDate and status for queries.
+routes: "routeDate" // if using a separate routes store, primary key routeDate.
+// (We could also index routeDate+sortIndex if we want to query in sorted order, but we can sort in memory.)
+});
+In Dexie’s schema string, the first field is the primary key; the others are indexed fields for efficient lookups. Here, we index routeDate to quickly retrieve all deliveries for a given day. We might also index status if we want to query pending vs delivered counts without scanning (though since a route has limited items, this is optional).
+Using Dexie in Angular is straightforward: we’ll create a service (e.g., DataService or DbService) that extends Dexie. This service will open the DB and provide methods to interact with data. The Dexie integration plan:
+• Initialization: On app startup, we instantiate the Dexie DB. We call db.open() during app initialization (Dexie will handle creating the DB if not exists, or opening existing). We log success or catch errors (e.g., if a user’s browser is in a state that blocks IndexedDB, though on a normal PWA this shouldn’t happen unless low storage or a rare Safari bug).
+• Versioning and Migrations: If we need to change the schema later (say add a new store or index), we’ll use Dexie’s version(x).stores({...}) with a higher version number. Dexie will run an upgrade transaction automatically. We can add .upgrade() callback to transform existing data if needed during migration. For example, if in version 2 we decide to add a lastUpdatedAt field to deliveries, we could populate it in the upgrade function. Dexie’s documentation provides guidance on migrations, and it simplifies schema changes by handling the underlying IDB version upgrade event for us.
+• Dexie operations: We’ll use Dexie’s APIs for all data access:
+• bulkAdd or bulkPut to insert deliveries on CSV import (fast batch insert).
+• toArray() or where('routeDate') queries to get deliveries for the selected date.
+• update or put to update a delivery’s status when delivered/skipped.
+• Transactions (db.transaction('rw', ...)) to group operations (e.g., update a delivery and add a log entry atomically).
+• The data service can expose methods like getRoutes(): Promise<Route[]> (which does a query for unique routeDate in deliveries or reads the routes store), getDeliveries(routeDate): Promise<Delivery[]>, markDelivered(deliveryId), etc. These methods will wrap Dexie calls. By centralizing in a service, it’s easy to swap out or modify storage logic later, and the rest of the app can work with promises or observables returned by the service.
+Why Dexie: Dexie is chosen for its ease of use and reliability. It abstracts away the sometimes verbose IndexedDB API and has proven stability in production. It will let us write concise async/await code for DB ops and even use reactive features (Dexie’s liveQuery) if we want the UI to auto-update. It’s well-suited for an offline PWA data layer[1].
+Writing Data Safely (Crash Resilience)
+Immediate, Transactional Writes: Every time the user taps “Deliver” or “Skip”, we will immediately persist that change to IndexedDB. This means updating the Delivery record’s status (and deliveredAt/skippedReason) and saving it before moving on. In practice, upon tapping a button: - We call a function like markDelivered(deliveryId) in our data service. This will perform db.transaction('rw', deliveriesStore, async () => { ... }) to ensure atomicity. Inside, we do await deliveries.update(id, { status: 'delivered', deliveredAt: ... , updatedAt: ... }). We can also in the same transaction update a Route record’s delivered count or mark it in a log store. Using a transaction guarantees that either all related updates succeed or none are committed (preventing partial state, e.g., if we had both a deliveries and a log update, they either both happen or neither if an error occurs). - Only after the database write promise is resolved do we advance the UI to the next stop. This way, if for some reason the write fails (e.g., quota exceeded, or some unexpected DB error), we can catch it and alert the user instead of silently losing the update. In such a case, we’d show an error like “Failed to save data. Please retry.” with a retry option, ensuring the user can attempt to save again. However, in practice, these failures are rare for the small data sizes we handle.
+This approach makes the app crash-safe: If the app is closed or the phone reboots right after pressing “Deliver”, the data is already in IndexedDB. When she reopens the app, the delivery will show as delivered and the app will resume at the correct next stop. There’s no reliance on in-memory state for critical info; everything is committed to disk as we go.
+Atomic updates and consistency: Using the local DB also lets us enforce simple constraints. For example, we won’t allow two deliveries with the same id, etc., as id is the primary key. We can also use Dexie’s features like bulkPut for marking many items if needed (for instance, a future feature “Mark all remaining as skipped” at end of day could update multiple records in one transaction).
+Additional Local Backup (JSON in localStorage)
+For belt-and-suspenders durability, we will implement a secondary lightweight backup: after every few changes (or even after each change, given the small scale), we save a JSON snapshot of the current route to localStorage. This addresses the off chance of an IndexedDB corruption or an edge-case iOS bug. The data model is small enough that duplicating it in localStorage (which is string-keyed storage) is feasible.
+Approach: After each delivery action (or say every N=5 actions to throttle a bit), we do something like:
+const currentRouteData = await db.deliveries.where('routeDate').equals(activeRouteDate).toArray();
+localStorage.setItem('routeBackup', JSON.stringify(currentRouteData));
+localStorage.setItem('routeBackupDate', new Date().toISOString());
+We’d store only the currently active route’s deliveries (as that’s what’s changing). Optionally, we could store all routes, but that may be unnecessary duplication since other routes haven’t changed since import. The snapshot will include each delivery’s latest status and timestamps.
+Recovery use-case: On app startup, we can check if the IndexedDB is accessible and has data. If IndexedDB fails to open (which is rare but let’s say the store was somehow wiped or corrupted), we can fall back to the routeBackup in localStorage. The app could detect the anomaly (e.g., db.deliveries.count() == 0 while localStorage.routeBackup exists) and then prompt the user: “We found a local backup of your last route – would you like to restore it?” If confirmed, we can repopulate the deliveries store from that JSON. This provides a last-resort recovery if something goes very wrong with IndexedDB.
+In normal operation, we may never need this. But having it is a peace-of-mind feature given the critical goal of never losing delivery records. The overhead is tiny (localStorage writes of a few KB). We will be careful to purge or update this backup appropriately (for example, after finishing a route or exporting, we might clear it or keep the latest route only).
+Storage Persistence and Eviction on iOS
+Modern browsers have large storage quotas and rarely evict data unless under extreme pressure[2]. On iOS specifically, older versions of Safari had aggressive data eviction policies (e.g., a PWA’s data could be deleted if the app wasn’t opened for 7 days). Good news: in recent iOS (15.2+), installed PWAs are not subject to the 7-day eviction rule[3]. And Safari/WebKit has increased storage quotas (the limit used to be ~50MB for service worker cache on iOS[4], but now iOS 17+ can provide hundreds of MB or more for an active PWA).
+That said, to be extra safe we will use the Storage API’s persistence feature. On startup, the app will call navigator.storage.persist() to request persistent storage. If granted, our data will be stored in a “persistent” storage bucket that will not be cleared by the browser without user consent[5]. In many cases, Safari (and other browsers) automatically grant this for PWAs that the user interacts with frequently (and they typically do not even prompt the user, they use heuristics)[6]. If the request is denied (which on Safari might happen silently), it’s usually fine as long as the app is used regularly. We will log the result (for debugging) and possibly inform the user “Storage is now persistent” if we can detect it.
+We will also encourage the user to open the app regularly if possible. Given that the aunt will likely use it at least once a week for deliveries, the risk of the browser evicting the data is extremely low in practice. According to Chrome team research, data is rarely evicted for sites that are visited regularly[2]. And as noted, one PWA developer reports no issues with months of IndexedDB data retention on iOS and Android[3].
+Nonetheless, by calling navigator.storage.persist() we add an extra layer of protection. With persistent storage, the data should remain until the user manually deletes it (or deletes the app). We will also document that if the user ever “Clears website data” for the app’s domain in Safari settings, it would wipe the data – but that’s an explicit user action.
+Additionally, our CSV backup workflow and optional server sync are in place to ensure even if the device is lost or storage is somehow wiped, the data can be recovered externally. We also plan to test the app’s offline storage under real conditions – for example, load some data, not use the app for a couple of weeks, then return to verify data still exists, to simulate the aunt’s usage pattern and ensure reliability.
+Summary of Offline Strategy
+• The app loads offline: thanks to the PWA service worker caching the app shell, the app UI is available with no network. We’ll verify on iPhone that after initial install, turning on airplane mode still allows the app to launch and display the last loaded data.
+• All CRUD operations go to IndexedDB. No writes depend on the network. We treat the network as a write-only backup channel.
+• We implement defensive measures like immediate writes (to avoid losing in-memory data on crash), transactionality (to maintain consistency), localStorage snapshot (for redundancy), and persistent storage request (to avoid eviction).
+• The data volume (likely a few hundred records at most) is very small relative to modern storage limits, so performance will be instant and space usage minimal. This app will not come near iOS’s storage quotas.
+• We will use Dexie’s proven reliability to avoid pitfalls (Dexie abstracts many IndexedDB quirks and will retry or properly handle the underlying IDB requests for us).
+All these ensure that even with zero cell service, the aunt can use the app all day, and never worry about losing the delivery records she’s entered.
+Backend & Security
+(The backend is optional and can be omitted in the initial version. Here we outline a simple design in case we add it for cloud backup.)
+The backend’s purpose is purely to back up data in the cloud for safekeeping. It will not be the source of truth during delivery runs – that’s the local app. The philosophy is to keep the backend as simple as possible: no complex querying or multi-user features, just a dumb data receiver/storage. We also aim to secure it just enough for a trusted, low-risk scenario without a full authentication system.
+API Design
+We can create a minimal REST API with a couple of endpoints:
+• POST /api/sync – Accepts a batch of delivery records (or delivery actions) to be backed up. The app will call this to upload new or changed data whenever it has connectivity. The request body could be JSON, e.g.:
+{
+"deliveries": [
+{
+"id": "abcd-1234-uuid",
+"routeDate": "2025-07-15",
+"name": "John Doe",
+"address": "123 Elm St",
+"city": "Canton",
+"state": "SD",
+"zip": "57013",
+"dozens": 2,
+"notes": "",
+"sortIndex": 0,
+"status": "delivered",
+"deliveredAt": "2025-07-15T14:30:00Z",
+"skippedReason": null,
+"updatedAt": "2025-07-15T14:30:00Z"
+},
+...
+]
+}
+This example shows sending full delivery objects, but we have flexibility. We could also send a diff or just {id, status, deliveredAt,...} for each change. However, sending the full record is simplest and ensures the server has all details (in case the initial import data wasn’t sent earlier). The server can upsert these into its storage (see Data model below). The server should respond with a success status (200 OK and maybe a JSON { status: "ok" }). If it encounters an error (like invalid token or server issue), it returns an error status (401 for auth error, 500 for server error, etc.), which the client will handle by retrying later.
+• GET /api/export/:date (or GET /api/routes/:date): Returns the backup data for a given route/date. This allows recovery. For example, GET /api/export/2025-07-15 might return the JSON (or CSV) of all deliveries on July 15, 2025 that it has stored. We might implement this for an admin or emergency recovery scenario – it’s not necessarily used by the app automatically (since the app relies on its local DB and CSV for normal export). But it’s a useful endpoint to verify the server backup or to download it manually. We will protect this endpoint by the same auth (shared secret) since it exposes data.
+We might not need an endpoint to list all routes or delete data in v1. Because user base is tiny and all users are trusted, we can even skip building a UI for pulling from server – the main flow is one-directional (app -> server). The server is like a “black box” that stores whatever it gets.
+Data Transmission Logic (Client side): The client will accumulate unsynced changes. Concretely, each Delivery could have a synced: false flag when it’s updated. A background routine will look for any synced == false deliveries and try to send them. We’ll use navigator.onLine events or a periodic timer: - When the app detects it’s online (e.g., window.ononline fires), or when a delivery is marked and we find navigator.onLine true, we trigger a sync attempt. - The app collects all unsynced deliveries (possibly group them by route or just send all in one batch). Even if multiple days’ data are pending (say she drove two days offline and only got connectivity after), we can send them all in one /api/sync call with a combined payload. - The server processes each record: it will create or update that delivery in storage. To avoid duplicate data: use the id as a unique key server-side. If the same id comes again (e.g., maybe the app retried a sync that already succeeded, or a record was updated twice), the server just updates the existing entry. This way, duplicates are overwritten rather than duplicated. - On successful response, the app will mark those records as synced=true in IndexedDB (so it won’t resend them). - If the network call fails (no connection or server down), the app will simply keep the records marked unsynced and retry later. We can implement an exponential backoff for retries to avoid battery drain in poor connectivity (for example, try immediately when online, if fails, wait 1 minute, then 2, 5, etc., until success or app closed). Given the user can always export CSV, this is just a secondary measure.
+Importantly, the app does not rely on a response from the server to continue. Even if sync fails, the app will continue to function offline. The server does not send back authoritative data to the client except maybe an acknowledgment. We avoid any complex “two-way merge” or conflict handling because we have essentially a single writer model (the app). This keeps things simple and robust.
+Server-side Data Model and Storage
+For the server, we have a couple of implementation choices: - Use a relational database (like SQLite, Postgres, etc.) with a deliveries table. - Use a simple file-based storage (like storing JSON or CSV files on disk). - Use a NoSQL store (or even something like an S3 bucket storing JSON per route).
+Given the small scale (a few routes per week, each with maybe tens of records), a lightweight approach is sufficient. One idea is to store each route’s data in a separate JSON file on the server: - e.g., 2025-07-15.json containing an array of delivery objects for that date. - When the server receives a sync POST, it can open the corresponding file (or in-memory object), update or append the records, and save it. - For instance, on POST /api/sync with deliveries from routeDate "2025-07-15", the server loads 2025-07-15.json, merges in the incoming changes (matching by id), and writes the file back. If the file doesn’t exist (first sync for that date), it creates it with those records. - The GET /api/export/2025-07-15 would just serve the contents of that JSON (or perhaps a CSV conversion on the fly if we want it in CSV format).
+Pros: This is very simple to implement and easy to manually inspect if needed. It avoids setting up a separate database service.
+Cons: If multiple sync requests came in concurrently for the same file, we’d need to handle file locking or use an atomic write strategy to avoid corruption. However, given our user scenario, concurrent requests are unlikely (the aunt’s phone will be the only client sending data, and those sync calls will typically be sequential). We can also mitigate issues by applying sync calls sequentially server-side (e.g., using a queue or simply by the single-threaded nature of Node if using Node/Express, which handles one request at a time per event loop).
+Alternatively, using a database is also fine. We could have a table deliveries_backup with columns corresponding to each field. The primary key could be the id (assuming they are globally unique across routes) or a composite of (routeDate, id). If using a relational DB, on receiving data we’d do an UPSERT (insert or replace) for each record. The advantage is built-in concurrency control and query abilities (we could query all unsynced etc., though not needed). But it’s arguably overkill for our scale and adds more setup.
+We should also consider data retention and corruption: Because this is backup, we ideally never delete or lose it. If using files, we might keep historical files indefinitely or until manually cleaned. Each route file is small (~a few KB), so keeping them is fine. It provides a historical log of deliveries by date which might even be useful for reports. If using DB, similar retention – we’d keep all records (we might add a primary key so each delivery appears once; if she re-delivers the same person next week, that’s a new record with a new id anyway). There’s minimal risk of corruption if we handle writes properly. If a write fails mid-way, we could potentially end up with a partially written JSON. To mitigate, we can: write to a temp file, then rename to the final name (ensuring the file is always either old or new, not half-written). Or just ensure file writes are atomic at OS level (small JSON writes usually are, but not guaranteed). With a DB, each transaction commit ensures consistency automatically.
+Restoration scenario: If the aunt loses her device or the IndexedDB gets cleared, in a pinch we could retrieve the backed-up data from the server. We might have to build a small admin page or use a tool to get the JSON/CSV from the server, then re-import it into the app (or manually into Excel). Since this is mostly for safety, a manual restore process is acceptable (it doesn’t need to be fully automated in v1). We will document that backups exist on the server and can be fetched if needed.
+Security Measures
+Because we have no user login, we will use a shared secret/API key mechanism to protect the endpoints: - We’ll generate a random API token (a long random string). This token will be stored in the client app (for example, in an Angular environment config file or injected during build). It will also be configured on the server (e.g., an environment variable or config file on the server side). - For each API call, the client will include this token in an HTTP header. A common method is the Authorization header with a Bearer token:
+Authorization: Bearer <YOUR_SECRET_TOKEN>. - The server will check this header on every request. If the token is missing or doesn’t match, it immediately returns 401 Unauthorized and doesn’t process the data. This prevents random internet users from hitting the endpoint and messing with our data.
+This approach is simple but effective for a controlled scenario. Only the distributed app knows the token. We acknowledge that if someone decompiled the app code, they could find the token. However, given the app is not public and the data isn’t highly sensitive, this risk is extremely low. Using HTTPS (TLS) for all requests means the token is not exposed to network sniffing, and it must be present in each request to be allowed. We’ll enforce that the backend only listens on HTTPS (most hosting will do this by default).
+Trade-offs & Risks: Unlike a user-specific login, a static token doesn’t allow per-user revocation or rotation easily (we’d have to update the app to change it). But since only one or two devices will ever use this, and they are all trusted persons, we accept this trade-off for simplicity. The risk of someone obtaining the token is low; even if they did, the worst they could do is upload bogus data or attempt to get data – they cannot affect the device’s local data. Regardless, the data (delivery records) are not highly private or damaging if leaked. They’re basically names/addresses and counts of egg deliveries for a nonprofit – quite low sensitivity. So the security level is appropriate to the data.
+Additional protections: We can add a few more minor safeguards: - Enable CORS properly: If our PWA is served from, say, https://mydomain.com, we can configure the API to only accept requests from that origin (and reject others). However, since our requests are from the PWA itself (which might be running as an installed app with no origin or file:// origin on iOS), CORS is less of an issue. If the PWA is served from the same domain, it’s even simpler (no cross-origin at all if API is same domain). - Rate limiting: We could implement a basic rate limit on the API (e.g., no more than X requests per minute) to prevent abuse. But given the extremely low usage (perhaps a handful of sync requests per day), this is not strictly necessary. It could be as simple as using a middleware to allow, say, 60 requests/minute which we’ll never hit in normal use. - Logging and monitoring: We should at least log the sync requests on the server (noting timestamp and maybe which route or how many records). This way, we can audit if needed. If any unknown IPs or large number of requests appear, we’d know something’s off (maybe someone found the URL). We can then change the token or implement further blocks. - No open endpoints: We won’t provide any unauthenticated endpoints that list or dump data. The only GET (/api/export/:date) is also protected by the token, so outsiders can’t just snoop. Also, we will not implement delete or update from server side beyond processing the sync, to minimize any vector for malicious activity. The server basically only accumulates data – even if an attacker got access, the worst case is they might add fake records, which doesn’t harm the primary workflow (and could be cleaned from backup if noticed).
+In summary, the backend security relies on a shared secret and HTTPS. This is a pragmatic solution for our scenario: it avoids building a full auth system (with user accounts, passwords, etc.) which would be overkill. The trade-off is that the secret lives in the app code, but with a tiny user base, we consider this acceptable. We’ll use a long, unguessable token to mitigate brute force attempts. The limited exposure of the app (basically only to the aunt and perhaps developers) further reduces risk.
+Sync Logic Details
+As described, the client uses a synced flag to know what to send. Another approach we considered is maintaining a separate “pending sync queue” (maybe using the DeliveryLog or a separate Dexie store for unsynced actions). For simplicity, marking each Delivery with synced/not-synced is enough. We just need to ensure that if the same delivery is updated again before syncing (e.g., user marks as skipped, then actually delivers the item later), the latest state is what gets synced. Our logic can handle this: - If delivery was marked skipped (synced=false), but then before we ever got connectivity the user changes it to delivered (perhaps she met the person later), we update the record to delivered (it stays synced=false because it’s still unsynced). When sync runs, that record will be sent with status delivered. The earlier skipped state never went to server (which is fine), and we won’t send two separate entries. So the server will just see one record delivered. This means our sync is state-based (idempotent) rather than action-based, which is simpler. We are essentially syncing the final state of each delivery.
+This approach avoids duplicate data issues: even if the app accidentally sends the same record twice, it’s the same data and the server upsert will just overwrite the old with the same values (no harm done). If the app sends an updated state (like from skipped to delivered), the server just updates its record accordingly. Therefore, the server always ends up with the latest known status for each delivery.
+We do have to be mindful that the server’s data model should allow updates. If using JSON files per route, our merge code will replace matching id entries. If using a DB, an UPSERT will handle it.
+If the server is unreachable for a long time, the app will keep storing those unsynced flags. This doesn’t block anything, but it means the backup isn’t up-to-date. We will surface a small indication in the UI perhaps (for example, on the “Backup” screen or somewhere, “X changes pending upload” if we want the user to know). It’s not strictly necessary, but could be nice for transparency. At minimum, in our “Last backup” status, we might clarify if that was a local CSV backup or cloud sync time.
+No Down-sync: The server doesn’t actively send data to the client except on explicit GET requests. We are not doing real-time multi-device sync. If in the future multiple drivers or devices were used, we’d have to implement a data pull mechanism (and more complex conflict resolution). But for v1, one user on one device is assumed, so we keep it one-directional.
+Authentication Implementation (Angular): We will store the API token in a configuration (for example, in environment.prod.ts). We’ll use Angular’s HttpClient for requests and set the header: http.post('/api/sync', data, { headers: { Authorization:Bearer ${token}} }). Because this token is static, we might also implement a small service that attaches it to any outgoing requests (like an HttpInterceptor in Angular). That way, we don’t repeat the header logic in every call.
+We must ensure to deploy the app and API over HTTPS (which is required for PWA anyway). We’ll also verify that the API’s TLS certificate is valid and that the endpoint is not accessible over plain HTTP.
+Summary: The optional backend is kept extremely simple – just a dump of data behind a shared secret. The security measures in place (secret token + HTTPS) are reasonable given the low sensitivity of data and trusted environment. We avoid user accounts and complex auth flows to keep the UX seamless (no login needed at all in the app). The biggest “risk” – the token being discovered – is mitigated by obscurity and the fact that even if abused, it doesn’t endanger critical systems. We will document the presence of the token and possibly change it periodically (we could change it annually and redistribute the app, for instance) if we feel that’s needed. But likely, this one secret approach will suffice indefinitely for this use case.
+UI / UX Design
+The user interface will be optimized for clarity, large touch targets, and minimal distraction. We have three main screens to design: the Home/Dashboard, the Route Planner (list of stops), and the Delivery Run screen (the in-route view for marking deliveries). All UI will follow mobile-first design, specifically considering iPhone screen sizes. We’ll use high-contrast text and a simple layout so that information is readable at a glance (e.g., when the device is mounted on a car dashboard or held at arm’s length).
+Before detailing each screen, some common UI principles we’ll apply: - Use a clean, sans-serif font, likely the system UI font (San Francisco on iOS) for best readability. We will set a base font size around 17pt (which is Apple’s recommended size for body text for readability[7]). Important text like names or “Delivered” status might be larger (20-24pt) to stand out. - Maintain high contrast: dark text on light background (likely black on white) for daytime visibility[8]. Optionally we can support dark mode (white text on black) if the user’s phone is in dark mode at night; Angular and CSS media queries can handle this easily, but initially we can focus on a light theme given daylight use. - All interactive elements (buttons, list items) will be at least 44×44 points in size, per Apple’s Human Interface Guidelines for touch targets[9]. This means generous padding around text in buttons, etc., so they are easy to tap without precision. - We will use spacing and big buttons to reduce the chance of tapping the wrong thing. No tiny hyperlinks or small checkboxes – everything should be finger-friendly. - The general style will be minimalist: likely a basic header bar and content area. We won’t clutter with unnecessary images or decorative elements (the focus is on the data: names, addresses, buttons). This also helps performance and offline caching.
+Now, let’s go through each screen:
+Home / Dashboard Screen
+Purpose: This is the landing screen when the app opens. From here the user will import data, select the active route/day, see a quick summary, and access backup functionality.
+Layout: We’ll likely use a simple vertical layout (one column) since this is a phone screen: - At the very top, we can have a header with the app name or logo (e.g., “Egg Delivery Tracker”). This can reassure the user of the app’s identity. It could be a simple text or a small logo icon next to text. (We might style this with a large font, say 24pt, and some nice color. But keeping it muted is fine since functionality is more important.) - Below that, if no data is loaded yet, the main call to action will be an “Import CSV” button in the center. This opens the iOS file picker. It should be very visible (e.g., a big button with an icon of a file). If data is already loaded from a previous session, the import is still available (maybe as a smaller button at top or bottom), but the focus shifts to selecting a route.
+• Route Selection: Once a CSV is imported (or if one is already in DB from before), the home screen will show a list or dropdown of available routes (dates). This could be a labeled dropdown: “Select delivery day: [ pick list ]”. Given there might be a few entries (maybe a week’s worth of days or some route codes), a dropdown (HTML <select> or an Angular Material <mat-select>) works well. Tapping it on iPhone will open the native picker (wheel or list) which is user-friendly. Alternatively, we could show the routes as a list of buttons if the count is small – for example, just display each date as a big list item that can be tapped.
+• If we expect multiple days, a dropdown keeps the UI cleaner.
+• We will list dates in a friendly format (e.g., “July 15, 2025” or a short format if space is tight). Possibly include the day of week (“Tue Jul 15”) to help avoid mistakes.
+• The selection should default to either the last used route (if one was in progress) or none. If the aunt typically imports a CSV then immediately selects that day, we’ll likely have a state where after import we automatically select the first date or prompt her to select one.
+• Start Route Button: After choosing a route, the user needs to start the delivery run. We will have a prominent “Start Route” button. This could be below the dropdown. It should be large and likely a primary color (to indicate the main action). When tapped, it navigates into the route (delivery run screen, starting at the first stop or the last unfinished stop if resuming). If a route is already fully delivered (perhaps she’s reopening the app after finishing), we might disable or relabel it (“Route Completed”) to avoid confusion.
+• Summary Stats: On the home screen (once a route is selected), we’ll display a concise summary: e.g., “24 stops – 10 delivered, 2 skipped”. This gives a quick overview of progress. We can derive these counts from the data. This text can be slightly smaller than the header, maybe 16-18pt, and perhaps in a secondary color or weight. It provides context that the user has, say, X remaining stops. We might even phrase it as “12 remaining” for clarity. This dynamic info confirms to the user that the correct data is loaded.
+• Backup Now Button: Also on the home screen (perhaps at the bottom or in a toolbar) will be the “Backup now” button. This triggers the CSV export/share. We’ll style it as an important action but perhaps secondary to “Start Route”. For example, it could be an outlined button or a smaller icon+text button with a cloud/upload icon. We want it visible enough that she remembers to tap it at the end of the day or during breaks. Next to or below this button, we’ll have a text label like “Last backup: 3:42 PM” (updating with the actual time of last backup). This label will be small (maybe 12pt) and gray, so it’s visible but not shouting. It provides reassurance that a backup was done (or if she sees “Last backup: yesterday 5:00 PM”, she knows she hasn’t backed up today yet).
+• If the optional server sync is implemented, we might also show a status of it here (e.g., a cloud icon that is green if all synced, or an “offline” label if not). But in v1, we may omit that from UI to avoid confusion. The “Backup now” (manual backup) is the main thing she will care about.
+• Import Button Placement: After initial use, the Import CSV action might not be needed frequently (maybe whenever she has a new spreadsheet). We could tuck it into a menu (e.g., a top-right “⋮” menu with “Import CSV” option) to declutter the main view. On first-run though, we’ll obviously need to show it clearly. We can decide to always show it as a button on the dashboard for simplicity (“Import New Routes” action).
+Spacing and touch: We will ensure there is generous vertical spacing between these controls so that even if her finger taps a bit off, she won’t hit the wrong one. For example, between the dropdown and Start button, have maybe 16px gap, and similar between Start and Backup.
+Overall, the Home screen will be very straightforward: Import (if needed), choose route, start route, and backup. It might look something like:
+[Egg Delivery Tracker]
+
+Delivery Day: [ July 15, 2025 ▼ ]
+Total: 24 stops (0 delivered, 0 skipped)
+
+[ Start Route ] [ Backup Now ]
+
+Last backup: not yet backed up today.
+
+Import new CSV file (if needed)
+(Just a textual mock-up; in UI it would be styled with proper buttons etc.)
+We’ll use color or icons minimally – perhaps the Start button in a friendly color (green or blue) and the Skip in red later, etc. The home could have a neutral color scheme to not distract.
+Route Planner Screen (Stop List & Reordering)
+Purpose: This screen shows the list of all stops for the selected route, allows the user to view details at a glance and optionally reorder or sort them before (or during) the delivery run.
+Navigation: The user might access this screen either by an explicit action (for example, from Home screen, a button “View Route Details” could lead here before starting route), or it could be integrated with the run screen. Likely, we will make it a separate view that one can go to if needed. The reason: the aunt might usually know her route order from the spreadsheet, so she might not need to rearrange often. But we want to support it.
+Layout: A scrollable list of stops (similar to a contacts list or todo list): - Each stop will be a card or list item with key information. We want it readable without tapping into it. We might format each item as: - Name – in bold, somewhat large (maybe 17-18pt). If it’s a business name or person’s name, that’s the primary identifier. - Right next to the name, we might show the quantity of eggs. Perhaps as a badge or simply “– 5 doz”. For example, “John Doe – 5 doz”. We could style the number to stand out (either bold or colored). If we expect many stops have similar numbers, this might not need heavy emphasis, but it is important (so she doesn’t miss that someone needs a different quantity). Another approach is to put the quantity on a new line or align to right. For instance, we could have Name on left and “[5 dozen]” right-aligned on the same row. - Address/City – on a second line in smaller text (14-16pt). E.g., “123 Elm St, Canton, SD”. We might truncate if it’s too long, but showing city is useful to mentally plan grouping. - Notes (if any) – if a note exists, we can show a third line or an icon. For example, a small sticky-note icon 📋 and the note text in a lighter font. If notes are short, we can inline them. If none, no third line to keep it compact. - Status indicator – If this screen is also used during or after the run, some stops might be delivered or skipped. We should indicate that. Options: - We could change the appearance of the item: delivered stops could be grayed out or have a checkmark ✔️ icon; skipped could have a strikethrough or a red “Skipped” label. - For simplicity, perhaps append a label at the end of the first line: e.g., “John Doe – 5 doz – ✅ Delivered” or “❌ Skipped”. But that might clutter the text. Alternatively, use color: delivered items text could turn green or semi-transparent once done. Skipped could turn a reddish hue or show a “skipped” badge. - Another idea: maintain two sections in the list – pending vs completed. But that complicates ordering. Better to keep single list and just style items differently when status != pending. - We will maintain the order by sortIndex. The list will reflect the current order (which by default is the CSV import order, unless user sorts/drag-drops).
+• Reordering: We will enable drag-and-drop reordering of the list. Using Angular CDK DragDrop, each list item can have a “handle” (like a ≡ icon on the right side). The aunt can press and drag a row up or down to reorder stops. This is especially useful if she decides to change the route sequence for efficiency. The UI will show a placeholder line as she drags. Once dropped, we update the sortIndex of all affected items and save to IndexedDB. We should give some visual affordance for this feature (like a subtle grip icon or even just allow dragging anywhere on the item).
+• If the aunt is not very tech-savvy, we should test that this interaction is discoverable. Alternatively or additionally, we could have up/down arrow buttons to rearrange when an item is selected, but that’s more cumbersome. Drag-and-drop is fairly intuitive these days and Angular’s implementation is smooth.
+• We’ll ensure the drag targets are large. Usually, the entire list item can act as the drag handle, or at least a large part of it.
+• After reordering, the list immediately reflects the new order. If a route was in progress, we need to handle if she reorders below the current stop – for safety, perhaps we disallow reordering once you’ve started delivering (or warn if she tries). But since the app is small scale, we might trust she knows what she’s doing if she reorders mid-run. We will just make sure the “resume pointer” updates if needed (maybe simplest: if reordering is allowed mid-run, we might recalc current index accordingly).
+• Sorting options: We might offer a quick sort by name or city. Possibly a small “Sort” button or icon at the top of list with a menu: “Sort by… [Original order, Name, City]”. If she taps “City”, we sort the list alphabetically by city and update sortIndex accordingly. Given rural deliveries, city grouping might be useful (to do all stops in the same town together). This is a nice-to-have. For v1, manual drag might suffice. But implementing a simple sort isn’t too hard: just sort the array and then assign new sortIndex in that order. We can include this in the plan if time permits.
+• The UI for this could be a small icon (like a sort icon) near the top right of the list. Since we probably have a header like “Route Stops (24)”, we can put a sort icon button in that header bar.
+• Tapping it could bring a small pop-up or simply cycle through sort modes.
+• Navigation & Actions: The Route Planner screen should have a way to go back to the Home or start the route:
+• Perhaps a back arrow in the top-left (standard iOS navigation pattern) to return to Home/Dashboard.
+• A “Start Route” button could also be present here (maybe at bottom or top right). Possibly if the user came here from home by pressing “Plan Route”, they might reorder and then press “Start Route” from here. We can make that flow smooth by providing that button.
+• Alternatively, the user might start the route directly from Home. Both flows should be allowed. If she presses Start from Home, we might bypass the list screen entirely and jump to delivery view.
+• So, the route planner is somewhat optional. It’s there if she wants to review or adjust stops. If we find she doesn’t need it often, it could be hidden behind an “Edit Route” button.
+• Visual Design: Keep it simple and scannable:
+• Use a list style with separator lines or ample spacing between items. iOS design often likes a clean list with a light grey divider line between items. We can do that to delineate stops.
+• Each item’s text should not be too small. Name at 17pt bold, address at maybe 15pt regular.
+• We can indent second line slightly or otherwise differentiate it (maybe name on one line, and address on the line below slightly indented or just left aligned normally).
+• Delivered stops might be italic or greyed to indicate done.
+• We should be cautious with color for status: ensure even color-blind users or in bright sun, the difference is clear. Using text “Delivered” or an icon ensures clarity beyond just color.
+• Scrolling behavior: The list may scroll if many stops. We should ensure the drag-drop works with scrolling (Angular CDK handles this if configured). Also, a nice to have: if she has started delivering, auto-scroll or highlight the current stop in the list. But since during actual delivery she’d be using the Delivery Run screen, that might not be needed. After finishing, if she comes back to list, she can see all statuses.
+In summary, the Route Planner is akin to a checklist view of all deliveries. It lets the user verify the plan (maybe she wants to double-check quantities or notes before heading out) and optionally re-sequence the route. By designing it with clear typography and simple controls (drag handles, sort icon), we make it a powerful but not overwhelming screen.
+Delivery Run Screen (In-Route “card” view)
+Purpose: This is the core screen used while driving/riding along the route. It shows one stop at a time, in order, with big buttons to mark Delivered or Skipped. It should require minimal touches and be very legible from a short distance.
+Layout: We’ll use a card-style, step-by-step interface. Typically: - At the top, a progress indicator. This can be textual: “Stop 5 of 24” and/or a progress bar. Likely both for clarity: - For example, a small text at top center: “Stop 5 of 24”. This tells her position in the route. - Right below it, a thin progress bar showing 5/24 (about 20% filled). We can bind this to the number of completed stops. This provides a visual cue of how far along she is. We will style it in a low-key way (perhaps a light blue or green bar not too thick). - These elements should not take much space or distract; they are just context.
+• Next, the delivery details in a large card (taking most of the screen):
+• Name – in very large text. If the person/business name is short, we can go up to, say, 24-30pt font, bold. If it’s long, we may wrap to two lines in slightly smaller font. This is the primary info because she might recognize the recipient by name.
+• Address – directly beneath name. We can either show it as one or two lines:
+o If the address fits in one line along with city, do that. If not, break after street. For example:
+John Doe
+123 Elm St
+Canton, SD 57013
+We’ll use a medium font (maybe 18pt) for address. We want it readable but not overshadow the name.
+o We will also include a map link button next to or below the address. Possibly an icon (like a map pin) or a button “Open in Maps”. When tapped, it will use the Apple Maps URL scheme (e.g. an anchor with href="maps://?q=123+Elm+St+Canton+SD" or using window.open to http://maps.apple.com/?daddr=123 Elm St, Canton, SD). This should launch the native Maps app with directions to that address. We’ll test this on iPhone to ensure it works from a PWA context. The map link icon should be reasonably large (perhaps 32px) for easy tapping.
+o If using Google Maps is preferred, we could do a Google Maps web link, but on iPhone Apple Maps integration is smoother. Perhaps we allow a setting for default nav app in the future.
+• Quantity of eggs – this should stand out so she immediately sees how many dozens to hand over. We can accomplish this by a large text or badge:
+o For example, a big number: “5 dozen” in bold 24pt, maybe with an emoji 🥚 or crate icon for visual. Or simply “5 dozen” text but in a contrasting color (like dark orange) to catch her eye.
+o We might put this on the same line as the name if space, but better on its own line, big and centered. Possibly even above the name if we wanted, but logically reading “Name – 5 dozen – Address” is how one would think. We could do: Name (big), then “5 dozen eggs” slightly smaller but bold under it, then address. We’ll pick a layout that flows naturally. Another idea: incorporate quantity into the name line e.g. “John Doe (5 doz)” but that might reduce readability. Likely separate line: “5 dozen” alone with maybe “Eggs:” label.
+• Notes – If there are notes (like “Leave by back door” or “Collect payment $X” etc.), we will display them in a smaller font, perhaps italic or in a subtly colored box. We don’t want to miss the note, but we also don’t want it to overshadow key info. One approach: put the note in a bordered box or a different background (light yellow) just below address. Or simply italic text prefixed with “Note:” in smaller font. This should be no more than a sentence. We’ll ensure it wraps if needed and is visible. If no note, we don’t show anything there to keep interface clean.
+•	At the bottom, the action buttons:
+•	Deliver – A large button for marking delivered. This will be the primary action most of the time. We will style it prominently:
+o	It could span almost the full width of the screen for easy tapping. Perhaps with a small margin on sides.
+o	Color: traditionally green is associated with success/delivery. We might use a green background with white text “Delivered”. (Make sure contrast is high for readability – the green should be deep enough or we use a design system color.)
+o	Size: Height at least 50px (to meet 44pt min and then some). Ideally more like 60-70px height for a nice chunky button. The width could be full width or nearly full.
+o	The text on it could just say “Deliver” (as an imperative) or “Delivered” (as in mark as delivered). We might use “Deliver” as the button label for the action. The wording should be unambiguous. Perhaps “✅ Deliver” with a check icon to reinforce.
+•	Skip – A large button for the skip action, for when a delivery can’t be completed. We will style this as a secondary action:
+o	Usually that means either an outlined button or a different color (like a grey or orange/red).
+o	We want it visible, but a bit less eye-catching than Deliver, since deliver is the usual case. Perhaps we use an orange or red background for Skip to indicate a warning/negative action. Red might imply something “bad” happened (which sort of is the case if skipping). Orange could be a softer alternative.
+o	Label it “Skip” or “Skip Stop”. Possibly add an icon (🚫 or ➜) but text is likely enough.
+o	This button should be equal size to Deliver for balance, unless we decide to emphasize deliver by making skip smaller. However, making skip smaller might frustrate if she needs to tap it while bouncing in a car. So better to keep it large too, just colored differently.
+•	Placement: We have two common arrangements:
+o	Side by side: Deliver on left (or right) and Skip on the other half. This uses horizontal space, each button taking ~50% width. With an iPhone (portrait orientation), each might be ~180px wide if phone ~360px css width, which is acceptable. They would both be large rectangles. We’ll put some gap between them (like 10px) to avoid accidentally hitting one when aiming for the other.
+o	Stacked vertically: Deliver on top (full width), Skip below (full width). This gives even larger tap area width-wise. It also prevents any possibility of hitting skip when aiming for deliver if they are one above the other. The trade-off is the user has to reach the skip button further down. But that might be okay.
+o	We need to consider ease of use: some argue side-by-side is fine if clearly distinguished by color. Stacked might be even safer (less chance to hit wrong one because one is above the other). Given skip is rarer, maybe side-by-side is fine.
+o	We’ll likely go with side by side to save vertical space (so more of the stop info can be visible without scrolling). We will just ensure big enough padding on each.
+•	These buttons will have a disabled state or be hidden once tapped, until the next stop loads (to avoid double tapping issues). But our flow likely navigates to the next stop immediately anyway. We might add a tiny delay or feedback (like flash the screen or vibrate on deliver, as confirmation). A subtle haptic feedback on button press can be good for confirmation, if PWA can do that (the Vibration API could do a short buzz).
+•	Skip Reason Dialog: When Skip is pressed, we shouldn’t immediately mark skip without context – we need a reason input. The design for this will be a modal pop-up:
+•	Title: “Skip Delivery – Reason?”
+•	Then a few big buttons inside: “Not home”, “Canceled Order”, “Other…”.
+•	These can be large list-style buttons (for easy tap). If “Other” is tapped, we’ll show a textarea or text input for the user to type a note (or we could have that input present initially but disabled until “Other” selected, but simpler: choose Other triggers a secondary prompt).
+•	Alternatively, we can have a text field visible with placeholder “Enter reason” so she can type a custom message if needed. But typing on the go is not ideal, so we assume predefined reasons cover most cases.
+•	The pop-up should have a Cancel option too if she tapped skip by mistake. If she selects a reason or enters one, then she confirms and we mark the delivery skipped with that reason.
+•	We can implement this as an Angular Material Dialog (giving a nice iOS-style alert appearance) or a custom div that we show/hide.
+•	UI wise: ensure the reason choices are also at least 44px tall touch targets[9].
+•	Using a modal keeps the workflow clear: she won’t accidentally skip without choosing reason.
+•	Once she confirms skip, the modal closes, and the app moves to next stop just like deliver does.
+•	Safety considerations: We expect the user might operate this at each stop (hopefully not while the vehicle is moving). We will assume she taps deliver after handing off eggs, probably while parked or at least stopped. To minimize distraction:
+•	The UI should remain static except when moving to next stop. No animations that could distract. Possibly just a quick fade or slide for the transition to next stop, but nothing flashy.
+•	If feasible, we might include an auditory cue (like a ding on marking delivered) or even a voice prompt for the next stop (“Next: John Doe, 5 dozen to 123 Elm St”). However, that’s beyond scope for now. We’ll focus on visual.
+•	We will ensure that the phone screen stays awake while the app is open on the run screen (so she doesn’t have to constantly unlock it). There are ways to hint this with the Screen Wake Lock API (if supported on iOS Safari) or by preventing auto-lock (some PWA use a no-sleep trick). iOS might not allow full control, but user can manually set auto-lock to “Never” while using if needed. We can mention this tip to her.
+•	Navigation within run screen:
+•	We will include a way to go back to the list or home if needed (maybe she wants to review something). Perhaps a back arrow in a top corner labeled “Route List” that takes her back. This should be small to not be pressed accidentally, but available.
+•	Also, if she skips a stop, presumably we still advance to the next. The skipped stop is considered done (with skip status). The app would then eventually show completion when all are delivered or skipped.
+•	If she wants to jump to a different stop out of sequence (maybe out-of-order delivery), that’s not directly supported in run mode unless she goes back to list and taps a different stop. We could allow tapping a stop in the list to navigate the run screen to that stop. This could be an advanced use-case; for now, we assume mostly sequential.
+•	Finish state: What happens when the last stop is done? We should design a completion UI:
+•	The run screen could display “Route Completed!” with a summary (X delivered, Y skipped) and perhaps confetti or a thumbs-up icon for a bit of delight.
+•	And maybe a button “Finish” or “Back to Home”. On finishing, we definitely want to encourage doing a “Backup now” if not done. We could even automatically trigger the backup prompt on completion, or show a pop-up “All deliveries done! Don’t forget to Backup your data.” for safety.
+•	We’ll implement a clear end-of-route message so she knows she’s through all stops (in case she mis-counted).
+Visual style for run screen: - The run screen will have a white background (for bright daylight visibility). Text will be mostly black (or dark) for contrast. We might use accent colors for buttons (green/red) as mentioned and maybe use the same accent in small places (like the progress bar color matching the deliver button color, etc., to create a consistent scheme). - We will leverage whitespace: the content (name, address, etc.) should ideally fit without scrolling for one stop. On a typical iPhone (e.g., iPhone 12,13 with ~844px tall screen in CSS units), we have room for maybe 6-8 lines of text plus the buttons. It should be fine as long as addresses or notes aren’t extremely long. We can truncate or allow scroll if necessary for an outlier long note, but most likely fine. - We will ensure the touch areas of deliver/skip extend maybe a bit beyond the visible button (some padding) so even a slightly off touch registers. Each button as said 44pt minimum height, we’ll likely do more like 55-60pt (which on a device with devicePixelRatio ~3 is ~180px actual pixels, a good size). - The map link icon will also be large enough and with some padding so it’s easy to hit. (We don’t want frustration trying to open maps.) - Font choices: Using the system font ensures good readability. We will use font weight variations (bold for names, normal for addresses, maybe semi-bold for quantities). - Possibly, for aesthetic, we might use a custom font or styling for headings, but given simplicity, likely stick with default iOS font (it’s optimized for legibility).
+Accessibility: We should adhere to Dynamic Type if possible (support larger text settings). Using relative units (em or rem) can help. At minimum, not hard-coding tiny font sizes ensures if the aunt has larger text enabled on her iPhone, the app will respect that. Also color choices will be tested for contrast ratio (aim for WCAG AA at least – e.g., white text on green button needs enough color saturation).
+Summarizing the run screen design: - Top: small “Stop X of N” + progress bar. - Middle: Big text for Name, address, quantity, notes. - Bottom: two huge buttons for Deliver and Skip. - Clean layout, easy on the eyes and fingers.
+By focusing on these design points, the app will be easy to operate during delivery rounds – the aunt can quickly see who’s next and what to do, and with one tap record the outcome.
+Implementation Roadmap
+We will implement the project in phases, ensuring that at each phase we have a working subset of functionality that can be tested. The plan is also structured so it can be used with AI pair-programming tools (Cursor, Copilot, etc.), by providing clear, small tasks at each step.
+Phase 0: Project Setup
+•	Initialize Angular Project: Use Angular CLI to create a new application, e.g., ng new egg-tracker-pwa. Choose routing (yes, we will use routing) and CSS preprocessor if desired (we can use plain CSS or SCSS for easier styling – SCSS might help with theming).
+•	Add PWA support: Run ng add @angular/pwa --project egg-tracker-pwa (replace with actual project name if different). This will:
+•	Generate a manifest.webmanifest (with default icons, etc.).
+•	Set up the Angular Service Worker (ngsw-config.json).
+•	Include the necessary Service Worker registration in main.ts (so the app will register the SW in production builds).
+•	Configure manifest: Update manifest.webmanifest:
+•	Set the app name ("Egg Delivery Tracker" or similar), short_name, description.
+•	Add icons (we’ll prepare a simple icon, e.g., an egg or truck icon). At least provide the 192px and 512px PNG that Angular expects, and add an Apple touch icon (in index.html meta) if needed for iOS.
+•	Set "display": "standalone" (this should be default) so it launches without browser UI. Also "orientation": "portrait" since our app is portrait-centric.
+•	Set theme_color and background_color to something (maybe white or a light brand color).
+•	iOS specific meta: In index.html, add:
+•	<meta name="apple-mobile-web-app-capable" content="yes"> and <meta name="apple-mobile-web-app-status-bar-style" content="default">. This ensures the PWA runs full-screen on iOS.
+•	Apple touch startup images can be added if we want, but those can be skipped initially (just a short flash of white background on launch is okay).
+•	Basic app structure: Create basic components as placeholders:
+•	HomeComponent (dashboard), RouteListComponent (if separate), DeliveryRunComponent. The CLI ng generate component can scaffold these.
+•	Set up app routing: e.g., routes: '' -> HomeComponent, 'plan' -> RouteListComponent, 'run' -> DeliveryRunComponent. We’ll protect the run route so it only works if data is loaded (perhaps handle that later).
+•	Test PWA installation: Serve the app (ng serve), then do a production build (ng build --prod) and serve those files via a simple HTTP server to test PWA behavior. We might deploy to a test domain early (even using GitHub Pages or Vercel for quick static hosting) to load it on an iPhone and ensure “Add to Home Screen” works. This early test catches any manifest or iOS quirks.
+•	For instance, verify that after adding to home screen, the app opens without the Safari UI and the service worker caches the offline page. (We can test by going offline and refreshing – should still see content.)
+•	Version control: Set up a Git repository from the start, committing each phase’s progress.
+Phase 1: Data Model & IndexedDB Integration
+•	Define Interfaces: In a TypeScript file (e.g., models.ts or within the data service file), define the interfaces for Delivery, Route, etc., as outlined in Data Model section. e.g.:
+ 	export interface Delivery { ... }
+export interface RouteInfo { ... }
+ 	This will help with type checking and clarity.
+•	Install Dexie: npm install dexie. Also install types if needed (npm i --save-dev @types/dexie).
+•	Create Database Service:
+•	ng generate service services/db (or call it DataService).
+•	In db.service.ts, import Dexie and extend it:
+ 	export class DbService extends Dexie {
+   deliveries!: Table<Delivery, string>;
+   routes!: Table<RouteInfo, string>;
+   constructor() {
+     super('EggDeliveriesDB');
+     this.version(1).stores({
+        deliveries: 'id, routeDate, status',
+        routes: 'routeDate'
+     });
+   }
+}
+export const db = new DbService();
+ 	This sets up the schema. (If we choose not to use a separate routes store, we omit it. We might include it for storing last index or summary.)
+•	Provide this service in Angular’s dependency injection (it might by default be provided in root if we use @Injectable({providedIn: 'root'})).
+•	Implement basic methods on this service:
+o	addDeliveries(deliveries: Delivery[]): use Dexie’s bulkAdd or bulkPut to insert deliveries. Possibly clear old ones first if replacing.
+o	getDeliveries(routeDate: string): returns a promise of all Delivery for that date, sorted by sortIndex.
+o	updateDelivery(id: string, changes: Partial<Delivery>): update a delivery (for marking status).
+o	If using routes store: saveRouteInfo(route: RouteInfo) and getRoutes() to list available routes, etc.
+o	Possibly a clearAll() for re-import scenarios.
+o	Also methods for state: maybe setLastRoute(date) in routes store or localStorage.
+•	We may also utilize Dexie’s liveQuery for reactive UI updates. For example, we could set up an observable for current route’s deliveries. But initially, it might be simpler to fetch on screen load and after actions. We can always add live queries later for auto-updating UI.
+•	Handle errors: wrap calls in try/catch or use Dexie’s promise catch. If any operation fails, consider logging or rethrowing for the component to handle (e.g., show toast “Database error”).
+•	Unique ID generation: Decide how to generate Delivery.id on import. We can:
+•	Use an external library like uuid: npm install uuid and then import { v4 as uuidv4 } from 'uuid';.
+•	Or use crypto.randomUUID() which is built-in on modern browsers (including latest iOS Safari).
+•	Implement in the import logic to assign each new Delivery an id = uuidv4().
+•	Alternatively, Dexie can auto-increment an id if we used '++id' in schema. But that gives numeric IDs which are fine locally, but harder to ensure unique across resets or when syncing multiple devices. So we’ll stick to UUIDs.
+•	Test Data service in isolation: We can write a simple unit test or just call it from a component. For example, in HomeComponent’s ngOnInit, call db.open() and maybe db.clear() (just for testing). Then try adding a dummy Delivery and reading it back. Use console.log to ensure it works. This verifies Dexie is properly configured and working in the Angular context.
+•	Migrations (planning ahead): Write a note in code comments about how to bump version if we need to alter schema later (like version(2).stores({...}) etc.). We might not implement an actual migration now, but it’s ready.
+•	Navigator.storage.persist: Also in a suitable place (maybe in HomeComponent initialization or AppComponent), call navigator.storage.persist() and log the result. We won’t see a prompt on most browsers, but the promise will resolve to true/false. This is a one-liner but important:
+ 	if ('storage' in navigator && 'persist' in navigator.storage) {
+  navigator.storage.persist().then(granted => {
+    console.log('Persisted storage granted:', granted);
+  });
+}
+ 	We won’t UI-block on it, just request it in background.
+At the end of Phase 1, we should have a functioning local database layer and data model, but no UI yet to trigger it except maybe a debug call. We can verify it works via console or simple temporary buttons.
+Phase 2: CSV Import & Export
+•	CSV Import implementation:
+•	Add a file input element in HomeComponent template: <input type="file" accept=".csv" (change)="onFileSelected($event)">. Style it or hide it as needed (we can have a nice button that triggers it via JavaScript).
+• Write onFileSelected(event) to handle file selection. Use the FileReader Web API:
+onFileSelected(event: Event) {
+const input = event.target as HTMLInputElement;
+if (!input.files?.length) return;
+const file = input.files[0];
+if (file.name.endsWith('.csv')) {
+const reader = new FileReader();
+reader.onload = () => {
+const csvText = reader.result as string;
+this.importCsvText(csvText);
+};
+reader.readAsText(file);
+}
+}
+• Implement importCsvText(csv: string): parse the CSV lines. For robust parsing (handling commas in quotes, etc.), consider using PapaParse:
+o npm install papaparse.
+o Use it like: Papa.parse(csv, { header: true }) which will return an object with data array.
+o Map the parsed output to our Delivery objects. This requires knowing the CSV header names. We’ll assume headers like “Name, Address, City, State, Zip, Dozens, Date, Notes”. We should confirm the aunt’s spreadsheet format. If no header, we can use column positions.
+o For each row in parsed data, create a Delivery object:
+const delivery: Delivery = {
+id: crypto.randomUUID(),
+name: row["Name"],
+address: row["Address"],
+city: row["City"],
+state: row["State"],
+zip: row["Zip"],
+dozens: Number(row["Dozens"] || 0),
+notes: row["Notes"] || "",
+routeDate: formatDate(row["Date"]), // maybe convert to YYYY-MM-DD string
+sortIndex: 0, // we will assign sortIndex after grouping
+status: "",
+createdAt: new Date().toISOString(),
+updatedAt: new Date().toISOString()
+};
+We might need to parse the date from the CSV if it’s not already in a nice format. If it’s e.g. “7/15/2025”, we can parse and format to "2025-07-15".
+o After creating all Delivery objects, if multiple routeDate values exist, we should assign sortIndex in a way that preserves the original order within each route. We can iterate through the list grouped by routeDate:
+o Sort the parsed deliveries by routeDate then by the order they appeared (PapaParse usually preserves order). Then for each routeDate group, set delivery.sortIndex = incremental 0,1,2…
+o Before inserting, we likely want to clear old data:
+o If the aunt imports a new CSV, we should remove the previous deliveries from IndexedDB to avoid mixing data. So call db.deliveries.clear() (and db.routes.clear() if used) before adding new ones. (One might prompt the user if unsaved data will be overwritten, but presumably she imports when she’s ready to replace data. We can implement a safety check: if there are any deliveries with status delivered that haven’t been exported or something, warn. This might be overkill v1.)
+o Use db.deliveries.bulkAdd(deliveries) to add them all. Dexie can handle a large bulk insert efficiently.
+o After import, generate RouteInfo entries (if using routes store) or at least update the UI with available route dates:
+o We can do this.availableRoutes = Array.from(new Set(deliveries.map(d => d.routeDate))) as a quick way to get unique dates, or query Dexie with .uniqueKeys() for routeDate index.
+o If using routes store, we could have built RouteInfo (with counts = deliveries count, deliveredCount=0 initially) and bulkAdd them too.
+o Finally, navigate or prompt user to select a route (if more than one).
+o If there’s only one route in the CSV, we might auto-select it and even auto-navigate to start (or at least set it as active).
+o If multiple, populate a dropdown on home with those route dates.
+• UI feedback: After import, maybe show a message “Imported X deliveries across Y days.” We can use a simple alert or a message on screen. This confirms success.
+• CSV Export (Backup Now):
+• Decide on scope: likely export only the currently selected route’s data. That’s the simplest and matches “daily backup” need. We’ll implement that first. (If we wanted to export all routes in one file, we could easily do that by combining all, but that might complicate her Excel workflow.)
+• Implement a exportCurrentRoute() function:
+o Fetch all deliveries for the active route from Dexie (e.g., const data = await db.deliveries.where('routeDate').equals(activeRoute).toArray();).
+o Prepare CSV content. We can use PapaParse’s unparse:
+const csv = Papa.unparse(data, { columns: [...] });
+Here we can specify the order of columns and maybe nice header names. Alternatively, manually build CSV:
+o Create header line: e.g. "Name,Address,City,State,Zip,Dozens,Date,Status,DeliveredAt,SkippedReason,Notes".
+o Then for each delivery, output a line. If we ensure no commas in fields (or properly quote them), fine. Papaparse will handle quoting automatically if we use unparse.
+o Once we have the CSV string, we need to trigger a download or share.
+o Using Web Share API: Check if navigator.share and navigator.canShare are available. On iOS Safari PWA (iOS 15+), navigator.share does support files[10]. We can do:
+const file = new File([csvContent], fileName, { type: "text/csv" });
+if (navigator.canShare && navigator.canShare({ files: [file] })) {
+await navigator.share({
+files: [file],
+title: "Delivery Backup",
+text: "Backup data for route " + activeRoute
+});
+} else {
+// fallback
+}
+The fallback if share is not available could be to simply trigger a download:
+o Fallback download: Create a Blob new Blob([csvContent], { type: 'text/csv' }) and create an object URL: URL.createObjectURL(blob). Then create a hidden anchor with href set to that URL and download attribute set to filename.csv. Append it to DOM and programmatically click it. On desktop this triggers download; on iOS PWA it might open a new window or prompt. Safari generally will open a new tab showing the text since it doesn’t directly download to Files without user action. But since we prefer share, hopefully we rarely hit this.
+o In testing on iPhone, using navigator.share will allow “Save to Files” which is ideal. So our primary path is Web Share API.
+o After a successful share (it returns a resolved promise if the user completed the share or at least opened the dialog), we update the “Last backup” timestamp. We can store this in localStorage.lastBackupTime = Date.now() or in IndexedDB (but localStorage is fine for this simple piece of state).
+o Update the UI element that displays last backup time. Format it nicely (like “Last backup: 3:42 PM” or with date if needed). Possibly use toLocaleTimeString for just time if same day.
+o If the share promise is rejected (user cancelled), we can handle that by not updating the time, maybe log “Backup cancelled” internally.
+• Integration in UI: Place the “Backup now” button on Home (or maybe also accessible during route run via a menu, but Home is fine for v1).
+o When tapped, call exportCurrentRoute.
+o Provide feedback: maybe temporarily show a toast “Backup file created” or if share opened, iOS already gives UI feedback. After share is done, showing “Backup saved” might be nice (though we can’t be 100% sure user saved it, but assume if they went through).
+o Edge: If no route selected or no data, disable the button or show error “Nothing to backup”.
+• Test the CSV import/export thoroughly:
+• Create a sample CSV and import it. Check the IndexedDB via dev tools to see that records are stored correctly.
+• Then try Backup Now, and on desktop verify the downloaded CSV or on iPhone verify that the share sheet comes up and file content is correct.
+• Iterate on any formatting issues (like ensure newline is \r\n for Windows Excel, etc., Papaparse usually handles CSV newline well).
+By end of Phase 2, we can load data in and out. The app should persist deliveries in DB after import (test by refreshing the app after import – the data should still be there thanks to IndexedDB caching). We might need to explicitly cache the app for offline by doing a production build and letting ngsw cache it, but anyway.
+Phase 3: Core UI (Home, Route selection, Run screen)
+• HomeComponent UI:
+• Implement template with:
+o Import button: e.g., <button (click)="fileInput.click()">Import CSV</button><input #fileInput type="file" ... hidden>. This way we can style a nice button and click the hidden input.
+o Route selector: use an <select> bound to a component property like selectedRoute. Populate options with availableRoutes array. e.g.:
+<select [(ngModel)]="selectedRoute">
+
+   <option *ngFor="let r of availableRoutes" [value]="r">{{ r }}</option>
+</select>
+ 	Alternatively, if using Reactive Forms or Material, approach accordingly. But ngModel is fine here for simplicity (just ensure FormsModule is imported).
+o	Start button: <button [disabled]="!selectedRoute" (click)="startRoute()">Start Route</button>.
+o	Backup now button: <button (click)="backupNow()">Backup now</button> plus display last backup time.
+o	Summary text: we can compute summary in component whenever selectedRoute changes or after actions. For now, in Home component we might not know delivered counts unless we query DB. Since we haven’t built the run logic yet, perhaps skip showing counts until that’s available. Or we can query db.deliveries.where("routeDate").equals(selectedRoute).toArray() and compute counts. This might be done in ngOnChanges or via an observable.
+o	Simpler: maintain in memory for now – on import, we know deliveredCount = 0. On mark delivered, we increment some counter (but since Home might not always be in memory, better to compute fresh).
+o	Perhaps implement a function getRouteSummary(routeDate) in DataService that does such count aggregation (Dexie can count by index or we just filter).
+o	Basic styling: maybe use a container with some padding. Use CSS classes to enlarge buttons (like font-size: 1.2em; padding: 0.5em 1em;).
+o	Make sure Import and Backup are not confused: we might style Import as secondary once data is loaded (since it’s not used often).
+•	Add logic in HomeComponent class:
+o	If DB already has data on init, populate availableRoutes. This covers scenario where user opened app after previously importing – we want to show the last loaded routes.
+o	We can do db.deliveries.orderBy('routeDate').uniqueKeys() (Dexie can get unique values of an index). Or get all deliveries and use a Set. In any case, fill availableRoutes.
+o	If there’s a last active route (we’ll handle resume in Phase 4), we might auto-select it.
+o	When route is selected (ngModel two-way bound will set selectedRoute), we can fetch summary counts and update a summaryText property.
+o	The startRoute() function:
+o	Likely navigate to the DeliveryRunComponent. Use Angular’s Router: this.router.navigate(['/run']). We might also pass the selectedRoute as state or a service variable. Simpler: store activeRoute in a service or a global variable that DeliveryRun can read. Alternatively, pass as queryParam or route param. For e.g., define route run/:routeDate and navigate to /run/2025-07-15. That way DeliveryRunComponent can retrieve route from param. This is useful if app is reloaded on run screen etc.
+o	We also probably want to initialize the index of current stop (especially if resuming, but on fresh start it’s 0). Possibly set a service state like DataService.currentIndex = 0, or better, handle in DeliveryRun by looking up if any delivered already to find next.
+o	For now, for new route, we set some global “activeRouteDate = X” in a DataService or separate state service.
+o	Hook up backupNow() to the method implemented in Phase 2.
+•	RouteListComponent UI:
+•	If we decide to have a separate screen for route planning:
+o	Show a list of stops. In Angular, use *ngFor:
+ 	<div *ngFor="let d of deliveries; let i = index" cdkDrag>
+   <!-- Use cdkDragHandle on some handle icon span -->
+   <div>{{i+1}}. <b>{{d.name}}</b> - {{d.dozens}} doz<br>
+        <small>{{d.address}}, {{d.city}}</small>
+        <span *ngIf="d.status=='delivered'">✅</span>
+        <span *ngIf="d.status=='skipped'">❌ {{d.skippedReason}}</span>
+   </div>
+</div>
+<div cdkDropList (cdkDropListDropped)="onReorder($event)">
+   <!-- the above divs should actually be inside this cdkDropList -->
+</div>
+ 	Actually for drag-and-drop, the container gets cdkDropList and each item gets cdkDrag. Also use cdkDropListDropped event to handle reordering: Inside handler, use moveItemInArray(this.deliveries, event.previousIndex, event.currentIndex) from @angular/cdk/drag-drop. Then update sortIndex accordingly and save to DB (maybe call a DataService method to persist the new order).
+o	Alternatively, use an Angular Material list and their drag-drop directives.
+o	Provide a “Back” button to go back to Home or a “Start” if they came here first. We might not want to overcomplicate flows, so possibly the Home is enough and this page might not be needed initially. However, since planning was a requirement, we do it.
+o	Provide sorting UI: maybe a button group or menu as discussed. Implement sorting by updating this.deliveries array and then saving new order.
+o	Because of time, if needed we could postpone drag-drop. But it’s likely doable; the Angular CDK is straightforward.
+o	The RouteListComponent will be activated after selecting a route and maybe clicking “Edit Route” (we need to have such a trigger on home). Alternatively, we could integrate this list directly into Home (like expanding when a route is selected). But separate screen gives more space.
+o	We'll load data in ngOnInit: this.deliveries = await db.getDeliveries(selectedRoute). Use that to populate list.
+o	Test reordering: ensure after going to run screen, the run follows new sort.
+•	If we skip separate screen (to keep things simpler for now), then the route list might just be accessible after finishing deliveries as a summary, or not at all. However, since requirement explicitly mentions planning and reordering, we implement it.
+•	DeliveryRunComponent UI:
+•	In ngOnInit, determine which route to display:
+o	If using route param: get routeDate from this.route.snapshot.paramMap.get('routeDate').
+o	Or if using shared service: get activeRoute from DataService.
+o	Also determine the starting index:
+o	If we have a saved last index for this route (resume scenario), we retrieve it (maybe from DataService or localStorage).
+o	Otherwise, 0 (first stop).
+o	Load the deliveries for that route from DB (if not already passed). Perhaps DataService can give an array or we use Dexie query directly here.
+o	It might be convenient to load deliveries once in Home and store in a service, but duplicating a quick query here is fine (IndexedDB is fast for 20-50 records).
+•	Maintain component state:
+o	currentIndex and currentDelivery = deliveries[currentIndex].
+o	A method showStop(i) that sets currentIndex and currentDelivery accordingly.
+o	Bind the template to currentDelivery fields for name, address, etc.
+•	Template layout:
+ 	<div class="progress-bar">
+   Stop {{currentIndex+1}} of {{deliveries.length}}
+   <div class="bar"><div class="bar-fill" [style.width.%]="((currentIndex)/deliveries.length*100)"></div></div>
+</div>
+<div class="delivery-card">
+   <h2>{{currentDelivery.name}}</h2>
+   <h3 *ngIf="currentDelivery.dozens">{{currentDelivery.dozens}} dozen</h3>
+   <p>{{currentDelivery.address}}<br>{{currentDelivery.city}}, {{currentDelivery.state}} {{currentDelivery.zip}}</p>
+   <p *ngIf="currentDelivery.notes"><em>Note: {{currentDelivery.notes}}</em></p>
+   <button (click)="openMaps()">📍 Open in Maps</button>
+</div>
+<div class="actions">
+   <button class="deliver-btn" (click)="markDelivered()">Deliver</button>
+   <button class="skip-btn" (click)="promptSkip()">Skip</button>
+</div>
+o	Style with CSS to make .deliver-btn green, .skip-btn orange/red, full width or half, etc.
+o	The openMaps() method: use window.open with Apple Maps link as described. Possibly use encodeURIComponent for address.
+•	Skip prompt:
+o	E.g., use an *ngIf to show a div overlay:
+ 	<div class="modal-backdrop" *ngIf="showSkipDialog">
+  <div class="modal">
+    <h3>Skip this stop?</h3>
+    <p>Select reason:</p>
+    <button (click)="confirmSkip('Not home')">Not home</button>
+    <button (click)="confirmSkip('Canceled')">Canceled</button>
+    <button (click)="customSkip=true">Other...</button>
+    <div *ngIf="customSkip">
+      <input [(ngModel)]="customSkipReason" placeholder="Enter reason"/>
+      <button (click)="confirmSkip(customSkipReason)">OK</button>
+    </div>
+    <button (click)="cancelSkip()">Cancel</button>
+  </div>
+</div>
+ 	We will style .modal as a centered box with background, etc., .modal-backdrop as semi-transparent overlay. These elements should be large enough (the buttons inside at least 44px tall).
+o	In TS, promptSkip() just sets showSkipDialog=true. confirmSkip(reason) will mark the delivery skipped:
+o	call DataService.updateDelivery(id, { status:'skipped', skippedReason: reason, deliveredAt: new Date() or skippedAt maybe separate field but we can reuse deliveredAt or updatedAt to log time });
+o	also set synced=false if using sync.
+o	Then proceed to next: call nextStop() function.
+o	cancelSkip() sets showSkipDialog=false and resets any custom reason state.
+•	Mark delivered:
+o	markDelivered() should:
+o	Update currentDelivery in DB: status "delivered", deliveredAt now, etc. This could be done via DataService or directly: await db.deliveries.update(currentDelivery.id, { status: "delivered", deliveredAt: new Date().toISOString(), updatedAt: ... , synced: false });
+o	Then call nextStop().
+•	Next stop logic:
+o	nextStop() increments currentIndex until it finds a delivery with status pending (in case we want to skip already delivered ones).
+o	But since we mark as we go and never revisit, simply currentIndex++.
+o	If currentIndex becomes == deliveries.length (meaning we finished last stop), then trigger completion:
+o	Perhaps navigate to a "completion" view or Home with a message. Simpler: in DeliveryRunComponent, if finished, we can show a “All done!” message and maybe automatically navigate home after a few seconds or when user taps a finish button.
+o	Also persist that the route is done (maybe update RouteInfo.completed = true, etc., for reference).
+o	If not finished, update currentDelivery to the next one.
+o	Also, after each action, update the route progress (e.g., update deliveredCount or lastIndex in RouteInfo store, and localStorage lastRouteIndex = currentIndex etc.).
+o	Possibly call DataService.syncIfOnline() to attempt background sync of that record.
+•	Resume support here (though Phase 4 covers it more): basically if currentIndex was saved in localStorage when exiting, on init we set that.
+•	Add a “Back to List” or “End Route” button if needed in UI (maybe a top-left back arrow to Home). If user hits back arrow mid-route, we should not lose state – we should still save current progress in DB. When coming back, resume from that.
+•	Test the run flow thoroughly:
+o	Start route, mark a few delivered, refresh the app or navigate away and back, ensure those statuses persisted.
+o	Try skip flow, see that skip reason is recorded.
+o	Ensure after finishing last stop, the UI handles it gracefully.
+o	Also test the map link launches Maps correctly (on actual device ideally).
+Phase 4: Backup & Resume features
+•	Backup Now (integration): Already implemented in Phase 2, ensure it’s accessible at appropriate times:
+•	We might put a backup button on the run screen as well (maybe in a menu or so) in case she wants to backup mid-route. But at least it’s on home. Document to her that she can always go home screen (progress won’t be lost) and tap backup if needed mid-route.
+•	Possibly prompt backup at end of route as mentioned.
+•	We will also incorporate the optional server sync triggers in next phase, but manual backup is done.
+•	Resume state on app start:
+•	When the app loads (HomeComponent ngOnInit or AppComponent), we check if there was an active route in progress:
+o	If localStorage.lastRoute exists, that means the app didn’t formally finish that route.
+o	We should then automatically navigate to DeliveryRun for that route.
+o	Alternatively, ask “Resume last route?” – but the requirement suggests auto-resume.
+o	Implementation: store in localStorage: lastRouteDate and lastRouteIndex.
+o	Update these on each deliver/skip action: localStorage.lastRouteDate = currentRoute; localStorage.lastRouteIndex = currentIndex; (or currentIndex+1 as next to do).
+o	Possibly update lastRouteIndex before incrementing or after – we need to decide whether it points to last done or next to do. Could define it as next to do index. For example, if index 0 done, we set lastRouteIndex=1 (so next start will load stop 2). If at end, maybe clear it.
+o	Also store lastRouteBackupTime if needed to show on UI.
+o	On app load:
+o	Check if lastRouteDate exists in localStorage and if that route still has pending deliveries:
+	For reliability, one could query if any deliveries of that route have status "". If yes, route is incomplete.
+	If incomplete and lastRouteIndex is set, auto-navigate to /run/lastRouteDate at lastRouteIndex.
+o	Implement that perhaps in AppComponent after DB is ready. Might use the Router to navigate before user sees Home.
+o	We should be careful that DB operations are async. Possibly we do: open DB, then do the check inside the Dexie.open() promise.
+o	If we find route complete or nothing in progress, just go to Home as usual.
+o	If we choose not to auto-resume but to prompt, we could instead navigate to Home and have an alert “Resume previous route?” which if accepted navigates to run. But auto might be fine since likely she knows she left it.
+o	Ensure that if the route was actually finished (maybe app crashed after marking last stop), we don’t resume to an already finished state. (Our check of pending deliveries covers that).
+o	If multiple routes were in DB and one finished, we only resume the one in progress. (Likely only one route actively in progress at a time in this workflow.)
+•	Testing resume:
+o	Start a route, mark a couple, then fully close the PWA (swipe it closed). Re-open it from icon. It should automatically show the DeliveryRun screen where left off. Confirm the data is correct.
+o	Also test after adding a new CSV (should clear the old lastRoute maybe). If a new import is done while one route was incomplete, that’s a corner case. We might warn or handle that (maybe prompt "You have a route in progress. Importing new CSV will overwrite data. Continue?"). This is an edge case – likely the aunt will finish a route then import a new CSV next time. We can document that rather than code it now.
+•	LocalStorage JSON snapshot:
+•	Implement as per plan: in markDelivered/markSkipped functions in DeliveryRun, after writing to IndexedDB (and if it succeeds):
+ 	const currentRouteData = await db.deliveries.where('routeDate').equals(activeRoute).toArray();
+localStorage.setItem('routeBackupData', JSON.stringify(currentRouteData));
+localStorage.setItem('routeBackupTimestamp', new Date().toISOString());
+ 	This ensures after each action (or maybe do every 5 actions to reduce frequency if concerned about performance, but given small data and local operation, every time is okay).
+•	On app startup, we can add an extra check: if db.deliveries.count() is 0 but localStorage.routeBackupData exists (meaning possibly data loss):
+o	Confirm with user to restore: parse JSON, and do db.deliveries.bulkAdd(restoredDeliveries). Then remove the localStorage backup (or maybe keep it).
+o	This would handle a scenario where maybe an app update changed DB schema incorrectly or Safari wiped IDB but not localStorage (which is unlikely since eviction would remove both, but in a corruption scenario, localStorage might still be there).
+o	This is very unlikely to occur in normal conditions. So we might implement this later or leave a note. Since it’s optional, and to avoid confusing normal flow, we might not automatically do it but have it as a developer tool.
+o	Perhaps log an error “IndexedDB empty, using local backup” if it triggers.
+•	The above is a failsafe; hopefully never needed. The main backups are CSV and server.
+•	Testing local backup restore: If we want, simulate by clearing IndexedDB in dev tools, then refresh app and see if it picks up localStorage backup prompt. But careful not to clear localStorage in the process.
+Phase 5: Optional Server Sync Integration
+(Implementing the backend itself might be separate from the Angular app tasks. Here we focus on client integration steps and outline server tasks.)
+•	Set up a small backend (server-side):
+•	We can create a Node.js Express app with two routes as planned:
+o	app.post('/api/sync', (req, res) => { ... }
+o	app.get('/api/export/:date', (req, res) => { ... }
+o	Use bodyParser.json() middleware to parse JSON.
+o	Implement token check:
+ 	app.use((req, res, next) => {
+   const auth = req.headers['authorization'];
+   if (!auth || auth !== `Bearer ${MY_SECRET}`) {
+      return res.sendStatus(401);
+   }
+   next();
+});
+ 	(Alternatively check auth in each route handler.)
+o	For data storage, as discussed, for simplicity one can use the file system:
+	Determine a directory for data (like data/).
+	In POST /sync: for each delivery in req.body.deliveries, open a file named <routeDate>.json. Possibly lock it (could use a library or just ensure synchronous writes sequentially):
+	Read and parse JSON (or if file not exists, start with empty array).
+	For each incoming record, find if it exists (match id) in array:
+•	If exists, update it (merge the fields, mostly status changes).
+•	If not, push it.
+	Write the JSON back to file.
+	We might just replace the entire file content in one go as it’s small. Ensure to handle errors.
+	After processing, respond 200 OK.
+	This should be done synchronously or with proper awaits to ensure file is written before responding.
+o	In GET /export/:date: open that JSON file and send it as JSON (or set header for CSV if we want to convert to CSV string).
+o	We can send JSON since the primary use is maybe developer or restoration. If we expect possibly to use it for restore in app, JSON is fine because the app can parse JSON easily via HTTP.
+o	If we wanted the aunt to download a backup from server, maybe returning CSV and using content-disposition for download could be considered, but that’s out of scope for now.
+o	Host this server on a domain (maybe the same domain as the PWA to avoid CORS issues altogether). If the static files are served by something like Firebase or Vercel, the API might need to be a separate function or serverless. That’s deployment detail – but we can also run a small VPS on the domain for this.
+o	Ensure it’s HTTPS (maybe behind Nginx or a cloud function which has HTTPS by default).
+o	Basic tests with curl or Postman to ensure it stores and returns data as expected.
+•	Client integration for sync:
+•	Store the API endpoint and token in environment config (environment.prod.ts).
+ 	export const environment = {
+  production: true,
+  apiUrl: 'https://mydomain.com/api', 
+  apiToken: 'ABC123...'
+};
+•	Create a SyncService or just put in DataService:
+o	Method syncPending():
+o	Query IndexedDB for unsynced deliveries. We can add an index on synced if we expect a lot, or just filter in JS since number of records is small.
+o	e.g., const unsynced = await db.deliveries.where('synced').equals(false).toArray(); (we should add 'synced' to the stores index string if we want to query it).
+o	If none, do nothing.
+o	If some, chunk or send all in one. Likely all in one is fine.
+o	Use Angular HttpClient to POST to ${apiUrl}/sync with body { deliveries: unsyncedData }. Attach header Authorization: Bearer ...token....
+o	On success (http 200):
+	Mark those deliveries as synced = true in IndexedDB (we can update in bulk by ids).
+	Possibly also update something like a lastSyncTime (just for our reference).
+o	On failure (no connection or server down):
+	Could catch error and schedule retry.
+	For scheduling, we might simply rely on user coming online event or next deliver action to try again, or use setTimeout to try after some seconds. A simple approach: whenever a deliver/skip happens, if navigator.onLine is true, call syncPending (which will attempt everything).
+	Also attach to window.ononline event: window.addEventListener('online', () => syncPending()).
+	Optionally use setInterval to attempt every X minutes while app is open.
+	Use exponential backoff if needed to avoid spamming (maybe not critical given usage).
+•	Integration points:
+o	In DeliveryRunComponent’s markDelivered/markSkipped logic: after updating DB, call SyncService.syncPending() (or schedule it) if navigator.onLine true. If offline, do nothing (changes stay unsynced).
+o	Also in AppComponent (or Home) add event listener for going online to flush queue.
+o	Also maybe call syncPending on app startup if navigator.onLine, to catch any unsynced from last session.
+•	Provide user feedback (optional):
+o	Could show an icon if unsynced items exist (like a cloud with a pending mark). But might not be necessary; she will press Backup anyway which gives her a file. The server sync is silent backup.
+o	Perhaps log last sync time somewhere in UI or console.
+o	If an error like 401 (auth) or 500 happens, we might alert developer (for debugging). For user, maybe not needed unless backups failing. We assume server is reliable enough.
+•	Testing:
+o	Simulate a sequence: Start route with network off (so unsynced accumulate). Then turn network on while app open, see that ononline triggers sync. Check server received the data correctly.
+o	Simulate a network on scenario: each deliver triggers immediate sync. Confirm server gets incremental updates. Maybe add some console logs for sync events to verify.
+o	Test duplicate send scenario: if one sync fails mid-way and we retry, ensure server didn't duplicate entries (with our upsert logic it shouldn’t).
+o	Test auth: try changing token to an incorrect one and see that server returns 401 and client handles it (maybe logs and stops retrying until correct, but in our case token won’t change often).
+•	The sync code should be careful with performance: since data small, it's fine. But if needed, throttle calls.
+•	Edge Cases:
+•	If user goes offline for days and does multiple routes, unsynced could include multiple route dates. Our payload handles that by sending all deliveries (some from route A, some from route B). The server will just update multiple files accordingly. That’s fine.
+•	If user clears app data or reinstalls app, the token would be baked in new build so fine. If we ever needed to change token, we’d have to update app. Not a big problem for one user.
+Phase 6: Polishing & Testing on Device
+•	Cross-browser/device testing:
+•	Build and deploy the app to a real HTTPS URL (our domain). For iPhone testing, one convenient way is to use something like GitHub Pages or Vercel for the static site, and ensure the manifest and service worker are correct. But ideally, same domain as our intended production.
+•	On an iPhone (the aunt’s or a test device), open Safari to the app URL. Confirm:
+o	The PWA install banner is available (or use the Share -> Add to Home Screen).
+o	Once on home screen, launch it. Check that it launches in standalone mode (no Safari UI).
+o	Test key flows offline: Import a CSV (you might need to upload the CSV somehow to the device or have it in Files to pick). Does the Files picker work? (On iOS, input type file opens the Files app. We ensure the .csv accept is set, so it should filter to CSVs).
+o	After import, select route, start route, mark deliveries, etc., in airplane mode to simulate no service. Then close app, reopen, resume works.
+o	Connect to internet, tap Backup Now, see that it can open share sheet and save to iCloud Drive. Retrieve the file from iCloud to ensure format is good.
+o	If possible, check the server got the sync (enable wifi or cell and open the app; if ononline triggers, great). Alternatively, after route, turn wifi on and open app, it should sync.
+o	Check visual aspects: Is text readable in bright light? Perhaps try different text size settings on iPhone accessibility to see if layout still okay.
+o	Check that tapping map icon indeed opens Apple Maps app at the right location.
+o	Try a long note in a CSV to see how it displays (maybe adjust CSS if it overflows).
+o	Confirm that the service worker caches the app for offline start: kill the app, turn on airplane, open the PWA – it should still start because Angular SW caches it. If not, maybe we need to configure ngsw-config.json to include the import route or fallback route. Actually, by default Angular SW might not cache dynamic routes. We might need to add data groups for /api calls (though those we might not want caching). But for app shell, it caches all files in dist. For routes (like /run), Angular SW by default will serve index.html for navigation requests (since it has an app shell configuration). That should handle offline navigation. We should test by full closing and reopening offline – if that fails, adjust ngsw config navigationUrls whitelist etc.
+o	If any iOS-specific quirks appear (like orientation, status bar overlap, etc.), fix via CSS or meta tags.
+•	Performance and UX tweaks:
+•	Ensure app is responsive (fast) – Angular might be heavy, but with our small data it should be fine on modern iPhone. If not, consider enabling production mode optimization (which we do by building prod).
+•	Possibly add a simple splash screen or loader while IndexedDB loads, though Dexie opens quick. Angular SW allows showing a custom offline page if not loaded, but since we always have data locally, probably fine.
+•	Confirm memory usage is low (only hundreds of KB, which is fine).
+•	App update strategy: Angular service worker will cache indefinitely until a new build with new asset hashes is deployed. We should implement an update prompt when a new version is available. Angular provides SwUpdate service for that. As a nice touch:
+o	In AppComponent, inject SwUpdate, and if update.available subscribe, then prompt user “New version available – tap to update” (which when clicked does SwUpdate.activateUpdate().then(() => location.reload())).
+o	This ensures the aunt gets app updates (bug fixes, etc.) easily.
+o	Alternatively, we can let it auto update on next restart, but prompting allows immediate update if she keeps it open.
+•	Testing update: Simulate by deploying a new version (like change a color), then open app on device to see if update pipeline works.
+•	Edge cases checklist:
+•	Starting the app offline from scratch (no data). If she tries that, app should show maybe “No data – please import CSV” message. Ensure the home doesn’t break if no data loaded and offline (the import still works offline as long as file is on device).
+•	If she accidentally navigates to run without selecting a route (should be prevented by disabling Start until a route chosen).
+•	If CSV has an unexpected format (e.g., missing columns), our code might fail. Ideally, handle parse errors:
+o	If PapaParse results have no fields we expect, show “Import failed: Unrecognized format.”
+o	Or if number parsing fails, default to 0.
+•	If user tries to import a new CSV while one route is partially done:
+o	Possibly warn: "Importing new data will erase current route progress. Make sure you’ve backed up or finished your current route."
+o	For now, maybe simply prevent import if any delivery has status "". But that might block adding new deliveries for a future day while one in progress.
+o	Maybe allow but ask for confirmation. We can do a confirm() dialog easily.
+o	Probably not a common scenario, but we handle by confirm.
+•	Multi-day in one CSV:
+o	We should ensure the UI flow if multiple routes: after import, she must pick one. If she later wants to do the second day, presumably she would come back to home next day and select that date and hit Start. This should work since data still in DB (unless she re-imports a different file which would clear old).
+o	So support that: the home route list will show both days. If she finished one day, those records now have delivered statuses, but that’s fine. She can still run the other day next.
+o	We might consider hiding completed routes from selection to avoid confusion, or mark them “completed” in the dropdown. Simpler, we leave them and if she selects it and it’s done, we could show an alert “All stops on this route have been completed.” Possibly offer to start anyway (maybe if she wants to review).
+o	Not critical, but something to think about. At least ensure it doesn’t break if she selects a completed route (DeliveryRun would just show it’s finished basically, maybe immediately show completion message).
+•	Data consistency:
+o	If two users (aunt and fill-in) ever used the app on two different devices with the same CSV, there’s no sync between devices in v1 (unless we implement pulling from server). This scenario might not happen often. We assume one device primarily. If needed in future, we could allow an export of state and import on another device mid-route or use server backup to sync multiple devices, but that’s beyond current scope.
+•	Security:
+o	If the token is included, ensure it’s actually being sent by checking network requests in dev tools.
+o	Confirm CORS is handled if API is separate domain (set appropriate Access-Control-Allow-Origin on server).
+o	If the app is hosted same domain, easy.
+o	Ensure the token isn’t logged or exposed anywhere inadvertently (it will be in the code bundle but that’s fine).
+o	One could also conceivably store token in IndexedDB or prompt user for it to not embed in code, but not needed since distribution is limited.
+•	Storage usage:
+o	Check how much space IndexedDB is using with dev tools after use. Likely very little, so fine.
+o	Optionally test navigator.storage.persisted() to see if our persist request took effect on that device (returns true if persistent). On iOS Safari PWA, not sure if it will, but either way data remains.
+•	Deployment:
+•	Deploy static files to production. Possibly set up a simple CI or just manual copy to server. Must be under HTTPS and correct domain as in manifest.
+•	Deploy backend and test connectivity from app (maybe add a test button hidden that pings the API).
+•	Final test by letting the aunt use it on a trial run with known data, and gather feedback to adjust UI if needed (maybe font size or any confusion in workflow).
+•	Documentation & Handover:
+•	Write a short user guide for the aunt (like one page of instructions with screenshots).
+•	Also document for maintainers: e.g., how to update the app, how to deploy, how to change the shared secret if needed, etc.
+•	Ensure we maintain the Excel integration: e.g., confirm the exported CSV opens properly in Excel (test in Excel on desktop).
+o	Might need to consider newline and encoding (use UTF-8 with BOM if Excel needs that for certain locales, possibly not needed for English).
+o	Also ensure skip reasons and deliveredAt appear in CSV for record. We should include those columns in export so she can see who was skipped and when delivered.
+o	The user wanted “The exported CSV should preserve all relevant columns and include delivery status and timestamps.” So yes, our export should add at least “Status”, “DeliveredAt”, “SkippedReason” columns to the original data. So she can see in Excel who was delivered or not.
+o	Possibly she’ll then use that to update her master sheet or just archive it.
+We will verify that all major goals from the prompt have been met. The final product will be a robust offline-first Angular PWA fulfilling the nonprofit egg delivery tracking needs, thoroughly tested on an iPhone, and with strategies in place to minimize any chance of data loss.
+Risks and Mitigations
+Despite careful design, it’s important to acknowledge potential risks and how we mitigate them:
+1. Data Loss Risk: This is the biggest concern (since not losing data is priority). - Risk scenarios: App could crash unexpectedly, device could run out of battery mid-route, storage might rarely get cleared by OS, or user error (like deleting the app or clearing Safari data). - Mitigations: We have multiple layers of protection: - Immediate writes to IndexedDB on every action (minimizes window of loss to virtually zero unless the crash happens in the milliseconds of the transaction). - Use of navigator.storage.persist() to prevent browser eviction of data[5]. - Encouraging regular backups: The “Backup Now” button exports data to an external file (iCloud or similar) that is outside the app. Even if device storage was wiped, that file can recover the data. - Optional server sync to cloud – providing an off-device backup. If the device were lost or the app accidentally deleted, we could retrieve the data from the server’s JSON/DB or from the CSV backup. - The data model itself is simple and less prone to complex corruption issues (no multi-table complex transactions). - Testing includes simulating power off, crashes, etc., to ensure data remains on reopen. - We avoid relying on volatile in-memory state; everything is persisted as soon as possible.
+2. Data Consistency and Integrity: - Risk: Partially applied updates or conflicting updates (though single-user scenario). - Mitigation: Using transactions for multi-step operations (delivery + log). In single updates, either it succeeds or fails; if fails, we don’t advance UI, so user can retry. - If the user were to somehow perform two actions quickly (double tapping deliver), we disable the button after one tap to prevent duplicate entries. - The app logic ensures each delivery record is updated exactly once to delivered or skipped; there’s no scenario where a delivery could end up with two statuses. Even if user toggles (not directly supported), the last action prevails. - On reordering route, we ensure the index updates are all saved consistently, so the order is not confused. - We also guard against mixing different CSV data: by clearing old deliveries on import, we avoid duplicate or stale records. The confirmation on re-import (if implemented) helps avoid accidental overwrite of in-progress data.
+3. User Interface/Experience Risks: - Risk: The aunt might find some aspect confusing or hard to use (e.g., dragging stops, or forgetting to backup). - Mitigation: We designed UI to be as straightforward as possible: - Large, clearly labeled buttons reduce confusion. We will also likely do a short training with her to go over usage. - To ensure she doesn’t forget backups, the “Last backup” timestamp on home is a reminder, and we might add an automatic reminder at route completion. - If she or a fill-in is not tech-savvy, we keep interactions simple (tap Deliver or Skip, not multi-step unless needed for skip reason). - We follow known iOS patterns (like large touch targets[9], using share sheet for saving files, which she may be familiar with from other apps). - Testing with her directly will be the best way to catch any UX issues. We’ll incorporate her feedback (for example, if text needs to be bigger, we can quickly adjust CSS, etc.). - The drag-and-drop reordering might be a new interaction for her; if we suspect it’s too subtle, we could add an explicit “Edit Order” mode or tips. But since it’s optional, it won’t block core usage if she ignores it (the route will just follow CSV order).
+4. Technical PWA Limitations on iOS: - Risk: iOS PWAs historically have limitations like no push notifications (so no background sync when closed), certain storage quirks, etc. - Mitigation: We accounted for known issues: - No reliance on push or background sync; our sync is foreground only and user-initiated via online events. - Storage limit ~50MB[4] won’t be hit by our data (a CSV of even 1000 stops is a few hundred KB). - The 7-day eviction rule has been lifted for installed PWAs[3], plus we request persistent storage explicitly. - We will advise the user to open the app at least once within a week of use if possible, just as a precaution (though likely she will anyway). - If Apple has any specific bug (like some iOS 12-14 issues), we have the safety net of backups. Also staying updated on iOS versions helps; presumably she’ll have a reasonably recent iOS where PWA support is better (especially iOS 16+). - We will test on the target iOS version to catch any new quirks (for example, there was an iOS bug that PWA might not be able to launch the Files picker unless certain user gesture – we are using a direct button, which counts as user gesture so should be fine).
+5. Security Risks: - Risk: The shared API token could be discovered and malicious use attempted. - Mitigation: The token is long and random; the server only accepts over HTTPS. The data that could be accessed is not highly sensitive. In worst case, if someone posted garbage data via the API, it doesn’t affect the local app (only the backup store). We could detect anomalies manually in backup. - If a leak happened, we’d generate a new token, update the app, and redeploy (and instruct the aunt to update by reopening the app). - We will not expose the backup publicly; only those with token (the app) can read it. Additionally, we might restrict GET /export to be used only by us (the developers) by not even including that in the client app – it can be a hidden admin thing. - We ensure to host the API on a secure server and keep the secret out of version control (in production, we’ll replace the placeholder with the real key via build config). - Rate limiting or IP restriction: Since only the aunt’s device should be hitting the API, we could consider locking it down to known IPs. But her cell IP may change. Instead, we rely on the secret. - We also make sure the server code doesn’t have injection vulnerabilities – since we mostly treat data as JSON blob, and no complex query, attack surface is small. We’ll sanitize file writes (e.g., use routeDate to form filename but ensure it’s a safe string to avoid path traversal).
+6. Device Loss or Failure: - Risk: The phone could be lost, broken, or the app accidentally removed, causing loss of in-progress data. - Mitigation: Regular use of “Backup now” to iCloud means that even if the phone is gone, the CSV file might be in iCloud (if she saved it there) or email if she shared it to herself. This is a manual step reliant on user, but we will emphasize it as part of her routine (maybe at lunch break and end of day, hit backup). - The optional server sync automates some of that – as long as she periodically gets connectivity, the data goes to server without her doing anything. So even if the phone was lost mid-route, whatever she had done up to last online moment is safe on server. The remaining stops could be reconstructed from original CSV which presumably is still on her computer. - We’ll instruct to not delete the app or clear data without exporting. But accidents happen; in a worst case, if she had CSV import still available, she could re-import and manually recall which she delivered (maybe less reliable). Our multiple backups should prevent reaching that point.
+7.Compatibility and Maintenance: - Risk: Future changes (like iOS updates, Angular updates) could break something. - Mitigation: Keep the app updated with Angular’s LTS and test on new iOS versions when they release. The app is not too tied to low-level quirks except the PWA stuff which we’ll monitor via PWA community. - We used standard tech (Angular, IndexedDB, Web Share) that are likely to remain supported or improve. If Apple changes something (e.g., introduces push for PWA or changes storage behavior), it should not negatively impact but we can adapt to use new features. - We also have Dexie’s robust library insulating us from many browser-specific issues with IndexedDB (like known bugs have often been handled internally by Dexie).
+8. Multi-user considerations: - Today, not an issue (one user). If in future a second driver needs to coordinate, our system would have limitations (two devices wouldn’t sync in real-time). That’s acknowledged in the design – it’s beyond current scope. However, our data model and backup could be extended to multi-user by moving source of truth to a cloud DB, but that would be a significant architecture change. For now, we note that expanding usage would require rethinking sync (perhaps use something like CouchDB/PouchDB or a real-time backend). But since all users are trusted, even if that happens, security isn’t the worry – the data consistency would be.
+9. Code and Deployment Risks: - Risk: Bugs in code (especially around file parsing or synchronization). - Mitigation: We plan to test each module thoroughly. Also, using well-tested libraries (PapaParse, Dexie) means less custom bug surface. - We will implement unit tests for critical functions like CSV import mapping to catch any format issues. - Before deploying an update, we can test it in a staging environment or on our own device to avoid introducing a bug that the aunt encounters in the field. - For deployment, using Angular’s SW means updates might not apply immediately if she doesn’t reopen the app. If we had an urgent fix (say a bug that could cause issues), we might need to instruct her to close and reopen the app to get it. That’s manageable with direct communication. The risk of her using a buggy version is mitigated by our thorough testing.
+In conclusion, we’ve layered multiple safety nets to make the solution robust. The offline-first nature eliminates reliance on network (so no risk of being stuck due to server down). The combination of local and external backups addresses data safety. Simplicity in UI and trust in user means we don’t need heavy security overhead, but we have enough to prevent casual interference. By following this plan and carefully testing each aspect, we minimize the likelihood of any serious issue in production. The result should be a dependable PWA that the aunt can use with confidence, even in no-signal areas, without fear of losing her delivery records.
+ 
+[1] Angular and IndexedDB: A Perfect Pair for Progressive Web Apps | by zeeshan khan | Medium
+https://medium.com/@zeeshankhan8838/angular-and-indexeddb-a-perfect-pair-for-progressive-web-apps-315a39f49
+[2] [6] Storage quotas and eviction criteria - Web APIs | MDN
+https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria
+[3] What is data persistence status on iOS 16.6 and latest safari? - Stack Overflow
+https://stackoverflow.com/questions/76809932/what-is-data-persistence-status-on-ios-16-6-and-latest-safari
+[4] iPhone iOS PWA Strategies for Unbeatable Mobile Performance
+https://scandiweb.com/blog/pwa-ios-strategies/
+[5] javascript - Does navigator.storage.persist() only protect against data removal in the case of storage pressure? - Stack Overflow
+https://stackoverflow.com/questions/78474823/does-navigator-storage-persist-only-protect-against-data-removal-in-the-case-o
+[7] [8] [9] UI Design Dos and Don’ts - Apple Developer
+https://developer.apple.com/design/tips/
+[10] Share files with navigator.share in PWA on IOS - Stack Overflow
+https://stackoverflow.com/questions/64058685/share-files-with-navigator-share-in-pwa-on-ios
