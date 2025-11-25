@@ -2,6 +2,8 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
 
+Note: This is a starter commit on the `style-refactor` branch — no functional changes.
+
 ## Development server
 
 To start a local development server, run:
