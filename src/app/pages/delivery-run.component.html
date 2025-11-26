@@ -1,82 +1,97 @@
-<div class="header">
-  <div>
-    <h1>Delivery Run</h1>
-    <div class="sub" *ngIf="routeDate">Route: {{ routeDate }}</div>
-  </div>
-  <div class="progress" *ngIf="total">
-    <span>{{ doneCount }} / {{ total }} done</span>
-    <div class="bar">
-      <div class="fill" [style.width.%]="(doneCount / total) * 100"></div>
+<div class="run-screen">
+  <div class="header">
+    <div>
+      <h1 class="section-title">Delivery Run</h1>
+      <div class="sub text-muted" *ngIf="routeDate">Route: {{ routeDate }}</div>
     </div>
-  </div>
-</div>
-
-<div *ngIf="loading" class="status">Loading…</div>
-<div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
-
-  <div class="stop-card" *ngIf="!loading && !errorMessage && !finished && currentStop">
-    <div class="stop-name">{{ currentStop.name }}</div>
-    <div class="stop-address">
-      {{ currentStop.address }}<br />
-      {{ currentStop.city }}, {{ currentStop.state }} {{ currentStop.zip }}
-    </div>
-    <button class="maps" type="button" (click)="openMaps()">Open in Maps</button>
-    <div class="spacer"></div>
-    <div class="stop-qty">
-      <div class="qty-input">
-        <button type="button" class="mini-btn" (click)="adjustDelivered(-1)">-</button>
-        <span class="qty-display" aria-label="Delivered dozens">{{ deliveredQty }}</span>
-        <button type="button" class="mini-btn" (click)="adjustDelivered(1)">+</button>
-        <span class="unit">dz</span>
+    <div class="progress" *ngIf="total">
+      <span class="progress-label">{{ doneCount }} / {{ total }} done</span>
+      <div class="bar">
+        <div class="fill" [style.width.%]="progressPercent"></div>
       </div>
     </div>
-    <div class="stop-note" *ngIf="currentStop.notes">Note: {{ currentStop.notes }}</div>
   </div>
 
-  <section class="donation" *ngIf="!loading && !errorMessage && !finished && currentStop">
-    <div class="donation-header">
-      <div class="donation-title">Donation (optional)</div>
-      <div class="donation-suggested">Suggested: ${{ suggestedDonationAmount | number: '1.0-0' }}</div>
-    </div>
-    <div class="donation-choices">
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="currentDonation.status === 'NoDonation'"
-        (click)="setDonationStatus('NoDonation')"
-      >
-        No donation
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'cash'"
-        (click)="setDonationDonated('cash')"
-      >
-        Cash
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'venmo'"
-        (click)="setDonationDonated('venmo')"
-      >
-        Venmo
-      </button>
-    </div>
-    <div class="donation-amount-row" *ngIf="currentDonation.status === 'Donated'">
-      <span>Amount: ${{ (currentDonation.amount ?? suggestedDonationAmount) | number: '1.2-2' }}</span>
-      <button type="button" class="btn-link" (click)="openDonationAmountPicker()">Adjust amount</button>
-    </div>
-  </section>
+  <div *ngIf="loading" class="status text-muted">Loading…</div>
+  <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
 
-  <div class="status" *ngIf="finished && !loading && !errorMessage">
-    🎉 All deliveries completed.
+  <main *ngIf="!loading && !errorMessage" class="content">
+    <div class="delivery-card card" *ngIf="!finished && currentStop" [@cardChange]="currentStop.id ? 'in' : 'void'">
+      <div class="card-top">
+        <div class="stop-name">{{ currentStop.name }}</div>
+        <div class="stop-address text-muted">
+          {{ currentStop.address }}<br />
+          {{ currentStop.city }}, {{ currentStop.state }} {{ currentStop.zip }}
+        </div>
+        <button class="btn btn-secondary maps" type="button" (click)="openMaps()">Open in Maps</button>
+      </div>
+
+      <div class="stop-qty">
+        <div class="qty-label text-muted">Dozens</div>
+        <div class="qty-input">
+          <button type="button" class="qty-btn" (click)="adjustDelivered(-1)">−</button>
+          <span class="qty-display" aria-label="Delivered dozens">{{ deliveredQty }}</span>
+          <button type="button" class="qty-btn" (click)="adjustDelivered(1)">+</button>
+          <span class="qty-unit text-muted">dz</span>
+        </div>
+      </div>
+
+      <div class="stop-note text-muted" *ngIf="currentStop.notes">
+        Note: {{ currentStop.notes }}
+      </div>
+    </div>
+
+    <section class="donation card" *ngIf="!finished && currentStop">
+      <div class="donation-header">
+        <div class="donation-title">Donation (optional)</div>
+        <div class="donation-suggested text-muted">Suggested: ${{ suggestedDonationAmount | number: '1.0-0' }}</div>
+      </div>
+      <div class="donation-choices">
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="currentDonation.status === 'NoDonation'"
+          (click)="setDonationStatus('NoDonation')"
+        >
+          No donation
+        </button>
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'cash'"
+          (click)="setDonationDonated('cash')"
+        >
+          Cash
+        </button>
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'venmo'"
+          (click)="setDonationDonated('venmo')"
+        >
+          Venmo
+        </button>
+      </div>
+      <div class="donation-amount-row" *ngIf="currentDonation.status === 'Donated'">
+        <span>Amount: ${{ (currentDonation.amount ?? suggestedDonationAmount) | number: '1.2-2' }}</span>
+        <button type="button" class="btn-link" (click)="openDonationAmountPicker()">Adjust amount</button>
+      </div>
+    </section>
+
+    <div class="status card" *ngIf="finished">
+      🎉 All deliveries completed.
+    </div>
+  </main>
+
+  <div class="bottom-bar safe-bottom" *ngIf="!loading && !errorMessage && !finished">
+    <button class="btn btn-primary" type="button" (click)="markDelivered()">Deliver</button>
+    <button class="btn btn-secondary" type="button" (click)="openSkipDialog()">Skip</button>
   </div>
 
-<div class="actions" *ngIf="!loading && !errorMessage && !finished">
-  <button class="deliver" type="button" (click)="markDelivered()">Deliver</button>
-  <button class="skip" type="button" (click)="openSkipDialog()">Skip</button>
+  <div class="actions-complete" *ngIf="finished && !loading && !errorMessage">
+    <button type="button" class="btn btn-primary" (click)="backupNow()">Backup now</button>
+    <button class="btn btn-secondary" type="button" (click)="finishRoute()">Done</button>
+  </div>
 </div>
 
 <div class="amount-overlay" *ngIf="showAmountPicker">
@@ -88,22 +103,17 @@
   />
 </div>
 
-<div class="actions" *ngIf="finished && !loading && !errorMessage">
-  <button type="button" (click)="backupNow()">Backup now</button>
-  <button class="ghost" type="button" (click)="finishRoute()">Done</button>
-</div>
-
 <div class="skip-overlay" *ngIf="showSkipDialog">
-  <div class="skip-dialog">
+  <div class="skip-dialog card">
     <h3>Skip reason</h3>
     <div class="reason-buttons">
-      <button type="button" (click)="confirmSkip('Not home')">Not home</button>
-      <button type="button" (click)="confirmSkip('Canceled')">Canceled</button>
+      <button class="btn btn-secondary" type="button" (click)="confirmSkip('Not home')">Not home</button>
+      <button class="btn btn-secondary" type="button" (click)="confirmSkip('Canceled')">Canceled</button>
     </div>
     <div class="custom-reason">
       <input [(ngModel)]="otherReason" placeholder="Other reason" />
-      <button type="button" (click)="confirmSkip(otherReason)">Save</button>
+      <button class="btn btn-primary" type="button" (click)="confirmSkip(otherReason)">Save</button>
     </div>
-    <button class="ghost" type="button" (click)="cancelSkip()">Cancel</button>
+    <button class="btn btn-text" type="button" (click)="cancelSkip()">Cancel</button>
   </div>
 </div>

@@ -1,41 +1,50 @@
-<section class="hero">
+<div class="page-header">
   <div>
-    <h1>Welcome</h1>
-    <p class="lede">
-      Import your delivery CSV, pick a route, and start the run. Data is stored locally for offline use.
+    <h1 class="page-title">Deliveries</h1>
+    <p class="lede text-muted">
+      Import your delivery CSV, pick a route, and start the run. Data stays local for offline use.
     </p>
-    <div class="actions">
-      <button type="button" (click)="fileInput.click()" [disabled]="isImporting">
-        {{ isImporting ? 'Importing…' : 'Import CSV' }}
-      </button>
-      <button type="button" class="ghost" (click)="exportCsv()" [disabled]="isExporting">
-        {{ isExporting ? 'Preparing…' : 'Backup (CSV)' }}
-      </button>
-      <input
-        #fileInput
-        type="file"
-        accept=".csv,text/csv"
-        hidden
-        (change)="onFileSelected($event)"
-      />
-    </div>
-    <div class="subtext" *ngIf="lastBackupAt">
-      Last backup: {{ lastBackupAt | date : 'short' }}
-    </div>
-    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
   </div>
+</div>
+
+<section class="card hero">
+  <div class="actions">
+    <button type="button" class="btn btn-primary" (click)="fileInput.click()" [disabled]="isImporting">
+      {{ isImporting ? 'Importing…' : 'Import CSV' }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="exportCsv()" [disabled]="isExporting">
+      {{ isExporting ? 'Preparing…' : 'Backup (CSV)' }}
+    </button>
+    <input
+      #fileInput
+      type="file"
+      accept=".csv,text/csv"
+      hidden
+      (change)="onFileSelected($event)"
+    />
+  </div>
+  <div class="subtext text-muted" *ngIf="lastBackupAt">
+    Last backup: {{ lastBackupAt | date : 'short' }}
+  </div>
+  <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
 </section>
 
-<section *ngIf="routes.length; else noData" class="routes">
-  <h2>Select delivery day</h2>
+<section *ngIf="routes.length; else noData" class="routes card">
+  <div class="routes-header">
+    <div>
+      <h2 class="section-title">Select delivery day</h2>
+      <p class="text-muted">Choose a route to continue or start fresh.</p>
+    </div>
+  </div>
+
   <div class="select-row">
-    <select [(ngModel)]="selectedRouteDate" (ngModelChange)="onSelectRoute($event)">
+    <select [(ngModel)]="selectedRouteDate" (ngModelChange)="onSelectRoute($event)" class="form-control">
       <option [ngValue]="null" disabled selected>Choose a route…</option>
       <option *ngFor="let r of routes" [ngValue]="r.routeDate">
         {{ r.routeDate }} ({{ r.totalStops }} stops)
       </option>
     </select>
-    <button type="button" (click)="startRoute()" [disabled]="!selectedRouteDate">
+    <button type="button" class="btn btn-primary" (click)="startRoute()" [disabled]="!selectedRouteDate">
       {{ selectedRouteDate && selectedRouteDate === currentRoute ? 'Continue Route' : 'Start Route' }}
     </button>
   </div>
@@ -45,7 +54,7 @@
       {{ selectedRouteSummary.routeDate }}
       <span *ngIf="selectedRouteSummary.completed" class="tag">Completed</span>
     </div>
-    <div class="route-meta">
+    <div class="route-meta text-muted">
       {{ selectedRouteSummary.deliveredCount }} delivered ·
       {{ selectedRouteSummary.skippedCount }} skipped ·
       {{ selectedRouteSummary.totalStops }} total
@@ -54,8 +63,12 @@
 </section>
 
 <ng-template #noData>
-  <div class="empty">
-    <p>No routes loaded.</p>
-    <button type="button" (click)="fileInput.click()">Import CSV</button>
+  <div class="empty card">
+    <p class="text-muted">No routes loaded yet.</p>
+    <div>
+      <button type="button" class="btn btn-primary" (click)="fileInput.click()">
+        Import CSV
+      </button>
+    </div>
   </div>
 </ng-template>

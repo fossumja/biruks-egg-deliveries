@@ -1,0 +1,3 @@
+<div class="toast" *ngIf="toast" [class.error]="toast.type === 'error'" [class.info]="toast.type === 'info'">
+  {{ toast.message }}
+</div>

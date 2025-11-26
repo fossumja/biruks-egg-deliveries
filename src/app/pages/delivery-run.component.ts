@@ -6,19 +6,23 @@ import { DonationAmountPickerComponent } from '../components/donation-amount-pic
 import { Delivery, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
 import { BackupService } from '../services/backup.service';
 import { StorageService } from '../services/storage.service';
+import { ToastService } from '../services/toast.service';
+import { cardChangeTrigger } from '../components/animations';
 
 @Component({
   selector: 'app-delivery-run',
   standalone: true,
   imports: [CommonModule, FormsModule, DonationAmountPickerComponent],
   templateUrl: './delivery-run.component.html',
-  styleUrl: './delivery-run.component.scss'
+  styleUrl: './delivery-run.component.scss',
+  animations: [cardChangeTrigger]
 })
 export class DeliveryRunComponent {
   private route = inject(ActivatedRoute);
   private storage = inject(StorageService);
   private router = inject(Router);
   private backup = inject(BackupService);
+  private toast = inject(ToastService);
 
   routeDate?: string;
   stops: Delivery[] = [];
@@ -104,6 +108,7 @@ export class DeliveryRunComponent {
       updatedAt: now
     };
     this.doneCount = this.stops.filter((s) => s.status === 'delivered' || s.status === 'skipped').length;
+    this.toast.show('Marked delivered');
     this.setCurrent();
   }
 
@@ -126,6 +131,7 @@ export class DeliveryRunComponent {
     };
     this.doneCount = this.stops.filter((s) => s.status === 'delivered' || s.status === 'skipped').length;
     this.showSkipDialog = false;
+    this.toast.show('Skipped stop', 'info');
     this.setCurrent();
   }
 
@@ -134,7 +140,13 @@ export class DeliveryRunComponent {
   }
 
   async backupNow(): Promise<void> {
-    await this.backup.exportAll();
+    try {
+      await this.backup.exportAll();
+      this.toast.show('Backup ready');
+    } catch (err) {
+      console.error(err);
+      this.toast.show('Backup failed', 'error');
+    }
   }
 
   finishRoute(): void {
@@ -154,6 +166,11 @@ export class DeliveryRunComponent {
   get suggestedDonationAmount(): number {
     if (!this.currentStop) return 0;
     return (this.currentStop.dozens ?? 0) * 4;
+  }
+
+  get progressPercent(): number {
+    if (!this.total) return 0;
+    return Math.min(100, (this.doneCount / this.total) * 100);
   }
 
   get currentDonation(): DonationInfo {

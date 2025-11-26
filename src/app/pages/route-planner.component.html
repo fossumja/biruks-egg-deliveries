@@ -1,45 +1,51 @@
-<div class="header">
+<div class="page-header">
   <div>
-    <h1>Route Planner</h1>
-    <div class="sub" *ngIf="routeDate">Route: {{ routeDate }}</div>
+    <h1 class="section-title">Route Planner</h1>
+    <div class="sub text-muted" *ngIf="routeDate">Route: {{ routeDate }}</div>
   </div>
   <div class="header-actions">
-    <button class="ghost" type="button" (click)="resetRoute()" [disabled]="!deliveries.length">Reset route</button>
-    <button type="button" (click)="startRun()" [disabled]="!deliveries.length">Start Run</button>
+    <button class="btn btn-secondary" type="button" (click)="resetRoute()" [disabled]="!deliveries.length">
+      Reset route
+    </button>
+    <button class="btn btn-primary" type="button" (click)="startRun()" [disabled]="!deliveries.length">
+      Start Run
+    </button>
   </div>
 </div>
 
-<div *ngIf="loading" class="status">Loading…</div>
+<div *ngIf="loading" class="status text-muted">Loading…</div>
 <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
 
-<div class="list" *ngIf="!loading && !errorMessage && deliveries.length; else empty">
+<div class="list card" *ngIf="!loading && !errorMessage && deliveries.length; else empty">
   <div
     cdkDropList
     [cdkDropListData]="deliveries"
     (cdkDropListDropped)="drop($event)"
     class="drop-list"
   >
-    <div class="item" *ngFor="let stop of deliveries; let i = index" cdkDrag>
-      <div class="handle" cdkDragHandle>::</div>
-      <div class="content">
-        <div class="top">
-          <span class="name">{{ stop.name }}</span>
-          <span class="qty">
-            <button type="button" class="mini-btn" (click)="adjustPlanned(stop, -1)">-</button>
+    <div class="route-item" *ngFor="let stop of deliveries; let i = index" cdkDrag>
+      <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">≡</div>
+      <div class="route-item-body">
+        <div class="item-top">
+          <div class="stop-info">
+            <div class="stop-name">{{ stop.name }}</div>
+            <div class="stop-city text-muted">{{ stop.city }}, {{ stop.state }}</div>
+          </div>
+          <div class="stop-qty">
+            <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1)">−</button>
             <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
-            <button type="button" class="mini-btn" (click)="adjustPlanned(stop, 1)">+</button>
-            <span class="unit">dz</span>
-          </span>
+            <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1)">+</button>
+            <span class="qty-unit text-muted">dz</span>
+          </div>
         </div>
-        <div class="bottom">
-          <span class="addr">{{ stop.city }}, {{ stop.state }}</span>
-          <span class="status" *ngIf="stop.status">{{ stop.status | titlecase }}</span>
+        <div class="item-bottom">
+          <span class="status-pill" *ngIf="stop.status">{{ stop.status | titlecase }}</span>
         </div>
       </div>
-      <div class="actions">
-        <button class="ghost small warn" type="button" (click)="skipStop(stop)">Skip</button>
-        <button class="ghost small" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
-        <button class="ghost small pill-btn" type="button" (click)="openDonationDetails(stop)">
+      <div class="item-actions">
+        <button class="btn btn-text warn" type="button" (click)="skipStop(stop)">Skip</button>
+        <button class="btn btn-text" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+        <button class="btn btn-secondary pill-btn" type="button" (click)="openDonationDetails(stop)">
           <span [ngClass]="getDonationPillClass(stop)">{{ getDonationPillLabel(stop) }}</span>
         </button>
       </div>
@@ -48,7 +54,7 @@
 </div>
 
 <ng-template #empty>
-  <div class="status">No deliveries found for this route.</div>
+  <div class="status text-muted card">No deliveries found for this route.</div>
 </ng-template>
 
 <div class="donation-overlay" *ngIf="donationModalStop">

@@ -7,6 +7,7 @@ import { Route } from '../models/route.model';
 import { BackupService } from '../services/backup.service';
 import { StorageService } from '../services/storage.service';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,7 @@ export class HomeComponent {
   private storage = inject(StorageService);
   private router = inject(Router);
   private backupService = inject(BackupService);
+  private toast = inject(ToastService);
 
   routes: Route[] = [];
   lastBackupAt?: string;
@@ -49,9 +51,11 @@ export class HomeComponent {
       await this.storage.importDeliveries(deliveries);
       await this.refreshRoutes();
       this.autoselectRoute();
+      this.toast.show('Import complete');
     } catch (err) {
       console.error(err);
       this.errorMessage = 'Import failed. Please check CSV format and try again.';
+      this.toast.show('Import failed', 'error');
     } finally {
       this.isImporting = false;
       input.value = '';
@@ -64,9 +68,11 @@ export class HomeComponent {
     try {
       await this.backupService.exportAll();
       this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
+      this.toast.show('Backup ready');
     } catch (err) {
       console.error(err);
       this.errorMessage = 'Export failed. Please try again.';
+      this.toast.show('Backup failed', 'error');
     } finally {
       this.isExporting = false;
     }

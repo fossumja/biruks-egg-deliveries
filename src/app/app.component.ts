@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { AppHeaderComponent } from './components/app-header.component';
+import { ToastComponent } from './components/toast.component';
 
 function getCurrentRouteLink(base: string[]): string[] {
   const current = localStorage.getItem('currentRoute');
@@ -9,7 +11,7 @@ function getCurrentRouteLink(base: string[]): string[] {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, AppHeaderComponent, ToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

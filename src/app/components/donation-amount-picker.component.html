@@ -1,4 +1,4 @@
-<div class="amount-dialog">
+<div class="amount-dialog card">
   <h3>Donation amount</h3>
   <p class="text-muted">Suggested: ${{ suggestedAmount | number: '1.0-0' }}</p>
   <div class="amount-scroll">
@@ -12,7 +12,7 @@
     </button>
   </div>
   <div class="amount-actions">
-    <button type="button" class="ghost" (click)="onCancel()">Cancel</button>
-    <button type="button" (click)="onSave()">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()">Save</button>
   </div>
 </div>

@@ -4,6 +4,8 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 Note: This is a starter commit on the `style-refactor` branch — no functional changes.
 
+Styling refactor status: styling refactoring is applied — still in progress.
+
 ## Development server
 
 To start a local development server, run:

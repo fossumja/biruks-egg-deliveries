@@ -1,14 +1,11 @@
-<div class="app-shell">
-  <header class="top-bar">
-    <div class="brand">Biruk's Egg Deliveries</div>
-    <nav class="nav">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-      <a [routerLink]="plannerLink" routerLinkActive="active">Planner</a>
-      <a [routerLink]="runLink" routerLinkActive="active">Run</a>
-    </nav>
-  </header>
-
-  <main class="page">
-    <router-outlet></router-outlet>
-  </main>
+<div class="app-shell safe-bottom">
+  <div class="app-shell-inner">
+    <app-header [plannerLink]="plannerLink" [runLink]="runLink" />
+    <main class="app-content">
+      <div class="card">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+  <app-toast />
 </div>
