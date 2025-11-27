@@ -23,31 +23,48 @@
     (cdkDropListDropped)="drop($event)"
     class="drop-list"
   >
-    <div class="route-item" *ngFor="let stop of deliveries; let i = index" cdkDrag>
-      <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">≡</div>
-      <div class="route-item-body">
-        <div class="item-top">
-          <div class="stop-info">
-            <div class="stop-name">{{ stop.name }}</div>
-            <div class="stop-city text-muted">{{ stop.city }}, {{ stop.state }}</div>
-          </div>
-          <div class="stop-qty">
-            <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1)">−</button>
-            <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
-            <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1)">+</button>
-            <span class="qty-unit text-muted">dz</span>
-          </div>
-        </div>
-        <div class="item-bottom">
-          <span class="status-pill" *ngIf="stop.status">{{ stop.status | titlecase }}</span>
-        </div>
-      </div>
-      <div class="item-actions">
-        <button class="btn btn-text warn" type="button" (click)="skipStop(stop)">Skip</button>
-        <button class="btn btn-text" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+    <div
+      class="planner-swipe-row"
+      *ngFor="let stop of deliveries; let i = index"
+      cdkDrag
+      [class.open]="openRowId === stop.id"
+      [cdkDragDisabled]="isSwiping"
+      (cdkDragStarted)="handleDragStart()"
+    >
+      <div class="planner-swipe-actions">
         <button class="btn btn-secondary pill-btn" type="button" (click)="openDonationDetails(stop)">
           <span [ngClass]="getDonationPillClass(stop)">{{ getDonationPillLabel(stop) }}</span>
         </button>
+        <button class="btn btn-text" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+        <button class="btn btn-text warn" type="button" (click)="skipStop(stop)">Skip</button>
+      </div>
+
+      <div
+        class="route-item planner-row-content"
+        [style.transform]="getRowTransform(stop)"
+        (pointerdown)="startSwipe($event, stop)"
+        (pointermove)="moveSwipe($event, stop)"
+        (pointerup)="endSwipe($event, stop)"
+        (click)="toggleRow(stop)"
+      >
+        <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">≡</div>
+        <div class="route-item-body">
+          <div class="item-top">
+            <div class="stop-info">
+              <div class="stop-name">{{ stop.name }}</div>
+              <div class="stop-city text-muted">{{ stop.city }}, {{ stop.state }}</div>
+            </div>
+            <div class="stop-qty">
+              <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1); $event.stopPropagation()">−</button>
+              <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
+              <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1); $event.stopPropagation()">+</button>
+              <span class="qty-unit text-muted">dz</span>
+            </div>
+          </div>
+          <div class="item-bottom">
+            <span class="status-pill" *ngIf="stop.status">{{ stop.status | titlecase }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

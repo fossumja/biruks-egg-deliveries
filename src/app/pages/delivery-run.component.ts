@@ -108,7 +108,7 @@ export class DeliveryRunComponent {
       updatedAt: now
     };
     this.doneCount = this.stops.filter((s) => s.status === 'delivered' || s.status === 'skipped').length;
-    this.toast.show('Marked delivered');
+    this.toast.show('Delivered!');
     this.setCurrent();
   }
 
@@ -131,7 +131,7 @@ export class DeliveryRunComponent {
     };
     this.doneCount = this.stops.filter((s) => s.status === 'delivered' || s.status === 'skipped').length;
     this.showSkipDialog = false;
-    this.toast.show('Skipped stop', 'info');
+    this.toast.show('Skipped!', 'info');
     this.setCurrent();
   }
 

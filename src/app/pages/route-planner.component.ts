@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,9 +15,14 @@ import { StorageService } from '../services/storage.service';
 @Component({
   selector: 'app-route-planner',
   standalone: true,
-  imports: [CommonModule, DragDropModule, FormsModule, DonationAmountPickerComponent],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    FormsModule,
+    DonationAmountPickerComponent,
+  ],
   templateUrl: './route-planner.component.html',
-  styleUrl: './route-planner.component.scss'
+  styleUrl: './route-planner.component.scss',
 })
 export class RoutePlannerComponent {
   private route = inject(ActivatedRoute);
@@ -29,6 +38,51 @@ export class RoutePlannerComponent {
   showAmountPicker = false;
   amountOptions: number[] = [];
   selectedAmount = 0;
+  openRowId: string | null = null;
+  isSwiping = false;
+  private swipeThreshold = 24; // px
+  private swipeDistance = 255; // px reveal width
+  private swipeStartX: number | null = null;
+
+  startSwipe(event: PointerEvent, stop: Delivery): void {
+    this.swipeStartX = event.clientX;
+    this.isSwiping = false;
+  }
+
+  moveSwipe(event: PointerEvent, stop: Delivery): void {
+    if (this.swipeStartX === null) return;
+    const deltaX = event.clientX - this.swipeStartX;
+    if (Math.abs(deltaX) > 6) {
+      this.isSwiping = true;
+    }
+  }
+
+  endSwipe(event: PointerEvent, stop: Delivery): void {
+    if (this.swipeStartX === null) return;
+    const deltaX = event.clientX - this.swipeStartX;
+    if (deltaX < -this.swipeThreshold) {
+      this.openRowId = stop.id;
+    } else if (deltaX > this.swipeThreshold) {
+      this.openRowId = null;
+    }
+    this.swipeStartX = null;
+    this.isSwiping = false;
+  }
+
+  toggleRow(stop: Delivery): void {
+    if (this.isSwiping) return;
+    this.openRowId = this.openRowId === stop.id ? null : stop.id;
+  }
+
+  handleDragStart(): void {
+    this.openRowId = null;
+  }
+
+  getRowTransform(stop: Delivery): string {
+    return this.openRowId === stop.id
+      ? `translateX(-${this.swipeDistance}px)`
+      : 'translateX(0)';
+  }
 
   async ngOnInit(): Promise<void> {
     this.routeDate = this.route.snapshot.paramMap.get('routeDate') || undefined;
@@ -47,7 +101,9 @@ export class RoutePlannerComponent {
     this.loading = true;
     this.errorMessage = '';
     try {
-      this.deliveries = await this.storage.getDeliveriesByRoute(this.routeDate!);
+      this.deliveries = await this.storage.getDeliveriesByRoute(
+        this.routeDate!
+      );
     } catch (err) {
       console.error(err);
       this.errorMessage = 'Failed to load deliveries.';
@@ -61,7 +117,7 @@ export class RoutePlannerComponent {
     this.deliveries = this.deliveries.map((d, idx) => ({
       ...d,
       sortIndex: idx,
-      deliveryOrder: idx
+      deliveryOrder: idx,
     }));
     await this.storage.saveSortOrder(this.deliveries);
   }
@@ -81,7 +137,7 @@ export class RoutePlannerComponent {
     stop.deliveredDozens = undefined;
     stop.donation = {
       status: 'NotRecorded',
-      suggestedAmount: (stop.dozens ?? 0) * 4
+      suggestedAmount: (stop.dozens ?? 0) * 4,
     };
     stop.updatedAt = new Date().toISOString();
     // Also reload to stay in sync with DB
@@ -107,7 +163,9 @@ export class RoutePlannerComponent {
 
   async resetRoute(): Promise<void> {
     if (!this.routeDate) return;
-    const confirmClear = window.confirm('Reset route? This will clear statuses, planned adjustments, and donation info.');
+    const confirmClear = window.confirm(
+      'Reset route? This will clear statuses, planned adjustments, and donation info.'
+    );
     if (!confirmClear) return;
     await this.storage.resetRoute(this.routeDate);
     await this.loadDeliveries();
@@ -130,7 +188,7 @@ export class RoutePlannerComponent {
   getDonationPillLabel(stop: Delivery): string {
     const suggested = (stop.dozens ?? 0) * 4;
     const donation = stop.donation;
-    if (!donation || donation.status === 'NotRecorded') return 'Not recorded';
+    if (!donation || donation.status === 'NotRecorded') return 'Donation';
     if (donation.status === 'NoDonation') return 'No donation';
     const amount = donation.amount ?? suggested;
     switch (donation.method) {
@@ -147,7 +205,8 @@ export class RoutePlannerComponent {
 
   getDonationPillClass(stop: Delivery): string {
     const donation = stop.donation;
-    if (!donation || donation.status === 'NotRecorded') return 'pill pill-muted';
+    if (!donation || donation.status === 'NotRecorded')
+      return 'pill pill-muted';
     if (donation.status === 'NoDonation') return 'pill pill-neutral';
     if (donation.method === 'cash') return 'pill pill-cash';
     if (donation.method === 'venmo') return 'pill pill-venmo';
@@ -165,8 +224,8 @@ export class RoutePlannerComponent {
         amount: stop.donation?.amount,
         suggestedAmount: (stop.dozens ?? 0) * 4,
         date: stop.donation?.date,
-        note: stop.donation?.note
-      }
+        note: stop.donation?.note,
+      },
     };
   }
 
@@ -192,7 +251,7 @@ export class RoutePlannerComponent {
     if (!this.donationDraft) return;
     const donation = this.donationDraft.donation ?? {
       status: 'NotRecorded',
-      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4
+      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
     };
     donation.status = status;
     if (status === 'NoDonation') {
@@ -210,7 +269,7 @@ export class RoutePlannerComponent {
     if (!this.donationDraft) return;
     const donation = this.donationDraft.donation ?? {
       status: 'NotRecorded',
-      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4
+      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
     };
     donation.status = 'Donated';
     donation.method = method;
@@ -239,7 +298,7 @@ export class RoutePlannerComponent {
     if (!this.donationDraft) return;
     const donation = this.donationDraft.donation ?? {
       status: 'Donated',
-      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4
+      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
     };
     donation.status = 'Donated';
     donation.amount = amount;

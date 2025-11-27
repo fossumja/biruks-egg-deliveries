@@ -33,6 +33,7 @@
           <span class="qty-display" aria-label="Delivered dozens">{{ deliveredQty }}</span>
           <button type="button" class="qty-btn" (click)="adjustDelivered(1)">+</button>
           <span class="qty-unit text-muted">dz</span>
+          <span class="status-pill" *ngIf="currentStop?.status">{{ currentStop.status | titlecase }}</span>
         </div>
       </div>
 

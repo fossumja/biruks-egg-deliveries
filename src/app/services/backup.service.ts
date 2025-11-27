@@ -98,7 +98,9 @@ export class BackupService {
         const status = delivery?.status ?? '';
         const donationStatus = delivery?.donation?.status ?? 'NotRecorded';
         const donationMethod = delivery?.donation?.method ?? '';
-        const donationAmount = delivery?.donation?.amount != null ? delivery.donation.amount.toFixed(2) : '';
+        const rawAmount = delivery?.donation?.amount;
+        const donationAmount =
+          rawAmount != null && !isNaN(Number(rawAmount)) ? Number(rawAmount).toFixed(2) : '';
 
         const cols = [
           `${prefix}_Status`,

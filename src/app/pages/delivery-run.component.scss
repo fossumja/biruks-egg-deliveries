@@ -110,6 +110,15 @@
   font-size: var(--font-size-sm);
 }
 
+.status-pill {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: #ecfeff;
+  color: #0ea5e9;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
 .stop-note {
   font-style: italic;
 }

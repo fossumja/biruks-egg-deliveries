@@ -5,26 +5,15 @@
   gap: var(--spacing-3);
 }
 
-.amount-scroll {
-  max-height: 220px;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-  gap: var(--spacing-2);
-}
-
-.amount-scroll button {
+.amount-select {
+  width: 100%;
+  padding: 12px;
   border: 1px solid var(--color-border);
-  background: #f9fafb;
-  color: var(--color-text);
-  padding: var(--spacing-2);
   border-radius: var(--radius-md);
-  font-weight: var(--font-weight-medium);
-}
-
-.amount-scroll button.selected {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  font-size: var(--font-size-base);
+  background: #fff;
+  color: var(--color-text);
+  appearance: auto;
 }
 
 .amount-actions {
