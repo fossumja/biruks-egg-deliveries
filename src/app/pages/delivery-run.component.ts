@@ -210,6 +210,13 @@ export class DeliveryRunComponent {
       };
     } else {
       this.currentStop.donation.suggestedAmount = this.suggestedDonationAmount;
+      if (
+        this.currentStop.donation.amount === undefined ||
+        this.currentStop.donation.amount === null ||
+        Number.isNaN(this.currentStop.donation.amount as number)
+      ) {
+        this.currentStop.donation.amount = this.suggestedDonationAmount;
+      }
     }
     return this.currentStop.donation;
   }
@@ -242,7 +249,10 @@ export class DeliveryRunComponent {
 
   openDonationAmountPicker(): void {
     this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
-    this.selectedAmount = this.currentDonation.amount ?? this.suggestedDonationAmount;
+    const current = Number(this.currentDonation.amount);
+    this.selectedAmount = !Number.isNaN(current)
+      ? current
+      : this.suggestedDonationAmount;
     this.showAmountPicker = true;
   }
 
@@ -257,6 +267,7 @@ export class DeliveryRunComponent {
     donation.method = donation.method ?? 'cash';
     donation.date = new Date().toISOString();
     void this.persistCurrentStopDonation();
+    this.selectedAmount = amount;
     this.showAmountPicker = false;
   }
 

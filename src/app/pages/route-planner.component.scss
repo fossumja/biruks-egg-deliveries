@@ -92,6 +92,23 @@
   gap: var(--spacing-2);
 }
 
+.route-item-body.two-col {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-2);
+}
+
+.col-left {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.col-right {
+  display: grid;
+  justify-items: end;
+  gap: var(--spacing-2);
+}
+
 .item-row {
   display: flex;
   align-items: center;
@@ -169,7 +186,7 @@
   border-radius: var(--radius-pill);
   background: #ecfeff;
   color: #0ea5e9;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
 

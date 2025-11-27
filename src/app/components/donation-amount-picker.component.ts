@@ -36,19 +36,19 @@ export class DonationAmountPickerComponent implements OnInit, OnChanges {
   }
 
   private computeDefaultAmount(): number {
-    const hasSuggested =
-      this.suggestedAmount !== null &&
-      this.suggestedAmount !== undefined &&
-      !Number.isNaN(this.suggestedAmount);
-    if (hasSuggested) {
-      return this.suggestedAmount as number;
-    }
     const hasCurrent =
       this.currentAmount !== null &&
       this.currentAmount !== undefined &&
       !Number.isNaN(this.currentAmount);
     if (hasCurrent) {
       return this.currentAmount as number;
+    }
+    const hasSuggested =
+      this.suggestedAmount !== null &&
+      this.suggestedAmount !== undefined &&
+      !Number.isNaN(this.suggestedAmount);
+    if (hasSuggested) {
+      return this.suggestedAmount as number;
     }
     return 0;
   }

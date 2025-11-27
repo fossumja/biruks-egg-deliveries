@@ -1,8 +1,9 @@
 <div class="amount-dialog card">
-  <h3>Donation amount</h3>
-  <p class="text-muted">Suggested: ${{ suggestedAmount | number: '1.0-0' }}</p>
+  <h3>Donation</h3>
 
-  <label class="text-muted" for="donation-amount-select">Select amount</label>
+  <div class="amount-hint text-muted">
+    Current: ${{ currentAmount ?? suggestedAmount ?? 0 }} · Suggested: ${{ suggestedAmount ?? 0 }}
+  </div>
   <select
     id="donation-amount-select"
     class="amount-select"

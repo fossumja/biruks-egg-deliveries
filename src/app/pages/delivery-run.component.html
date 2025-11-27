@@ -61,7 +61,8 @@
           </button>
         </div>
         <div class="donation-suggested text-muted">
-          Suggested: ${{ suggestedDonationAmount | number: '1.0-0' }}
+          Current: ${{ (currentDonation.amount ?? suggestedDonationAmount) | number: '1.0-0' }}
+          · Suggested: ${{ suggestedDonationAmount | number: '1.0-0' }}
           <button type="button" class="btn-link" (click)="openDonationAmountPicker()">Adjust amount</button>
         </div>
       </div>
@@ -95,7 +96,7 @@
 
 <div class="amount-overlay" *ngIf="showAmountPicker">
   <app-donation-amount-picker
-    [currentAmount]="selectedAmount"
+    [currentAmount]="currentDonation.amount"
     [suggestedAmount]="suggestedDonationAmount"
     (cancel)="closeAmountPicker()"
     (save)="confirmAmountFromPicker($event)"

@@ -101,28 +101,27 @@
         (pointerup)="endSwipe($event, stop)"
         (click)="toggleRow(stop)">
         <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">≡</div>
-        <div class="route-item-body">
-          <div class="item-top">
-            <div class="item-row top-row">
-              <div class="stop-name">{{ stop.name }}</div>
-              <div class="stop-qty">
-                <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1); $event.stopPropagation()">−</button>
-                <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
-                <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1); $event.stopPropagation()">+</button>
-              </div>
+        <div class="route-item-body two-col">
+          <div class="col-left">
+            <div class="stop-name">{{ stop.name }}</div>
+            <div class="stop-address text-muted">
+              {{ stop.address || '(no address)' }}
+              <br />
+              {{ stop.city }}<span *ngIf="stop.city && stop.state">,</span> {{ stop.state }} {{ stop.zip }}
             </div>
-            <div class="item-row bottom-row">
-              <div class="stop-address text-muted">
-                {{ stop.address || '(no address)' }}
-                <br />
-                {{ stop.city }}<span *ngIf="stop.city && stop.state">,</span> {{ stop.state }} {{ stop.zip }}
-              </div>
+          </div>
+          <div class="col-right">
             <div class="stop-meta">
-                <span class="status-pill" [class.pending]="!stop.status" [class.unsubscribed]="isUnsubscribed(stop)">
-                  {{ isUnsubscribed(stop) ? 'Unsubscribed' : (stop.status ? (stop.status | titlecase) : 'Pending') }}
-                </span>
-              </div>
+              <span class="status-pill" [class.pending]="!stop.status" [class.unsubscribed]="isUnsubscribed(stop)">
+                {{ isUnsubscribed(stop) ? 'Unsubscribed' : (stop.status ? (stop.status | titlecase) : 'Pending') }}
+              </span>
             </div>
+            <div class="stop-qty">
+              <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1); $event.stopPropagation()">−</button>
+              <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
+              <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1); $event.stopPropagation()">+</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

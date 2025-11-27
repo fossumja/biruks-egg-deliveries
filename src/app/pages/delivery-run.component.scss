@@ -40,6 +40,14 @@
   gap: var(--spacing-3);
 }
 
+.delivery-card .stop-qty,
+.delivery-card .donation-inline,
+.delivery-card .donation-choices,
+.delivery-card .donation-suggested {
+  justify-content: center;
+  text-align: center;
+}
+
 .card-top {
   display: grid;
   gap: var(--spacing-2);
@@ -61,6 +69,7 @@
 .stop-qty {
   display: grid;
   gap: var(--spacing-1);
+  justify-content: start;
 }
 
 .qty-label {
@@ -107,6 +116,11 @@
   font-weight: var(--font-weight-medium);
 }
 
+.status-pill.pending {
+  background: #f5f5f5;
+  color: var(--color-text-muted);
+}
+
 .name-row {
   display: flex;
   align-items: center;
@@ -115,17 +129,22 @@
 }
 
 .address-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
   gap: var(--spacing-2);
-  flex-wrap: wrap;
 }
 
 .address-actions {
   display: flex;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
+  gap: var(--spacing-1);
+  flex-wrap: nowrap;
+  align-items: center;
+
+  .btn {
+    padding: 6px 10px;
+    min-height: 32px;
+  }
 }
 
 .stop-meta {
