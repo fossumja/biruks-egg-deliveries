@@ -136,10 +136,8 @@ export class RoutePlannerComponent {
     if (!this.routeDate || !this.canSaveNew) return;
     this.savingNew = true;
     try {
-      const week = this.deliveries[0]?.week ?? 'WeekA';
       await this.storage.addDelivery(this.routeDate, {
         ...this.newDelivery,
-        week,
       });
       this.toast.show('Delivery added');
       this.resetNewDelivery();

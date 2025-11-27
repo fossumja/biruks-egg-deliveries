@@ -250,16 +250,18 @@ export class StorageService {
   async addDelivery(routeDate: string, payload: Partial<Delivery>): Promise<Delivery> {
     const now = new Date().toISOString();
     const currentCount = await this.db.deliveries.where('routeDate').equals(routeDate).count();
-    const week = payload.week ?? this.deriveWeekFromRoute(routeDate);
+    // Extract schedule identifier from existing deliveries in this route (e.g., "Week A" from routeDate column)
+    const existingDeliveries = await this.db.deliveries.where('routeDate').equals(routeDate).limit(1).toArray();
+    const scheduleId = existingDeliveries[0]?.week ?? 'WeekA';
     const baseRowId = payload.baseRowId ?? `NEW_${crypto.randomUUID?.() ?? Date.now()}`;
     const id = payload.id ?? crypto.randomUUID?.() ?? `${Date.now()}_${Math.random()}`;
     const dozens = payload.dozens ?? 0;
     const newDelivery: Delivery = {
       id,
-      runId: payload.runId ?? `${routeDate}_${week}`,
+      runId: payload.runId ?? `${routeDate}_${scheduleId}`,
       baseRowId,
       routeDate,
-      week,
+      week: scheduleId,
       name: payload.name ?? '',
       address: payload.address ?? '',
       city: payload.city ?? '',
@@ -415,7 +417,8 @@ export class StorageService {
   }
 
   private deriveWeekFromRoute(routeDate: string): string {
-    // Simple fallback if week isn’t supplied; keeps runId stable enough.
+    // Fallback if schedule identifier cannot be extracted from existing deliveries.
+    // Schedule info should come from the delivery data (originally in Date column).
     return 'WeekA';
   }
 }
