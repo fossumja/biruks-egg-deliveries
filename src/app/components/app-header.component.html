@@ -4,5 +4,13 @@
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
     <a [routerLink]="plannerLink" routerLinkActive="active">Planner</a>
     <a [routerLink]="runLink" routerLinkActive="active">Run</a>
+    <div class="progress-inline" *ngIf="currentRouteSummary">
+      <div class="progress-summary">
+        {{ currentRouteSummary.delivered }} / {{ currentRouteSummary.total }} delivered
+      </div>
+      <div class="bar">
+        <div class="fill" [style.width.%]="routeProgress"></div>
+      </div>
+    </div>
   </nav>
 </header>

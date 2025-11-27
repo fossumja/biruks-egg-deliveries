@@ -163,6 +163,27 @@ export class DeliveryRunComponent {
     window.open(url, '_blank');
   }
 
+  async copyAddress(): Promise<void> {
+    if (!this.currentStop) return;
+    const address = `${this.currentStop.address}, ${this.currentStop.city}, ${this.currentStop.state} ${this.currentStop.zip ?? ''}`.trim();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(address);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = address;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      this.toast.show('Address copied');
+    } catch (err) {
+      console.error('Copy failed', err);
+      this.toast.show('Copy failed', 'error');
+    }
+  }
+
   get suggestedDonationAmount(): number {
     if (!this.currentStop) return 0;
     return (this.currentStop.dozens ?? 0) * 4;
@@ -171,6 +192,11 @@ export class DeliveryRunComponent {
   get progressPercent(): number {
     if (!this.total) return 0;
     return Math.min(100, (this.doneCount / this.total) * 100);
+  }
+
+  get nextStop(): Delivery | undefined {
+    if (!this.stops.length || this.finished) return undefined;
+    return this.stops.slice(this.currentIndex + 1).find((s) => s.status === '' || s.status === 'changed');
   }
 
   get currentDonation(): DonationInfo {

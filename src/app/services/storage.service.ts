@@ -79,7 +79,8 @@ export class StorageService {
       runId: d.runId ?? d.routeDate ?? 'default-run',
       baseRowId: d.baseRowId ?? d.id,
       originalDozens: d.originalDozens ?? d.dozens,
-      donation: d.donation ?? defaultDonation(d)
+      donation: d.donation ?? defaultDonation(d),
+      subscribed: d.subscribed ?? true
     }));
     await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
       await this.db.deliveries.clear();
@@ -186,15 +187,28 @@ export class StorageService {
       if (!delivery) return;
       const restoredDozens = delivery.originalDozens ?? delivery.dozens;
       await this.db.deliveries.update(id, {
-        status: '' as DeliveryStatus,
+        status:
+          delivery.subscribed === false ||
+          (delivery.skippedReason?.toLowerCase?.().includes('unsubscribed') ?? false)
+            ? ('skipped' as DeliveryStatus)
+            : ('' as DeliveryStatus),
         dozens: restoredDozens,
         deliveredAt: undefined,
-        skippedAt: undefined,
-        skippedReason: undefined,
+        skippedAt:
+          delivery.subscribed === false ||
+          (delivery.skippedReason?.toLowerCase?.().includes('unsubscribed') ?? false)
+            ? delivery.skippedAt ?? now
+            : undefined,
+        skippedReason:
+          delivery.subscribed === false ||
+          (delivery.skippedReason?.toLowerCase?.().includes('unsubscribed') ?? false)
+            ? delivery.skippedReason ?? 'Unsubscribed'
+            : undefined,
         deliveredDozens: undefined,
         donation: defaultDonation({ ...(delivery as Delivery), dozens: restoredDozens }),
         updatedAt: now,
-        synced: false
+        synced: false,
+        subscribed: delivery.subscribed ?? true
       });
       await this.refreshRouteStats(delivery.routeDate, now);
     });
@@ -206,12 +220,24 @@ export class StorageService {
       const deliveries = await this.db.deliveries.where('routeDate').equals(routeDate).toArray();
       const reset: Delivery[] = deliveries.map((d) => ({
         ...d,
-        status: '' as DeliveryStatus,
+        status:
+          d.subscribed === false ||
+          (d.skippedReason?.toLowerCase?.().includes('unsubscribed') ?? false)
+            ? ('skipped' as DeliveryStatus)
+            : ('' as DeliveryStatus),
         dozens: d.originalDozens ?? d.dozens,
         deliveredDozens: undefined,
         deliveredAt: undefined,
-        skippedAt: undefined,
-        skippedReason: undefined,
+        skippedAt:
+          d.subscribed === false ||
+          (d.skippedReason?.toLowerCase?.().includes('unsubscribed') ?? false)
+            ? d.skippedAt ?? now
+            : undefined,
+        skippedReason:
+          d.subscribed === false ||
+          (d.skippedReason?.toLowerCase?.().includes('unsubscribed') ?? false)
+            ? d.skippedReason ?? 'Unsubscribed'
+            : undefined,
         donation: defaultDonation({ ...(d as Delivery), dozens: d.originalDozens ?? d.dozens }),
         updatedAt: now,
         synced: false
@@ -219,6 +245,45 @@ export class StorageService {
       await this.db.deliveries.bulkPut(reset);
       await this.refreshRouteStats(routeDate, now);
     });
+  }
+
+  async addDelivery(routeDate: string, payload: Partial<Delivery>): Promise<Delivery> {
+    const now = new Date().toISOString();
+    const currentCount = await this.db.deliveries.where('routeDate').equals(routeDate).count();
+    const week = payload.week ?? this.deriveWeekFromRoute(routeDate);
+    const baseRowId = payload.baseRowId ?? `NEW_${crypto.randomUUID?.() ?? Date.now()}`;
+    const id = payload.id ?? crypto.randomUUID?.() ?? `${Date.now()}_${Math.random()}`;
+    const dozens = payload.dozens ?? 0;
+    const newDelivery: Delivery = {
+      id,
+      runId: payload.runId ?? `${routeDate}_${week}`,
+      baseRowId,
+      routeDate,
+      week,
+      name: payload.name ?? '',
+      address: payload.address ?? '',
+      city: payload.city ?? '',
+      state: payload.state ?? '',
+      zip: payload.zip,
+      dozens,
+      originalDozens: payload.originalDozens ?? dozens,
+      deliveryOrder: currentCount,
+      sortIndex: currentCount,
+      notes: payload.notes,
+      status: payload.status ?? '',
+      donation: payload.donation ?? defaultDonation({ ...(payload as Delivery), dozens }),
+      subscribed: payload.subscribed ?? true,
+      createdAt: now,
+      updatedAt: now,
+      synced: false
+    };
+
+    await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
+      await this.db.deliveries.add(newDelivery);
+      await this.refreshRouteStats(routeDate, now);
+    });
+
+    return newDelivery;
   }
 
   async updatePlannedDozens(id: string, dozens: number): Promise<void> {
@@ -261,6 +326,25 @@ export class StorageService {
   async updateDonation(id: string, donation: DonationInfo): Promise<void> {
     const now = new Date().toISOString();
     await this.db.deliveries.update(id, { donation, updatedAt: now, synced: false });
+  }
+
+  async updateDeliveryFields(id: string, updates: Partial<Delivery>): Promise<void> {
+    const now = new Date().toISOString();
+    const existing = await this.db.deliveries.get(id);
+    if (!existing) return;
+    const next: Partial<Delivery> = {
+      ...updates,
+      updatedAt: now,
+      synced: false
+    };
+    if (updates.dozens != null) {
+      const donation = (existing.donation as DonationInfo | undefined) ?? defaultDonation(existing as Delivery);
+      donation.suggestedAmount = updates.dozens * 4;
+      next.donation = donation;
+      next.status = updates.status ?? 'changed';
+    }
+    await this.db.deliveries.update(id, next);
+    await this.refreshRouteStats(existing.routeDate, now);
   }
 
   async saveRun(run: DeliveryRun): Promise<void> {
@@ -328,5 +412,10 @@ export class StorageService {
     } catch (err) {
       console.warn('Storage persistence request failed', err);
     }
+  }
+
+  private deriveWeekFromRoute(routeDate: string): string {
+    // Simple fallback if week isn’t supplied; keeps runId stable enough.
+    return 'WeekA';
   }
 }

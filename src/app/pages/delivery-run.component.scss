@@ -6,19 +6,7 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-3);
-  flex-wrap: wrap;
-}
-
-.progress {
-  min-width: 180px;
-  display: grid;
-  gap: var(--spacing-1);
-}
-
-.progress-label {
-  font-size: var(--font-size-sm);
+  min-height: 0;
 }
 
 .bar {
@@ -86,7 +74,7 @@
   background: #f9fafb;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 4px 8px;
+  padding: 2px 6px;
 }
 
 .qty-btn {
@@ -117,6 +105,34 @@
   color: #0ea5e9;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+}
+
+.address-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.address-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.stop-meta {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: center;
+  margin-top: 0;
 }
 
 .stop-note {

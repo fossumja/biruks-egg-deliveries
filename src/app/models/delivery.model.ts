@@ -26,6 +26,7 @@ export interface Delivery {
   originalDozens?: number;
   deliveredDozens?: number;
   deliveryOrder: number;
+  subscribed?: boolean;
   notes?: string;
   sortIndex: number;
   status: DeliveryStatus;

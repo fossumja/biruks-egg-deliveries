@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './donation-amount-picker.component.html',
   styleUrl: './donation-amount-picker.component.scss'
 })
-export class DonationAmountPickerComponent implements OnInit {
+export class DonationAmountPickerComponent implements OnInit, OnChanges {
   @Input() currentAmount?: number;
   @Input() suggestedAmount?: number;
   @Output() cancel = new EventEmitter<void>();
@@ -20,7 +20,11 @@ export class DonationAmountPickerComponent implements OnInit {
 
   ngOnInit(): void {
     this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
-    this.selectedAmount = this.currentAmount ?? this.suggestedAmount ?? 0;
+    this.selectedAmount = this.computeDefaultAmount();
+  }
+
+  ngOnChanges(_: SimpleChanges): void {
+    this.selectedAmount = this.computeDefaultAmount();
   }
 
   onCancel(): void {
@@ -29,5 +33,23 @@ export class DonationAmountPickerComponent implements OnInit {
 
   onSave(): void {
     this.save.emit(this.selectedAmount);
+  }
+
+  private computeDefaultAmount(): number {
+    const hasSuggested =
+      this.suggestedAmount !== null &&
+      this.suggestedAmount !== undefined &&
+      !Number.isNaN(this.suggestedAmount);
+    if (hasSuggested) {
+      return this.suggestedAmount as number;
+    }
+    const hasCurrent =
+      this.currentAmount !== null &&
+      this.currentAmount !== undefined &&
+      !Number.isNaN(this.currentAmount);
+    if (hasCurrent) {
+      return this.currentAmount as number;
+    }
+    return 0;
   }
 }

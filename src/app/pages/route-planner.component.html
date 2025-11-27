@@ -1,14 +1,10 @@
 <div class="page-header">
-  <div>
-    <h1 class="section-title">Route Planner</h1>
-    <div class="sub text-muted" *ngIf="routeDate">Route: {{ routeDate }}</div>
-  </div>
   <div class="header-actions">
     <button class="btn btn-secondary" type="button" (click)="resetRoute()" [disabled]="!deliveries.length">
-      Reset route
+      Reset Route
     </button>
-    <button class="btn btn-primary" type="button" (click)="startRun()" [disabled]="!deliveries.length">
-      Start Run
+    <button class="btn btn-primary" type="button" (click)="openNewDeliveryForm()">
+      Add Delivery
     </button>
   </div>
 </div>
@@ -16,7 +12,63 @@
 <div *ngIf="loading" class="status text-muted">Loading…</div>
 <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
 
-<div class="list card" *ngIf="!loading && !errorMessage && deliveries.length; else empty">
+<div class="card new-delivery-card" *ngIf="showNewForm">
+  <div class="new-header">
+    <h3 class="section-title">Add delivery</h3>
+    <div class="new-actions">
+      <button class="btn btn-text" type="button" (click)="cancelNewDelivery()">Cancel</button>
+      <button class="btn btn-primary" type="button" (click)="saveNewDelivery()" [disabled]="!canSaveNew || savingNew">
+        {{ savingNew ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </div>
+
+  <form class="new-form" (submit)="$event.preventDefault()">
+    <label>
+      Name
+      <input class="form-control" [(ngModel)]="newDelivery.name" name="newName" />
+    </label>
+    <label>
+      Address
+      <input class="form-control" [(ngModel)]="newDelivery.address" name="newAddress" />
+    </label>
+    <label>
+      City
+      <input class="form-control" [(ngModel)]="newDelivery.city" name="newCity" />
+    </label>
+    <label>
+      State
+      <input class="form-control" [(ngModel)]="newDelivery.state" name="newState" />
+    </label>
+    <label>
+      ZIP
+      <input class="form-control" [(ngModel)]="newDelivery.zip" name="newZip" />
+    </label>
+    <label>
+      Dozens
+      <input
+        class="form-control"
+        type="number"
+        min="0"
+        [(ngModel)]="newDelivery.dozens"
+        name="newDozens"
+        required
+      />
+    </label>
+    <label class="full-width">
+      Notes
+      <textarea class="form-control" rows="2" [(ngModel)]="newDelivery.notes" name="newNotes"></textarea>
+    </label>
+    <div class="form-hint full-width" *ngIf="newDeliveryErrors.length">
+      <div *ngFor="let err of newDeliveryErrors" class="error-text">{{ err }}</div>
+    </div>
+    <div class="form-hint full-width text-muted">
+      Address fields can be left blank if unknown. You can reorder or edit later.
+    </div>
+  </form>
+</div>
+
+<div class="list card" *ngIf="!loading && !errorMessage && deliveries.length">
   <div
     cdkDropList
     [cdkDropListData]="deliveries"
@@ -32,47 +84,53 @@
       (cdkDragStarted)="handleDragStart()"
     >
       <div class="planner-swipe-actions">
-        <button class="btn btn-secondary pill-btn" type="button" (click)="openDonationDetails(stop)">
-          <span [ngClass]="getDonationPillClass(stop)">{{ getDonationPillLabel(stop) }}</span>
-        </button>
-        <button class="btn btn-text" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
-        <button class="btn btn-text warn" type="button" (click)="skipStop(stop)">Skip</button>
+        <div class="action-row">
+          <button class="btn btn-text" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+          <button class="btn btn-text" type="button" (click)="openEdit(stop)">Edit</button>
+          <button class="btn btn-text warn" type="button" (click)="skipStop(stop)">Skip</button>
+        </div>
+        <div class="action-row">
+          <button class="btn btn-secondary" type="button" (click)="openDonationDetails(stop)">Donation</button>
+        </div>
       </div>
 
-      <div
-        class="route-item planner-row-content"
+      <div class="route-item planner-row-content"
         [style.transform]="getRowTransform(stop)"
         (pointerdown)="startSwipe($event, stop)"
         (pointermove)="moveSwipe($event, stop)"
         (pointerup)="endSwipe($event, stop)"
-        (click)="toggleRow(stop)"
-      >
+        (click)="toggleRow(stop)">
         <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">≡</div>
         <div class="route-item-body">
           <div class="item-top">
-            <div class="stop-info">
+            <div class="item-row top-row">
               <div class="stop-name">{{ stop.name }}</div>
-              <div class="stop-city text-muted">{{ stop.city }}, {{ stop.state }}</div>
+              <div class="stop-qty">
+                <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1); $event.stopPropagation()">−</button>
+                <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
+                <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1); $event.stopPropagation()">+</button>
+              </div>
             </div>
-            <div class="stop-qty">
-              <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1); $event.stopPropagation()">−</button>
-              <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
-              <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1); $event.stopPropagation()">+</button>
-              <span class="qty-unit text-muted">dz</span>
+            <div class="item-row bottom-row">
+              <div class="stop-address text-muted">
+                {{ stop.address || '(no address)' }}
+                <br />
+                {{ stop.city }}<span *ngIf="stop.city && stop.state">,</span> {{ stop.state }} {{ stop.zip }}
+              </div>
+            <div class="stop-meta">
+                <span class="status-pill" [class.pending]="!stop.status" [class.unsubscribed]="isUnsubscribed(stop)">
+                  {{ isUnsubscribed(stop) ? 'Unsubscribed' : (stop.status ? (stop.status | titlecase) : 'Pending') }}
+                </span>
+              </div>
             </div>
-          </div>
-          <div class="item-bottom">
-            <span class="status-pill" *ngIf="stop.status">{{ stop.status | titlecase }}</span>
-          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<ng-template #empty>
-  <div class="status text-muted card">No deliveries found for this route.</div>
-</ng-template>
+<div class="status text-muted card" *ngIf="!loading && !errorMessage && !deliveries.length">
+  No deliveries found for this route.
+</div>
 
 <div class="donation-overlay" *ngIf="donationModalStop">
   <div class="donation-dialog">
@@ -142,6 +200,72 @@
     <div class="donation-actions">
       <button type="button" class="ghost" (click)="closeDonationModal()">Cancel</button>
       <button type="button" (click)="saveDonation()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="edit-overlay" *ngIf="editingStop">
+  <div class="donation-dialog">
+    <h3>Edit delivery</h3>
+    <div class="new-form">
+      <label>
+        Name
+        <input class="form-control" [(ngModel)]="editDraft.name" name="editName" />
+      </label>
+      <label>
+        Address
+        <input class="form-control" [(ngModel)]="editDraft.address" name="editAddress" />
+      </label>
+      <label>
+        City
+        <input class="form-control" [(ngModel)]="editDraft.city" name="editCity" />
+      </label>
+      <label>
+        State
+        <input class="form-control" [(ngModel)]="editDraft.state" name="editState" />
+      </label>
+      <label>
+        ZIP
+        <input class="form-control" [(ngModel)]="editDraft.zip" name="editZip" />
+      </label>
+      <label>
+        Dozens
+        <input
+          class="form-control"
+          type="number"
+          min="0"
+          [(ngModel)]="editDraft.dozens"
+          name="editDozens"
+        />
+      </label>
+      <label class="full-width">
+        Notes
+        <textarea class="form-control" rows="2" [(ngModel)]="editDraft.notes" name="editNotes"></textarea>
+      </label>
+    </div>
+    <div class="donation-actions">
+      <div class="left-actions">
+        <button
+          *ngIf="editingStop && isUnsubscribed(editingStop)"
+          class="btn btn-secondary"
+          type="button"
+          (click)="resubscribeStop(editingStop)"
+        >
+          Resubscribe
+        </button>
+        <button
+          *ngIf="editingStop && !isUnsubscribed(editingStop)"
+          class="btn btn-text warn"
+          type="button"
+          (click)="unsubscribeStop(editingStop)"
+        >
+          Unsubscribe
+        </button>
+      </div>
+      <div class="right-actions">
+        <button class="btn btn-text" type="button" (click)="cancelEdit()">Cancel</button>
+        <button class="btn btn-primary" type="button" (click)="saveEdit()">Save</button>
+      </div>
     </div>
   </div>
 </div>

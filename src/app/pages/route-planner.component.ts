@@ -11,6 +11,7 @@ import { DonationAmountPickerComponent } from '../components/donation-amount-pic
 import { Delivery } from '../models/delivery.model';
 import { Route } from '../models/route.model';
 import { StorageService } from '../services/storage.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-route-planner',
@@ -28,6 +29,7 @@ export class RoutePlannerComponent {
   private route = inject(ActivatedRoute);
   private storage = inject(StorageService);
   private router = inject(Router);
+  private toast = inject(ToastService);
 
   routeDate?: string;
   deliveries: Delivery[] = [];
@@ -41,8 +43,29 @@ export class RoutePlannerComponent {
   openRowId: string | null = null;
   isSwiping = false;
   private swipeThreshold = 24; // px
-  private swipeDistance = 255; // px reveal width
+  private swipeDistance = 190; // px reveal width
   private swipeStartX: number | null = null;
+  showNewForm = false;
+  savingNew = false;
+  newDelivery = {
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    dozens: 1,
+    notes: '',
+  };
+  editingStop: Delivery | null = null;
+  editDraft = {
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    dozens: 1,
+    notes: '',
+  };
 
   startSwipe(event: PointerEvent, stop: Delivery): void {
     this.swipeStartX = event.clientX;
@@ -82,6 +105,65 @@ export class RoutePlannerComponent {
     return this.openRowId === stop.id
       ? `translateX(-${this.swipeDistance}px)`
       : 'translateX(0)';
+  }
+
+  openNewDeliveryForm(): void {
+    this.showNewForm = true;
+  }
+
+  cancelNewDelivery(): void {
+    this.showNewForm = false;
+    this.resetNewDelivery();
+  }
+
+  get canSaveNew(): boolean {
+    return (
+      !!this.routeDate &&
+      !!this.newDelivery.name.trim() &&
+      Number(this.newDelivery.dozens) > 0
+    );
+  }
+
+  get newDeliveryErrors(): string[] {
+    const errors: string[] = [];
+    if (!this.newDelivery.name.trim()) errors.push('Name is required.');
+    if (!(Number(this.newDelivery.dozens) > 0))
+      errors.push('Dozens must be greater than 0.');
+    return errors;
+  }
+
+  async saveNewDelivery(): Promise<void> {
+    if (!this.routeDate || !this.canSaveNew) return;
+    this.savingNew = true;
+    try {
+      const week = this.deliveries[0]?.week ?? 'WeekA';
+      await this.storage.addDelivery(this.routeDate, {
+        ...this.newDelivery,
+        week,
+      });
+      this.toast.show('Delivery added');
+      this.resetNewDelivery();
+      this.showNewForm = false;
+      await this.loadDeliveries();
+    } catch (err) {
+      console.error('Failed to add delivery', err);
+      this.errorMessage = 'Failed to add delivery.';
+      this.toast.show('Failed to add delivery', 'error');
+    } finally {
+      this.savingNew = false;
+    }
+  }
+
+  private resetNewDelivery(): void {
+    this.newDelivery = {
+      name: '',
+      address: '',
+      city: '',
+      state: '',
+      zip: '',
+      dozens: 1,
+      notes: '',
+    };
   }
 
   async ngOnInit(): Promise<void> {
@@ -307,5 +389,86 @@ export class RoutePlannerComponent {
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
     this.donationDraft.donation = donation;
     this.showAmountPicker = false;
+  }
+
+  openEdit(stop: Delivery): void {
+    this.editingStop = stop;
+    this.editDraft = {
+      name: stop.name,
+      address: stop.address,
+      city: stop.city,
+      state: stop.state,
+      zip: stop.zip ?? '',
+      dozens: stop.dozens,
+      notes: stop.notes ?? '',
+    };
+  }
+
+  cancelEdit(): void {
+    this.editingStop = null;
+  }
+
+  async saveEdit(): Promise<void> {
+    if (!this.editingStop) return;
+    const stop = this.editingStop;
+    const updates: Partial<Delivery> = {
+      name: this.editDraft.name,
+      address: this.editDraft.address,
+      city: this.editDraft.city,
+      state: this.editDraft.state,
+      zip: this.editDraft.zip || undefined,
+      notes: this.editDraft.notes || undefined,
+    };
+    const dozensChanged = this.editDraft.dozens !== stop.dozens;
+    if (dozensChanged) {
+      await this.storage.updatePlannedDozens(
+        stop.id,
+        Number(this.editDraft.dozens) || 0
+      );
+    }
+    await this.storage.updateDeliveryFields(stop.id, updates);
+    await this.loadDeliveries();
+    this.editingStop = null;
+  }
+
+  async unsubscribeStop(stop: Delivery): Promise<void> {
+    await this.storage.markSkipped(stop.id, 'Unsubscribed');
+    await this.storage.updateDeliveryFields(stop.id, {
+      subscribed: false
+    });
+    // Refresh from DB so status/reason are present before reordering.
+    const list = await this.storage.getDeliveriesByRoute(this.routeDate!);
+    const idx = list.findIndex((d) => d.id === stop.id);
+    if (idx >= 0) {
+      const [removed] = list.splice(idx, 1);
+      list.push(removed);
+      list.forEach((d, i) => {
+        d.sortIndex = i;
+        d.deliveryOrder = i;
+      });
+      await this.storage.saveSortOrder(list);
+      this.deliveries = list;
+    }
+    this.editingStop = null;
+  }
+
+  isUnsubscribed(stop: Delivery | null | undefined): boolean {
+    if (!stop) return false;
+    const reason = stop.skippedReason?.toLowerCase?.().trim() ?? '';
+    return stop.status === 'skipped' && reason.includes('unsubscribed');
+  }
+
+  async resubscribeStop(stop: Delivery): Promise<void> {
+    const updates: Partial<Delivery> = {
+      status: '',
+      skippedAt: undefined,
+      skippedReason: undefined,
+      subscribed: true,
+      updatedAt: new Date().toISOString(),
+      synced: false,
+    };
+    await this.storage.updateDeliveryFields(stop.id, updates);
+    await this.loadDeliveries();
+    this.editingStop = null;
   }
 }

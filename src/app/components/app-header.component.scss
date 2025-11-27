@@ -17,7 +17,9 @@
   display: flex;
   gap: var(--spacing-2);
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
 }
 
 .nav a {
@@ -43,4 +45,36 @@
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: #fff;
+}
+
+.progress-inline {
+  display: inline-grid;
+  gap: var(--spacing-1);
+  width: auto;
+  min-width: 0;
+  max-width: 240px;
+  margin-left: auto;
+}
+
+.progress-summary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar {
+  height: 6px;
+  background: var(--color-border);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+}
+
+.fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width var(--duration-base) var(--easing-ease-out);
 }
