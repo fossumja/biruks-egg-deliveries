@@ -52,7 +52,6 @@ export class RoutePlannerComponent {
   showNewForm = false;
   savingNew = false;
   newDelivery = {
-    routeDate: '',
     name: '',
     address: '',
     city: '',
@@ -115,7 +114,6 @@ export class RoutePlannerComponent {
 
   openNewDeliveryForm(): void {
     this.showNewForm = true;
-    this.newDelivery.routeDate = this.routeDate ?? '';
   }
 
   cancelNewDelivery(): void {
@@ -140,17 +138,13 @@ export class RoutePlannerComponent {
   }
 
   async saveNewDelivery(): Promise<void> {
-    const targetRoute = this.newDelivery.routeDate || this.routeDate;
-    if (!targetRoute || !this.canSaveNew) return;
+    if (!this.routeDate || !this.canSaveNew) return;
     this.savingNew = true;
     try {
-      await this.storage.addDelivery(targetRoute, {
+      await this.storage.addDelivery(this.routeDate, {
         ...this.newDelivery,
-        routeDate: targetRoute,
-        week: targetRoute.replace(/\s+/g, '') || 'Schedule',
         dozens: Number(this.newDelivery.dozens) || 0,
       });
-      this.routeDate = targetRoute;
       this.persistRouteSelection();
       this.toast.show('Delivery added');
       this.resetNewDelivery();
@@ -167,7 +161,6 @@ export class RoutePlannerComponent {
 
   private resetNewDelivery(): void {
     this.newDelivery = {
-      routeDate: this.routeDate ?? '',
       name: '',
       address: '',
       city: '',
@@ -184,7 +177,6 @@ export class RoutePlannerComponent {
     if (!this.routeDate) {
       this.routeDate = await this.pickFallbackRoute();
     }
-    this.newDelivery.routeDate = this.routeDate ?? '';
     if (!this.routeDate) {
       this.errorMessage = 'No route selected.';
       this.loading = false;
@@ -292,7 +284,6 @@ export class RoutePlannerComponent {
       return;
     }
     this.routeDate = routeDate;
-    this.newDelivery.routeDate = routeDate;
     this.persistRouteSelection();
     void this.loadDeliveries();
   }
