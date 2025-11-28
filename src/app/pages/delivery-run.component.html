@@ -7,69 +7,19 @@
 
   <main *ngIf="!loading && !errorMessage" class="content">
     <div class="delivery-card card" *ngIf="!finished && currentStop" [@cardChange]="currentStop.id ? 'in' : 'void'">
-      <div class="card-top">
-        <div class="name-row">
-          <div class="stop-name">{{ currentStop.name }}</div>
-          <span class="status-pill" [class.pending]="!currentStop.status">{{ currentStop.status ? (currentStop.status | titlecase) : 'Pending' }}</span>
-        </div>
-        <div class="address-row">
-          <div class="stop-address text-muted">
-            {{ currentStop.address }}<br />
-            {{ currentStop.city }}, {{ currentStop.state }} {{ currentStop.zip }}
-          </div>
-          <div class="address-actions">
-            <button class="btn btn-text" type="button" (click)="copyAddress()">Copy</button>
-            <button class="btn btn-secondary" type="button" (click)="openMaps()">Open Map</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="stop-qty">
-        <div class="qty-label text-muted">Quantity</div>
-        <div class="qty-input">
-          <button type="button" class="qty-btn" (click)="adjustDelivered(-1)">−</button>
-          <span class="qty-display" aria-label="Delivered dozens">{{ deliveredQty }}</span>
-          <button type="button" class="qty-btn" (click)="adjustDelivered(1)">+</button>
-        </div>
-      </div>
-
-      <div class="donation-inline">
-        <div class="donation-choices wide">
-          <button
-            type="button"
-            class="btn-chip wide"
-            [class.active]="currentDonation.status === 'NoDonation'"
-            (click)="setDonationStatus('NoDonation')"
-          >
-            No donation
-          </button>
-          <button
-            type="button"
-            class="btn-chip wide"
-            [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'cash'"
-            (click)="setDonationDonated('cash')"
-          >
-            Cash
-          </button>
-          <button
-            type="button"
-            class="btn-chip wide"
-            [class.active]="currentDonation.status === 'Donated' && currentDonation.method === 'venmo'"
-            (click)="setDonationDonated('venmo')"
-          >
-            Venmo
-          </button>
-        </div>
-        <div class="donation-suggested text-muted">
-          Current: ${{ (currentDonation.amount ?? suggestedDonationAmount) | number: '1.0-0' }}
-          · Suggested: ${{ suggestedDonationAmount | number: '1.0-0' }}
-          <button type="button" class="btn-link" (click)="openDonationAmountPicker()">Adjust amount</button>
-        </div>
-      </div>
-
-      <div class="stop-note text-muted" *ngIf="currentStop.notes">
-        Note: {{ currentStop.notes }}
-      </div>
+      <app-stop-delivery-card
+        [stop]="currentStop"
+        [deliveredQty]="deliveredQty"
+        [donation]="currentDonation"
+        [suggestedAmount]="suggestedDonationAmount"
+        [showNoDonation]="true"
+        (adjustQty)="adjustDelivered($event)"
+        (donationStatusChange)="setDonationStatus($event)"
+        (donationMethodChange)="setDonationDonated($event)"
+        (amountChange)="onInlineAmountChange($event)"
+        (copyAddress)="copyAddress()"
+        (openMap)="openMaps()"
+      />
     </div>
 
     <div class="next-up card" *ngIf="nextStop">

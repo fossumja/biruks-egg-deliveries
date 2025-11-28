@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DonationAmountPickerComponent } from '../components/donation-amount-picker.component';
+import { StopDeliveryCardComponent } from '../components/stop-delivery-card.component';
 import { Delivery, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
 import { BackupService } from '../services/backup.service';
 import { StorageService } from '../services/storage.service';
@@ -12,7 +13,7 @@ import { cardChangeTrigger } from '../components/animations';
 @Component({
   selector: 'app-delivery-run',
   standalone: true,
-  imports: [CommonModule, FormsModule, DonationAmountPickerComponent],
+  imports: [CommonModule, FormsModule, DonationAmountPickerComponent, StopDeliveryCardComponent],
   templateUrl: './delivery-run.component.html',
   styleUrl: './delivery-run.component.scss',
   animations: [cardChangeTrigger]
@@ -269,6 +270,16 @@ export class DeliveryRunComponent {
     void this.persistCurrentStopDonation();
     this.selectedAmount = amount;
     this.showAmountPicker = false;
+  }
+
+  onInlineAmountChange(amount: number): void {
+    const donation = this.currentDonation;
+    donation.status = 'Donated';
+    donation.amount = amount;
+    donation.method = donation.method ?? 'cash';
+    donation.date = new Date().toISOString();
+    this.selectedAmount = amount;
+    void this.persistCurrentStopDonation();
   }
 
   private async persistCurrentStopDonation(): Promise<void> {

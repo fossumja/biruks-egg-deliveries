@@ -8,7 +8,8 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DonationAmountPickerComponent } from '../components/donation-amount-picker.component';
-import { Delivery } from '../models/delivery.model';
+import { StopDeliveryCardComponent } from '../components/stop-delivery-card.component';
+import { Delivery, DonationInfo } from '../models/delivery.model';
 import { Route } from '../models/route.model';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
@@ -21,11 +22,13 @@ import { ToastService } from '../services/toast.service';
     DragDropModule,
     FormsModule,
     DonationAmountPickerComponent,
+    StopDeliveryCardComponent,
   ],
   templateUrl: './route-planner.component.html',
   styleUrl: './route-planner.component.scss',
 })
 export class RoutePlannerComponent {
+  readonly ALL_SCHEDULES = '__ALL_SCHEDULES__';
   private route = inject(ActivatedRoute);
   private storage = inject(StorageService);
   private router = inject(Router);
@@ -34,6 +37,7 @@ export class RoutePlannerComponent {
   routeDate?: string;
   routes: Route[] = [];
   deliveries: Delivery[] = [];
+  filteredDeliveries: Delivery[] = [];
   loading = true;
   errorMessage = '';
   donationModalStop: Delivery | null = null;
@@ -41,17 +45,21 @@ export class RoutePlannerComponent {
   showAmountPicker = false;
   amountOptions: number[] = [];
   selectedAmount = 0;
+  offScheduleStop: Delivery | null = null;
+  offDonationDraft: DonationInfo | null = null;
+  offDeliveredQty = 0;
+  pickerMode: 'main' | 'off' | null = null;
   openRowId: string | null = null;
   isSwiping = false;
   private swipeThreshold = 24; // px
-  private swipeDistance = 190; // px reveal width
+  private swipeDistance = 210; // px reveal width
   private swipeStartX: number | null = null;
   showSearch = false;
   searchTerm = '';
-  filteredDeliveries: Delivery[] = [];
   showNewForm = false;
   savingNew = false;
   newDelivery = {
+    routeDate: '',
     name: '',
     address: '',
     city: '',
@@ -75,6 +83,118 @@ export class RoutePlannerComponent {
   startSwipe(event: PointerEvent, stop: Delivery): void {
     this.swipeStartX = event.clientX;
     this.isSwiping = false;
+  }
+
+  openOffScheduleDelivery(stop: Delivery): void {
+    this.closeSwipe();
+    this.offScheduleStop = stop;
+    const suggested = (stop.dozens ?? 0) * 4;
+    this.offDonationDraft = {
+      status: stop.donation?.status ?? 'NotRecorded',
+      method: stop.donation?.method,
+      amount: stop.donation?.amount ?? suggested,
+      suggestedAmount: suggested,
+    };
+    this.offDeliveredQty = stop.deliveredDozens ?? stop.dozens ?? 0;
+  }
+
+  closeOffSchedule(): void {
+    this.offScheduleStop = null;
+    this.offDonationDraft = null;
+    this.offDeliveredQty = 0;
+    this.pickerMode = null;
+  }
+
+  setOffDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
+    if (!this.offDonationDraft) return;
+    this.offDonationDraft.status = status;
+    if (status === 'NoDonation') {
+      this.offDonationDraft.amount = 0;
+      this.offDonationDraft.method = undefined;
+    } else if (status === 'NotRecorded') {
+      this.offDonationDraft.amount = undefined;
+      this.offDonationDraft.method = undefined;
+    } else {
+      this.offDonationDraft.amount =
+        this.offDonationDraft.amount ?? this.offDonationDraft.suggestedAmount ?? 0;
+    }
+  }
+
+  setOffDonationMethod(method: 'cash' | 'venmo' | 'ach' | 'paypal' | 'other'): void {
+    if (!this.offDonationDraft) return;
+    this.offDonationDraft.status = 'Donated';
+    this.offDonationDraft.method = method;
+    if (this.offDonationDraft.amount == null) {
+      this.offDonationDraft.amount = this.offDonationDraft.suggestedAmount ?? 0;
+    }
+  }
+
+  adjustOffDelivered(delta: number): void {
+    const next = Math.max(0, (this.offDeliveredQty || 0) + delta);
+    this.offDeliveredQty = next;
+    if (this.offDonationDraft) {
+      this.offDonationDraft.suggestedAmount = next * 4;
+      if (this.offDonationDraft.status === 'Donated' && this.offDonationDraft.amount == null) {
+        this.offDonationDraft.amount = next * 4;
+      }
+    }
+  }
+
+  async saveOffSchedule(): Promise<void> {
+    if (!this.offScheduleStop || !this.offDonationDraft) {
+      this.closeOffSchedule();
+      return;
+    }
+    const stop = this.offScheduleStop;
+    const donation = { ...this.offDonationDraft, date: new Date().toISOString() };
+    await this.storage.markDelivered(stop.id, this.offDeliveredQty || stop.dozens);
+    await this.storage.updateDonation(stop.id, donation);
+    await this.loadDeliveries();
+    this.closeOffSchedule();
+  }
+
+  openOffAmountInput(): void {
+    // inline picker handles selection; keep handler for compatibility
+  }
+
+  onOffAmountChange(amount: number): void {
+    if (!this.offDonationDraft) return;
+    this.offDonationDraft.status = 'Donated';
+    this.offDonationDraft.amount = amount;
+    this.offDonationDraft.method = this.offDonationDraft.method ?? 'cash';
+    this.offDonationDraft.date = new Date().toISOString();
+    this.offDonationDraft.suggestedAmount =
+      this.offDonationDraft.suggestedAmount ?? this.offDeliveredQty * 4;
+  }
+
+  async copyAddress(stop?: Delivery | null): Promise<void> {
+    const target = stop ?? this.offScheduleStop;
+    if (!target) return;
+    const address = `${target.address}, ${target.city}, ${target.state} ${target.zip ?? ''}`.trim();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(address);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = address;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      this.toast.show('Address copied');
+    } catch (err) {
+      console.error('Copy failed', err);
+      this.toast.show('Copy failed', 'error');
+    }
+  }
+
+  openMaps(stop?: Delivery | null): void {
+    const target = stop ?? this.offScheduleStop;
+    if (!target) return;
+    const address = `${target.address}, ${target.city}, ${target.state} ${target.zip ?? ''}`;
+    const url = `https://maps.apple.com/?daddr=${encodeURIComponent(address)}`;
+    window.open(url, '_blank');
   }
 
   moveSwipe(event: PointerEvent, stop: Delivery): void {
@@ -102,6 +222,11 @@ export class RoutePlannerComponent {
     this.openRowId = this.openRowId === stop.id ? null : stop.id;
   }
 
+  closeSwipe(): void {
+    this.openRowId = null;
+    this.isSwiping = false;
+  }
+
   handleDragStart(): void {
     this.openRowId = null;
   }
@@ -114,6 +239,7 @@ export class RoutePlannerComponent {
 
   openNewDeliveryForm(): void {
     this.showNewForm = true;
+    this.newDelivery.routeDate = this.routeDate ?? '';
   }
 
   cancelNewDelivery(): void {
@@ -138,13 +264,16 @@ export class RoutePlannerComponent {
   }
 
   async saveNewDelivery(): Promise<void> {
-    if (!this.routeDate || !this.canSaveNew) return;
+    const targetRoute = this.newDelivery.routeDate || this.routeDate;
+    if (!targetRoute || !this.canSaveNew) return;
     this.savingNew = true;
     try {
-      await this.storage.addDelivery(this.routeDate, {
+      await this.storage.addDelivery(targetRoute, {
         ...this.newDelivery,
         dozens: Number(this.newDelivery.dozens) || 0,
+        routeDate: targetRoute,
       });
+      this.routeDate = targetRoute;
       this.persistRouteSelection();
       this.toast.show('Delivery added');
       this.resetNewDelivery();
@@ -161,6 +290,7 @@ export class RoutePlannerComponent {
 
   private resetNewDelivery(): void {
     this.newDelivery = {
+      routeDate: this.routeDate ?? '',
       name: '',
       address: '',
       city: '',
@@ -177,6 +307,7 @@ export class RoutePlannerComponent {
     if (!this.routeDate) {
       this.routeDate = await this.pickFallbackRoute();
     }
+    this.newDelivery.routeDate = this.routeDate ?? '';
     if (!this.routeDate) {
       this.errorMessage = 'No route selected.';
       this.loading = false;
@@ -192,10 +323,21 @@ export class RoutePlannerComponent {
     try {
       if (!this.routeDate) {
         this.deliveries = [];
+        this.filteredDeliveries = [];
         this.errorMessage = 'No route selected.';
         return;
       }
-      this.deliveries = await this.storage.getDeliveriesByRoute(this.routeDate);
+      if (this.routeDate === this.ALL_SCHEDULES) {
+        const all = await this.storage.getAllDeliveries();
+        this.deliveries = all.sort((a, b) => {
+          const dateCmp = (a.routeDate || '').localeCompare(b.routeDate || '');
+          if (dateCmp !== 0) return dateCmp;
+          return (a.sortIndex ?? 0) - (b.sortIndex ?? 0);
+        });
+      } else {
+        this.deliveries = await this.storage.getDeliveriesByRoute(this.routeDate);
+      }
+      this.applyFilter(false);
     } catch (err) {
       console.error(err);
       this.errorMessage = 'Failed to load deliveries.';
@@ -205,6 +347,9 @@ export class RoutePlannerComponent {
   }
 
   async drop(event: CdkDragDrop<Delivery[]>): Promise<void> {
+    if (this.showSearch && this.searchTerm.trim()) {
+      return;
+    }
     moveItemInArray(this.deliveries, event.previousIndex, event.currentIndex);
     this.deliveries = this.deliveries.map((d, idx) => ({
       ...d,
@@ -212,6 +357,7 @@ export class RoutePlannerComponent {
       deliveryOrder: idx,
     }));
     await this.storage.saveSortOrder(this.deliveries);
+    this.applyFilter(false);
   }
 
   startRun(): void {
@@ -222,6 +368,7 @@ export class RoutePlannerComponent {
   }
 
   async resetStop(stop: Delivery): Promise<void> {
+    this.closeSwipe();
     await this.storage.resetDelivery(stop.id);
     // Optimistically update in place for immediate UI feedback
     stop.dozens = stop.originalDozens ?? stop.dozens;
@@ -234,6 +381,7 @@ export class RoutePlannerComponent {
     stop.updatedAt = new Date().toISOString();
     // Also reload to stay in sync with DB
     await this.loadDeliveries();
+    this.applyFilter(false);
   }
 
   async updatePlanned(stop: Delivery, value: number): Promise<void> {
@@ -246,11 +394,31 @@ export class RoutePlannerComponent {
     if (stop.originalDozens === undefined) {
       stop.originalDozens = dozens;
     }
+    this.applyFilter(false);
   }
 
   async skipStop(stop: Delivery): Promise<void> {
+    this.closeSwipe();
     await this.storage.markSkipped(stop.id, 'Canceled');
     await this.loadDeliveries();
+    this.applyFilter(false);
+  }
+
+  isSkipped(stop: Delivery | null | undefined): boolean {
+    return !!stop && stop.status === 'skipped';
+  }
+
+  async unskipStop(stop: Delivery): Promise<void> {
+    this.closeSwipe();
+    await this.storage.updateDeliveryFields(stop.id, {
+      status: '',
+      skippedAt: undefined,
+      skippedReason: undefined,
+      synced: false,
+      updatedAt: new Date().toISOString(),
+    });
+    await this.loadDeliveries();
+    this.applyFilter(false);
   }
 
   async resetRoute(): Promise<void> {
@@ -265,7 +433,9 @@ export class RoutePlannerComponent {
 
   private async pickFallbackRoute(): Promise<string | undefined> {
     const current = localStorage.getItem('currentRoute');
-    const routes: Route[] = this.routes.length ? this.routes : await this.storage.getRoutes();
+    const routes: Route[] = this.routes.length
+      ? this.routes
+      : await this.storage.getRoutes();
     if (current && routes.some((r) => r.routeDate === current)) {
       return current;
     }
@@ -281,15 +451,18 @@ export class RoutePlannerComponent {
     if (!routeDate) {
       this.routeDate = undefined;
       this.deliveries = [];
+      this.filteredDeliveries = [];
       return;
     }
     this.routeDate = routeDate;
-    this.persistRouteSelection();
+    if (routeDate !== this.ALL_SCHEDULES) {
+      this.persistRouteSelection();
+    }
     void this.loadDeliveries();
   }
 
   private persistRouteSelection(): void {
-    if (this.routeDate) {
+    if (this.routeDate && this.routeDate !== this.ALL_SCHEDULES) {
       localStorage.setItem('currentRoute', this.routeDate);
       localStorage.setItem('lastSelectedRoute', this.routeDate);
     }
@@ -324,6 +497,7 @@ export class RoutePlannerComponent {
   }
 
   openDonationDetails(stop: Delivery): void {
+    this.closeSwipe();
     this.donationModalStop = stop;
     // shallow clone to edit
     this.donationDraft = {
@@ -343,6 +517,7 @@ export class RoutePlannerComponent {
     this.donationModalStop = null;
     this.donationDraft = undefined;
     this.showAmountPicker = false;
+    this.pickerMode = null;
   }
 
   saveDonation(): void {
@@ -375,7 +550,7 @@ export class RoutePlannerComponent {
     this.donationDraft.donation = donation;
   }
 
-  setDonationMethod(method: 'cash' | 'venmo' | 'other'): void {
+  setDonationMethod(method: 'cash' | 'venmo' | 'ach' | 'paypal' | 'other'): void {
     if (!this.donationDraft) return;
     const donation = this.donationDraft.donation ?? {
       status: 'NotRecorded',
@@ -392,6 +567,7 @@ export class RoutePlannerComponent {
 
   openAmountPicker(): void {
     if (!this.donationDraft) return;
+    this.pickerMode = 'main';
     this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
     this.selectedAmount =
       this.donationDraft.donation?.amount ??
@@ -405,21 +581,31 @@ export class RoutePlannerComponent {
   }
 
   confirmAmountFromPicker(amount: number): void {
-    if (!this.donationDraft) return;
-    const donation = this.donationDraft.donation ?? {
-      status: 'Donated',
-      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
-    };
-    donation.status = 'Donated';
-    donation.amount = amount;
-    donation.method = donation.method ?? 'cash';
-    donation.date = donation.date ?? new Date().toISOString();
-    donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
-    this.donationDraft.donation = donation;
+    if (this.pickerMode === 'off') {
+      if (!this.offDonationDraft) return;
+      this.offDonationDraft.status = this.offDonationDraft.status || 'Donated';
+      this.offDonationDraft.amount = amount;
+      this.offDonationDraft.method = this.offDonationDraft.method ?? 'cash';
+      this.offDonationDraft.date = new Date().toISOString();
+    } else {
+      if (!this.donationDraft) return;
+      const donation = this.donationDraft.donation ?? {
+        status: 'Donated',
+        suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
+      };
+      donation.status = 'Donated';
+      donation.amount = amount;
+      donation.method = donation.method ?? 'cash';
+      donation.date = donation.date ?? new Date().toISOString();
+      donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
+      this.donationDraft.donation = donation;
+    }
     this.showAmountPicker = false;
+    this.pickerMode = null;
   }
 
   openEdit(stop: Delivery): void {
+    this.closeSwipe();
     this.editingStop = stop;
     this.editDraft = {
       routeDate: stop.routeDate,
@@ -479,7 +665,7 @@ export class RoutePlannerComponent {
   async unsubscribeStop(stop: Delivery): Promise<void> {
     await this.storage.markSkipped(stop.id, 'Unsubscribed');
     await this.storage.updateDeliveryFields(stop.id, {
-      subscribed: false
+      subscribed: false,
     });
     // Refresh from DB so status/reason are present before reordering.
     const list = await this.storage.getDeliveriesByRoute(this.routeDate!);
@@ -515,5 +701,28 @@ export class RoutePlannerComponent {
     await this.storage.updateDeliveryFields(stop.id, updates);
     await this.loadDeliveries();
     this.editingStop = null;
+  }
+
+  toggleSearch(): void {
+    this.showSearch = !this.showSearch;
+    if (!this.showSearch) {
+      this.searchTerm = '';
+      this.applyFilter(false);
+    }
+  }
+
+  applyFilter(resetScroll = true): void {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.filteredDeliveries = [...this.deliveries];
+      return;
+    }
+    this.filteredDeliveries = this.deliveries.filter((d) => {
+      return (
+        d.name?.toLowerCase().includes(term) ||
+        d.address?.toLowerCase().includes(term) ||
+        d.city?.toLowerCase().includes(term)
+      );
+    });
   }
 }

@@ -1,10 +1,10 @@
 ﻿Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter
-Week A,CUST001,001,Kaylee Schroder,110 Oak St. ,Fairview,SD,,1,TRUE,front door,1
+Week A,CUST001,001,Kaylee Schroder,110 Oak St.,Fairview,SD,,1,TRUE,front door,1
 Week A,CUST002,002,Tanya Van De Stroet,1524 290th St.,Inwood,IA,,1,TRUE,leave outside front door,1
 Week A,CUST003,003,Oak Street Station,,,,,15,TRUE,verify delivery number. Needs invoice.,1
 Week A,CUST004,004,Inwood Hatchery,210 S. Main,Inwood,IA,,45,TRUE,fridge in back room,5
 Week A,CUST005,005,Manna Market,316 S. Main,Inwood,IA,,45,TRUE,Deliver to back door. Deliver in flats. Put in fridge.,2
-Week A,CUST006,006,Sunshine,5th St.,,,,15,TRUE,number varies,1
+Week A,CUST006,006,Sunshine,5th St.,Canton,SD,57013,15,TRUE,number varies,1
 Week A,CUST007,007,Anna Behning,48390 281st St.,,,,2,TRUE,Deliver with Melissa's ,1
 Week A,CUST008,008,Melissa Schutte,48390 281st St.,,,,1,TRUE,inside container in front of house,1
 Week A,CUST009,009,Dan Anderson,28037 483rd Ave.,,,,1,TRUE,put on floor inside south garage door,1
@@ -17,7 +17,7 @@ Week A,CUST015,015,Laurie Cole,Canton-Inwood Hospital,,,,1,TRUE,Take to cafeteri
 Week A,CUST016,016,Scott Larson,Canton-Inwood Hospital,,,,1,TRUE,Take to cafeteria fridge,1
 Week A,CUST017,017,Becky Berenschot,Canton-Inwood Hospital,,,,1,TRUE,Fridge in kitchen of physical therapy dept.,1
 Week A,CUST018,018,Andrea Flyger,Canton-Inwood Hospital,,,,2,TRUE,Fridge in kitchen of physical therapy dept.,0
-Week A,CUST019,019,June Fossum,814 E. 5th,,,,1,TRUE,"number varies, doesn't get them every time. Take to back door.",0
+Week A,CUST019,019,June Fossum,814 E. 5th,Canton,SD,57013,1,TRUE,"number varies, doesn't get them every time. Take to back door.",0
 Week A,CUST020,020,Sarah Woods,Methodist Church - 621 E. 4th ,,,,2,TRUE,secretary's office or church fridge,1
 Week A,CUST021,021,Carla Reding,104 N. Milwaukee,,,,2,TRUE,in cooler by garage,1
 Week A,CUST022,022,Irene Ness,224 N. Milwaukee,,,,1,TRUE,delivery is to daughter's house. Put inside back door.,1

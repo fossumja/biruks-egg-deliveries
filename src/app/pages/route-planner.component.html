@@ -1,4 +1,4 @@
-<div class="page-header">
+<div class="page-header" [class.searching]="showSearch">
   <div class="header-actions">
     <select
       class="form-control route-select"
@@ -6,19 +6,20 @@
       (ngModelChange)="onRouteChange($event)"
     >
       <option [ngValue]="null" disabled>Choose a route…</option>
+      <option [ngValue]="ALL_SCHEDULES">All Schedules ({{ routes.length }})</option>
       <option *ngFor="let r of routes" [ngValue]="r.routeDate">
         {{ r.routeDate }} ({{ r.totalStops }} stops)
       </option>
     </select>
     <button
-      class="btn btn-secondary icon-btn"
+      class="btn btn-secondary icon-btn btn-reset"
       type="button"
       (click)="resetRoute()"
       [disabled]="!deliveries.length"
       aria-label="Reset route"
       title="Reset route"
     >
-      ⟳
+      <span class="glyph">⟳</span>
     </button>
     <button
       class="btn btn-primary icon-btn"
@@ -27,7 +28,34 @@
       aria-label="Add delivery"
       title="Add delivery"
     >
-      +
+      <span class="glyph">+</span>
+    </button>
+    <button
+      class="btn btn-secondary icon-btn btn-search"
+      type="button"
+      (click)="toggleSearch()"
+      aria-label="Search deliveries"
+      title="Search deliveries"
+    >
+      <span class="glyph">🔍</span>
+    </button>
+  </div>
+  <div class="search-row" *ngIf="showSearch">
+    <input
+      class="form-control search-input"
+      type="search"
+      placeholder="Search deliveries…"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="applyFilter()"
+    />
+    <button
+      class="btn btn-secondary icon-btn"
+      type="button"
+      (click)="searchTerm=''; applyFilter(false); toggleSearch()"
+      aria-label="Close search"
+      title="Close search"
+    >
+      ×
     </button>
   </div>
 </div>
@@ -106,13 +134,14 @@
 <div class="list card" *ngIf="!loading && !errorMessage && deliveries.length">
   <div
     cdkDropList
-    [cdkDropListData]="deliveries"
+    [cdkDropListData]="filteredDeliveries"
+    [cdkDropListDisabled]="(showSearch && searchTerm.trim()) || routeDate === ALL_SCHEDULES"
     (cdkDropListDropped)="drop($event)"
     class="drop-list"
   >
     <div
       class="planner-swipe-row"
-      *ngFor="let stop of deliveries; let i = index"
+      *ngFor="let stop of filteredDeliveries; let i = index"
       cdkDrag
       [class.open]="openRowId === stop.id"
       [cdkDragDisabled]="isSwiping"
@@ -120,12 +149,19 @@
     >
       <div class="planner-swipe-actions">
         <div class="action-row">
-          <button class="btn btn-text" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+          <button
+            class="btn btn-text skip-btn"
+            type="button"
+            (click)="isSkipped(stop) ? unskipStop(stop) : skipStop(stop)"
+          >
+            {{ isSkipped(stop) ? 'Unskip' : 'Skip' }}
+          </button>
           <button class="btn btn-text" type="button" (click)="openEdit(stop)">Edit</button>
-          <button class="btn btn-text warn" type="button" (click)="skipStop(stop)">Skip</button>
+          <button class="btn btn-text reset-warn" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
         </div>
         <div class="action-row">
           <button class="btn btn-secondary" type="button" (click)="openDonationDetails(stop)">Donation</button>
+          <button class="btn btn-secondary" type="button" (click)="openOffScheduleDelivery(stop)">Delivery</button>
         </div>
       </div>
 
@@ -189,14 +225,6 @@
       >
         Donated
       </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.status === 'NoDonation'"
-        (click)="setDonationStatus('NoDonation')"
-      >
-        No donation
-      </button>
     </div>
 
     <div *ngIf="donationDraft?.donation?.status === 'Donated'" class="donation-methods">
@@ -219,6 +247,22 @@
       <button
         type="button"
         class="btn-chip"
+        [class.active]="donationDraft?.donation?.method === 'ach'"
+        (click)="setDonationMethod('ach')"
+      >
+        ACH
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
+        [class.active]="donationDraft?.donation?.method === 'paypal'"
+        (click)="setDonationMethod('paypal')"
+      >
+        PayPal
+      </button>
+      <button
+        type="button"
+        class="btn-chip"
         [class.active]="donationDraft?.donation?.method === 'other'"
         (click)="setDonationMethod('other')"
       >
@@ -234,6 +278,32 @@
     <div class="donation-actions">
       <button type="button" class="ghost" (click)="closeDonationModal()">Cancel</button>
       <button type="button" (click)="saveDonation()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="donation-overlay" *ngIf="offScheduleStop">
+  <div class="donation-dialog">
+    <h3>Delivery for {{ offScheduleStop!.name }}</h3>
+    <div class="delivery-card card">
+      <app-stop-delivery-card
+        [stop]="offScheduleStop"
+        [deliveredQty]="offDeliveredQty"
+        [donation]="offDonationDraft"
+        [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
+        [showNoDonation]="true"
+        [showNotes]="false"
+        (adjustQty)="adjustOffDelivered($event)"
+        (donationStatusChange)="setOffDonationStatus($event)"
+        (donationMethodChange)="setOffDonationMethod($event)"
+        (amountChange)="onOffAmountChange($event)"
+        (copyAddress)="copyAddress(offScheduleStop)"
+        (openMap)="openMaps(offScheduleStop)"
+      />
+    </div>
+    <div class="donation-actions">
+      <button type="button" class="ghost" (click)="closeOffSchedule()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveOffSchedule()">Save</button>
     </div>
   </div>
 </div>

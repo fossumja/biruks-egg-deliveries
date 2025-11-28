@@ -1,6 +1,6 @@
 export type DeliveryStatus = '' | 'changed' | 'delivered' | 'skipped';
 export type DonationStatus = 'NotRecorded' | 'Donated' | 'NoDonation';
-export type DonationMethod = 'cash' | 'venmo' | 'other';
+export type DonationMethod = 'cash' | 'venmo' | 'ach' | 'paypal' | 'other';
 
 export interface DonationInfo {
   status: DonationStatus;

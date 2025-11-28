@@ -1,0 +1,125 @@
+<ng-container *ngIf="stop as s">
+  <div class="stop-card">
+  <div class="card-top">
+    <div class="name-row">
+      <div class="stop-name">{{ s.name }}</div>
+      <span class="status-pill" [class.pending]="!s.status">
+        {{ s.status ? (s.status | titlecase) : "Pending" }}
+        </span>
+      </div>
+      <div class="address-row">
+        <div class="stop-address text-muted">
+          {{ s.address }}<br />
+          {{ s.city }}, {{ s.state }} {{ s.zip }}
+        </div>
+        <div class="address-actions">
+          <button class="btn btn-text" type="button" (click)="onCopyAddress()">
+            Copy
+          </button>
+          <button class="btn btn-secondary" type="button" (click)="onOpenMap()">
+            Open Map
+          </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stop-note text-muted" *ngIf="showNotes && s.notes">
+    Note: {{ s.notes }}
+  </div>
+
+  <div class="stop-qty">
+    <div class="qty-label text-muted">Quantity (dozen)</div>
+    <div class="qty-input">
+      <button type="button" class="qty-btn" (click)="onAdjustQty(-1)">
+        −
+        </button>
+        <span class="qty-display" aria-label="Delivered dozens">{{
+          deliveredQty
+        }}</span>
+        <button type="button" class="qty-btn" (click)="onAdjustQty(1)">
+          +
+        </button>
+      </div>
+    </div>
+
+    <div class="donation-inline">
+      <div class="donation-choices rows">
+        <button
+          *ngIf="showNoDonation"
+          type="button"
+          class="btn-chip"
+          [class.active]="donation?.status === 'NoDonation'"
+          (click)="onDonationStatus('NoDonation')"
+        >
+          No donation
+        </button>
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="
+            donation?.status === 'Donated' && donation?.method === 'cash'
+          "
+          (click)="onDonationMethod('cash')"
+        >
+          Cash
+        </button>
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="
+            donation?.status === 'Donated' && donation?.method === 'ach'
+          "
+          (click)="onDonationMethod('ach')"
+        >
+          ACH
+        </button>
+      </div>
+      <div class="donation-choices rows">
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="
+            donation?.status === 'Donated' && donation?.method === 'venmo'
+          "
+          (click)="onDonationMethod('venmo')"
+        >
+          Venmo
+        </button>
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="
+            donation?.status === 'Donated' && donation?.method === 'paypal'
+          "
+          (click)="onDonationMethod('paypal')"
+        >
+          PayPal
+        </button>
+        <button
+          type="button"
+          class="btn-chip"
+          [class.active]="
+            donation?.status === 'Donated' && donation?.method === 'other'
+          "
+          (click)="onDonationMethod('other')"
+        >
+          Other
+        </button>
+    </div>
+    <div class="donation-suggested text-muted">
+      Suggested: ${{ suggestedAmount | number : "1.0-0" }}
+    </div>
+    <div class="donation-picker">
+      <select
+        class="amount-select"
+        [ngModel]="amountValue"
+        (ngModelChange)="onAmountChangeSelect($event)"
+      >
+        <option *ngFor="let val of amountOptions" [ngValue]="val">
+          ${{ val }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
+</ng-container>
