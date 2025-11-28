@@ -1,10 +1,33 @@
 <div class="page-header">
   <div class="header-actions">
-    <button class="btn btn-secondary" type="button" (click)="resetRoute()" [disabled]="!deliveries.length">
-      Reset Route
+    <select
+      class="form-control route-select"
+      [(ngModel)]="routeDate"
+      (ngModelChange)="onRouteChange($event)"
+    >
+      <option [ngValue]="null" disabled>Choose a route…</option>
+      <option *ngFor="let r of routes" [ngValue]="r.routeDate">
+        {{ r.routeDate }} ({{ r.totalStops }} stops)
+      </option>
+    </select>
+    <button
+      class="btn btn-secondary icon-btn"
+      type="button"
+      (click)="resetRoute()"
+      [disabled]="!deliveries.length"
+      aria-label="Reset route"
+      title="Reset route"
+    >
+      ⟳
     </button>
-    <button class="btn btn-primary" type="button" (click)="openNewDeliveryForm()">
-      Add Delivery
+    <button
+      class="btn btn-primary icon-btn"
+      type="button"
+      (click)="openNewDeliveryForm()"
+      aria-label="Add delivery"
+      title="Add delivery"
+    >
+      +
     </button>
   </div>
 </div>
@@ -24,6 +47,18 @@
   </div>
 
   <form class="new-form" (submit)="$event.preventDefault()">
+    <label>
+      Schedule
+      <select
+        class="form-control"
+        [(ngModel)]="newDelivery.routeDate"
+        name="newRouteDate"
+      >
+        <option *ngFor="let r of routes" [ngValue]="r.routeDate">
+          {{ r.routeDate }}
+        </option>
+      </select>
+    </label>
     <label>
       Name
       <input class="form-control" [(ngModel)]="newDelivery.name" name="newName" />
@@ -207,6 +242,18 @@
   <div class="donation-dialog">
     <h3>Edit delivery</h3>
     <div class="new-form">
+      <label>
+        Schedule
+        <select
+          class="form-control"
+          [(ngModel)]="editDraft.routeDate"
+          name="editRouteDate"
+        >
+          <option *ngFor="let r of routes" [ngValue]="r.routeDate">
+            {{ r.routeDate }}
+          </option>
+        </select>
+      </label>
       <label>
         Name
         <input class="form-control" [(ngModel)]="editDraft.name" name="editName" />

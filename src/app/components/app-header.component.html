@@ -1,16 +1,30 @@
 <header class="top-bar card safe-top">
-  <div class="brand">Biruk's Egg Deliveries</div>
-  <nav class="nav">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-    <a [routerLink]="plannerLink" routerLinkActive="active">Planner</a>
-    <a [routerLink]="runLink" routerLinkActive="active">Run</a>
+  <div class="brand-row">
+    <div class="brand">Egg Deliveries</div>
     <div class="progress-inline" *ngIf="currentRouteSummary">
-      <div class="progress-summary">
-        {{ currentRouteSummary.delivered }} / {{ currentRouteSummary.total }} delivered
+      <div class="progress-line">
+        <span class="progress-summary">
+          {{ currentRouteSummary.delivered }} /
+          {{ currentRouteSummary.total }} delivered
+        </span>
+        <span class="progress-divider">·</span>
+        <span class="progress-skipped"
+          >{{ currentRouteSummary.skipped }} skipped</span
+        >
       </div>
       <div class="bar">
         <div class="fill" [style.width.%]="routeProgress"></div>
       </div>
     </div>
+  </div>
+  <nav class="nav">
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a [routerLink]="plannerLink" routerLinkActive="active">Planner</a>
+    <a [routerLink]="runLink" routerLinkActive="active">Run</a>
   </nav>
 </header>

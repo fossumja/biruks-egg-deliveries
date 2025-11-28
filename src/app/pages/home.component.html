@@ -1,8 +1,7 @@
 <div class="page-header">
   <div>
-    <h1 class="page-title">Deliveries</h1>
     <p class="lede text-muted">
-      Import your delivery CSV, pick a route, and start the run. Data stays local for offline use.
+      Import your delivery CSV, pick a route, and start the run; use export to back up anytime. Data stays local for offline use.
     </p>
   </div>
 </div>
@@ -28,47 +27,3 @@
   </div>
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
 </section>
-
-<section *ngIf="routes.length; else noData" class="routes card">
-  <div class="routes-header">
-    <div>
-      <h2 class="section-title">Select delivery day</h2>
-      <p class="text-muted">Choose a route to continue or start fresh.</p>
-    </div>
-  </div>
-
-  <div class="select-row">
-    <select [(ngModel)]="selectedRouteDate" (ngModelChange)="onSelectRoute($event)" class="form-control">
-      <option [ngValue]="null" disabled selected>Choose a route…</option>
-      <option *ngFor="let r of routes" [ngValue]="r.routeDate">
-        {{ r.routeDate }} ({{ r.totalStops }} stops)
-      </option>
-    </select>
-    <button type="button" class="btn btn-primary" (click)="startRoute()" [disabled]="!selectedRouteDate">
-      {{ selectedRouteDate && selectedRouteDate === currentRoute ? 'Continue Route' : 'Start Route' }}
-    </button>
-  </div>
-
-  <div class="route-summary" *ngIf="selectedRouteSummary">
-    <div class="route-name">
-      {{ selectedRouteSummary.routeDate }}
-      <span *ngIf="selectedRouteSummary.completed" class="tag">Completed</span>
-    </div>
-    <div class="route-meta text-muted">
-      {{ selectedRouteSummary.deliveredCount }} delivered ·
-      {{ selectedRouteSummary.skippedCount }} skipped ·
-      {{ selectedRouteSummary.totalStops }} total
-    </div>
-  </div>
-</section>
-
-<ng-template #noData>
-  <div class="empty card">
-    <p class="text-muted">No routes loaded yet.</p>
-    <div>
-      <button type="button" class="btn btn-primary" (click)="fileInput.click()">
-        Import CSV
-      </button>
-    </div>
-  </div>
-</ng-template>

@@ -250,15 +250,22 @@ export class StorageService {
   async addDelivery(routeDate: string, payload: Partial<Delivery>): Promise<Delivery> {
     const now = new Date().toISOString();
     const currentCount = await this.db.deliveries.where('routeDate').equals(routeDate).count();
-    // Extract schedule identifier from existing deliveries in this route (e.g., "Week A" from routeDate column)
-    const existingDeliveries = await this.db.deliveries.where('routeDate').equals(routeDate).limit(1).toArray();
-    const scheduleId = existingDeliveries[0]?.week ?? 'WeekA';
+    // Derive schedule identifier from existing deliveries' routeDate (first column) to avoid separate week column.
+    const existingDeliveries = await this.db.deliveries
+      .where('routeDate')
+      .equals(routeDate)
+      .limit(1)
+      .toArray();
+    const scheduleId =
+      (payload.week ?? existingDeliveries[0]?.routeDate ?? routeDate ?? 'Schedule')
+        .toString()
+        .replace(/\s+/g, '') || 'Schedule';
     const baseRowId = payload.baseRowId ?? `NEW_${crypto.randomUUID?.() ?? Date.now()}`;
     const id = payload.id ?? crypto.randomUUID?.() ?? `${Date.now()}_${Math.random()}`;
     const dozens = payload.dozens ?? 0;
     const newDelivery: Delivery = {
       id,
-      runId: payload.runId ?? `${routeDate}_${scheduleId}`,
+      runId: payload.runId ?? routeDate,
       baseRowId,
       routeDate,
       week: scheduleId,

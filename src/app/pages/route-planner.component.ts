@@ -32,6 +32,7 @@ export class RoutePlannerComponent {
   private toast = inject(ToastService);
 
   routeDate?: string;
+  routes: Route[] = [];
   deliveries: Delivery[] = [];
   loading = true;
   errorMessage = '';
@@ -45,9 +46,13 @@ export class RoutePlannerComponent {
   private swipeThreshold = 24; // px
   private swipeDistance = 190; // px reveal width
   private swipeStartX: number | null = null;
+  showSearch = false;
+  searchTerm = '';
+  filteredDeliveries: Delivery[] = [];
   showNewForm = false;
   savingNew = false;
   newDelivery = {
+    routeDate: '',
     name: '',
     address: '',
     city: '',
@@ -58,6 +63,7 @@ export class RoutePlannerComponent {
   };
   editingStop: Delivery | null = null;
   editDraft = {
+    routeDate: '',
     name: '',
     address: '',
     city: '',
@@ -109,6 +115,7 @@ export class RoutePlannerComponent {
 
   openNewDeliveryForm(): void {
     this.showNewForm = true;
+    this.newDelivery.routeDate = this.routeDate ?? '';
   }
 
   cancelNewDelivery(): void {
@@ -133,12 +140,18 @@ export class RoutePlannerComponent {
   }
 
   async saveNewDelivery(): Promise<void> {
-    if (!this.routeDate || !this.canSaveNew) return;
+    const targetRoute = this.newDelivery.routeDate || this.routeDate;
+    if (!targetRoute || !this.canSaveNew) return;
     this.savingNew = true;
     try {
-      await this.storage.addDelivery(this.routeDate, {
+      await this.storage.addDelivery(targetRoute, {
         ...this.newDelivery,
+        routeDate: targetRoute,
+        week: targetRoute.replace(/\s+/g, '') || 'Schedule',
+        dozens: Number(this.newDelivery.dozens) || 0,
       });
+      this.routeDate = targetRoute;
+      this.persistRouteSelection();
       this.toast.show('Delivery added');
       this.resetNewDelivery();
       this.showNewForm = false;
@@ -154,6 +167,7 @@ export class RoutePlannerComponent {
 
   private resetNewDelivery(): void {
     this.newDelivery = {
+      routeDate: this.routeDate ?? '',
       name: '',
       address: '',
       city: '',
@@ -165,25 +179,31 @@ export class RoutePlannerComponent {
   }
 
   async ngOnInit(): Promise<void> {
+    this.routes = await this.storage.getRoutes();
     this.routeDate = this.route.snapshot.paramMap.get('routeDate') || undefined;
     if (!this.routeDate) {
       this.routeDate = await this.pickFallbackRoute();
     }
+    this.newDelivery.routeDate = this.routeDate ?? '';
     if (!this.routeDate) {
       this.errorMessage = 'No route selected.';
       this.loading = false;
       return;
     }
     await this.loadDeliveries();
+    this.persistRouteSelection();
   }
 
   async loadDeliveries(): Promise<void> {
     this.loading = true;
     this.errorMessage = '';
     try {
-      this.deliveries = await this.storage.getDeliveriesByRoute(
-        this.routeDate!
-      );
+      if (!this.routeDate) {
+        this.deliveries = [];
+        this.errorMessage = 'No route selected.';
+        return;
+      }
+      this.deliveries = await this.storage.getDeliveriesByRoute(this.routeDate);
     } catch (err) {
       console.error(err);
       this.errorMessage = 'Failed to load deliveries.';
@@ -253,7 +273,7 @@ export class RoutePlannerComponent {
 
   private async pickFallbackRoute(): Promise<string | undefined> {
     const current = localStorage.getItem('currentRoute');
-    const routes: Route[] = await this.storage.getRoutes();
+    const routes: Route[] = this.routes.length ? this.routes : await this.storage.getRoutes();
     if (current && routes.some((r) => r.routeDate === current)) {
       return current;
     }
@@ -263,6 +283,25 @@ export class RoutePlannerComponent {
   async adjustPlanned(stop: Delivery, delta: number): Promise<void> {
     const next = Math.max(0, (stop.dozens || 0) + delta);
     await this.updatePlanned(stop, next);
+  }
+
+  onRouteChange(routeDate: string | null): void {
+    if (!routeDate) {
+      this.routeDate = undefined;
+      this.deliveries = [];
+      return;
+    }
+    this.routeDate = routeDate;
+    this.newDelivery.routeDate = routeDate;
+    this.persistRouteSelection();
+    void this.loadDeliveries();
+  }
+
+  private persistRouteSelection(): void {
+    if (this.routeDate) {
+      localStorage.setItem('currentRoute', this.routeDate);
+      localStorage.setItem('lastSelectedRoute', this.routeDate);
+    }
   }
 
   getDonationPillLabel(stop: Delivery): string {
@@ -392,6 +431,7 @@ export class RoutePlannerComponent {
   openEdit(stop: Delivery): void {
     this.editingStop = stop;
     this.editDraft = {
+      routeDate: stop.routeDate,
       name: stop.name,
       address: stop.address,
       city: stop.city,
@@ -409,6 +449,7 @@ export class RoutePlannerComponent {
   async saveEdit(): Promise<void> {
     if (!this.editingStop) return;
     const stop = this.editingStop;
+    const targetRoute = this.editDraft.routeDate || stop.routeDate;
     const updates: Partial<Delivery> = {
       name: this.editDraft.name,
       address: this.editDraft.address,
@@ -424,7 +465,22 @@ export class RoutePlannerComponent {
         Number(this.editDraft.dozens) || 0
       );
     }
-    await this.storage.updateDeliveryFields(stop.id, updates);
+    if (targetRoute && targetRoute !== stop.routeDate) {
+      const targetList = await this.storage.getDeliveriesByRoute(targetRoute);
+      const nextIndex = targetList.length;
+      await this.storage.updateDeliveryFields(stop.id, {
+        ...updates,
+        routeDate: targetRoute,
+        runId: targetRoute,
+        week: targetRoute.replace(/\s+/g, '') || 'Schedule',
+        sortIndex: nextIndex,
+        deliveryOrder: nextIndex,
+      });
+      this.routeDate = targetRoute;
+      this.persistRouteSelection();
+    } else {
+      await this.storage.updateDeliveryFields(stop.id, updates);
+    }
     await this.loadDeliveries();
     this.editingStop = null;
   }

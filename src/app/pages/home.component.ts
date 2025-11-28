@@ -1,4 +1,4 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import Papa from 'papaparse';
@@ -6,13 +6,12 @@ import { Delivery, DeliveryStatus, DonationInfo, DonationMethod, DonationStatus 
 import { Route } from '../models/route.model';
 import { BackupService } from '../services/backup.service';
 import { StorageService } from '../services/storage.service';
-import { FormsModule } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, NgFor, DatePipe, FormsModule],
+  imports: [NgIf, DatePipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -54,8 +53,10 @@ export class HomeComponent {
       this.toast.show('Import complete');
     } catch (err) {
       console.error(err);
-      this.errorMessage = 'Import failed. Please check CSV format and try again.';
-      this.toast.show('Import failed', 'error');
+      const message =
+        err instanceof Error ? err.message : 'Please check CSV format and try again.';
+      this.errorMessage = `Import failed: ${message}`;
+      this.toast.show(this.errorMessage, 'error');
     } finally {
       this.isImporting = false;
       input.value = '';
@@ -135,23 +136,54 @@ export class HomeComponent {
     const grouped = new Map<string, Delivery[]>();
     const statusBlank: DeliveryStatus = '';
 
+    const scheduleHeader =
+      headers.find((h) => ['schedule', '\ufeffschedule', 'date'].includes(h.toLowerCase())) ?? null;
+    if (!scheduleHeader) {
+      throw new Error('Missing required column "Schedule" (or "Date").');
+    }
+    const deliveryOrderHeader = headers.find((h) => h.toLowerCase() === 'delivery order') ?? null;
+
     rows.forEach((row, rawIndex) => {
-      const routeDate = (row['Date'] || row['date'] || '').trim();
+      const routeDateRaw =
+        (scheduleHeader ? row[scheduleHeader] : undefined) ||
+        row['Schedule'] ||
+        row['schedule'] ||
+        row['Date'] ||
+        row['date'] ||
+        row['\ufeffSchedule'] ||
+        row['\ufeffschedule'] ||
+        '';
+      const routeDate = (routeDateRaw || '').trim();
       if (!routeDate) {
-        throw new Error('Missing Date column');
+        const rowNumber = rawIndex + 2; // +1 for header row, +1 for zero index
+        throw new Error(`Row ${rowNumber}: Missing value for "Schedule".`);
       }
-      const planned = Number(row['Dozens'] || row['dozens'] || row['Qty'] || 0) || 0;
-      const deliveryOrderRaw = row['Delivery Order'] || row['delivery order'] || row['Order'];
+      const scheduleId = routeDate.replace(/\s+/g, '') || 'Schedule';
+      const plannedRaw = row['Dozens'] || row['dozens'] || row['Qty'] || '0';
+      const planned = Number(plannedRaw);
+      if (Number.isNaN(planned)) {
+        const rowNumber = rawIndex + 2;
+        throw new Error(`Row ${rowNumber}: "Dozens" must be a number.`);
+      }
+      const deliveryOrderRaw =
+        (deliveryOrderHeader ? row[deliveryOrderHeader] : undefined) ||
+        row['Delivery Order'] ||
+        row['delivery order'] ||
+        row['Order'];
       const deliveryOrder = deliveryOrderRaw ? Number(deliveryOrderRaw) || 0 : rawIndex;
       const baseRowId = (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || '').trim() || `ROW_${rawIndex}`;
-      const week = (row['Week'] || row['week'] || '').trim() || 'WeekA';
-      const runId = `${routeDate}_${week}`;
+      const subscribedRaw = (row['Subscribed'] || row['subscribed'] || '').toString().trim().toLowerCase();
+      const subscribed =
+        subscribedRaw === ''
+          ? true
+          : subscribedRaw === 'true' || subscribedRaw === 'yes' || subscribedRaw === '1';
+      const runId = routeDate;
       const donation = this.buildDonationFromRow(row, planned);
       const delivery: Delivery = {
         id: crypto.randomUUID(),
         runId,
         baseRowId,
-        week,
+        week: scheduleId,
         routeDate,
         name: (row['Name'] || row['name'] || '').trim(),
         address: (row['Address'] || row['address'] || '').trim(),
@@ -165,6 +197,7 @@ export class HomeComponent {
         deliveryOrder,
         status: statusBlank,
         donation,
+        subscribed,
         createdAt: now,
         updatedAt: now,
         synced: false

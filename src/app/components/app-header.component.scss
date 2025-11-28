@@ -1,16 +1,28 @@
 .top-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-3);
+  flex-direction: column;
+  gap: var(--spacing-2);
   padding: var(--spacing-3);
-  flex-wrap: wrap;
+  width: 100%;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
 }
 
 .brand {
   font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-md);
+  font-size: 20px;
   letter-spacing: 0.01em;
+  padding: 10px 12px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  justify-content: flex-start;
 }
 
 .nav {
@@ -18,7 +30,7 @@
   gap: var(--spacing-2);
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
 }
 
@@ -26,7 +38,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 12px;
+  padding: 0 12px;
+  height: 44px;
+  flex: 1 1 0;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -48,20 +62,34 @@
 }
 
 .progress-inline {
-  display: inline-grid;
-  gap: var(--spacing-1);
-  width: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
   min-width: 0;
-  max-width: 240px;
+  width: 100%;
+  max-width: 380px;
   margin-left: auto;
+  align-items: stretch;
+  height: 44px;
+  padding: 0 0 2px;
+}
+
+.progress-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  justify-content: space-between;
 }
 
 .progress-summary {
   font-size: var(--font-size-sm);
   color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.progress-divider {
+  color: var(--color-text-subtle, #6b7280);
+  font-size: var(--font-size-sm);
 }
 
 .bar {
@@ -71,6 +99,12 @@
   overflow: hidden;
   width: 100%;
   min-width: 0;
+}
+
+.progress-skipped {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle, #6b7280);
+  white-space: nowrap;
 }
 
 .fill {
