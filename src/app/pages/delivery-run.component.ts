@@ -57,7 +57,9 @@ export class DeliveryRunComponent {
     this.loading = true;
     this.errorMessage = '';
     try {
-      this.stops = await this.storage.getDeliveriesByRoute(this.routeDate!);
+      this.stops = (await this.storage.getDeliveriesByRoute(this.routeDate!)).map((s) =>
+        this.normalizeStop({ ...s })
+      );
       this.total = this.stops.length;
       this.doneCount = this.stops.filter((s) => s.status !== '').length;
     } catch (err) {
@@ -76,7 +78,7 @@ export class DeliveryRunComponent {
     } else {
       this.finished = false;
       this.currentIndex = nextIndex;
-      this.currentStop = this.stops[this.currentIndex];
+      this.currentStop = this.normalizeStop({ ...this.stops[this.currentIndex] });
       this.deliveredQty = this.currentStop.deliveredDozens ?? this.currentStop.dozens;
       this.syncDonationDefaults();
     }
@@ -89,9 +91,9 @@ export class DeliveryRunComponent {
       void this.storage.updateDraftDelivered(this.currentStop.id, next);
       this.currentStop.dozens = next;
       this.currentStop.deliveredDozens = next;
-      this.currentStop.status = 'changed';
       this.currentStop.updatedAt = new Date().toISOString();
       this.syncDonationDefaults();
+      this.refreshCurrentStatus();
     }
   }
 
@@ -187,7 +189,7 @@ export class DeliveryRunComponent {
 
   get suggestedDonationAmount(): number {
     if (!this.currentStop) return 0;
-    return (this.currentStop.dozens ?? 0) * 4;
+    return (this.currentStop.dozens ?? 0) * this.storage.getSuggestedRate();
   }
 
   get progressPercent(): number {
@@ -222,7 +224,7 @@ export class DeliveryRunComponent {
     return this.currentStop.donation;
   }
 
-  setDonationStatus(status: DonationStatus): void {
+  async setDonationStatus(status: DonationStatus): Promise<void> {
     const donation = this.currentDonation;
     donation.status = status;
     donation.method = undefined;
@@ -233,10 +235,10 @@ export class DeliveryRunComponent {
     }
     donation.suggestedAmount = this.suggestedDonationAmount;
     donation.date = new Date().toISOString();
-    void this.persistCurrentStopDonation();
+    await this.persistCurrentStopDonation();
   }
 
-  setDonationDonated(method: DonationMethod): void {
+  async setDonationDonated(method: DonationMethod): Promise<void> {
     const donation = this.currentDonation;
     donation.status = 'Donated';
     donation.method = method;
@@ -245,7 +247,7 @@ export class DeliveryRunComponent {
       donation.amount = this.suggestedDonationAmount;
     }
     donation.date = new Date().toISOString();
-    void this.persistCurrentStopDonation();
+    await this.persistCurrentStopDonation();
   }
 
   openDonationAmountPicker(): void {
@@ -261,30 +263,31 @@ export class DeliveryRunComponent {
     this.showAmountPicker = false;
   }
 
-  confirmAmountFromPicker(amount: number): void {
+  async confirmAmountFromPicker(amount: number): Promise<void> {
     const donation = this.currentDonation;
     donation.status = 'Donated';
     donation.amount = amount;
     donation.method = donation.method ?? 'cash';
     donation.date = new Date().toISOString();
-    void this.persistCurrentStopDonation();
+    await this.persistCurrentStopDonation();
     this.selectedAmount = amount;
     this.showAmountPicker = false;
   }
 
-  onInlineAmountChange(amount: number): void {
+  async onInlineAmountChange(amount: number): Promise<void> {
     const donation = this.currentDonation;
     donation.status = 'Donated';
     donation.amount = amount;
     donation.method = donation.method ?? 'cash';
     donation.date = new Date().toISOString();
     this.selectedAmount = amount;
-    void this.persistCurrentStopDonation();
+    await this.persistCurrentStopDonation();
   }
 
   private async persistCurrentStopDonation(): Promise<void> {
     if (!this.currentStop) return;
     await this.storage.updateDonation(this.currentStop.id, this.currentDonation);
+    this.refreshCurrentStatus();
   }
 
   private syncDonationDefaults(): void {
@@ -295,5 +298,34 @@ export class DeliveryRunComponent {
       donation.amount = donation.suggestedAmount;
     }
     void this.persistCurrentStopDonation();
+  }
+
+  private refreshCurrentStatus(): void {
+    if (!this.currentStop) return;
+    this.currentStop.status = this.storage.computeChangeStatus(this.currentStop, {
+      dozens: this.deliveredQty,
+      deliveredDozens: this.deliveredQty
+    }, this.currentDonation);
+    this.stops[this.currentIndex] = { ...this.currentStop };
+  }
+
+  private normalizeStop(stop: Delivery): Delivery {
+    if (stop.originalDozens == null) {
+      stop.originalDozens = stop.dozens ?? 0;
+    }
+    if (!stop.originalDonation) {
+      stop.originalDonation = {
+        status: 'NotRecorded',
+        suggestedAmount: (stop.originalDozens ?? stop.dozens ?? 0) * 4
+      };
+    }
+    if (!stop.donation) {
+      stop.donation = {
+        status: 'NotRecorded',
+        suggestedAmount: (stop.dozens ?? 0) * 4
+      };
+    }
+    stop.status = this.storage.computeChangeStatus(stop, undefined, stop.donation);
+    return stop;
   }
 }

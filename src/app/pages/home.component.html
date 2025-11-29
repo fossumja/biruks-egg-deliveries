@@ -1,18 +1,29 @@
 <div class="page-header">
   <div>
     <p class="lede text-muted">
-      Import your delivery CSV, pick a route, and start the run; use export to back up anytime. Data stays local for offline use.
+      Import your delivery CSV, pick a route, and start the run; use export to
+      back up anytime. Data stays local for offline use.
     </p>
   </div>
 </div>
 
 <section class="card hero">
   <div class="actions">
-    <button type="button" class="btn btn-primary" (click)="fileInput.click()" [disabled]="isImporting">
-      {{ isImporting ? 'Importing…' : 'Import CSV' }}
+    <button
+      type="button"
+      class="btn btn-secondary btn-outline-primary"
+      (click)="fileInput.click()"
+      [disabled]="isImporting"
+    >
+      {{ isImporting ? "Importing…" : "Import CSV" }}
     </button>
-    <button type="button" class="btn btn-secondary" (click)="exportCsv()" [disabled]="isExporting">
-      {{ isExporting ? 'Preparing…' : 'Backup (CSV)' }}
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="exportCsv()"
+      [disabled]="isExporting"
+    >
+      {{ isExporting ? "Preparing…" : "Backup (CSV)" }}
     </button>
     <input
       #fileInput
@@ -23,7 +34,51 @@
     />
   </div>
   <div class="subtext text-muted" *ngIf="lastBackupAt">
-    Last backup: {{ lastBackupAt | date : 'short' }}
+    Last backup: {{ lastBackupAt | date : "short" }}
   </div>
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+</section>
+
+<section class="card settings-card">
+  <div class="settings-row">
+    <div>
+      <div class="settings-title">Keep screen awake</div>
+      <div class="text-muted settings-subtitle">
+        Prevents the display from sleeping while you use the app.
+      </div>
+    </div>
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="wakeLockActive ? 'btn-primary' : 'btn-secondary'"
+      (click)="toggleWakeLock()"
+      [disabled]="!wakeLockSupported"
+      title="Keep the screen awake while using the app"
+    >
+      {{ wakeLockActive ? "On" : "Off" }}
+    </button>
+  </div>
+  <div class="text-muted" *ngIf="!wakeLockSupported">
+    Screen wake lock is not supported on this device/browser.
+  </div>
+</section>
+
+<section class="card settings-card">
+  <div class="settings-row">
+    <div>
+      <div class="settings-title">Suggested donation/dozen</div>
+      <div class="text-muted settings-subtitle">
+        Used across planner and run screens.
+      </div>
+    </div>
+    <select
+      class="form-control compact amount-select"
+      [(ngModel)]="suggestedRate"
+      (ngModelChange)="onSuggestedChange($event)"
+    >
+      <option *ngFor="let val of suggestedOptions" [ngValue]="val">
+        ${{ val }}
+      </option>
+    </select>
+  </div>
 </section>

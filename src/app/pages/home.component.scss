@@ -16,11 +16,49 @@
   gap: var(--spacing-2);
 }
 
+.settings-card {
+  margin-top: var(--spacing-3);
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.settings-title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-subtitle {
+  font-size: var(--font-size-sm);
+}
+
+.form-control.compact {
+  min-width: 120px;
+  padding: 8px 10px;
+}
+
 .actions {
   display: flex;
   gap: var(--spacing-2);
   align-items: center;
   flex-wrap: wrap;
+}
+
+.actions .btn.active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: #fff;
+}
+
+.actions .btn-outline-primary {
+  background: #fff;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .subtext {
@@ -59,6 +97,37 @@
   font-size: var(--font-size-base);
   background: #fff;
   color: var(--color-text);
+}
+
+.form-control.compact {
+  min-width: 120px;
+  padding: 8px 10px;
+  background: #fff;
+  color: var(--color-text);
+  appearance: auto;
+}
+
+.settings-card .amount-select {
+  min-width: 90px;
+  max-width: 110px;
+  padding: 6px 8px;
+  text-align: center;
+  font-size: 16px;
+  height: 38px;
+  line-height: 1.2;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--color-text);
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+}
+
+.settings-card .amount-select option {
+  background: #fff;
+  color: var(--color-text);
+  text-align: center;
 }
 
 .route-summary {

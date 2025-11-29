@@ -30,6 +30,7 @@ export class BackupService {
   }
 
   private toCsv(deliveries: Delivery[]): string {
+    const totalsMap = this.computeTotalsByBase(deliveries);
     const rows = deliveries.map((d) => ({
       Date: d.routeDate,
       'Delivery Order': d.deliveryOrder,
@@ -46,7 +47,9 @@ export class BackupService {
       SkippedReason: d.skippedReason ?? '',
       DonationStatus: d.donation?.status ?? 'NotRecorded',
       DonationMethod: d.donation?.method ?? '',
-      DonationAmount: d.donation?.amount ?? ''
+      DonationAmount: d.donation?.amount ?? '',
+      TotalDonation: totalsMap.get(d.baseRowId)?.donation.toFixed(2) ?? '0.00',
+      TotalDozens: totalsMap.get(d.baseRowId)?.dozens ?? 0
     }));
     return Papa.unparse(rows);
   }
@@ -55,6 +58,7 @@ export class BackupService {
     deliveries: Delivery[],
     state: { headers: string[]; rowsByBaseRowId: Record<string, string[]> }
   ): string {
+    const totalsMap = this.computeTotalsByBase(deliveries);
     const baseHeaders = [...state.headers];
     const baseRowIdIndex = baseHeaders.findIndex((h) => h.toLowerCase() === 'baserowid');
     const finalHeaders = [...baseHeaders];
@@ -78,6 +82,12 @@ export class BackupService {
           finalHeaders.push(c);
         }
       });
+    });
+
+    ['TotalDonation', 'TotalDozens'].forEach((col) => {
+      if (!finalHeaders.includes(col)) {
+        finalHeaders.push(col);
+      }
     });
 
     const deliveryMap = new Map<string, Delivery>();
@@ -117,9 +127,57 @@ export class BackupService {
         });
       });
 
+      const totals = totalsMap.get(baseRowId);
+      if (totals) {
+        const donationIdx = finalHeaders.indexOf('TotalDonation');
+        const dozensIdx = finalHeaders.indexOf('TotalDozens');
+        if (donationIdx >= 0) rowVals[donationIdx] = totals.donation.toFixed(2);
+        if (dozensIdx >= 0) rowVals[dozensIdx] = totals.dozens.toString();
+      }
+
       rows.push(rowVals);
     });
 
     return Papa.unparse({ fields: finalHeaders, data: rows });
+  }
+
+  private computeTotalsByBase(deliveries: Delivery[]): Map<string, { donation: number; dozens: number }> {
+    const map = new Map<string, { donation: number; dozens: number }>();
+    const addTotals = (baseRowId: string, donation: number, dozens: number) => {
+      const entry = map.get(baseRowId) ?? { donation: 0, dozens: 0 };
+      entry.donation += donation;
+      entry.dozens += dozens;
+      map.set(baseRowId, entry);
+    };
+
+    deliveries.forEach((d) => {
+      const baseId = d.baseRowId;
+      if (!baseId) return;
+
+      // Main run donation/dozens (only when delivered)
+      if (d.status === 'delivered') {
+        const donationAmt =
+          d.donation?.status === 'Donated'
+            ? Number(d.donation.amount ?? d.donation.suggestedAmount ?? 0)
+            : 0;
+        const dozens = Number(d.deliveredDozens ?? d.dozens ?? 0);
+        addTotals(baseId, donationAmt, dozens);
+      }
+
+      // One-off donations
+      (d.oneOffDonations ?? []).forEach((don) => {
+        const amt = Number(don.amount ?? don.suggestedAmount ?? 0);
+        addTotals(baseId, amt, 0);
+      });
+
+      // One-off deliveries (dozens + donation)
+      (d.oneOffDeliveries ?? []).forEach((entry) => {
+        const amt = Number(entry.donation?.amount ?? entry.donation?.suggestedAmount ?? 0);
+        const dozens = Number(entry.deliveredDozens ?? 0);
+        addTotals(baseId, amt, dozens);
+      });
+    });
+
+    return map;
   }
 }

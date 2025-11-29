@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DonationAmountPickerComponent } from '../components/donation-amount-picker.component';
 import { StopDeliveryCardComponent } from '../components/stop-delivery-card.component';
+import { DonationControlsComponent } from '../components/donation-controls.component';
 import { Delivery, DonationInfo } from '../models/delivery.model';
 import { Route } from '../models/route.model';
 import { StorageService } from '../services/storage.service';
@@ -22,6 +23,7 @@ import { ToastService } from '../services/toast.service';
     DragDropModule,
     FormsModule,
     DonationAmountPickerComponent,
+    DonationControlsComponent,
     StopDeliveryCardComponent,
   ],
   templateUrl: './route-planner.component.html',
@@ -42,6 +44,7 @@ export class RoutePlannerComponent {
   errorMessage = '';
   donationModalStop: Delivery | null = null;
   donationDraft?: Delivery;
+  donationTotals = { donationTotal: 0, dozensTotal: 0 };
   showAmountPicker = false;
   amountOptions: number[] = [];
   selectedAmount = 0;
@@ -80,6 +83,8 @@ export class RoutePlannerComponent {
     notes: '',
   };
 
+  noop(): void {}
+
   startSwipe(event: PointerEvent, stop: Delivery): void {
     this.swipeStartX = event.clientX;
     this.isSwiping = false;
@@ -88,7 +93,8 @@ export class RoutePlannerComponent {
   openOffScheduleDelivery(stop: Delivery): void {
     this.closeSwipe();
     this.offScheduleStop = stop;
-    const suggested = (stop.dozens ?? 0) * 4;
+    const rate = this.storage.getSuggestedRate();
+    const suggested = (stop.dozens ?? 0) * rate;
     this.offDonationDraft = {
       status: stop.donation?.status ?? 'NotRecorded',
       method: stop.donation?.method,
@@ -96,6 +102,7 @@ export class RoutePlannerComponent {
       suggestedAmount: suggested,
     };
     this.offDeliveredQty = stop.deliveredDozens ?? stop.dozens ?? 0;
+    this.donationTotals = this.computeOneOffTotals(stop);
   }
 
   closeOffSchedule(): void {
@@ -147,8 +154,12 @@ export class RoutePlannerComponent {
     }
     const stop = this.offScheduleStop;
     const donation = { ...this.offDonationDraft, date: new Date().toISOString() };
-    await this.storage.markDelivered(stop.id, this.offDeliveredQty || stop.dozens);
-    await this.storage.updateDonation(stop.id, donation);
+    await this.storage.appendOneOffDelivery(
+      stop.id,
+      this.offDeliveredQty || stop.dozens,
+      donation
+    );
+    this.toast.show('Delivery saved');
     await this.loadDeliveries();
     this.closeOffSchedule();
   }
@@ -327,16 +338,18 @@ export class RoutePlannerComponent {
         this.errorMessage = 'No route selected.';
         return;
       }
+      let fetched: Delivery[] = [];
       if (this.routeDate === this.ALL_SCHEDULES) {
         const all = await this.storage.getAllDeliveries();
-        this.deliveries = all.sort((a, b) => {
+        fetched = all.sort((a, b) => {
           const dateCmp = (a.routeDate || '').localeCompare(b.routeDate || '');
           if (dateCmp !== 0) return dateCmp;
           return (a.sortIndex ?? 0) - (b.sortIndex ?? 0);
         });
       } else {
-        this.deliveries = await this.storage.getDeliveriesByRoute(this.routeDate);
+        fetched = await this.storage.getDeliveriesByRoute(this.routeDate);
       }
+      this.deliveries = fetched.map((d) => this.normalizeDelivery(d));
       this.applyFilter(false);
     } catch (err) {
       console.error(err);
@@ -386,14 +399,17 @@ export class RoutePlannerComponent {
 
   async updatePlanned(stop: Delivery, value: number): Promise<void> {
     const dozens = Math.max(0, Number(value) || 0);
+    if (stop.originalDozens == null) {
+      stop.originalDozens = stop.dozens;
+    }
     await this.storage.updatePlannedDozens(stop.id, dozens);
     stop.dozens = dozens;
-    stop.status = 'changed';
     stop.deliveredDozens = undefined;
     stop.updatedAt = new Date().toISOString();
-    if (stop.originalDozens === undefined) {
-      stop.originalDozens = dozens;
+    if (stop.donation) {
+      stop.donation.suggestedAmount = dozens * 4;
     }
+    stop.status = this.storage.computeChangeStatus(stop);
     this.applyFilter(false);
   }
 
@@ -469,7 +485,7 @@ export class RoutePlannerComponent {
   }
 
   getDonationPillLabel(stop: Delivery): string {
-    const suggested = (stop.dozens ?? 0) * 4;
+    const suggested = (stop.dozens ?? 0) * this.storage.getSuggestedRate();
     const donation = stop.donation;
     if (!donation || donation.status === 'NotRecorded') return 'Donation';
     if (donation.status === 'NoDonation') return 'No donation';
@@ -499,6 +515,7 @@ export class RoutePlannerComponent {
   openDonationDetails(stop: Delivery): void {
     this.closeSwipe();
     this.donationModalStop = stop;
+    const rate = this.storage.getSuggestedRate();
     // shallow clone to edit
     this.donationDraft = {
       ...stop,
@@ -506,11 +523,12 @@ export class RoutePlannerComponent {
         status: stop.donation?.status ?? 'NotRecorded',
         method: stop.donation?.method,
         amount: stop.donation?.amount,
-        suggestedAmount: (stop.dozens ?? 0) * 4,
+        suggestedAmount: (stop.dozens ?? 0) * rate,
         date: stop.donation?.date,
         note: stop.donation?.note,
       },
     };
+    this.donationTotals = this.computeOneOffTotals(stop);
   }
 
   closeDonationModal(): void {
@@ -526,17 +544,28 @@ export class RoutePlannerComponent {
       return;
     }
     const donation = this.donationDraft.donation;
-    donation.suggestedAmount = (this.donationModalStop.dozens ?? 0) * 4;
-    this.donationModalStop.donation = donation;
-    void this.storage.updateDonation(this.donationModalStop.id, donation);
+    donation.suggestedAmount = (this.donationModalStop.dozens ?? 0) * this.storage.getSuggestedRate();
+    donation.date = new Date().toISOString();
+    void this.storage.appendOneOffDonation(this.donationModalStop.id, donation);
+    this.toast.show('Donation saved');
+    // Update local totals immediately so reopening shows the latest value.
+    if (this.donationModalStop) {
+      const list = Array.isArray(this.donationModalStop.oneOffDonations)
+        ? [...this.donationModalStop.oneOffDonations]
+        : [];
+      list.push(donation);
+      this.donationModalStop.oneOffDonations = list;
+      this.donationTotals = this.computeOneOffTotals(this.donationModalStop);
+    }
     this.closeDonationModal();
   }
 
   setDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
     if (!this.donationDraft) return;
+    const rate = this.storage.getSuggestedRate();
     const donation = this.donationDraft.donation ?? {
       status: 'NotRecorded',
-      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
+      suggestedAmount: (this.donationDraft.dozens ?? 0) * rate,
     };
     donation.status = status;
     if (status === 'NoDonation') {
@@ -546,19 +575,20 @@ export class RoutePlannerComponent {
       donation.method = undefined;
       donation.amount = undefined;
     }
-    donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
+    donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * rate;
     this.donationDraft.donation = donation;
   }
 
   setDonationMethod(method: 'cash' | 'venmo' | 'ach' | 'paypal' | 'other'): void {
     if (!this.donationDraft) return;
+    const rate = this.storage.getSuggestedRate();
     const donation = this.donationDraft.donation ?? {
       status: 'NotRecorded',
-      suggestedAmount: (this.donationDraft.dozens ?? 0) * 4,
+      suggestedAmount: (this.donationDraft.dozens ?? 0) * rate,
     };
     donation.status = 'Donated';
     donation.method = method;
-    donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
+    donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * rate;
     if (donation.amount == null) {
       donation.amount = donation.suggestedAmount;
     }
@@ -602,6 +632,17 @@ export class RoutePlannerComponent {
     }
     this.showAmountPicker = false;
     this.pickerMode = null;
+  }
+
+  onDonationAmountChange(amount: number): void {
+    if (!this.donationDraft?.donation) return;
+    const donation = this.donationDraft.donation;
+    donation.status = 'Donated';
+    donation.amount = amount;
+    donation.method = donation.method ?? 'cash';
+    donation.date = donation.date ?? new Date().toISOString();
+    donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
+    this.donationDraft.donation = donation;
   }
 
   openEdit(stop: Delivery): void {
@@ -711,6 +752,14 @@ export class RoutePlannerComponent {
     }
   }
 
+  get allSchedulesTotal(): number {
+    return this.routes.reduce((sum, r) => sum + (r.totalStops ?? 0), 0);
+  }
+
+  getSuggestedRate(): number {
+    return this.storage.getSuggestedRate();
+  }
+
   applyFilter(resetScroll = true): void {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) {
@@ -724,5 +773,57 @@ export class RoutePlannerComponent {
         d.city?.toLowerCase().includes(term)
       );
     });
+  }
+
+  private normalizeDelivery(stop: Delivery): Delivery {
+    const baseDozens =
+      stop.originalDozens != null ? stop.originalDozens : stop.dozens ?? 0;
+    if (stop.originalDozens == null) {
+      stop.originalDozens = baseDozens;
+    }
+    if (!stop.originalDonation) {
+      stop.originalDonation = {
+        status: 'NotRecorded',
+        suggestedAmount: baseDozens * 4,
+      };
+    }
+    if (!stop.donation) {
+      stop.donation = { status: 'NotRecorded', suggestedAmount: (stop.dozens ?? 0) * 4 };
+    }
+    stop.status = this.storage.computeChangeStatus(stop);
+    return stop;
+  }
+
+  private computeOneOffTotals(stop: Delivery): { donationTotal: number; dozensTotal: number } {
+    const mainDonation =
+      stop.donation?.status === 'Donated'
+        ? Number(stop.donation.amount ?? stop.donation.suggestedAmount ?? 0)
+        : 0;
+    const mainDozens =
+      stop.deliveredDozens != null
+        ? Number(stop.deliveredDozens)
+        : stop.status === 'delivered'
+          ? Number(stop.dozens ?? 0)
+          : 0;
+
+    const oneOffDonationTotal =
+      (stop.oneOffDonations ?? []).reduce(
+        (sum, d) => sum + Number(d.amount ?? d.suggestedAmount ?? 0),
+        0
+      ) +
+      (stop.oneOffDeliveries ?? []).reduce(
+        (sum, d) => sum + Number(d.donation?.amount ?? d.donation?.suggestedAmount ?? 0),
+        0
+      );
+
+    const oneOffDozensTotal = (stop.oneOffDeliveries ?? []).reduce(
+      (sum, d) => sum + Number(d.deliveredDozens ?? 0),
+      0
+    );
+
+    return {
+      donationTotal: mainDonation + oneOffDonationTotal,
+      dozensTotal: mainDozens + oneOffDozensTotal,
+    };
   }
 }

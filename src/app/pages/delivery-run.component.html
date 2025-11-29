@@ -13,6 +13,7 @@
         [donation]="currentDonation"
         [suggestedAmount]="suggestedDonationAmount"
         [showNoDonation]="true"
+        [allowDonationReselect]="true"
         (adjustQty)="adjustDelivered($event)"
         (donationStatusChange)="setDonationStatus($event)"
         (donationMethodChange)="setDonationDonated($event)"

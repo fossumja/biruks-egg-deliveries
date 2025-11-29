@@ -31,6 +31,13 @@ export interface Delivery {
   sortIndex: number;
   status: DeliveryStatus;
   donation?: DonationInfo;
+  originalDonation?: DonationInfo;
+  oneOffDonations?: DonationInfo[];
+  oneOffDeliveries?: {
+    deliveredDozens?: number;
+    donation?: DonationInfo;
+    date: string;
+  }[];
   deliveredAt?: string;
   skippedAt?: string;
   skippedReason?: string;

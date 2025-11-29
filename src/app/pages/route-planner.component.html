@@ -6,7 +6,7 @@
       (ngModelChange)="onRouteChange($event)"
     >
       <option [ngValue]="null" disabled>Choose a route…</option>
-      <option [ngValue]="ALL_SCHEDULES">All Schedules ({{ routes.length }})</option>
+      <option [ngValue]="ALL_SCHEDULES">All Schedules ({{ allSchedulesTotal }})</option>
       <option *ngFor="let r of routes" [ngValue]="r.routeDate">
         {{ r.routeDate }} ({{ r.totalStops }} stops)
       </option>
@@ -22,7 +22,7 @@
       <span class="glyph">⟳</span>
     </button>
     <button
-      class="btn btn-primary icon-btn"
+      class="btn btn-primary icon-btn btn-add"
       type="button"
       (click)="openNewDeliveryForm()"
       aria-label="Add delivery"
@@ -205,79 +205,30 @@
 <div class="donation-overlay" *ngIf="donationModalStop">
   <div class="donation-dialog">
     <h3>Donation for {{ donationModalStop!.name }}</h3>
-    <p class="text-muted">
-      Suggested: ${{ donationModalStop!.dozens * 4 }} ({{ donationModalStop!.dozens }} dz &#64; $4/dozen)
-    </p>
-    <div class="donation-toggle">
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.status === 'NotRecorded'"
-        (click)="setDonationStatus('NotRecorded')"
-      >
-        Not recorded
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.status === 'Donated'"
-        (click)="setDonationStatus('Donated')"
-      >
-        Donated
-      </button>
+    <div class="card">
+      <app-donation-controls
+        [donation]="donationDraft?.donation || null"
+        [suggestedAmount]="donationDraft?.donation?.suggestedAmount || donationModalStop.dozens * getSuggestedRate()"
+        [showNoDonation]="true"
+        [allowReselect]="true"
+        (donationStatusChange)="setDonationStatus($event)"
+        (donationMethodChange)="setDonationMethod($event)"
+        (amountChange)="onDonationAmountChange($event)"
+      />
     </div>
-
-    <div *ngIf="donationDraft?.donation?.status === 'Donated'" class="donation-methods">
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.method === 'cash'"
-        (click)="setDonationMethod('cash')"
-      >
-        Cash
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.method === 'venmo'"
-        (click)="setDonationMethod('venmo')"
-      >
-        Venmo
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.method === 'ach'"
-        (click)="setDonationMethod('ach')"
-      >
-        ACH
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.method === 'paypal'"
-        (click)="setDonationMethod('paypal')"
-      >
-        PayPal
-      </button>
-      <button
-        type="button"
-        class="btn-chip"
-        [class.active]="donationDraft?.donation?.method === 'other'"
-        (click)="setDonationMethod('other')"
-      >
-        Other
-      </button>
+    <div class="card totals-card">
+      <div class="totals-row">
+        <span>Total Donations</span>
+        <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
+      </div>
+      <div class="totals-row">
+        <span>Total Dozens</span>
+        <span>{{ donationTotals.dozensTotal }}</span>
+      </div>
     </div>
-
-    <div class="donation-amount-row" *ngIf="donationDraft?.donation?.status === 'Donated'">
-      <span>Amount: ${{ donationDraft?.donation?.amount ?? donationDraft?.donation?.suggestedAmount }}</span>
-      <button type="button" class="btn-link" (click)="openAmountPicker()">Adjust amount</button>
-    </div>
-
     <div class="donation-actions">
       <button type="button" class="ghost" (click)="closeDonationModal()">Cancel</button>
-      <button type="button" (click)="saveDonation()">Save</button>
+      <button type="button" class="btn btn-primary" (click)="saveDonation()">Save</button>
     </div>
   </div>
 </div>
@@ -292,6 +243,7 @@
         [donation]="offDonationDraft"
         [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
         [showNoDonation]="true"
+        [allowDonationReselect]="false"
         [showNotes]="false"
         (adjustQty)="adjustOffDelivered($event)"
         (donationStatusChange)="setOffDonationStatus($event)"

@@ -1,5 +1,6 @@
-import { DatePipe, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { DatePipe, NgIf, NgClass } from '@angular/common';
+import { Component, inject, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Papa from 'papaparse';
 import { Delivery, DeliveryStatus, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
@@ -11,11 +12,13 @@ import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, DatePipe],
+  imports: [NgIf, NgClass, FormsModule, DatePipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnDestroy {
+  private wakeLock: any | null = null;
+  private visibilityHandler?: () => void;
   private storage = inject(StorageService);
   private router = inject(Router);
   private backupService = inject(BackupService);
@@ -29,13 +32,36 @@ export class HomeComponent {
   selectedRouteDate: string | null = null;
   selectedRouteSummary?: Route;
   currentRoute?: string;
+  wakeLockSupported = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
+  wakeLockActive = false;
+  private wakeLockKey = 'keepScreenAwake';
+  suggestedRate = 4;
+  suggestedOptions = Array.from({ length: 101 }, (_, i) => i);
 
   async ngOnInit(): Promise<void> {
     await this.refreshRoutes();
     this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
     this.currentRoute = localStorage.getItem('currentRoute') || undefined;
+    this.suggestedRate = this.storage.getSuggestedRate();
+    this.wakeLockActive = localStorage.getItem(this.wakeLockKey) === 'true';
     this.autoselectRoute();
     await this.resumeIfNeeded();
+
+    if (this.wakeLockSupported) {
+      this.visibilityHandler = () => {
+        if (document.visibilityState === 'visible' && this.wakeLockActive && !this.wakeLock) {
+          void this.requestWakeLock();
+        }
+      };
+      document.addEventListener('visibilitychange', this.visibilityHandler);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.releaseWakeLock();
+    if (this.visibilityHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
+    }
   }
 
   async onFileSelected(event: Event): Promise<void> {
@@ -82,6 +108,54 @@ export class HomeComponent {
   goTo(route: string): void {
     this.router.navigate([route]);
   }
+
+  async toggleWakeLock(): Promise<void> {
+    if (!this.wakeLockSupported) {
+      this.toast.show('Screen wake lock not supported', 'error');
+      return;
+    }
+    if (this.wakeLockActive) {
+      this.releaseWakeLock();
+      this.wakeLockActive = false;
+      localStorage.setItem(this.wakeLockKey, 'false');
+      this.toast.show('Screen will sleep normally');
+    } else {
+      const granted = await this.requestWakeLock();
+      this.wakeLockActive = granted;
+      localStorage.setItem(this.wakeLockKey, granted ? 'true' : 'false');
+      if (!granted) {
+        this.toast.show('Unable to keep screen awake', 'error');
+      } else {
+        this.toast.show('Screen will stay awake');
+      }
+    }
+  }
+
+  private async requestWakeLock(): Promise<boolean> {
+    try {
+      // @ts-ignore
+      this.wakeLock = await navigator.wakeLock.request('screen');
+      this.wakeLock.addEventListener?.('release', () => {
+        this.wakeLock = null;
+        this.wakeLockActive = false;
+      });
+      this.wakeLockActive = true;
+      return true;
+    } catch (err) {
+      console.warn('Wake lock failed', err);
+      this.wakeLock = null;
+      this.wakeLockActive = false;
+      return false;
+    }
+  }
+
+  private releaseWakeLock(): void {
+    if (this.wakeLock?.release) {
+      this.wakeLock.release().catch(() => null);
+    }
+    this.wakeLock = null;
+  }
+
 
   async startRoute(): Promise<void> {
     if (!this.selectedRouteDate) return;
@@ -213,7 +287,7 @@ export class HomeComponent {
         d.sortIndex = i;
         d.deliveryOrder = i;
         if (!d.donation) {
-          d.donation = { status: 'NotRecorded', suggestedAmount: d.dozens * 4 };
+          d.donation = { status: 'NotRecorded', suggestedAmount: d.dozens * this.storage.getSuggestedRate() };
         }
       });
       deliveries.push(...list);
@@ -242,8 +316,15 @@ export class HomeComponent {
       status,
       method: methodRaw,
       amount,
-      suggestedAmount: plannedDozens * 4
+      suggestedAmount: plannedDozens * this.storage.getSuggestedRate()
     };
+  }
+
+  onSuggestedChange(value: number): void {
+    const safe = Number.isFinite(Number(value)) ? Number(value) : 4;
+    this.suggestedRate = safe;
+    this.storage.setSuggestedRate(safe);
+    this.toast.show(`Suggested donation set to $${safe}`);
   }
 
   private autoselectRoute(): void {

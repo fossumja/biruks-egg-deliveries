@@ -6,10 +6,19 @@ import { DeliveryRun } from '../models/delivery-run.model';
 import { BaseStop } from '../models/base-stop.model';
 import { CsvImportState } from '../models/csv-import-state.model';
 
+const SUGGESTED_KEY = 'suggestedDonationRate';
+
+function getSuggestedRate(): number {
+  if (typeof localStorage === 'undefined') return 4;
+  const raw = localStorage.getItem(SUGGESTED_KEY);
+  const num = raw != null ? Number(raw) : NaN;
+  return Number.isFinite(num) && num > 0 ? num : 4;
+}
+
 function defaultDonation(d?: Delivery): DonationInfo {
   return {
     status: 'NotRecorded',
-    suggestedAmount: (d?.dozens ?? 0) * 4
+    suggestedAmount: (d?.dozens ?? 0) * getSuggestedRate()
   };
 }
 
@@ -72,14 +81,33 @@ export class StorageService {
     void this.requestPersistence();
   }
 
+  getSuggestedRate(): number {
+    return getSuggestedRate();
+  }
+
+  setSuggestedRate(value: number): void {
+    if (typeof localStorage === 'undefined') return;
+    const safe = Number.isFinite(value) && value > 0 ? value : 4;
+    localStorage.setItem(SUGGESTED_KEY, safe.toString());
+  }
+
   async importDeliveries(deliveries: Delivery[]): Promise<void> {
     const now = new Date().toISOString();
+    const rate = this.getSuggestedRate();
     const normalized = deliveries.map((d) => ({
       ...d,
       runId: d.runId ?? d.routeDate ?? 'default-run',
       baseRowId: d.baseRowId ?? d.id,
       originalDozens: d.originalDozens ?? d.dozens,
-      donation: d.donation ?? defaultDonation(d),
+      donation: { ...(d.donation ?? defaultDonation({ ...(d as Delivery), dozens: d.dozens, donation: undefined })) },
+      originalDonation: {
+        ...(d.originalDonation ??
+          d.donation ??
+          {
+            status: 'NotRecorded',
+            suggestedAmount: (d.dozens ?? 0) * rate
+          })
+      },
       subscribed: d.subscribed ?? true
     }));
     await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
@@ -186,6 +214,7 @@ export class StorageService {
       const delivery = await this.db.deliveries.get(id);
       if (!delivery) return;
       const restoredDozens = delivery.originalDozens ?? delivery.dozens;
+      const baselineDonation = defaultDonation({ ...(delivery as Delivery), dozens: restoredDozens });
       await this.db.deliveries.update(id, {
         status:
           delivery.subscribed === false ||
@@ -205,7 +234,8 @@ export class StorageService {
             ? delivery.skippedReason ?? 'Unsubscribed'
             : undefined,
         deliveredDozens: undefined,
-        donation: defaultDonation({ ...(delivery as Delivery), dozens: restoredDozens }),
+        donation: baselineDonation,
+        originalDonation: baselineDonation,
         updatedAt: now,
         synced: false,
         subscribed: delivery.subscribed ?? true
@@ -239,6 +269,7 @@ export class StorageService {
             ? d.skippedReason ?? 'Unsubscribed'
             : undefined,
         donation: defaultDonation({ ...(d as Delivery), dozens: d.originalDozens ?? d.dozens }),
+        originalDonation: defaultDonation({ ...(d as Delivery), dozens: d.originalDozens ?? d.dozens }),
         updatedAt: now,
         synced: false
       }));
@@ -263,6 +294,7 @@ export class StorageService {
     const baseRowId = payload.baseRowId ?? `NEW_${crypto.randomUUID?.() ?? Date.now()}`;
     const id = payload.id ?? crypto.randomUUID?.() ?? `${Date.now()}_${Math.random()}`;
     const dozens = payload.dozens ?? 0;
+    const baseDonation: DonationInfo = { ...(payload.donation ?? defaultDonation({ ...(payload as Delivery), dozens })) };
     const newDelivery: Delivery = {
       id,
       runId: payload.runId ?? routeDate,
@@ -280,7 +312,8 @@ export class StorageService {
       sortIndex: currentCount,
       notes: payload.notes,
       status: payload.status ?? '',
-      donation: payload.donation ?? defaultDonation({ ...(payload as Delivery), dozens }),
+      donation: { ...baseDonation },
+      originalDonation: { ...baseDonation },
       subscribed: payload.subscribed ?? true,
       createdAt: now,
       updatedAt: now,
@@ -299,12 +332,16 @@ export class StorageService {
     const now = new Date().toISOString();
     const existing = await this.db.deliveries.get(id);
     const originalDozens = existing?.originalDozens ?? existing?.dozens ?? dozens;
-    const donation = (existing?.donation as DonationInfo | undefined) ?? defaultDonation(existing as Delivery);
-    donation.suggestedAmount = dozens * 4;
+    const donation =
+      ((existing?.donation as DonationInfo | undefined) ?? defaultDonation(existing as Delivery));
+    donation.suggestedAmount = dozens * this.getSuggestedRate();
+    const status = existing
+      ? this.computeChangeStatus(existing as Delivery, { dozens }, donation)
+      : ('changed' as DeliveryStatus);
     await this.db.deliveries.update(id, {
       dozens,
       originalDozens,
-      status: 'changed',
+      status,
       deliveredDozens: undefined,
       donation,
       updatedAt: now,
@@ -321,11 +358,14 @@ export class StorageService {
     const now = new Date().toISOString();
     const existing = await this.db.deliveries.get(id);
     const donation = (existing?.donation as DonationInfo | undefined) ?? defaultDonation(existing as Delivery);
-    donation.suggestedAmount = deliveredDozens * 4;
+    donation.suggestedAmount = deliveredDozens * this.getSuggestedRate();
+    const status = existing
+      ? this.computeChangeStatus(existing as Delivery, { dozens: deliveredDozens, deliveredDozens }, donation)
+      : ('changed' as DeliveryStatus);
     await this.db.deliveries.update(id, {
       deliveredDozens,
       dozens: deliveredDozens,
-      status: 'changed',
+      status,
       donation,
       updatedAt: now,
       synced: false
@@ -334,24 +374,84 @@ export class StorageService {
 
   async updateDonation(id: string, donation: DonationInfo): Promise<void> {
     const now = new Date().toISOString();
-    await this.db.deliveries.update(id, { donation, updatedAt: now, synced: false });
+    const existing = await this.db.deliveries.get(id);
+    const status = existing
+      ? this.computeChangeStatus(existing as Delivery, undefined, donation)
+      : ('changed' as DeliveryStatus);
+    await this.db.deliveries.update(id, { donation, status, updatedAt: now, synced: false });
+  }
+
+  async updateDonationPreserveStatus(id: string, donation: DonationInfo): Promise<void> {
+    const now = new Date().toISOString();
+    const existing = await this.db.deliveries.get(id);
+    if (!existing) return;
+    await this.db.deliveries.update(id, {
+      donation,
+      status: existing.status,
+      updatedAt: now,
+      synced: false
+    });
+  }
+
+  async appendOneOffDonation(id: string, donation: DonationInfo): Promise<void> {
+    const now = new Date().toISOString();
+    const existing = await this.db.deliveries.get(id);
+    if (!existing) return;
+    const list = Array.isArray(existing.oneOffDonations)
+      ? [...existing.oneOffDonations]
+      : [];
+    list.push({ ...donation, date: donation.date ?? now });
+    await this.db.deliveries.update(id, {
+      oneOffDonations: list,
+      updatedAt: now,
+      synced: false
+    });
+  }
+
+  async appendOneOffDelivery(
+    id: string,
+    deliveredDozens: number | undefined,
+    donation?: DonationInfo
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const existing = await this.db.deliveries.get(id);
+    if (!existing) return;
+    const list = Array.isArray(existing.oneOffDeliveries)
+      ? [...existing.oneOffDeliveries]
+      : [];
+    list.push({
+      deliveredDozens,
+      donation: donation ? { ...donation, date: donation.date ?? now } : undefined,
+      date: now
+    });
+    await this.db.deliveries.update(id, {
+      oneOffDeliveries: list,
+      updatedAt: now,
+      synced: false
+    });
   }
 
   async updateDeliveryFields(id: string, updates: Partial<Delivery>): Promise<void> {
     const now = new Date().toISOString();
     const existing = await this.db.deliveries.get(id);
     if (!existing) return;
+    const donation =
+      (updates.donation as DonationInfo | undefined) ??
+      (existing.donation as DonationInfo | undefined) ??
+      defaultDonation(existing as Delivery);
+    if (updates.dozens != null) {
+      donation.suggestedAmount = updates.dozens * this.getSuggestedRate();
+    }
+    const status =
+      updates.status ??
+      this.computeChangeStatus(existing as Delivery, updates as Delivery, donation);
     const next: Partial<Delivery> = {
       ...updates,
+      donation,
+      status,
       updatedAt: now,
       synced: false
     };
-    if (updates.dozens != null) {
-      const donation = (existing.donation as DonationInfo | undefined) ?? defaultDonation(existing as Delivery);
-      donation.suggestedAmount = updates.dozens * 4;
-      next.donation = donation;
-      next.status = updates.status ?? 'changed';
-    }
     await this.db.deliveries.update(id, next);
     await this.refreshRouteStats(existing.routeDate, now);
   }
@@ -427,5 +527,58 @@ export class StorageService {
     // Fallback if schedule identifier cannot be extracted from existing deliveries.
     // Schedule info should come from the delivery data (originally in Date column).
     return 'WeekA';
+  }
+
+  private baseDonation(existing: Delivery): DonationInfo {
+    const baselineDozens = existing.originalDozens ?? existing.dozens ?? 0;
+    return { status: 'NotRecorded', suggestedAmount: baselineDozens * 4 };
+  }
+
+  private isUnsubscribed(stop: Delivery): boolean {
+    const reason = stop.skippedReason?.toLowerCase?.().trim() ?? '';
+    return stop.subscribed === false || reason.includes('unsubscribed');
+  }
+
+  computeChangeStatus(
+    stop: Delivery,
+    overrides?: Partial<Delivery>,
+    donationOverride?: DonationInfo
+  ): DeliveryStatus {
+    if (stop.status === 'delivered') return 'delivered';
+    if (this.isUnsubscribed(stop) || stop.status === 'skipped') return 'skipped';
+
+    const baseDozens = stop.originalDozens ?? stop.dozens ?? 0;
+    const currentDozens = overrides?.dozens ?? stop.dozens ?? 0;
+
+    const baseDonation = { ...(stop.originalDonation ?? this.baseDonation(stop)) };
+    const currentDonation = {
+      ...(donationOverride ??
+        overrides?.donation ??
+        stop.donation ??
+        defaultDonation(stop))
+    };
+    const baseStatus = baseDonation.status ?? 'NotRecorded';
+    const currStatus = currentDonation.status ?? 'NotRecorded';
+    const currentSuggested = (overrides?.dozens ?? stop.dozens ?? 0) * 4;
+    const currentAmount = Number(
+      currentDonation.amount ?? currentDonation.suggestedAmount ?? currentSuggested
+    );
+
+    let donationChanged = baseStatus !== currStatus;
+
+    if (currStatus === 'Donated') {
+      if ((baseDonation.method ?? null) !== (currentDonation.method ?? null)) {
+        donationChanged = true;
+      }
+      if (currentAmount !== currentSuggested) {
+        donationChanged = true;
+      } else if (!donationChanged && baseStatus === 'Donated') {
+        donationChanged = false;
+      }
+    }
+
+    const qtyChanged = Number(baseDozens) !== Number(currentDozens);
+
+    return donationChanged || qtyChanged ? 'changed' : '';
   }
 }

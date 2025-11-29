@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Delivery, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
+import { DonationControlsComponent } from './donation-controls.component';
 
 @Component({
   selector: 'app-stop-delivery-card',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DonationControlsComponent],
   templateUrl: './stop-delivery-card.component.html',
   styleUrl: './stop-delivery-card.component.scss'
 })
@@ -17,6 +18,7 @@ export class StopDeliveryCardComponent implements OnChanges {
   @Input() suggestedAmount = 0;
   @Input() showNoDonation = true;
   @Input() showNotes = true;
+  @Input() allowDonationReselect = false;
 
   @Output() adjustQty = new EventEmitter<number>(); // delta
   @Output() donationStatusChange = new EventEmitter<DonationStatus>();
@@ -25,21 +27,9 @@ export class StopDeliveryCardComponent implements OnChanges {
   @Output() copyAddress = new EventEmitter<void>();
   @Output() openMap = new EventEmitter<void>();
 
-  amountOptions: number[] = [];
-  amountValue = 0;
-
   ngOnChanges(changes: SimpleChanges): void {
-    if ('donation' in changes || 'suggestedAmount' in changes) {
-      const base =
-        (this.donation?.amount ??
-          this.donation?.suggestedAmount ??
-          this.suggestedAmount ??
-          0) ?? 0;
-      this.amountValue = base;
-      this.refreshAmountOptions(base);
-    }
     // Ensure status defaults to Donated when a method is chosen and no status set
-    if (this.donation?.status === undefined && this.donation?.method) {
+    if (('donation' in changes || 'suggestedAmount' in changes) && this.donation?.method && !this.donation.status) {
       this.donation.status = 'Donated';
     }
   }
@@ -60,22 +50,11 @@ export class StopDeliveryCardComponent implements OnChanges {
     this.amountChange.emit(amount);
   }
 
-  onAmountChangeSelect(value: number): void {
-    const num = Number(value) || 0;
-    this.amountValue = num;
-    this.onAmountPicked(num);
-  }
-
   onCopyAddress(): void {
     this.copyAddress.emit();
   }
 
   onOpenMap(): void {
     this.openMap.emit();
-  }
-
-  private refreshAmountOptions(base: number): void {
-    const max = Math.min(9999, Math.max(200, Math.ceil(base * 2 + 50)));
-    this.amountOptions = Array.from({ length: max + 1 }, (_, i) => i);
   }
 }
