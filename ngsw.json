@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1764558665350,
+  "timestamp": 1764558847560,
   "index": "/biruks-egg-deliveries/index.html",
   "assetGroups": [
     {
@@ -16,7 +16,7 @@
         "/biruks-egg-deliveries/main-Y2XJGJJT.js",
         "/biruks-egg-deliveries/manifest.webmanifest",
         "/biruks-egg-deliveries/polyfills-B6TNHZQ6.js",
-        "/biruks-egg-deliveries/styles-M6U3UYJJ.css"
+        "/biruks-egg-deliveries/styles-7EERRGEU.css"
       ],
       "patterns": []
     },
@@ -115,11 +115,11 @@
     "/biruks-egg-deliveries/icons/icon-512x512.png": "4a1b10456e31c1b12deec632c461bb928549fbac",
     "/biruks-egg-deliveries/icons/icon-72x72.png": "ac5d6ec22e9a16bd7743a0ec074c4092f44adfd2",
     "/biruks-egg-deliveries/icons/icon-96x96.png": "5c1997c8c5aff379fa081c7bdf1ca4afa1d4e7dc",
-    "/biruks-egg-deliveries/index.html": "d73c8a40d99074a0f15d987ab48f8f47387bb028",
+    "/biruks-egg-deliveries/index.html": "f967753cd3201443e6235541229343ae75b1ae30",
     "/biruks-egg-deliveries/main-Y2XJGJJT.js": "195ebcf0b0bd41b2eb958126256369e15a614041",
     "/biruks-egg-deliveries/manifest.webmanifest": "8f8e45688e3620e945357553a4cae9824c6e1943",
     "/biruks-egg-deliveries/polyfills-B6TNHZQ6.js": "bf76ac291d7f51c1139b7edcf86b359a30c08c64",
-    "/biruks-egg-deliveries/styles-M6U3UYJJ.css": "46e50121a493e2271854f73bf3350cc0c2f1687b"
+    "/biruks-egg-deliveries/styles-7EERRGEU.css": "391556def72535946a890fc522c1bd97b33b70b1"
   },
   "navigationUrls": [
     {
