@@ -10,7 +10,11 @@ export class BackupService {
   async exportAll(): Promise<void> {
     const deliveries = await this.storage.getAllDeliveries();
     const importState = await this.storage.getImportState('default');
-    const csv = importState ? this.toCsvWithImportState(deliveries, importState) : this.toCsv(deliveries);
+    const runEntries = await this.storage.getAllRunEntries();
+    const totalsMap = this.computeTotalsByBase(deliveries, runEntries, importState ?? undefined);
+    const csv = importState
+      ? this.toCsvWithImportState(deliveries, importState, totalsMap)
+      : this.toCsv(deliveries, totalsMap);
     const filename = `BiruksEggDeliveries-${new Date().toISOString().slice(0, 10)}.csv`;
     const file = new File([csv], filename, { type: 'text/csv' });
 
@@ -29,8 +33,10 @@ export class BackupService {
     localStorage.setItem('lastBackupAt', now);
   }
 
-  private toCsv(deliveries: Delivery[]): string {
-    const totalsMap = this.computeTotalsByBase(deliveries);
+  private toCsv(
+    deliveries: Delivery[],
+    totalsMap: Map<string, { donation: number; dozens: number; taxable: number }>
+  ): string {
     const rows = deliveries.map((d) => ({
       Date: d.routeDate,
       'Delivery Order': d.deliveryOrder,
@@ -57,9 +63,9 @@ export class BackupService {
 
   private toCsvWithImportState(
     deliveries: Delivery[],
-    state: { headers: string[]; rowsByBaseRowId: Record<string, string[]> }
+    state: { headers: string[]; rowsByBaseRowId: Record<string, string[]> },
+    totalsMap: Map<string, { donation: number; dozens: number; taxable: number }>
   ): string {
-    const totalsMap = this.computeTotalsByBase(deliveries);
     const baseHeaders = [...state.headers];
     const baseRowIdIndex = baseHeaders.findIndex((h) => h.toLowerCase() === 'baserowid');
     const finalHeaders = [...baseHeaders];
@@ -145,7 +151,9 @@ export class BackupService {
   }
 
   private computeTotalsByBase(
-    deliveries: Delivery[]
+    deliveries: Delivery[],
+    runEntries: { baseRowId: string; donationAmount: number; dozens: number; taxableAmount: number }[],
+    importState?: { headers: string[]; rowsByBaseRowId: Record<string, string[]> }
   ): Map<string, { donation: number; dozens: number; taxable: number }> {
     const map = new Map<string, { donation: number; dozens: number; taxable: number }>();
     const addTotals = (baseRowId: string, donation: number, dozens: number, taxable: number) => {
@@ -156,6 +164,44 @@ export class BackupService {
       map.set(baseRowId, entry);
     };
 
+    // 1) Baseline from import state (if totals columns exist)
+    if (importState) {
+      const { headers, rowsByBaseRowId } = importState;
+      const donationIdx = headers.findIndex(
+        (h) => h.toLowerCase() === 'totaldonation'
+      );
+      const dozensIdx = headers.findIndex(
+        (h) => h.toLowerCase() === 'totaldozens'
+      );
+      const taxableIdx = headers.findIndex(
+        (h) => h.toLowerCase() === 'totaltaxabledonation'
+      );
+
+      Object.entries(rowsByBaseRowId).forEach(([baseRowId, values]) => {
+        let donation = 0;
+        let dozens = 0;
+        let taxable = 0;
+        if (donationIdx >= 0 && donationIdx < values.length) {
+          donation = Number(values[donationIdx]) || 0;
+        }
+        if (dozensIdx >= 0 && dozensIdx < values.length) {
+          dozens = Number(values[dozensIdx]) || 0;
+        }
+        if (taxableIdx >= 0 && taxableIdx < values.length) {
+          taxable = Number(values[taxableIdx]) || 0;
+        }
+        if (donation || dozens || taxable) {
+          addTotals(baseRowId, donation, dozens, taxable);
+        }
+      });
+    }
+
+    // 2) Completed runs from runEntries
+    runEntries.forEach((e) => {
+      addTotals(e.baseRowId, e.donationAmount, e.dozens, e.taxableAmount);
+    });
+
+    // 3) Current live deliveries and one-offs
     deliveries.forEach((d) => {
       const baseId = d.baseRowId;
       if (!baseId) return;

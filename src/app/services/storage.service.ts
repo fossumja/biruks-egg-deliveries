@@ -5,6 +5,7 @@ import { Route } from '../models/route.model';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { BaseStop } from '../models/base-stop.model';
 import { CsvImportState } from '../models/csv-import-state.model';
+import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 
 const SUGGESTED_KEY = 'suggestedDonationRate';
 
@@ -36,6 +37,7 @@ class AppDB extends Dexie {
   runs!: Table<DeliveryRun, string>;
   baseStops!: Table<BaseStop, string>;
   importStates!: Table<CsvImportState, string>;
+  runEntries!: Table<RunSnapshotEntry, string>;
 
   constructor() {
     super('BiruksEggDeliveriesDB');
@@ -77,6 +79,14 @@ class AppDB extends Dexie {
         }
         await tx.table('deliveries').bulkPut(deliveries);
       });
+    this.version(4).stores({
+      deliveries: 'id, runId, baseRowId, routeDate, status, sortIndex',
+      routes: 'routeDate',
+      runs: 'id, weekType, routeDate',
+      baseStops: 'baseRowId',
+      importStates: 'id',
+      runEntries: 'id, runId, baseRowId'
+    });
   }
 }
 
@@ -172,6 +182,47 @@ export class StorageService {
     return this.db.deliveries.where('runId').equals(runId).sortBy('sortIndex');
   }
 
+  async getRunsForSchedule(scheduleId: string): Promise<DeliveryRun[]> {
+    return this.db.runs
+      .where('weekType')
+      .equals(scheduleId)
+      .toArray()
+      .then((runs) => runs.sort((a, b) => a.date.localeCompare(b.date)));
+  }
+
+  async getAllRuns(): Promise<DeliveryRun[]> {
+    const runs = await this.db.runs.toArray();
+    return runs.sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  getRunEntries(runId: string): Promise<RunSnapshotEntry[]> {
+    return this.db.runEntries.where('runId').equals(runId).toArray();
+  }
+
+  getAllRunEntries(): Promise<RunSnapshotEntry[]> {
+    return this.db.runEntries.toArray();
+  }
+
+  async updateRunEntry(
+    id: string,
+    patch: Partial<RunSnapshotEntry>
+  ): Promise<void> {
+    await this.db.runEntries.update(id, patch);
+  }
+
+  async saveRunEntryOrdering(
+    runId: string,
+    entries: RunSnapshotEntry[]
+  ): Promise<void> {
+    const ordered = entries
+      .slice()
+      .sort(
+        (a, b) =>
+          (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
+      );
+    await this.db.runEntries.bulkPut(ordered);
+  }
+
   async markDelivered(id: string, deliveredDozens?: number): Promise<void> {
     const now = new Date().toISOString();
     await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
@@ -226,6 +277,109 @@ export class StorageService {
       updatedAt: now
     }));
     await this.db.deliveries.bulkPut(updated);
+  }
+
+  async completeRun(routeDate: string, endedEarly: boolean): Promise<void> {
+    const now = new Date().toISOString();
+    // Snapshot history first, then reset live route state.
+    await this.db.transaction(
+      'rw',
+      this.db.deliveries,
+      this.db.routes,
+      this.db.runs,
+      this.db.runEntries,
+      async () => {
+        const deliveries = await this.db.deliveries
+          .where('routeDate')
+          .equals(routeDate)
+          .toArray();
+        if (!deliveries.length) {
+          return;
+        }
+
+        const pending = deliveries.filter(
+          (d) => d.status === '' || d.status === 'changed'
+        );
+        if (pending.length) {
+          throw new Error('Cannot complete run: some stops are still pending.');
+        }
+
+        const first = deliveries[0] as Delivery;
+        const scheduleId =
+          first.week || first.routeDate.replace(/\s+/g, '') || 'Schedule';
+        const runId = `${routeDate}_${now}`;
+
+        const snapshot: DeliveryRun = {
+          id: runId,
+          date: now,
+          weekType: scheduleId,
+          label: `${routeDate} – ${now.slice(0, 10)}`,
+          status: endedEarly ? 'endedEarly' : 'completed',
+          routeDate
+        };
+        await this.db.runs.put(snapshot);
+
+        const entries: RunSnapshotEntry[] = [];
+        for (const raw of deliveries) {
+          const d = raw as Delivery;
+          if (d.status !== 'delivered' && d.status !== 'skipped') continue;
+
+          const dozens = Number(d.deliveredDozens ?? d.dozens ?? 0);
+          const deliveryOrder = Number(
+            d.deliveryOrder ?? d.sortIndex ?? 0
+          );
+          const donation =
+            (d.donation as DonationInfo | undefined) ??
+            defaultDonation(d as Delivery);
+          const suggested =
+            donation.suggestedAmount ??
+            dozens * getSuggestedRate();
+          const donationAmount =
+            donation.status === 'Donated'
+              ? Number(
+                  donation.amount ??
+                    donation.suggestedAmount ??
+                    suggested
+                )
+              : 0;
+          const taxableAmount =
+            donation.status === 'Donated'
+              ? computeTaxableAmount({
+                  ...donation,
+                  amount: donationAmount,
+                  suggestedAmount: suggested
+                })
+              : 0;
+
+          entries.push({
+            id: typeof crypto !== 'undefined' && crypto.randomUUID
+              ? crypto.randomUUID()
+              : `${runId}_${d.baseRowId}`,
+            runId,
+            baseRowId: d.baseRowId,
+            name: d.name,
+            address: d.address,
+            city: d.city,
+            state: d.state,
+            zip: d.zip,
+            status: d.status as 'delivered' | 'skipped',
+            dozens,
+            deliveryOrder,
+            donationStatus: donation.status,
+            donationMethod: donation.method,
+            donationAmount,
+            taxableAmount
+          });
+        }
+
+        if (entries.length) {
+          await this.db.runEntries.bulkAdd(entries);
+        }
+      }
+    );
+
+    // Reset live route state outside the snapshot transaction.
+    await this.resetRoute(routeDate);
   }
 
   async resetDelivery(id: string): Promise<void> {

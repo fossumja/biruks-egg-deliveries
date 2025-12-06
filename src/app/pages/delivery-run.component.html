@@ -68,8 +68,13 @@
     <button type="button" class="btn btn-primary" (click)="backupNow()">
       Backup now
     </button>
-    <button class="btn btn-secondary" type="button" (click)="finishRoute()">
-      Done
+    <button
+      type="button"
+      class="btn btn-secondary"
+      [disabled]="isCompleting"
+      (click)="completeRun()"
+    >
+      {{ isCompleting ? "Completing…" : "Complete run" }}
     </button>
   </div>
 </div>

@@ -33,6 +33,7 @@ export class HomeComponent implements OnDestroy {
   isExporting = false;
   pendingImportAfterBackup = false;
   showImportHint = false;
+  showHelp = false;
   errorMessage = '';
   selectedRouteDate: string | null = null;
   selectedRouteSummary?: Route;
@@ -441,6 +442,14 @@ export class HomeComponent implements OnDestroy {
     this.suggestedRate = next;
     this.storage.setSuggestedRate(next);
     this.toast.show(`Suggested donation set to $${next}`);
+  }
+
+  openHelp(): void {
+    this.showHelp = true;
+  }
+
+  closeHelp(): void {
+    this.showHelp = false;
   }
 
   togglePlannerReorderDefault(): void {

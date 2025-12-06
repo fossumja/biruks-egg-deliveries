@@ -16,6 +16,13 @@
     >
       {{ isExporting ? "Preparing…" : "Backup (CSV)" }}
     </button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="openHelp()"
+    >
+      Help
+    </button>
     <input
       #fileInput
       type="file"
@@ -50,26 +57,6 @@
       title="Dark mode"
     >
       {{ darkModeEnabled ? "On" : "Off" }}
-    </button>
-  </div>
-</section>
-
-<section class="card settings-card">
-  <div class="settings-row">
-    <div>
-      <div class="settings-title">Drag to reorder on Planner</div>
-      <div class="text-muted settings-subtitle">
-        When on, you can drag people to change their route order.
-      </div>
-    </div>
-    <button
-      type="button"
-      class="btn"
-      [ngClass]="plannerReorderDefaultEnabled ? 'btn-primary' : 'btn-secondary'"
-      (click)="togglePlannerReorderDefault()"
-      title="Toggle drag-to-reorder on Planner"
-    >
-      {{ plannerReorderDefaultEnabled ? "On" : "Off" }}
     </button>
   </div>
 </section>
@@ -125,3 +112,59 @@
     <span *ngIf="info.commit"> (commit {{ info.commit.slice(0, 7) }})</span>
   </div>
 </section>
+
+<div class="help-overlay" *ngIf="showHelp">
+  <div class="help-dialog card">
+    <h3>Biruk’s Egg Deliveries – Help</h3>
+    <div class="help-content">
+      <p>
+        This app helps you import your delivery CSV, plan routes, run deliveries,
+        record donations (including the taxable portion), and export a single CSV
+        that you can use for records and taxes.
+      </p>
+
+      <h4>Daily / Weekly workflow</h4>
+      <ul>
+        <li>Import your route CSV on the Home page.</li>
+        <li>Use <strong>Planner</strong> to review stops, adjust dozens, add/edit people, and manage subscriptions.</li>
+        <li>Use <strong>Run</strong> to deliver or skip each stop and record donations.</li>
+        <li>When finished, optionally <strong>Backup (CSV)</strong>, then tap <strong>Complete run</strong> on the Run page.</li>
+      </ul>
+
+      <h4>Planner</h4>
+      <ul>
+        <li>Choose a schedule (e.g., Week A) from the dropdown.</li>
+        <li>Use the run selector (when present) to switch between <em>Current (live)</em> and past runs.</li>
+        <li>Swipe a card to open the hidden menu: Reset, Edit, Skip/Unskip, Unsubscribe/Resubscribe, one‑off Donation, one‑off Delivery.</li>
+        <li>Use the Reorder toggle + drag handle to change the order, or turn it off to avoid accidental moves.</li>
+      </ul>
+
+      <h4>Run page</h4>
+      <ul>
+        <li>Deliver or Skip each stop; changes are saved immediately.</li>
+        <li>Use the donation buttons to record how much and how people paid.</li>
+        <li><strong>End Run</strong> marks all remaining stops as skipped.</li>
+        <li><strong>Complete run</strong> archives the run and resets the route so you can run it again later.</li>
+      </ul>
+
+      <h4>Exports & totals</h4>
+      <ul>
+        <li><strong>Backup (CSV)</strong> always contains:</li>
+        <li>All original columns from your import.</li>
+        <li>All completed runs recorded in the app.</li>
+        <li>All one‑off deliveries and donations.</li>
+        <li>Running totals per person for dozens, donations, and taxable donations.</li>
+      </ul>
+
+      <p class="text-muted">
+        You can run many times during the year and export whenever you need.
+        For tax time, export a fresh CSV and use its totals to build donor statements.
+      </p>
+    </div>
+    <div class="help-actions">
+      <button type="button" class="btn btn-secondary" (click)="closeHelp()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

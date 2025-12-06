@@ -10,10 +10,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DonationAmountPickerComponent } from '../components/donation-amount-picker.component';
 import { StopDeliveryCardComponent } from '../components/stop-delivery-card.component';
 import { DonationControlsComponent } from '../components/donation-controls.component';
-import { Delivery, DonationInfo } from '../models/delivery.model';
+import {
+  Delivery,
+  DonationInfo,
+  DonationMethod,
+  DonationStatus,
+} from '../models/delivery.model';
 import { Route } from '../models/route.model';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
+import { DeliveryRun } from '../models/delivery-run.model';
+import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 
 @Component({
   selector: 'app-route-planner',
@@ -64,6 +71,21 @@ export class RoutePlannerComponent {
   showNewForm = false;
   savingNew = false;
   reorderEnabled = false;
+  runOptions: DeliveryRun[] = [];
+  selectedRunId: string | 'live' | null = 'live';
+  viewingRun = false;
+  runEntries: RunSnapshotEntry[] = [];
+  allRuns: DeliveryRun[] = [];
+  selectedRouteOrRun: string | null = null;
+  editingRunEntry: RunSnapshotEntry | null = null;
+  runEntryDraft: {
+    status: 'delivered' | 'skipped';
+    dozens: number;
+    deliveryOrder: number;
+    donationStatus: DonationStatus;
+    donationMethod: DonationMethod | '';
+    donationAmount: number;
+  } | null = null;
   newDelivery = {
     deliveryOrder: 0,
     routeDate: '',
@@ -349,6 +371,7 @@ export class RoutePlannerComponent {
 
   async ngOnInit(): Promise<void> {
     this.routes = await this.storage.getRoutes();
+    this.allRuns = await this.storage.getAllRuns();
     this.routeDate = this.route.snapshot.paramMap.get('routeDate') || undefined;
     if (!this.routeDate) {
       this.routeDate = await this.pickFallbackRoute();
@@ -356,7 +379,13 @@ export class RoutePlannerComponent {
     // Initialize reorder mode from persisted setting.
     const storedReorder = localStorage.getItem('plannerReorderEnabled');
     this.reorderEnabled = storedReorder === 'true';
+    await this.loadRunsForRoute();
     this.newDelivery.routeDate = this.routeDate ?? '';
+    if (this.routeDate) {
+      this.selectedRouteOrRun = `route:${this.routeDate}`;
+    } else {
+      this.selectedRouteOrRun = null;
+    }
     if (!this.routeDate) {
       this.errorMessage = 'No route selected.';
       this.loading = false;
@@ -389,6 +418,7 @@ export class RoutePlannerComponent {
       }
       this.deliveries = fetched.map((d) => this.normalizeDelivery(d));
       this.applyFilter(false);
+      await this.loadRunsForRoute();
     } catch (err) {
       console.error(err);
       this.errorMessage = 'Failed to load deliveries.';
@@ -510,12 +540,14 @@ export class RoutePlannerComponent {
       this.routeDate = undefined;
       this.deliveries = [];
       this.filteredDeliveries = [];
+      this.selectedRouteOrRun = null;
       return;
     }
     this.routeDate = routeDate;
     if (routeDate !== this.ALL_SCHEDULES) {
       this.persistRouteSelection();
     }
+    this.selectedRouteOrRun = `route:${routeDate}`;
     void this.loadDeliveries();
   }
 
@@ -709,6 +741,190 @@ export class RoutePlannerComponent {
 
   toggleReorder(): void {
     this.reorderEnabled = !this.reorderEnabled;
+  }
+
+  openRunEntryEdit(entry: RunSnapshotEntry): void {
+    this.editingRunEntry = entry;
+    this.runEntryDraft = {
+      status: entry.status,
+      dozens: entry.dozens,
+      deliveryOrder: (entry.deliveryOrder ?? 0) + 1,
+      donationStatus: entry.donationStatus,
+      donationMethod: entry.donationMethod ?? '',
+      donationAmount: entry.donationAmount,
+    };
+  }
+
+  async onRouteOrRunChange(key: string | null): Promise<void> {
+    this.selectedRouteOrRun = key;
+    this.editingRunEntry = null;
+    this.runEntryDraft = null;
+
+    if (!key) {
+      this.routeDate = undefined;
+      this.viewingRun = false;
+      this.selectedRunId = 'live';
+      this.deliveries = [];
+      this.filteredDeliveries = [];
+      this.runEntries = [];
+      return;
+    }
+
+    if (key === this.ALL_SCHEDULES || key.startsWith('route:')) {
+      // Live route selection.
+      const route =
+        key === this.ALL_SCHEDULES ? this.ALL_SCHEDULES : key.slice('route:'.length);
+      this.routeDate = route === this.ALL_SCHEDULES ? this.ALL_SCHEDULES : route;
+      if (this.routeDate && this.routeDate !== this.ALL_SCHEDULES) {
+        this.persistRouteSelection();
+      }
+      this.viewingRun = false;
+      this.selectedRunId = 'live';
+      this.runEntries = [];
+      await this.loadDeliveries();
+      return;
+    }
+
+    if (key.startsWith('run:')) {
+      const runId = key.slice('run:'.length);
+      this.selectedRunId = runId;
+      this.viewingRun = true;
+      const run =
+        this.allRuns.find((r) => r.id === runId) ?? null;
+      if (run?.routeDate) {
+        this.routeDate = run.routeDate;
+      }
+      const entries = await this.storage.getRunEntries(runId);
+      this.runEntries = entries
+        .slice()
+        .sort(
+          (a, b) =>
+            (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
+        );
+      return;
+    }
+  }
+
+  cancelRunEntryEdit(): void {
+    this.editingRunEntry = null;
+    this.runEntryDraft = null;
+  }
+
+  private computeRunEntryTaxable(
+    dozens: number,
+    status: DonationStatus,
+    amount: number
+  ): number {
+    if (status !== 'Donated') return 0;
+    const suggested = dozens * this.storage.getSuggestedRate();
+    const actual = Number.isFinite(amount) ? amount : suggested;
+    const extra = actual - suggested;
+    return extra > 0 ? extra : 0;
+  }
+
+  async saveRunEntryEdit(): Promise<void> {
+    if (!this.editingRunEntry || !this.runEntryDraft) return;
+    const original = this.editingRunEntry;
+    const draft = this.runEntryDraft;
+
+    const newDozens = Math.max(0, Number(draft.dozens) || 0);
+    const newAmount = Math.max(0, Number(draft.donationAmount) || 0);
+    const taxable = this.computeRunEntryTaxable(
+      newDozens,
+      draft.donationStatus,
+      newAmount
+    );
+
+    // Update ordering within current run entries.
+    const requestedOrderRaw = draft.deliveryOrder || 1;
+    const maxOrder = this.runEntries.length || 1;
+    const requestedOrder = Math.min(
+      Math.max(1, requestedOrderRaw),
+      maxOrder
+    );
+
+    const entries = this.runEntries.slice();
+    const idx = entries.findIndex((e) => e.id === original.id);
+    if (idx !== -1) {
+      const [removed] = entries.splice(idx, 1);
+      entries.splice(requestedOrder - 1, 0, removed);
+      entries.forEach((e, i) => {
+        e.deliveryOrder = i;
+        if (e.id === original.id) {
+          e.dozens = newDozens;
+          e.donationStatus = draft.donationStatus;
+          e.donationMethod =
+            draft.donationStatus === 'Donated'
+              ? (draft.donationMethod || undefined)
+              : undefined;
+          e.donationAmount =
+            draft.donationStatus === 'Donated' ? newAmount : 0;
+          e.taxableAmount = taxable;
+          e.status = draft.status;
+        }
+      });
+      this.runEntries = entries;
+      await this.storage.saveRunEntryOrdering(
+        original.runId,
+        entries
+      );
+      await this.storage.updateRunEntry(original.id, {
+        dozens: newDozens,
+        donationStatus: draft.donationStatus,
+        donationMethod:
+          draft.donationStatus === 'Donated'
+            ? (draft.donationMethod || undefined)
+            : undefined,
+        donationAmount:
+          draft.donationStatus === 'Donated' ? newAmount : 0,
+        taxableAmount: taxable,
+        status: draft.status,
+        deliveryOrder:
+          requestedOrder - 1,
+      });
+    }
+
+    this.editingRunEntry = null;
+    this.runEntryDraft = null;
+  }
+
+  private getScheduleId(routeDate: string): string {
+    return routeDate.replace(/\s+/g, '') || 'Schedule';
+  }
+
+  private async loadRunsForRoute(): Promise<void> {
+    if (!this.routeDate || this.routeDate === this.ALL_SCHEDULES) {
+      this.runOptions = [];
+      this.selectedRunId = 'live';
+      this.viewingRun = false;
+      return;
+    }
+    const scheduleId = this.getScheduleId(this.routeDate);
+    this.runOptions = await this.storage.getRunsForSchedule(scheduleId);
+    // Always default to live view when changing route.
+    this.selectedRunId = 'live';
+    this.viewingRun = false;
+  }
+
+  async onRunChange(runId: string | 'live'): Promise<void> {
+    this.selectedRunId = runId;
+    if (runId === 'live') {
+      this.viewingRun = false;
+      this.runEntries = [];
+       this.editingRunEntry = null;
+       this.runEntryDraft = null;
+      return;
+    }
+    this.viewingRun = true;
+    const entries = await this.storage.getRunEntries(runId);
+    this.runEntries = entries
+      .slice()
+      .sort(
+        (a, b) =>
+          (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
+      );
+    this.editingRunEntry = null;
+    this.runEntryDraft = null;
   }
 
   async saveEdit(): Promise<void> {

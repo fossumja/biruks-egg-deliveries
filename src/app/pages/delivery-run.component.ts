@@ -41,6 +41,8 @@ export class DeliveryRunComponent {
 
   showSkipDialog = false;
   otherReason = '';
+  private endedEarly = false;
+  isCompleting = false;
   showEndRunDialog = false;
 
   async ngOnInit(): Promise<void> {
@@ -76,6 +78,8 @@ export class DeliveryRunComponent {
     if (nextIndex === -1) {
       this.finished = true;
       this.currentStop = undefined;
+      // Natural completion (not ended early).
+      this.endedEarly = false;
     } else {
       this.finished = false;
       this.currentIndex = nextIndex;
@@ -173,6 +177,7 @@ export class DeliveryRunComponent {
       ).length;
       this.finished = true;
       this.currentStop = undefined;
+      this.endedEarly = true;
       this.showEndRunDialog = false;
       this.toast.show('Run ended early; remaining stops skipped', 'info');
     } catch (err) {
@@ -197,6 +202,28 @@ export class DeliveryRunComponent {
       localStorage.removeItem('currentRoute');
     }
     this.router.navigate(['/']);
+  }
+
+  async completeRun(): Promise<void> {
+    if (!this.routeDate || this.isCompleting) return;
+    if (this.stops.some((s) => s.status === '' || s.status === 'changed')) {
+      this.toast.show('There are still pending stops. Deliver/skip or end run early first.', 'error');
+      return;
+    }
+    this.isCompleting = true;
+    try {
+      await this.storage.completeRun(this.routeDate, this.endedEarly);
+      this.toast.show('Run archived and route reset for next time');
+      if (this.routeDate) {
+        localStorage.removeItem('currentRoute');
+      }
+      this.router.navigate(['/']);
+    } catch (err) {
+      console.error('Complete run failed', err);
+      this.toast.show('Failed to complete run', 'error');
+    } finally {
+      this.isCompleting = false;
+    }
   }
 
   openMaps(): void {
@@ -316,11 +343,34 @@ export class DeliveryRunComponent {
 
   async onInlineAmountChange(amount: number): Promise<void> {
     const donation = this.currentDonation;
-    donation.status = 'Donated';
+    const now = new Date().toISOString();
+    this.selectedAmount = amount;
+
+    if (donation.status === 'NoDonation') {
+      // When "None" is selected, keep status as NoDonation while amount is 0.
+      if (amount === 0) {
+        donation.amount = 0;
+        donation.method = undefined;
+        donation.date = now;
+        await this.persistCurrentStopDonation();
+        return;
+      }
+      // User moved the picker off zero: treat as a real donation.
+      donation.status = 'Donated';
+    } else if (donation.status === 'NotRecorded') {
+      if (amount === 0) {
+        donation.amount = 0;
+        donation.date = now;
+        await this.persistCurrentStopDonation();
+        return;
+      }
+      donation.status = 'Donated';
+    }
+
+    // For Donated (or statuses promoted to Donated)
     donation.amount = amount;
     donation.method = donation.method ?? 'cash';
-    donation.date = new Date().toISOString();
-    this.selectedAmount = amount;
+    donation.date = now;
     await this.persistCurrentStopDonation();
   }
 

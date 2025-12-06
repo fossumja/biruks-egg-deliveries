@@ -5,14 +5,27 @@
     </div>
     <div class="progress-inline" *ngIf="currentRouteSummary">
       <div class="progress-line">
-        <span class="progress-summary">
-          {{ currentRouteSummary.delivered }} /
-          {{ currentRouteSummary.total }} delivered
+        <span
+          class="progress-skipped"
+          *ngIf="currentRouteSummary.dozensTotal"
+        >
+          {{ currentRouteSummary.dozensDelivered }} /
+          {{ currentRouteSummary.dozensTotal }} dozen
+        </span>
+        <span
+          class="progress-divider"
+          *ngIf="currentRouteSummary.dozensTotal"
+        >
+          ·
+        </span>
+        <span class="progress-skipped">
+          {{ currentRouteSummary.skipped }} skipped
         </span>
         <span class="progress-divider">·</span>
-        <span class="progress-skipped"
-          >{{ currentRouteSummary.skipped }} skipped</span
-        >
+        <span class="progress-summary">
+          {{ currentRouteSummary.delivered }} /
+          {{ currentRouteSummary.total }} stops
+        </span>
       </div>
       <div class="bar">
         <div class="fill" [style.width.%]="routeProgress"></div>

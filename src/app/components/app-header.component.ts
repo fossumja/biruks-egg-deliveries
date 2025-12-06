@@ -15,8 +15,16 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   @Input() plannerLink: string[] = ['/plan'];
   @Input() runLink: string[] = ['/run'];
 
-  currentRouteSummary: { routeDate: string; delivered: number; skipped: number; total: number } | null =
-    null;
+  currentRouteSummary:
+    | {
+        routeDate: string;
+        delivered: number;
+        skipped: number;
+        total: number;
+        dozensDelivered: number;
+        dozensTotal: number;
+      }
+    | null = null;
 
   private routerSub?: Subscription;
   private refreshTimer?: number;
@@ -56,11 +64,23 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     const skipped = active.filter((d) => d.status === 'skipped').length;
     const delivered = active.filter((d) => d.status === 'delivered').length;
     const effectiveTotal = Math.max(0, active.length - skipped);
+    const dozensTotal = active.reduce(
+      (sum, d) => sum + (d.dozens ?? 0),
+      0
+    );
+    const dozensDelivered = active
+      .filter((d) => d.status === 'delivered')
+      .reduce(
+        (sum, d) => sum + (d.deliveredDozens ?? d.dozens ?? 0),
+        0
+      );
     this.currentRouteSummary = {
       routeDate: current,
       delivered,
       skipped,
-      total: effectiveTotal
+      total: effectiveTotal,
+      dozensDelivered,
+      dozensTotal
     };
   }
 

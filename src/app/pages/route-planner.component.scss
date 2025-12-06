@@ -38,6 +38,15 @@
   color: var(--color-text);
 }
 
+.run-select {
+  flex: 0 0 auto;
+  min-width: 140px;
+  height: 40px;
+  padding: 8px 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
 .icon-btn {
   width: 40px;
   height: 40px;
@@ -240,6 +249,15 @@
 
 .row-bottom .stop-qty {
   flex-shrink: 0;
+}
+
+.run-history-card {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.run-history-card .donation-summary {
+  margin-top: var(--spacing-1);
 }
 
 .stop-qty {

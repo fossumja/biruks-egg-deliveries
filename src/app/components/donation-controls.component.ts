@@ -57,6 +57,12 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       return;
     }
     this.donationStatusChange.emit(status);
+    if (status === 'NoDonation') {
+      // Immediately reflect "None" by snapping the picker to $0
+      this.amountValue = 0;
+      this.refreshAmountOptions(0);
+      this.amountChange.emit(0);
+    }
   }
 
   onDonationMethod(method: DonationMethod): void {

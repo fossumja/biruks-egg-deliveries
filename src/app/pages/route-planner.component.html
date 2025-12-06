@@ -2,25 +2,25 @@
   <div class="header-actions">
     <select
       class="form-control route-select"
-      [(ngModel)]="routeDate"
-      (ngModelChange)="onRouteChange($event)"
+      [(ngModel)]="selectedRouteOrRun"
+      (ngModelChange)="onRouteOrRunChange($event)"
     >
       <option [ngValue]="null" disabled>Choose a route…</option>
-      <option [ngValue]="ALL_SCHEDULES">All Schedules ({{ allSchedulesTotal }})</option>
-      <option *ngFor="let r of routes" [ngValue]="r.routeDate">
-        {{ r.routeDate }} ({{ r.totalStops }} stops)
-      </option>
+      <optgroup label="Routes">
+        <option [ngValue]="ALL_SCHEDULES">
+          All Schedules ({{ allSchedulesTotal }})
+        </option>
+        <option *ngFor="let r of routes" [ngValue]="'route:' + r.routeDate">
+          {{ r.routeDate }} ({{ r.totalStops }} stops)
+        </option>
+      </optgroup>
+      <optgroup *ngIf="allRuns.length" label="Past runs">
+        <option *ngFor="let run of allRuns" [ngValue]="'run:' + run.id">
+          {{ run.routeDate }} — {{ run.date | date : 'shortDate' }}
+          <span *ngIf="run.status === 'endedEarly'"> (ended early)</span>
+        </option>
+      </optgroup>
     </select>
-    <button
-      class="btn btn-secondary icon-btn btn-reset"
-      type="button"
-      (click)="resetRoute()"
-      [disabled]="!deliveries.length"
-      aria-label="Reset route"
-      title="Reset route"
-    >
-      <span class="glyph">⟳</span>
-    </button>
     <button
       class="btn btn-secondary icon-btn btn-reorder"
       type="button"
@@ -153,7 +153,7 @@
   </form>
 </div>
 
-<div *ngIf="!loading && !errorMessage && deliveries.length">
+<div *ngIf="!loading && !errorMessage && deliveries.length && !viewingRun">
   <div
     cdkDropList
     [cdkDropListData]="filteredDeliveries"
@@ -325,6 +325,158 @@
             <button class="btn btn-primary" type="button" (click)="saveEdit()">Save</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading && !errorMessage && viewingRun">
+  <div
+    class="planner-swipe-row"
+    *ngFor="let entry of runEntries"
+  >
+    <div class="route-item run-history-card">
+      <div class="drag-handle order-only">
+        <span class="order-number text-muted">
+          {{ entry.deliveryOrder + 1 }}
+        </span>
+      </div>
+      <div class="route-item-body">
+        <div class="row-top">
+          <div class="stop-name">
+            {{ entry.name }}
+          </div>
+          <div class="stop-meta">
+            <span
+              class="status-pill"
+              [class.delivered]="entry.status === 'delivered'"
+              [class.skipped]="entry.status === 'skipped'"
+            >
+              {{ entry.status | titlecase }}
+            </span>
+          </div>
+        </div>
+        <div class="row-bottom">
+          <div class="stop-address text-muted">
+            {{ entry.address || '(no address)' }}<br />
+            {{ entry.city
+            }}<span *ngIf="entry.city && entry.state">,</span> {{ entry.state }}
+            {{ entry.zip }}
+          </div>
+          <div class="stop-qty">
+            <span class="qty-display">{{ entry.dozens }}</span>
+          </div>
+        </div>
+        <div class="donation-summary text-muted">
+          <ng-container [ngSwitch]="entry.donationStatus">
+            <span *ngSwitchCase="'NoDonation'">No donation</span>
+            <span *ngSwitchCase="'NotRecorded'">Donation not recorded</span>
+            <span *ngSwitchCase="'Donated'">
+              {{ entry.donationMethod ? (entry.donationMethod | titlecase) : 'Donated' }}
+              ${{ entry.donationAmount | number : '1.0-0' }}
+            </span>
+          </ng-container>
+        </div>
+        <div class="run-entry-actions">
+          <button
+            type="button"
+            class="btn btn-text"
+            (click)="openRunEntryEdit(entry)"
+          >
+            Edit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-inline card" *ngIf="editingRunEntry?.id === entry.id && runEntryDraft">
+      <h3>Edit run entry</h3>
+      <div class="new-form">
+        <label>
+          Status
+          <select
+            class="form-control"
+            [(ngModel)]="runEntryDraft.status"
+            name="runEntryStatus"
+          >
+            <option value="delivered">Delivered</option>
+            <option value="skipped">Skipped</option>
+          </select>
+        </label>
+        <label>
+          Order in route
+          <input
+            class="form-control"
+            type="number"
+            min="1"
+            [max]="runEntries.length"
+            [(ngModel)]="runEntryDraft.deliveryOrder"
+            name="runEntryOrder"
+          />
+        </label>
+        <label>
+          Dozen
+          <input
+            class="form-control"
+            type="number"
+            min="0"
+            [(ngModel)]="runEntryDraft.dozens"
+            name="runEntryDozens"
+          />
+        </label>
+        <label>
+          Donation status
+          <select
+            class="form-control"
+            [(ngModel)]="runEntryDraft.donationStatus"
+            name="runEntryDonationStatus"
+          >
+            <option value="NotRecorded">Not recorded</option>
+            <option value="NoDonation">No donation</option>
+            <option value="Donated">Donated</option>
+          </select>
+        </label>
+        <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
+          Donation method
+          <select
+            class="form-control"
+            [(ngModel)]="runEntryDraft.donationMethod"
+            name="runEntryDonationMethod"
+          >
+            <option value="">(none)</option>
+            <option value="cash">Cash</option>
+            <option value="ach">Ach</option>
+            <option value="venmo">Venmo</option>
+            <option value="paypal">Paypal</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
+          Donation amount
+          <input
+            class="form-control"
+            type="number"
+            min="0"
+            [(ngModel)]="runEntryDraft.donationAmount"
+            name="runEntryDonationAmount"
+          />
+        </label>
+      </div>
+      <div class="donation-actions">
+        <button
+          class="btn btn-text"
+          type="button"
+          (click)="cancelRunEntryEdit()"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="saveRunEntryEdit()"
+        >
+          Save
+        </button>
       </div>
     </div>
   </div>
