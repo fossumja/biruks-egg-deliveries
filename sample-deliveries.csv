@@ -1,0 +1,12 @@
+Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter
+Week A,SAMPLE001,001,Alex Farmer,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1
+Week A,SAMPLE002,002,Brook Rivers,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1
+Week A,SAMPLE003,003,Casey Hill,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0
+Week A,SAMPLE004,004,Drew Lake,14 S Broadway St,Canton,SD,57013,1,TRUE,Text on arrival,1
+Week A,SAMPLE005,005,Elliott Stone,316 S Main St,Inwood,IA,51240,6,TRUE,Deliver to store fridge,1
+Week A,SAMPLE006,006,Finley Woods,300 Birch St,Canton,SD,57013,2,TRUE,Leave by garage door,0
+Week A,SAMPLE007,007,Georgia Fields,808 W 3rd St,Canton,SD,57013,4,TRUE,Use side entrance,1
+Week A,SAMPLE008,008,Hayden Brooks,104 River Bend Rd,Canton,SD,57013,1,TRUE,Front steps,0
+Week A,SAMPLE009,009,Indigo Lane,215 S Main St,Inwood,IA,51240,2,TRUE,Cooler on porch,1
+Week A,SAMPLE010,010,Jordan Park,526 N Blair Ave,Canton,SD,57013,3,TRUE,Gate code 1234,1
+
