@@ -1,4 +1,4 @@
-import { DatePipe, NgIf, NgClass } from '@angular/common';
+import { DatePipe, NgIf, NgClass, NgFor } from '@angular/common';
 import { Component, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import Papa from 'papaparse';
 import { Delivery, DeliveryStatus, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
 import { Route } from '../models/route.model';
 import { BackupService } from '../services/backup.service';
+import { BuildInfo, BuildInfoService } from '../services/build-info.service';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 
@@ -23,11 +24,15 @@ export class HomeComponent implements OnDestroy {
   private router = inject(Router);
   private backupService = inject(BackupService);
   private toast = inject(ToastService);
+  private buildInfoService = inject(BuildInfoService);
 
   routes: Route[] = [];
   lastBackupAt?: string;
+  lastImportAt?: string;
   isImporting = false;
   isExporting = false;
+  pendingImportAfterBackup = false;
+  showImportHint = false;
   errorMessage = '';
   selectedRouteDate: string | null = null;
   selectedRouteSummary?: Route;
@@ -36,16 +41,29 @@ export class HomeComponent implements OnDestroy {
   wakeLockActive = false;
   private wakeLockKey = 'keepScreenAwake';
   suggestedRate = 4;
-  suggestedOptions = Array.from({ length: 101 }, (_, i) => i);
+  private suggestedKey = 'suggestedDonationRate';
+  darkModeEnabled = false;
+  buildInfo?: BuildInfo | null;
+  plannerReorderDefaultEnabled = false;
 
   async ngOnInit(): Promise<void> {
     await this.refreshRoutes();
     this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
+    this.lastImportAt = localStorage.getItem('lastImportAt') || undefined;
     this.currentRoute = localStorage.getItem('currentRoute') || undefined;
     this.suggestedRate = this.storage.getSuggestedRate();
+    const storedDark = localStorage.getItem('darkModeEnabled');
+    this.darkModeEnabled = storedDark === null ? true : storedDark === 'true';
+    if (storedDark === null) {
+      localStorage.setItem('darkModeEnabled', 'true');
+    }
     this.wakeLockActive = localStorage.getItem(this.wakeLockKey) === 'true';
+    const storedReorder = localStorage.getItem('plannerReorderEnabled');
+    this.plannerReorderDefaultEnabled = storedReorder === 'true';
+    this.applyTheme(this.darkModeEnabled);
     this.autoselectRoute();
     await this.resumeIfNeeded();
+    this.buildInfo = await this.buildInfoService.load();
 
     if (this.wakeLockSupported) {
       this.visibilityHandler = () => {
@@ -54,6 +72,11 @@ export class HomeComponent implements OnDestroy {
         }
       };
       document.addEventListener('visibilitychange', this.visibilityHandler);
+    }
+
+    // If this is a brand new install with no routes yet, auto-load bundled sample data.
+    if (!this.routes.length) {
+      await this.importSampleDataIfAvailable();
     }
   }
 
@@ -74,6 +97,15 @@ export class HomeComponent implements OnDestroy {
     try {
       const deliveries = await this.parseCsv(file);
       await this.storage.importDeliveries(deliveries);
+      localStorage.setItem('lastImportSource', 'user');
+      // After a new import, any previous backup no longer matches this dataset.
+      localStorage.removeItem('lastBackupAt');
+      this.lastBackupAt = undefined;
+      const now = new Date().toISOString();
+      localStorage.setItem('lastImportAt', now);
+      this.lastImportAt = now;
+      this.pendingImportAfterBackup = false;
+      this.showImportHint = false;
       await this.refreshRoutes();
       this.autoselectRoute();
       this.toast.show('Import complete');
@@ -89,12 +121,48 @@ export class HomeComponent implements OnDestroy {
     }
   }
 
+  async onImportClick(fileInput: HTMLInputElement): Promise<void> {
+    // If a backup was just completed for this import, allow immediate file selection.
+    if (this.pendingImportAfterBackup) {
+      this.pendingImportAfterBackup = false;
+      this.showImportHint = false;
+      fileInput.click();
+      return;
+    }
+
+    // Ensure we have the latest route list.
+    if (!this.routes.length) {
+      await this.refreshRoutes();
+    }
+    const hasRoutes = this.routes.length > 0;
+    const lastSource = localStorage.getItem('lastImportSource');
+
+    // No real data yet, or only sample data: open the picker immediately.
+    if (!hasRoutes || lastSource === 'sample') {
+      fileInput.click();
+      return;
+    }
+
+    // Real data exists: run backup flow first. Due to browser security,
+    // we can't open the file picker after an async operation and still
+    // have it count as a user gesture, so we require a second tap.
+    const ok = await this.maybeBackupBeforeImport();
+    if (!ok) {
+      return;
+    }
+    this.pendingImportAfterBackup = true;
+    this.showImportHint = true;
+    this.toast.show('Backup ready. Tap "Import CSV" again to choose a file.');
+  }
+
   async exportCsv(): Promise<void> {
     this.isExporting = true;
     this.errorMessage = '';
     try {
       await this.backupService.exportAll();
       this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
+      // Manual backup: no special import hint.
+      this.showImportHint = false;
       this.toast.show('Backup ready');
     } catch (err) {
       console.error(err);
@@ -183,8 +251,56 @@ export class HomeComponent implements OnDestroy {
     }
   }
 
+  private async maybeBackupBeforeImport(): Promise<boolean> {
+    const confirmMessage =
+      'You already have delivery data loaded. Importing a new CSV will replace the current data in the app.\n\n' +
+      'It is strongly recommended to export a backup first so you keep a copy of your past runs and donations.\n\n' +
+      'Press OK to export a backup now and then continue with the import, or Cancel to abort.';
+
+    const proceed = window.confirm(confirmMessage);
+    if (!proceed) {
+      return false;
+    }
+
+    try {
+      this.isExporting = true;
+      await this.backupService.exportAll();
+      this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
+      this.toast.show('Backup ready');
+      return true;
+    } catch (err) {
+      console.error('Backup before import failed', err);
+      this.toast.show('Backup failed. Import cancelled.', 'error');
+      return false;
+    } finally {
+      this.isExporting = false;
+    }
+  }
+
+  private async importSampleDataIfAvailable(): Promise<void> {
+    try {
+      const response = await fetch('sample-deliveries.csv', { cache: 'no-cache' });
+      if (!response.ok) {
+        return;
+      }
+      const text = await response.text();
+      const deliveries = await this.parseCsvText(text);
+      await this.storage.importDeliveries(deliveries);
+      localStorage.setItem('lastImportSource', 'sample');
+      await this.refreshRoutes();
+      this.autoselectRoute();
+      this.toast.show('Loaded sample deliveries');
+    } catch (err) {
+      console.warn('Sample CSV could not be loaded', err);
+    }
+  }
+
   private async parseCsv(file: File): Promise<Delivery[]> {
     const text = await file.text();
+    return this.parseCsvText(text);
+  }
+
+  private parseCsvText(text: string): Promise<Delivery[]> {
     return new Promise((resolve, reject) => {
       Papa.parse<Record<string, string>>(text, {
         header: true,
@@ -320,11 +436,36 @@ export class HomeComponent implements OnDestroy {
     };
   }
 
-  onSuggestedChange(value: number): void {
-    const safe = Number.isFinite(Number(value)) ? Number(value) : 4;
-    this.suggestedRate = safe;
-    this.storage.setSuggestedRate(safe);
-    this.toast.show(`Suggested donation set to $${safe}`);
+  changeSuggested(delta: number): void {
+    const next = Math.max(0, Math.min(100, Number(this.suggestedRate) + delta));
+    this.suggestedRate = next;
+    this.storage.setSuggestedRate(next);
+    this.toast.show(`Suggested donation set to $${next}`);
+  }
+
+  togglePlannerReorderDefault(): void {
+    this.plannerReorderDefaultEnabled = !this.plannerReorderDefaultEnabled;
+    localStorage.setItem(
+      'plannerReorderEnabled',
+      this.plannerReorderDefaultEnabled ? 'true' : 'false'
+    );
+  }
+
+  toggleDarkMode(): void {
+    this.darkModeEnabled = !this.darkModeEnabled;
+    localStorage.setItem('darkModeEnabled', this.darkModeEnabled ? 'true' : 'false');
+    this.applyTheme(this.darkModeEnabled);
+    this.toast.show(this.darkModeEnabled ? 'Dark mode on' : 'Dark mode off');
+  }
+
+  private applyTheme(enabled: boolean): void {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    if (enabled) {
+      root.setAttribute('data-theme', 'dark');
+    } else {
+      root.removeAttribute('data-theme');
+    }
   }
 
   private autoselectRoute(): void {

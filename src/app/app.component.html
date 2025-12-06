@@ -1,10 +1,9 @@
-<div class="app-shell safe-bottom">
+<div class="ios-statusbar-bg"></div>
+<div class="app-shell safe-bottom tight">
   <div class="app-shell-inner">
     <app-header [plannerLink]="plannerLink" [runLink]="runLink" />
     <main class="app-content">
-      <div class="card">
-        <router-outlet></router-outlet>
-      </div>
+      <router-outlet></router-outlet>
     </main>
   </div>
   <app-toast />

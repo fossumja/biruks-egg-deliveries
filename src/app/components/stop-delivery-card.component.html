@@ -3,9 +3,22 @@
   <div class="card-top">
     <div class="name-row">
       <div class="stop-name">{{ s.name }}</div>
-      <span class="status-pill" [class.pending]="!s.status">
-        {{ s.status ? (s.status | titlecase) : "Pending" }}
-        </span>
+      <span
+        class="status-pill"
+        [ngClass]="{
+          pending: !s.status,
+          delivered: s.status === 'delivered',
+          skipped: s.status === 'skipped',
+          changed: s.status === 'changed',
+          unsubscribed: s.status === 'skipped' && (s.skippedReason?.toLowerCase?.() ?? '').includes('unsubscribed')
+        }"
+      >
+        {{
+          s.status === 'skipped' && (s.skippedReason?.toLowerCase?.() ?? '').includes('unsubscribed')
+            ? 'Unsubscribed'
+            : (s.status ? (s.status | titlecase) : 'Pending')
+        }}
+      </span>
       </div>
       <div class="address-row">
         <div class="stop-address text-muted">
@@ -33,7 +46,7 @@
       <button type="button" class="qty-btn" (click)="onAdjustQty(-1)">
         −
         </button>
-        <span class="qty-display" aria-label="Delivered dozens">{{
+        <span class="qty-display" aria-label="Delivered dozen">{{
           deliveredQty
         }}</span>
         <button type="button" class="qty-btn" (click)="onAdjustQty(1)">

@@ -44,7 +44,7 @@ export class RoutePlannerComponent {
   errorMessage = '';
   donationModalStop: Delivery | null = null;
   donationDraft?: Delivery;
-  donationTotals = { donationTotal: 0, dozensTotal: 0 };
+  donationTotals = { donationTotal: 0, dozensTotal: 0, taxableTotal: 0 };
   showAmountPicker = false;
   amountOptions: number[] = [];
   selectedAmount = 0;
@@ -57,11 +57,15 @@ export class RoutePlannerComponent {
   private swipeThreshold = 24; // px
   private swipeDistance = 210; // px reveal width
   private swipeStartX: number | null = null;
+  private swipeStartY: number | null = null;
+  private swipeMode: 'none' | 'swipe' | 'scroll' = 'none';
   showSearch = false;
   searchTerm = '';
   showNewForm = false;
   savingNew = false;
+  reorderEnabled = false;
   newDelivery = {
+    deliveryOrder: 0,
     routeDate: '',
     name: '',
     address: '',
@@ -73,6 +77,7 @@ export class RoutePlannerComponent {
   };
   editingStop: Delivery | null = null;
   editDraft = {
+    deliveryOrder: 0,
     routeDate: '',
     name: '',
     address: '',
@@ -87,6 +92,8 @@ export class RoutePlannerComponent {
 
   startSwipe(event: PointerEvent, stop: Delivery): void {
     this.swipeStartX = event.clientX;
+    this.swipeStartY = event.clientY;
+    this.swipeMode = 'none';
     this.isSwiping = false;
   }
 
@@ -205,31 +212,54 @@ export class RoutePlannerComponent {
     if (!target) return;
     const address = `${target.address}, ${target.city}, ${target.state} ${target.zip ?? ''}`;
     const url = `https://maps.apple.com/?daddr=${encodeURIComponent(address)}`;
-    window.open(url, '_blank');
+    window.location.assign(url);
   }
 
   moveSwipe(event: PointerEvent, stop: Delivery): void {
-    if (this.swipeStartX === null) return;
-    const deltaX = event.clientX - this.swipeStartX;
-    if (Math.abs(deltaX) > 6) {
-      this.isSwiping = true;
+    if (this.swipeStartX === null || this.swipeStartY === null) return;
+    const dx = event.clientX - this.swipeStartX;
+    const dy = event.clientY - this.swipeStartY;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // Decide mode once per gesture.
+    if (this.swipeMode === 'none') {
+      const threshold = 3;
+      // Extremely strong bias toward horizontal swipe: only lock to swipe; otherwise
+      // leave it to the browser to handle vertical scrolling.
+      if (absDx > threshold && absDx >= absDy) {
+        this.swipeMode = 'swipe';
+        this.isSwiping = true;
+      }
+    }
+
+    if (this.swipeMode === 'swipe') {
+      // Prevent vertical scroll once we've locked into swipe.
+      event.preventDefault();
     }
   }
 
   endSwipe(event: PointerEvent, stop: Delivery): void {
     if (this.swipeStartX === null) return;
     const deltaX = event.clientX - this.swipeStartX;
-    if (deltaX < -this.swipeThreshold) {
-      this.openRowId = stop.id;
-    } else if (deltaX > this.swipeThreshold) {
-      this.openRowId = null;
+    if (this.swipeMode === 'swipe') {
+      if (deltaX < -this.swipeThreshold) {
+        this.openRowId = stop.id;
+      } else if (deltaX > this.swipeThreshold) {
+        this.openRowId = null;
+      }
     }
     this.swipeStartX = null;
+    this.swipeStartY = null;
+    this.swipeMode = 'none';
     this.isSwiping = false;
   }
 
   toggleRow(stop: Delivery): void {
     if (this.isSwiping) return;
+    if (this.editingStop) {
+      this.editingStop = null;
+    }
     this.openRowId = this.openRowId === stop.id ? null : stop.id;
   }
 
@@ -271,6 +301,9 @@ export class RoutePlannerComponent {
     if (!this.newDelivery.name.trim()) errors.push('Name is required.');
     if (!(Number(this.newDelivery.dozens) > 0))
       errors.push('Dozens must be greater than 0.');
+    if (!(Number(this.newDelivery.deliveryOrder) > 0)) {
+      errors.push('Order must be at least 1.');
+    }
     return errors;
   }
 
@@ -300,7 +333,9 @@ export class RoutePlannerComponent {
   }
 
   private resetNewDelivery(): void {
+    const nextOrder = this.deliveries.length + 1;
     this.newDelivery = {
+      deliveryOrder: nextOrder,
       routeDate: this.routeDate ?? '',
       name: '',
       address: '',
@@ -318,6 +353,9 @@ export class RoutePlannerComponent {
     if (!this.routeDate) {
       this.routeDate = await this.pickFallbackRoute();
     }
+    // Initialize reorder mode from persisted setting.
+    const storedReorder = localStorage.getItem('plannerReorderEnabled');
+    this.reorderEnabled = storedReorder === 'true';
     this.newDelivery.routeDate = this.routeDate ?? '';
     if (!this.routeDate) {
       this.errorMessage = 'No route selected.';
@@ -425,6 +463,10 @@ export class RoutePlannerComponent {
   }
 
   async unskipStop(stop: Delivery): Promise<void> {
+    if (this.isUnsubscribed(stop)) {
+      await this.resubscribeStop(stop);
+      return;
+    }
     this.closeSwipe();
     await this.storage.updateDeliveryFields(stop.id, {
       status: '',
@@ -649,6 +691,7 @@ export class RoutePlannerComponent {
     this.closeSwipe();
     this.editingStop = stop;
     this.editDraft = {
+      deliveryOrder: (stop.deliveryOrder ?? stop.sortIndex ?? 0) + 1,
       routeDate: stop.routeDate,
       name: stop.name,
       address: stop.address,
@@ -664,10 +707,18 @@ export class RoutePlannerComponent {
     this.editingStop = null;
   }
 
+  toggleReorder(): void {
+    this.reorderEnabled = !this.reorderEnabled;
+  }
+
   async saveEdit(): Promise<void> {
     if (!this.editingStop) return;
     const stop = this.editingStop;
     const targetRoute = this.editDraft.routeDate || stop.routeDate;
+    const requestedOrderRaw = this.editDraft.deliveryOrder || 1;
+    const currentList = this.deliveries.filter(d => d.routeDate === stop.routeDate);
+    const maxOrder = currentList.length || 1;
+    const requestedOrder = Math.min(Math.max(1, requestedOrderRaw), maxOrder);
     const updates: Partial<Delivery> = {
       name: this.editDraft.name,
       address: this.editDraft.address,
@@ -678,12 +729,13 @@ export class RoutePlannerComponent {
     };
     const dozensChanged = this.editDraft.dozens !== stop.dozens;
     if (dozensChanged) {
-      await this.storage.updatePlannedDozens(
-        stop.id,
-        Number(this.editDraft.dozens) || 0
-      );
+      const nextDozens = Number(this.editDraft.dozens) || 0;
+      await this.storage.updatePlannedDozens(stop.id, nextDozens);
+      updates.dozens = nextDozens;
     }
     if (targetRoute && targetRoute !== stop.routeDate) {
+      // Moving to a different route: append at end of target list, then we will
+      // adjust ordering within that route on reload if needed.
       const targetList = await this.storage.getDeliveriesByRoute(targetRoute);
       const nextIndex = targetList.length;
       await this.storage.updateDeliveryFields(stop.id, {
@@ -697,7 +749,22 @@ export class RoutePlannerComponent {
       this.routeDate = targetRoute;
       this.persistRouteSelection();
     } else {
+      // Same route: apply simple updates first.
       await this.storage.updateDeliveryFields(stop.id, updates);
+      // Then reorder within this.deliveries based on requestedOrder.
+      const list = [...this.deliveries];
+      const currentIdx = list.findIndex(d => d.id === stop.id);
+      if (currentIdx !== -1) {
+        const [removed] = list.splice(currentIdx, 1);
+        const newIdx = requestedOrder - 1;
+        list.splice(newIdx, 0, removed);
+        // Re-index sortIndex and deliveryOrder so they stay dense.
+        list.forEach((d, idx) => {
+          d.sortIndex = idx;
+          d.deliveryOrder = idx;
+        });
+        await this.storage.saveSortOrder(list);
+      }
     }
     await this.loadDeliveries();
     this.editingStop = null;
@@ -708,19 +775,28 @@ export class RoutePlannerComponent {
     await this.storage.updateDeliveryFields(stop.id, {
       subscribed: false,
     });
-    // Refresh from DB so status/reason are present before reordering.
-    const list = await this.storage.getDeliveriesByRoute(this.routeDate!);
-    const idx = list.findIndex((d) => d.id === stop.id);
-    if (idx >= 0) {
-      const [removed] = list.splice(idx, 1);
-      list.push(removed);
-      list.forEach((d, i) => {
-        d.sortIndex = i;
-        d.deliveryOrder = i;
-      });
-      await this.storage.saveSortOrder(list);
-      this.deliveries = list;
+
+    // Reload so UI reflects skipped/unsubscribed state
+    if (this.routeDate && this.routeDate !== this.ALL_SCHEDULES) {
+      const list = await this.storage.getDeliveriesByRoute(this.routeDate);
+      const idx = list.findIndex((d) => d.id === stop.id);
+      if (idx >= 0) {
+        const [removed] = list.splice(idx, 1);
+        list.push(removed);
+        list.forEach((d, i) => {
+          d.sortIndex = i;
+          d.deliveryOrder = i;
+        });
+        await this.storage.saveSortOrder(list);
+        this.deliveries = list;
+      } else {
+        await this.loadDeliveries();
+      }
+    } else {
+      await this.loadDeliveries();
     }
+
+    this.applyFilter(false);
     this.editingStop = null;
   }
 
@@ -794,10 +870,20 @@ export class RoutePlannerComponent {
     return stop;
   }
 
-  private computeOneOffTotals(stop: Delivery): { donationTotal: number; dozensTotal: number } {
+  private computeOneOffTotals(
+    stop: Delivery
+  ): { donationTotal: number; dozensTotal: number; taxableTotal: number } {
+    const suggestedMain = (stop.dozens ?? 0) * this.storage.getSuggestedRate();
     const mainDonation =
       stop.donation?.status === 'Donated'
-        ? Number(stop.donation.amount ?? stop.donation.suggestedAmount ?? 0)
+        ? Number(stop.donation.amount ?? stop.donation.suggestedAmount ?? suggestedMain)
+        : 0;
+    const mainTaxable =
+      stop.donation?.status === 'Donated'
+        ? Number(
+            stop.donation.taxableAmount ??
+              Math.max(0, mainDonation - Number(stop.donation.suggestedAmount ?? suggestedMain))
+          )
         : 0;
     const mainDozens =
       stop.deliveredDozens != null
@@ -816,6 +902,21 @@ export class RoutePlannerComponent {
         0
       );
 
+    const oneOffTaxableTotal =
+      (stop.oneOffDonations ?? []).reduce((sum, d) => {
+        const suggested = Number(d.suggestedAmount ?? 0);
+        const amount = Number(d.amount ?? suggested);
+        const taxable = d.taxableAmount ?? Math.max(0, amount - suggested);
+        return sum + taxable;
+      }, 0) +
+      (stop.oneOffDeliveries ?? []).reduce((sum, d) => {
+        const suggested = Number(d.donation?.suggestedAmount ?? 0);
+        const amount = Number(d.donation?.amount ?? suggested);
+        const taxable =
+          d.donation?.taxableAmount ?? Math.max(0, amount - suggested);
+        return sum + taxable;
+      }, 0);
+
     const oneOffDozensTotal = (stop.oneOffDeliveries ?? []).reduce(
       (sum, d) => sum + Number(d.deliveredDozens ?? 0),
       0
@@ -824,6 +925,7 @@ export class RoutePlannerComponent {
     return {
       donationTotal: mainDonation + oneOffDonationTotal,
       dozensTotal: mainDozens + oneOffDozensTotal,
+      taxableTotal: mainTaxable + oneOffTaxableTotal,
     };
   }
 }

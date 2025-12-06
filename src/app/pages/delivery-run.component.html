@@ -1,12 +1,15 @@
 <div class="run-screen">
-  <div class="header">
-  </div>
+  <div class="header"></div>
 
   <div *ngIf="loading" class="status text-muted">Loading…</div>
   <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
 
   <main *ngIf="!loading && !errorMessage" class="content">
-    <div class="delivery-card card" *ngIf="!finished && currentStop" [@cardChange]="currentStop.id ? 'in' : 'void'">
+    <div
+      class="delivery-card card"
+      *ngIf="!finished && currentStop"
+      [@cardChange]="currentStop.id ? 'in' : 'void'"
+    >
       <app-stop-delivery-card
         [stop]="currentStop"
         [deliveredQty]="deliveredQty"
@@ -30,18 +33,44 @@
         {{ nextStop.address }}<br />
         {{ nextStop.city }}, {{ nextStop.state }} {{ nextStop.zip }}
       </div>
-      <div class="next-meta text-muted">{{ nextStop.dozens }} dozen{{ nextStop.dozens === 1 ? '' : 's' }}</div>
+      <div class="next-meta text-muted">
+        {{ nextStop.dozens }} dozen{{ nextStop.dozens === 1 ? "" : "s" }}
+      </div>
     </div>
   </main>
 
-  <div class="bottom-bar safe-bottom" *ngIf="!loading && !errorMessage && !finished">
-    <button class="btn btn-primary" type="button" (click)="markDelivered()">Deliver</button>
-    <button class="btn btn-secondary" type="button" (click)="openSkipDialog()">Skip</button>
+  <div
+    class="bottom-bar safe-bottom"
+    *ngIf="!loading && !errorMessage && !finished"
+  >
+    <div class="primary-actions">
+      <button class="btn btn-primary" type="button" (click)="markDelivered()">
+        Deliver
+      </button>
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="openSkipDialog()"
+      >
+        Skip
+      </button>
+    </div>
+    <button
+      class="btn btn-secondary btn-end-run"
+      type="button"
+      (click)="openEndRunDialog()"
+    >
+      End Run
+    </button>
   </div>
 
   <div class="actions-complete" *ngIf="finished && !loading && !errorMessage">
-    <button type="button" class="btn btn-primary" (click)="backupNow()">Backup now</button>
-    <button class="btn btn-secondary" type="button" (click)="finishRoute()">Done</button>
+    <button type="button" class="btn btn-primary" (click)="backupNow()">
+      Backup now
+    </button>
+    <button class="btn btn-secondary" type="button" (click)="finishRoute()">
+      Done
+    </button>
   </div>
 </div>
 
@@ -58,13 +87,60 @@
   <div class="skip-dialog card">
     <h3>Skip reason</h3>
     <div class="reason-buttons">
-      <button class="btn btn-secondary" type="button" (click)="confirmSkip('Not home')">Not home</button>
-      <button class="btn btn-secondary" type="button" (click)="confirmSkip('Canceled')">Canceled</button>
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="confirmSkip('Not home')"
+      >
+        Not home
+      </button>
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="confirmSkip('Canceled')"
+      >
+        Canceled
+      </button>
     </div>
     <div class="custom-reason">
       <input [(ngModel)]="otherReason" placeholder="Other reason" />
-      <button class="btn btn-primary" type="button" (click)="confirmSkip(otherReason)">Save</button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="confirmSkip(otherReason)"
+      >
+        Save
+      </button>
     </div>
-    <button class="btn btn-text" type="button" (click)="cancelSkip()">Cancel</button>
+    <button class="btn btn-text" type="button" (click)="cancelSkip()">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<div class="end-run-overlay" *ngIf="showEndRunDialog">
+  <div class="end-run-dialog card">
+    <h3>End run early?</h3>
+    <p class="text-muted">
+      This will mark all remaining stops in this route as
+      <strong>Skipped</strong>. You can still edit them later on the Planner
+      page if needed.
+    </p>
+    <div class="end-run-actions">
+      <button
+        class="btn btn-secondary btn-cancel-large"
+        type="button"
+        (click)="cancelEndRun()"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn btn-secondary btn-proceed-small"
+        type="button"
+        (click)="confirmEndRunEarly()"
+      >
+        Proceed
+      </button>
+    </div>
   </div>
 </div>

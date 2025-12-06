@@ -22,6 +22,17 @@
       <span class="glyph">⟳</span>
     </button>
     <button
+      class="btn btn-secondary icon-btn btn-reorder"
+      type="button"
+      (click)="toggleReorder()"
+      [class.active]="reorderEnabled"
+      [attr.aria-pressed]="reorderEnabled"
+      [attr.aria-label]="reorderEnabled ? 'Disable reordering' : 'Enable reordering'"
+      [title]="reorderEnabled ? 'Disable reordering' : 'Enable reordering'"
+    >
+      <span class="glyph">⇅</span>
+    </button>
+    <button
       class="btn btn-primary icon-btn btn-add"
       type="button"
       (click)="openNewDeliveryForm()"
@@ -108,7 +119,18 @@
       <input class="form-control" [(ngModel)]="newDelivery.zip" name="newZip" />
     </label>
     <label>
-      Dozens
+      Order in route
+      <input
+        class="form-control"
+        type="number"
+        min="1"
+        [max]="deliveries.length + 1"
+        [(ngModel)]="newDelivery.deliveryOrder"
+        name="newOrder"
+      />
+    </label>
+    <label>
+      Dozen
       <input
         class="form-control"
         type="number"
@@ -131,11 +153,11 @@
   </form>
 </div>
 
-<div class="list card" *ngIf="!loading && !errorMessage && deliveries.length">
+<div *ngIf="!loading && !errorMessage && deliveries.length">
   <div
     cdkDropList
     [cdkDropListData]="filteredDeliveries"
-    [cdkDropListDisabled]="(showSearch && searchTerm.trim()) || routeDate === ALL_SCHEDULES"
+    [cdkDropListDisabled]="(showSearch && searchTerm.trim()) || routeDate === ALL_SCHEDULES || !reorderEnabled"
     (cdkDropListDropped)="drop($event)"
     class="drop-list"
   >
@@ -144,7 +166,7 @@
       *ngFor="let stop of filteredDeliveries; let i = index"
       cdkDrag
       [class.open]="openRowId === stop.id"
-      [cdkDragDisabled]="isSwiping"
+      [cdkDragDisabled]="isSwiping || !reorderEnabled"
       (cdkDragStarted)="handleDragStart()"
     >
       <div class="planner-swipe-actions">
@@ -152,12 +174,12 @@
           <button
             class="btn btn-text skip-btn"
             type="button"
-            (click)="isSkipped(stop) ? unskipStop(stop) : skipStop(stop)"
+            (click)="isUnsubscribed(stop) ? resubscribeStop(stop) : (isSkipped(stop) ? unskipStop(stop) : skipStop(stop))"
           >
-            {{ isSkipped(stop) ? 'Unskip' : 'Skip' }}
+            {{ isUnsubscribed(stop) ? 'Resubscribe' : (isSkipped(stop) ? 'Unskip' : 'Skip') }}
           </button>
           <button class="btn btn-text" type="button" (click)="openEdit(stop)">Edit</button>
-          <button class="btn btn-text reset-warn" type="button" (click)="resetStop(stop)" [disabled]="!stop.status">Reset</button>
+          <button class="btn btn-text reset-warn" type="button" (click)="resetStop(stop)">Reset</button>
         </div>
         <div class="action-row">
           <button class="btn btn-secondary" type="button" (click)="openDonationDetails(stop)">Donation</button>
@@ -171,27 +193,136 @@
         (pointermove)="moveSwipe($event, stop)"
         (pointerup)="endSwipe($event, stop)"
         (click)="toggleRow(stop)">
-        <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">≡</div>
-        <div class="route-item-body two-col">
-          <div class="col-left">
+        <ng-container *ngIf="reorderEnabled; else orderOnly">
+          <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">
+            <span class="glyph">≡</span>
+            <span class="order-number text-muted">
+              {{ stop.deliveryOrder + 1 }}
+            </span>
+          </div>
+        </ng-container>
+        <ng-template #orderOnly>
+          <div class="drag-handle order-only">
+            <span class="order-number text-muted">
+              {{ stop.deliveryOrder + 1 }}
+            </span>
+          </div>
+        </ng-template>
+        <div class="route-item-body">
+          <div class="row-top">
             <div class="stop-name">{{ stop.name }}</div>
+            <div class="stop-meta">
+              <span
+                class="status-pill"
+                [class.pending]="!stop.status"
+                [class.delivered]="stop.status === 'delivered'"
+                [class.skipped]="stop.status === 'skipped'"
+                [class.changed]="stop.status === 'changed'"
+                [class.unsubscribed]="isUnsubscribed(stop)"
+              >
+                {{ isUnsubscribed(stop) ? 'Unsubscribed' : (stop.status ? (stop.status | titlecase) : 'Pending') }}
+              </span>
+            </div>
+          </div>
+          <div class="row-bottom">
             <div class="stop-address text-muted">
               {{ stop.address || '(no address)' }}
               <br />
               {{ stop.city }}<span *ngIf="stop.city && stop.state">,</span> {{ stop.state }} {{ stop.zip }}
             </div>
-          </div>
-          <div class="col-right">
-            <div class="stop-meta">
-              <span class="status-pill" [class.pending]="!stop.status" [class.unsubscribed]="isUnsubscribed(stop)">
-                {{ isUnsubscribed(stop) ? 'Unsubscribed' : (stop.status ? (stop.status | titlecase) : 'Pending') }}
-              </span>
-            </div>
             <div class="stop-qty">
               <button type="button" class="qty-btn" (click)="adjustPlanned(stop, -1); $event.stopPropagation()">−</button>
-              <span class="qty-display" aria-label="Planned dozens">{{ stop.dozens }}</span>
+              <span class="qty-display" aria-label="Planned dozen">{{ stop.dozens }}</span>
               <button type="button" class="qty-btn" (click)="adjustPlanned(stop, 1); $event.stopPropagation()">+</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inline edit card shown beneath the stop being edited -->
+      <div class="edit-inline card" *ngIf="editingStop?.id === stop.id">
+        <h3>Edit delivery</h3>
+        <div class="new-form">
+          <label>
+            Schedule
+            <select
+              class="form-control"
+              [(ngModel)]="editDraft.routeDate"
+              name="editRouteDate"
+            >
+              <option *ngFor="let r of routes" [ngValue]="r.routeDate">
+                {{ r.routeDate }}
+              </option>
+            </select>
+          </label>
+          <label>
+            Name
+            <input class="form-control" [(ngModel)]="editDraft.name" name="editName" />
+          </label>
+          <label>
+            Address
+            <input class="form-control" [(ngModel)]="editDraft.address" name="editAddress" />
+          </label>
+          <label>
+            City
+            <input class="form-control" [(ngModel)]="editDraft.city" name="editCity" />
+          </label>
+          <label>
+            State
+            <input class="form-control" [(ngModel)]="editDraft.state" name="editState" />
+          </label>
+          <label>
+            ZIP
+            <input class="form-control" [(ngModel)]="editDraft.zip" name="editZip" />
+          </label>
+          <label>
+            Order in route
+            <input
+              class="form-control"
+              type="number"
+              min="1"
+              [max]="deliveries.length"
+              [(ngModel)]="editDraft.deliveryOrder"
+              name="editOrder"
+            />
+          </label>
+          <label>
+            Dozen
+            <input
+              class="form-control"
+              type="number"
+              min="0"
+              [(ngModel)]="editDraft.dozens"
+              name="editDozens"
+            />
+          </label>
+          <label class="full-width">
+            Notes
+            <textarea class="form-control" rows="2" [(ngModel)]="editDraft.notes" name="editNotes"></textarea>
+          </label>
+        </div>
+        <div class="donation-actions">
+          <div class="left-actions">
+            <button
+              *ngIf="editingStop && isUnsubscribed(editingStop)"
+              class="btn btn-secondary"
+              type="button"
+              (click)="resubscribeStop(editingStop)"
+            >
+              Resubscribe
+            </button>
+            <button
+              *ngIf="editingStop && !isUnsubscribed(editingStop)"
+              class="btn btn-text warn"
+              type="button"
+              (click)="unsubscribeStop(editingStop)"
+            >
+              Unsubscribe
+            </button>
+          </div>
+          <div class="right-actions">
+            <button class="btn btn-text" type="button" (click)="cancelEdit()">Cancel</button>
+            <button class="btn btn-primary" type="button" (click)="saveEdit()">Save</button>
           </div>
         </div>
       </div>
@@ -222,8 +353,12 @@
         <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
       </div>
       <div class="totals-row">
-        <span>Total Dozens</span>
+        <span>Total Dozen</span>
         <span>{{ donationTotals.dozensTotal }}</span>
+      </div>
+      <div class="totals-row">
+        <span>Taxable Donations</span>
+        <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
       </div>
     </div>
     <div class="donation-actions">
@@ -256,84 +391,6 @@
     <div class="donation-actions">
       <button type="button" class="ghost" (click)="closeOffSchedule()">Cancel</button>
       <button type="button" class="btn btn-primary" (click)="saveOffSchedule()">Save</button>
-    </div>
-  </div>
-</div>
-
-<div class="edit-overlay" *ngIf="editingStop">
-  <div class="donation-dialog">
-    <h3>Edit delivery</h3>
-    <div class="new-form">
-      <label>
-        Schedule
-        <select
-          class="form-control"
-          [(ngModel)]="editDraft.routeDate"
-          name="editRouteDate"
-        >
-          <option *ngFor="let r of routes" [ngValue]="r.routeDate">
-            {{ r.routeDate }}
-          </option>
-        </select>
-      </label>
-      <label>
-        Name
-        <input class="form-control" [(ngModel)]="editDraft.name" name="editName" />
-      </label>
-      <label>
-        Address
-        <input class="form-control" [(ngModel)]="editDraft.address" name="editAddress" />
-      </label>
-      <label>
-        City
-        <input class="form-control" [(ngModel)]="editDraft.city" name="editCity" />
-      </label>
-      <label>
-        State
-        <input class="form-control" [(ngModel)]="editDraft.state" name="editState" />
-      </label>
-      <label>
-        ZIP
-        <input class="form-control" [(ngModel)]="editDraft.zip" name="editZip" />
-      </label>
-      <label>
-        Dozens
-        <input
-          class="form-control"
-          type="number"
-          min="0"
-          [(ngModel)]="editDraft.dozens"
-          name="editDozens"
-        />
-      </label>
-      <label class="full-width">
-        Notes
-        <textarea class="form-control" rows="2" [(ngModel)]="editDraft.notes" name="editNotes"></textarea>
-      </label>
-    </div>
-    <div class="donation-actions">
-      <div class="left-actions">
-        <button
-          *ngIf="editingStop && isUnsubscribed(editingStop)"
-          class="btn btn-secondary"
-          type="button"
-          (click)="resubscribeStop(editingStop)"
-        >
-          Resubscribe
-        </button>
-        <button
-          *ngIf="editingStop && !isUnsubscribed(editingStop)"
-          class="btn btn-text warn"
-          type="button"
-          (click)="unsubscribeStop(editingStop)"
-        >
-          Unsubscribe
-        </button>
-      </div>
-      <div class="right-actions">
-        <button class="btn btn-text" type="button" (click)="cancelEdit()">Cancel</button>
-        <button class="btn btn-primary" type="button" (click)="saveEdit()">Save</button>
-      </div>
     </div>
   </div>
 </div>

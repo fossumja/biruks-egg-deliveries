@@ -49,7 +49,8 @@ export class BackupService {
       DonationMethod: d.donation?.method ?? '',
       DonationAmount: d.donation?.amount ?? '',
       TotalDonation: totalsMap.get(d.baseRowId)?.donation.toFixed(2) ?? '0.00',
-      TotalDozens: totalsMap.get(d.baseRowId)?.dozens ?? 0
+      TotalDozens: totalsMap.get(d.baseRowId)?.dozens ?? 0,
+      TotalTaxableDonation: totalsMap.get(d.baseRowId)?.taxable.toFixed(2) ?? '0.00'
     }));
     return Papa.unparse(rows);
   }
@@ -84,7 +85,7 @@ export class BackupService {
       });
     });
 
-    ['TotalDonation', 'TotalDozens'].forEach((col) => {
+    ['TotalDonation', 'TotalDozens', 'TotalTaxableDonation'].forEach((col) => {
       if (!finalHeaders.includes(col)) {
         finalHeaders.push(col);
       }
@@ -131,8 +132,10 @@ export class BackupService {
       if (totals) {
         const donationIdx = finalHeaders.indexOf('TotalDonation');
         const dozensIdx = finalHeaders.indexOf('TotalDozens');
+        const taxableIdx = finalHeaders.indexOf('TotalTaxableDonation');
         if (donationIdx >= 0) rowVals[donationIdx] = totals.donation.toFixed(2);
         if (dozensIdx >= 0) rowVals[dozensIdx] = totals.dozens.toString();
+        if (taxableIdx >= 0) rowVals[taxableIdx] = totals.taxable.toFixed(2);
       }
 
       rows.push(rowVals);
@@ -141,12 +144,15 @@ export class BackupService {
     return Papa.unparse({ fields: finalHeaders, data: rows });
   }
 
-  private computeTotalsByBase(deliveries: Delivery[]): Map<string, { donation: number; dozens: number }> {
-    const map = new Map<string, { donation: number; dozens: number }>();
-    const addTotals = (baseRowId: string, donation: number, dozens: number) => {
-      const entry = map.get(baseRowId) ?? { donation: 0, dozens: 0 };
+  private computeTotalsByBase(
+    deliveries: Delivery[]
+  ): Map<string, { donation: number; dozens: number; taxable: number }> {
+    const map = new Map<string, { donation: number; dozens: number; taxable: number }>();
+    const addTotals = (baseRowId: string, donation: number, dozens: number, taxable: number) => {
+      const entry = map.get(baseRowId) ?? { donation: 0, dozens: 0, taxable: 0 };
       entry.donation += donation;
       entry.dozens += dozens;
+      entry.taxable += taxable;
       map.set(baseRowId, entry);
     };
 
@@ -156,25 +162,40 @@ export class BackupService {
 
       // Main run donation/dozens (only when delivered)
       if (d.status === 'delivered') {
+        const suggested = Number(d.donation?.suggestedAmount ?? 0);
         const donationAmt =
           d.donation?.status === 'Donated'
             ? Number(d.donation.amount ?? d.donation.suggestedAmount ?? 0)
             : 0;
+        const taxableAmt =
+          d.donation?.status === 'Donated'
+            ? Number(
+                d.donation.taxableAmount ??
+                  Math.max(0, donationAmt - suggested)
+              )
+            : 0;
         const dozens = Number(d.deliveredDozens ?? d.dozens ?? 0);
-        addTotals(baseId, donationAmt, dozens);
+        addTotals(baseId, donationAmt, dozens, taxableAmt);
       }
 
       // One-off donations
       (d.oneOffDonations ?? []).forEach((don) => {
+        const suggested = Number(don.suggestedAmount ?? 0);
         const amt = Number(don.amount ?? don.suggestedAmount ?? 0);
-        addTotals(baseId, amt, 0);
+        const taxableAmt =
+          don.taxableAmount ?? Math.max(0, amt - suggested);
+        addTotals(baseId, amt, 0, taxableAmt);
       });
 
       // One-off deliveries (dozens + donation)
       (d.oneOffDeliveries ?? []).forEach((entry) => {
+        const suggested = Number(entry.donation?.suggestedAmount ?? 0);
         const amt = Number(entry.donation?.amount ?? entry.donation?.suggestedAmount ?? 0);
+        const taxableAmt =
+          entry.donation?.taxableAmount ??
+          Math.max(0, amt - suggested);
         const dozens = Number(entry.deliveredDozens ?? 0);
-        addTotals(baseId, amt, dozens);
+        addTotals(baseId, amt, dozens, taxableAmt);
       });
     });
 

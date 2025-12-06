@@ -1,63 +1,92 @@
-# EggDeliveryApp
+# Biruk’s Egg Deliveries (PWA)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Offline‑first Angular PWA for planning and recording egg deliveries.  
+Key flows:
+- Import a CSV of customers and routes from Excel.
+- Plan and reorder stops on the **Planner** page.
+- Run a live delivery route on the **Run** page (deliver / skip, quantities, donations).
+- Record one‑off deliveries and donations from the Planner hidden menu.
+- Export an updated CSV for record‑keeping and taxes.
 
-Note: This is a starter commit on the `style-refactor` branch — no functional changes.
+This app is designed to run as an installable PWA on iPhone and work fully offline once the data is imported.
 
-Styling refactor status: styling refactoring is applied — still in progress.
+---
 
-## Development server
+## Getting started (development)
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Install dependencies:
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Start the dev server:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Then open `http://localhost:4200/` in your browser.  
+The app reloads automatically when you change source files.
 
-To build the project run:
+---
+
+## Build & deployment
+
+Production build:
 
 ```bash
-ng build
+npx ng build --configuration production
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+For GitHub Pages deployment (as used today):
 
 ```bash
-ng test
+# Build with GitHub Pages base href
+npx ng build --configuration production --base-href="/biruks-egg-deliveries/"
+
+# Publish the built app from the browser subfolder to gh-pages
+npx angular-cli-ghpages --dir=dist/egg-delivery-app/browser --branch=gh-pages
 ```
 
-## Running end-to-end tests
+The live app is served from the `gh-pages` branch and can be installed as a PWA on iOS.
 
-For end-to-end (e2e) testing, run:
+---
+
+## Testing
+
+Run unit and scenario tests:
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The test suite currently focuses on:
+- Storage and CSV import/export behavior.
+- Donation and delivery totals (including one‑off activity).
+- Multi‑run usage scenarios (see `USAGE-SCENARIO-TESTS.md`).
 
-## Additional Resources
+Test plans and coverage goals are documented in:
+- `REGRESSION-TESTS.md`
+- `USAGE-SCENARIO-TESTS.md`
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## Documentation
+
+Design and behavior documentation lives alongside the code:
+
+- **Architecture overview** – high‑level data and PWA design  
+  `Architecture Overview.txt`
+
+- **UX & styling** – screen inventory and style system  
+  `README-ux.md`  
+  `Style Guide.txt`
+
+- **Test strategy** – regression and usage‑scenario plans  
+  `REGRESSION-TESTS.md`  
+  `USAGE-SCENARIO-TESTS.md`
+
+Task‑oriented notes for ongoing work are in:
+- `Task Breakdown.txt`  
+- `Task Breakdown - Styling.txt`

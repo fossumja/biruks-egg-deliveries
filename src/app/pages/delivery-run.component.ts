@@ -41,6 +41,7 @@ export class DeliveryRunComponent {
 
   showSkipDialog = false;
   otherReason = '';
+  showEndRunDialog = false;
 
   async ngOnInit(): Promise<void> {
     this.routeDate = this.route.snapshot.paramMap.get('routeDate') || undefined;
@@ -142,6 +143,45 @@ export class DeliveryRunComponent {
     this.showSkipDialog = false;
   }
 
+  openEndRunDialog(): void {
+    this.showEndRunDialog = true;
+  }
+
+  cancelEndRun(): void {
+    this.showEndRunDialog = false;
+  }
+
+  async confirmEndRunEarly(): Promise<void> {
+    if (!this.stops.length) {
+      this.showEndRunDialog = false;
+      return;
+    }
+    const now = new Date().toISOString();
+    const remaining = this.stops.filter(
+      (s) => s.status === '' || s.status === 'changed'
+    );
+    try {
+      for (const stop of remaining) {
+        await this.storage.markSkipped(stop.id, 'Ended run early');
+        stop.status = 'skipped';
+        stop.skippedAt = now;
+        stop.skippedReason = 'Ended run early';
+        stop.updatedAt = now;
+      }
+      this.doneCount = this.stops.filter(
+        (s) => s.status === 'delivered' || s.status === 'skipped'
+      ).length;
+      this.finished = true;
+      this.currentStop = undefined;
+      this.showEndRunDialog = false;
+      this.toast.show('Run ended early; remaining stops skipped', 'info');
+    } catch (err) {
+      console.error('End run early failed', err);
+      this.toast.show('Failed to end run early', 'error');
+      this.showEndRunDialog = false;
+    }
+  }
+
   async backupNow(): Promise<void> {
     try {
       await this.backup.exportAll();
@@ -163,7 +203,7 @@ export class DeliveryRunComponent {
     if (!this.currentStop) return;
     const address = `${this.currentStop.address}, ${this.currentStop.city}, ${this.currentStop.state} ${this.currentStop.zip ?? ''}`;
     const url = `https://maps.apple.com/?daddr=${encodeURIComponent(address)}`;
-    window.open(url, '_blank');
+    window.location.assign(url);
   }
 
   async copyAddress(): Promise<void> {

@@ -7,12 +7,14 @@
       [class.active]="donation?.status === 'NoDonation'"
       (click)="onDonationStatus('NoDonation')"
     >
-      No donation
+      None
     </button>
     <button
       type="button"
       class="btn-chip"
-      [class.active]="donation?.status === 'Donated' && donation?.method === 'cash'"
+      [class.active]="
+        donation?.status === 'Donated' && donation?.method === 'cash'
+      "
       (click)="onDonationMethod('cash')"
     >
       Cash
@@ -20,7 +22,9 @@
     <button
       type="button"
       class="btn-chip"
-      [class.active]="donation?.status === 'Donated' && donation?.method === 'ach'"
+      [class.active]="
+        donation?.status === 'Donated' && donation?.method === 'ach'
+      "
       (click)="onDonationMethod('ach')"
     >
       ACH
@@ -30,7 +34,9 @@
     <button
       type="button"
       class="btn-chip"
-      [class.active]="donation?.status === 'Donated' && donation?.method === 'venmo'"
+      [class.active]="
+        donation?.status === 'Donated' && donation?.method === 'venmo'
+      "
       (click)="onDonationMethod('venmo')"
     >
       Venmo
@@ -38,7 +44,9 @@
     <button
       type="button"
       class="btn-chip"
-      [class.active]="donation?.status === 'Donated' && donation?.method === 'paypal'"
+      [class.active]="
+        donation?.status === 'Donated' && donation?.method === 'paypal'
+      "
       (click)="onDonationMethod('paypal')"
     >
       PayPal
@@ -46,14 +54,16 @@
     <button
       type="button"
       class="btn-chip"
-      [class.active]="donation?.status === 'Donated' && donation?.method === 'other'"
+      [class.active]="
+        donation?.status === 'Donated' && donation?.method === 'other'
+      "
       (click)="onDonationMethod('other')"
     >
       Other
     </button>
   </div>
   <div class="donation-suggested text-muted">
-    Suggested: ${{ suggestedAmount | number : '1.0-0' }}
+    Suggested: ${{ suggestedAmount | number : "1.0-0" }}
   </div>
   <div class="donation-picker">
     <select

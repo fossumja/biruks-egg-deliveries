@@ -36,8 +36,8 @@
 .status-pill {
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  background: #ecfeff;
-  color: #0ea5e9;
+  background: #e0f2fe;
+  color: #0369a1;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
@@ -45,6 +45,56 @@
 .status-pill.pending {
   background: #f5f5f5;
   color: var(--color-text-muted);
+}
+
+.status-pill.delivered {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.status-pill.skipped {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-pill.changed {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.status-pill.unsubscribed {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+:host-context([data-theme='dark']) .status-pill {
+  background: #0f172a;
+  color: #cbd5e1;
+}
+
+:host-context([data-theme='dark']) .status-pill.pending {
+  background: #111827;
+  color: #94a3b8;
+}
+
+:host-context([data-theme='dark']) .status-pill.delivered {
+  background: #0f2f1c;
+  color: #4ade80;
+}
+
+:host-context([data-theme='dark']) .status-pill.skipped {
+  background: #0b2536;
+  color: #7dd3fc;
+}
+
+:host-context([data-theme='dark']) .status-pill.changed {
+  background: #2b1c00;
+  color: #fbbf24;
+}
+
+:host-context([data-theme='dark']) .status-pill.unsubscribed {
+  background: #3b0f0f;
+  color: #fecdd3;
 }
 
 .stop-qty {
@@ -75,6 +125,26 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+:host-context([data-theme='dark']) .qty-btn {
+  background: var(--color-bg);
+}
+
+.qty-btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface) 88%);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+:host-context([data-theme='dark']) .qty-btn:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
+  border-color: var(--color-primary-dark);
+}
+
+:host-context([data-theme='dark']) .qty-btn {
+  background: var(--color-bg);
 }
 
 .qty-display {

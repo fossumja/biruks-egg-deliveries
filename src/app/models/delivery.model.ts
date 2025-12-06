@@ -7,6 +7,9 @@ export interface DonationInfo {
   method?: DonationMethod;
   amount?: number;
   suggestedAmount?: number;
+  // Portion of the donation that is above the suggested amount.
+  // This is the "taxable" donation amount we want to track and total.
+  taxableAmount?: number;
   date?: string;
   note?: string;
 }

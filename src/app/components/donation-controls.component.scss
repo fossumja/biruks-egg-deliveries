@@ -19,24 +19,51 @@
 }
 
 .donation-suggested {
-  margin-top: var(--spacing-2);
+  margin-top: var(--spacing-1);
   margin-bottom: 0;
   font-size: var(--font-size-sm);
 }
 
 .btn-chip {
   border: 1px solid var(--color-border);
-  background: #f9fafb;
+  background: var(--color-surface);
   color: var(--color-text);
   padding: 6px 10px;
   border-radius: var(--radius-pill);
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-sm);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-chip.active {
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+@media (hover: none) {
+  .btn-chip:hover {
+    background: inherit;
+    color: inherit;
+    border-color: inherit;
+  }
+
+  .btn-chip:active {
+    background: inherit;
+    color: inherit;
+    border-color: inherit;
+  }
+}
+
+.btn-chip:hover {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface) 88%);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+:host-context([data-theme='dark']) .btn-chip:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
+  border-color: var(--color-primary-dark);
 }
 
 .donation-picker .amount-select {
@@ -46,7 +73,7 @@
   padding: 6px 8px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-text);
   text-align: center;
   appearance: auto;

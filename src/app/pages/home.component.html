@@ -1,18 +1,9 @@
-<div class="page-header">
-  <div>
-    <p class="lede text-muted">
-      Import your delivery CSV, pick a route, and start the run; use export to
-      back up anytime. Data stays local for offline use.
-    </p>
-  </div>
-</div>
-
 <section class="card hero">
   <div class="actions">
     <button
       type="button"
       class="btn btn-secondary btn-outline-primary"
-      (click)="fileInput.click()"
+      (click)="onImportClick(fileInput)"
       [disabled]="isImporting"
     >
       {{ isImporting ? "Importing…" : "Import CSV" }}
@@ -35,8 +26,52 @@
   </div>
   <div class="subtext text-muted" *ngIf="lastBackupAt">
     Last backup: {{ lastBackupAt | date : "short" }}
+    <span *ngIf="showImportHint">
+      — tap “Import CSV” again to choose a file.
+    </span>
+  </div>
+  <div class="subtext text-muted" *ngIf="lastImportAt">
+    Imported: {{ lastImportAt | date : "short" }}
   </div>
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+</section>
+
+<section class="card settings-card">
+  <div class="settings-row">
+    <div>
+      <div class="settings-title">Dark mode</div>
+      <div class="text-muted settings-subtitle">Toggle dark mode.</div>
+    </div>
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="darkModeEnabled ? 'btn-primary' : 'btn-secondary'"
+      (click)="toggleDarkMode()"
+      title="Dark mode"
+    >
+      {{ darkModeEnabled ? "On" : "Off" }}
+    </button>
+  </div>
+</section>
+
+<section class="card settings-card">
+  <div class="settings-row">
+    <div>
+      <div class="settings-title">Drag to reorder on Planner</div>
+      <div class="text-muted settings-subtitle">
+        When on, you can drag people to change their route order.
+      </div>
+    </div>
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="plannerReorderDefaultEnabled ? 'btn-primary' : 'btn-secondary'"
+      (click)="togglePlannerReorderDefault()"
+      title="Toggle drag-to-reorder on Planner"
+    >
+      {{ plannerReorderDefaultEnabled ? "On" : "Off" }}
+    </button>
+  </div>
 </section>
 
 <section class="card settings-card">
@@ -71,14 +106,22 @@
         Used across planner and run screens.
       </div>
     </div>
-    <select
-      class="form-control compact amount-select"
-      [(ngModel)]="suggestedRate"
-      (ngModelChange)="onSuggestedChange($event)"
-    >
-      <option *ngFor="let val of suggestedOptions" [ngValue]="val">
-        ${{ val }}
-      </option>
-    </select>
+    <div class="qty-picker">
+      <button type="button" class="qty-btn" (click)="changeSuggested(-1)">
+        −
+      </button>
+      <span class="qty-display">${{ suggestedRate }}</span>
+      <button type="button" class="qty-btn" (click)="changeSuggested(1)">
+        +
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="card build-card" *ngIf="buildInfo as info">
+  <div class="text-muted small">
+    Updated
+    {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
+    <span *ngIf="info.commit"> (commit {{ info.commit.slice(0, 7) }})</span>
   </div>
 </section>

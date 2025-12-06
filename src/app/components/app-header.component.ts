@@ -70,4 +70,5 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
       (this.currentRouteSummary.delivered / this.currentRouteSummary.total) * 100;
     return Math.min(100, Math.max(0, pct));
   }
+
 }

@@ -18,8 +18,16 @@ function getSuggestedRate(): number {
 function defaultDonation(d?: Delivery): DonationInfo {
   return {
     status: 'NotRecorded',
-    suggestedAmount: (d?.dozens ?? 0) * getSuggestedRate()
+    suggestedAmount: (d?.dozens ?? 0) * getSuggestedRate(),
+    taxableAmount: 0
   };
+}
+
+function computeTaxableAmount(d: DonationInfo): number {
+  const suggested = Number(d.suggestedAmount ?? 0);
+  const amount = Number(d.amount ?? suggested);
+  const extra = amount - suggested;
+  return extra > 0 ? extra : 0;
 }
 
 class AppDB extends Dexie {
@@ -94,22 +102,34 @@ export class StorageService {
   async importDeliveries(deliveries: Delivery[]): Promise<void> {
     const now = new Date().toISOString();
     const rate = this.getSuggestedRate();
-    const normalized = deliveries.map((d) => ({
-      ...d,
-      runId: d.runId ?? d.routeDate ?? 'default-run',
-      baseRowId: d.baseRowId ?? d.id,
-      originalDozens: d.originalDozens ?? d.dozens,
-      donation: { ...(d.donation ?? defaultDonation({ ...(d as Delivery), dozens: d.dozens, donation: undefined })) },
-      originalDonation: {
-        ...(d.originalDonation ??
-          d.donation ??
-          {
-            status: 'NotRecorded',
-            suggestedAmount: (d.dozens ?? 0) * rate
-          })
-      },
-      subscribed: d.subscribed ?? true
-    }));
+    const normalized = deliveries.map((d) => {
+      const baseDonation =
+        d.donation ?? defaultDonation({ ...(d as Delivery), dozens: d.dozens, donation: undefined });
+      if (baseDonation.taxableAmount == null) {
+        baseDonation.taxableAmount = computeTaxableAmount(baseDonation);
+      }
+      const baseOriginalDonation =
+        d.originalDonation ??
+        d.donation ??
+        ({
+          status: 'NotRecorded' as const,
+          suggestedAmount: (d.dozens ?? 0) * rate,
+          taxableAmount: 0
+        } as DonationInfo);
+      if (baseOriginalDonation.taxableAmount == null) {
+        baseOriginalDonation.taxableAmount = computeTaxableAmount(baseOriginalDonation);
+      }
+
+      return {
+        ...d,
+        runId: d.runId ?? d.routeDate ?? 'default-run',
+        baseRowId: d.baseRowId ?? d.id,
+        originalDozens: d.originalDozens ?? d.dozens,
+        donation: { ...baseDonation },
+        originalDonation: { ...baseOriginalDonation },
+        subscribed: d.subscribed ?? true
+      };
+    });
     await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
       await this.db.deliveries.clear();
       await this.db.routes.clear();
@@ -280,21 +300,21 @@ export class StorageService {
 
   async addDelivery(routeDate: string, payload: Partial<Delivery>): Promise<Delivery> {
     const now = new Date().toISOString();
-    const currentCount = await this.db.deliveries.where('routeDate').equals(routeDate).count();
+    // Pull current list to support insertion at a specific order.
+    const list = await this.db.deliveries.where('routeDate').equals(routeDate).sortBy('sortIndex');
+
     // Derive schedule identifier from existing deliveries' routeDate (first column) to avoid separate week column.
-    const existingDeliveries = await this.db.deliveries
-      .where('routeDate')
-      .equals(routeDate)
-      .limit(1)
-      .toArray();
+    const existingDeliveries = list.slice(0, 1);
     const scheduleId =
       (payload.week ?? existingDeliveries[0]?.routeDate ?? routeDate ?? 'Schedule')
         .toString()
         .replace(/\s+/g, '') || 'Schedule';
+
     const baseRowId = payload.baseRowId ?? `NEW_${crypto.randomUUID?.() ?? Date.now()}`;
     const id = payload.id ?? crypto.randomUUID?.() ?? `${Date.now()}_${Math.random()}`;
     const dozens = payload.dozens ?? 0;
     const baseDonation: DonationInfo = { ...(payload.donation ?? defaultDonation({ ...(payload as Delivery), dozens })) };
+
     const newDelivery: Delivery = {
       id,
       runId: payload.runId ?? routeDate,
@@ -308,8 +328,8 @@ export class StorageService {
       zip: payload.zip,
       dozens,
       originalDozens: payload.originalDozens ?? dozens,
-      deliveryOrder: currentCount,
-      sortIndex: currentCount,
+      deliveryOrder: 0, // temporary, will reindex
+      sortIndex: 0,     // temporary, will reindex
       notes: payload.notes,
       status: payload.status ?? '',
       donation: { ...baseDonation },
@@ -320,8 +340,23 @@ export class StorageService {
       synced: false
     };
 
+    // Determine insertion point (1-based from UI, clamp to list length + 1).
+    const requestedOrder = Math.min(
+      Math.max(1, (payload.deliveryOrder as number | undefined) ?? list.length + 1),
+      list.length + 1
+    );
+    const insertIdx = requestedOrder - 1;
+    list.splice(insertIdx, 0, newDelivery);
+
+    // Reindex dense order/sort.
+    list.forEach((d, idx) => {
+      d.sortIndex = idx;
+      d.deliveryOrder = idx;
+      d.updatedAt = now;
+    });
+
     await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
-      await this.db.deliveries.add(newDelivery);
+      await this.db.deliveries.bulkPut(list);
       await this.refreshRouteStats(routeDate, now);
     });
 
@@ -378,6 +413,7 @@ export class StorageService {
     const status = existing
       ? this.computeChangeStatus(existing as Delivery, undefined, donation)
       : ('changed' as DeliveryStatus);
+    donation.taxableAmount = computeTaxableAmount(donation);
     await this.db.deliveries.update(id, { donation, status, updatedAt: now, synced: false });
   }
 
@@ -385,6 +421,7 @@ export class StorageService {
     const now = new Date().toISOString();
     const existing = await this.db.deliveries.get(id);
     if (!existing) return;
+    donation.taxableAmount = computeTaxableAmount(donation);
     await this.db.deliveries.update(id, {
       donation,
       status: existing.status,
@@ -400,7 +437,12 @@ export class StorageService {
     const list = Array.isArray(existing.oneOffDonations)
       ? [...existing.oneOffDonations]
       : [];
-    list.push({ ...donation, date: donation.date ?? now });
+    const normalizedDonation: DonationInfo = {
+      ...donation,
+      taxableAmount: computeTaxableAmount(donation),
+      date: donation.date ?? now
+    };
+    list.push(normalizedDonation);
     await this.db.deliveries.update(id, {
       oneOffDonations: list,
       updatedAt: now,
@@ -419,9 +461,16 @@ export class StorageService {
     const list = Array.isArray(existing.oneOffDeliveries)
       ? [...existing.oneOffDeliveries]
       : [];
+    const normalizedDonation = donation
+      ? ({
+          ...donation,
+          taxableAmount: computeTaxableAmount(donation),
+          date: donation.date ?? now
+        } as DonationInfo)
+      : undefined;
     list.push({
       deliveredDozens,
-      donation: donation ? { ...donation, date: donation.date ?? now } : undefined,
+      donation: normalizedDonation,
       date: now
     });
     await this.db.deliveries.update(id, {

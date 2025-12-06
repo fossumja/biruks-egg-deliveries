@@ -6,5 +6,30 @@
 }
 
 .app-content {
-  margin-top: var(--spacing-4);
+  margin-top: var(--spacing-1);
+}
+
+.ios-statusbar-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+  pointer-events: none;
+  z-index: 3000;
+}
+
+@supports (padding-top: constant(safe-area-inset-top)) {
+  .ios-statusbar-bg {
+    height: constant(safe-area-inset-top);
+  }
+}
+
+[data-theme='dark'] .ios-statusbar-bg {
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+}
+
+.app-shell.tight .card {
+  margin-top: var(--spacing-1);
 }

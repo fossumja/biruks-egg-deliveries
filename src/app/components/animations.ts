@@ -10,9 +10,12 @@ export const cardChangeTrigger = trigger('cardChange', [
   ),
   transition('void => in', [
     style({ opacity: 0, transform: 'translateY(12px)' }),
-    animate('200ms var(--easing-ease-out)')
+    animate('200ms cubic-bezier(0, 0, 0.2, 1)')
   ]),
   transition('in => void', [
-    animate('180ms var(--easing-ease-out)', style({ opacity: 0, transform: 'translateY(-8px)' }))
+    animate(
+      '180ms cubic-bezier(0, 0, 0.2, 1)',
+      style({ opacity: 0, transform: 'translateY(-8px)' })
+    )
   ])
 ]);

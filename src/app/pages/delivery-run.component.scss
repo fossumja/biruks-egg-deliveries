@@ -1,6 +1,6 @@
 .run-screen {
   display: grid;
-  gap: var(--spacing-3);
+  gap: 0px;
 }
 
 .header {
@@ -46,6 +46,11 @@
 .delivery-card .donation-suggested {
   justify-content: center;
   text-align: center;
+}
+
+:host ::ng-deep main.app-content > .card {
+  margin-bottom: 0;
+  border-bottom: 0;
 }
 
 .card-top {
@@ -119,6 +124,16 @@
 .status-pill.pending {
   background: #f5f5f5;
   color: var(--color-text-muted);
+}
+
+:host-context([data-theme="dark"]) .status-pill {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+:host-context([data-theme="dark"]) .status-pill.pending {
+  background: #111827;
+  color: #cbd5e1;
 }
 
 .name-row {
@@ -216,11 +231,36 @@
   width: 100%;
   display: flex;
   gap: var(--spacing-2);
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
   backdrop-filter: blur(12px);
   padding: var(--spacing-2);
   border-radius: var(--radius-lg);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+:host-context([data-theme='dark']) .bottom-bar {
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+}
+
+.bottom-bar .primary-actions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.bottom-bar .btn-end-run {
+  margin-left: auto;
+  padding: 6px 10px;
+  min-height: 32px;
+  font-size: var(--font-size-sm);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  background: color-mix(in srgb, #fef2f2 80%, var(--color-surface) 20%);
+}
+
+:host-context([data-theme='dark']) .bottom-bar .btn-end-run {
+  background: color-mix(in srgb, #3b0f0f 80%, var(--color-bg) 20%);
+  color: #fecaca;
+  border-color: #fca5a5;
 }
 
 .actions-complete {
@@ -267,15 +307,48 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
 }
-.bottom-bar {
-  position: sticky;
-  bottom: 0;
+
+.end-run-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4);
+  z-index: 2100;
+}
+
+.end-run-dialog {
   width: 100%;
+  max-width: 400px;
+  display: grid;
+  gap: var(--spacing-3);
+  box-shadow: var(--shadow-modal);
+}
+
+.end-run-actions {
   display: flex;
   gap: var(--spacing-2);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  padding: var(--spacing-2);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-cancel-large {
+  flex: 1 1 auto;
+  padding: 10px 14px;
+}
+
+.btn-proceed-small {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  background: color-mix(in srgb, #fef2f2 80%, var(--color-surface) 20%);
+}
+
+:host-context([data-theme='dark']) .btn-proceed-small {
+  background: color-mix(in srgb, #3b0f0f 80%, var(--color-bg) 20%);
+  color: #fecaca;
+  border-color: #fca5a5;
 }
