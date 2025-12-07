@@ -1,39 +1,39 @@
-RowType,Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter,RunId,RouteDate,ScheduleId,RunStatus,RunBaseRowId,RunDeliveryOrder,RunEntryStatus,RunDozens,RunDonationStatus,RunDonationMethod,RunDonationAmount,RunTaxableAmount,TotalDonation,TotalDozens,TotalDeductibleContribution
-RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-01,Week A,WeekA,completed,CUST_A1,0,delivered,2,Donated,cash,8,0,,,,,
-RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-01,Week A,WeekA,completed,CUST_A2,1,delivered,1,NoDonation,,0,0,,,,,
-RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-01,Week A,WeekA,completed,CUST_A3,2,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-08,Week A,WeekA,completed,CUST_A1,0,delivered,2,Donated,paypal,10,2,,,,,
-RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-08,Week A,WeekA,completed,CUST_A2,1,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-08,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,cash,12,0,,,,,
-RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-15,Week A,WeekA,completed,CUST_A1,0,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-15,Week A,WeekA,completed,CUST_A2,1,delivered,1,Donated,venmo,5,1,,,,,
-RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-15,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,ach,18,6,,,,,
-RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-02-01,Week B,WeekB,completed,CUST_B1,0,delivered,2,Donated,cash,8,0,,,,,
-RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-02-01,Week B,WeekB,completed,CUST_B2,1,delivered,1,NoDonation,,0,0,,,,,
-RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-02-01,Week B,WeekB,completed,CUST_B3,2,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-02-15,Week B,WeekB,completed,CUST_B1,0,delivered,2,NoDonation,,0,0,,,,,
-RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-02-15,Week B,WeekB,completed,CUST_B2,1,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-02-15,Week B,WeekB,completed,CUST_B3,2,delivered,4,Donated,paypal,20,4,,,,,
-RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-22,Week A,WeekA,completed,CUST_A1,0,delivered,2,Donated,cash,8,0,,,,,
-RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-22,Week A,WeekA,completed,CUST_A2,1,delivered,1,NoDonation,,0,0,,,,,
-RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-22,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,cash,15,3,,,,,
-RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-02-05,Week A,WeekA,completed,CUST_A1,0,delivered,2,NoDonation,,0,0,,,,,
-RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-02-05,Week A,WeekA,completed,CUST_A2,1,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-02-05,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,paypal,24,12,,,,,
-RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-03-01,Week B,WeekB,completed,CUST_B1,0,delivered,2,Donated,cash,8,0,,,,,
-RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-03-01,Week B,WeekB,completed,CUST_B2,1,delivered,1,Donated,cash,5,1,,,,,
-RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-03-01,Week B,WeekB,completed,CUST_B3,2,delivered,4,NoDonation,,0,0,,,,,
-RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-03-15,Week B,WeekB,completed,CUST_B1,0,skipped,0,NotRecorded,,0,0,,,,,
-RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-03-15,Week B,WeekB,completed,CUST_B2,1,delivered,1,Donated,paypal,4,0,,,,,
-RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-03-15,Week B,WeekB,completed,CUST_B3,2,delivered,4,Donated,ach,24,8,,,,,
-OneOffDonation,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,,,,,,,,,0,Donated,cash,20,8,,,,,
-OneOffDelivery,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,,,,,,,,,1,Donated,venmo,4,0,,,,,
-OneOffDonation,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,,,,,,,,,0,Donated,ach,30,6,,,,,
-OneOffDonation,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,,,,,,,,,0,Donated,cash,10,6,,,,,
-OneOffDonation,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,,,,,,,,,0,Donated,other,5,1,,,,,
-Delivery,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,,,,,,,,,,,,,42.00,5,10.00
-Delivery,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,,,,,,,,,,,,,5.00,2,1.00
-Delivery,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,,,,,,,,,,,,,60.00,6,12.00
-Delivery,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,,,,,,,,,,,,,8.00,5,0.00
-Delivery,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,,,,,,,,,,,,,15.00,2,7.00
-Delivery,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,,,,,,,,,,,,,20.00,4,4.00
+RowType,Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter,RunId,RouteDate,ScheduleId,RunStatus,RunBaseRowId,RunDeliveryOrder,RunEntryStatus,RunDozens,RunDonationStatus,RunDonationMethod,RunDonationAmount,RunTaxableAmount,RunCompletedAt,EventDate,TotalDonation,TotalDozens,TotalDeductibleContribution
+RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-01,Week A,WeekA,completed,CUST_A1,0,delivered,2,Donated,cash,8,0,2025-01-01T09:00:00Z,2025-01-01T09:00:00Z,,,
+RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-01,Week A,WeekA,completed,CUST_A2,1,delivered,1,NoDonation,,0,0,2025-01-01T09:00:00Z,2025-01-01T09:00:00Z,,,
+RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-01,Week A,WeekA,completed,CUST_A3,2,skipped,0,NotRecorded,,0,0,2025-01-01T09:00:00Z,2025-01-01T09:00:00Z,,,
+RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-08,Week A,WeekA,completed,CUST_A1,0,delivered,2,Donated,paypal,10,2,2025-01-08T09:00:00Z,2025-01-08T09:00:00Z,,,
+RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-08,Week A,WeekA,completed,CUST_A2,1,skipped,0,NotRecorded,,0,0,2025-01-08T09:00:00Z,2025-01-08T09:00:00Z,,,
+RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-08,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,cash,12,0,2025-01-08T09:00:00Z,2025-01-08T09:00:00Z,,,
+RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-15,Week A,WeekA,completed,CUST_A1,0,skipped,0,NotRecorded,,0,0,2025-01-15T09:00:00Z,2025-01-15T09:00:00Z,,,
+RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-15,Week A,WeekA,completed,CUST_A2,1,delivered,1,Donated,venmo,5,1,2025-01-15T09:00:00Z,2025-01-15T09:00:00Z,,,
+RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-15,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,ach,18,6,2025-01-15T09:00:00Z,2025-01-15T09:00:00Z,,,
+RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-02-01,Week B,WeekB,completed,CUST_B1,0,delivered,2,Donated,cash,8,0,2025-02-01T09:00:00Z,2025-02-01T09:00:00Z,,,
+RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-02-01,Week B,WeekB,completed,CUST_B2,1,delivered,1,NoDonation,,0,0,2025-02-01T09:00:00Z,2025-02-01T09:00:00Z,,,
+RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-02-01,Week B,WeekB,completed,CUST_B3,2,skipped,0,NotRecorded,,0,0,2025-02-01T09:00:00Z,2025-02-01T09:00:00Z,,,
+RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-02-15,Week B,WeekB,completed,CUST_B1,0,delivered,2,NoDonation,,0,0,2025-02-15T09:00:00Z,2025-02-15T09:00:00Z,,,
+RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-02-15,Week B,WeekB,completed,CUST_B2,1,skipped,0,NotRecorded,,0,0,2025-02-15T09:00:00Z,2025-02-15T09:00:00Z,,,
+RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-02-15,Week B,WeekB,completed,CUST_B3,2,delivered,4,Donated,paypal,20,4,2025-02-15T09:00:00Z,2025-02-15T09:00:00Z,,,
+RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-01-22,Week A,WeekA,completed,CUST_A1,0,delivered,2,Donated,cash,8,0,2025-01-22T09:00:00Z,2025-01-22T09:00:00Z,,,
+RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-01-22,Week A,WeekA,completed,CUST_A2,1,delivered,1,NoDonation,,0,0,2025-01-22T09:00:00Z,2025-01-22T09:00:00Z,,,
+RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-01-22,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,cash,15,3,2025-01-22T09:00:00Z,2025-01-22T09:00:00Z,,,
+RunEntry,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,runA-2025-02-05,Week A,WeekA,completed,CUST_A1,0,delivered,2,NoDonation,,0,0,2025-02-05T09:00:00Z,2025-02-05T09:00:00Z,,,
+RunEntry,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,runA-2025-02-05,Week A,WeekA,completed,CUST_A2,1,skipped,0,NotRecorded,,0,0,2025-02-05T09:00:00Z,2025-02-05T09:00:00Z,,,
+RunEntry,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,runA-2025-02-05,Week A,WeekA,completed,CUST_A3,2,delivered,3,Donated,paypal,24,12,2025-02-05T09:00:00Z,2025-02-05T09:00:00Z,,,
+RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-03-01,Week B,WeekB,completed,CUST_B1,0,delivered,2,Donated,cash,8,0,2025-03-01T09:00:00Z,2025-03-01T09:00:00Z,,,
+RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-03-01,Week B,WeekB,completed,CUST_B2,1,delivered,1,Donated,cash,5,1,2025-03-01T09:00:00Z,2025-03-01T09:00:00Z,,,
+RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-03-01,Week B,WeekB,completed,CUST_B3,2,delivered,4,NoDonation,,0,0,2025-03-01T09:00:00Z,2025-03-01T09:00:00Z,,,
+RunEntry,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,runB-2025-03-15,Week B,WeekB,completed,CUST_B1,0,skipped,0,NotRecorded,,0,0,2025-03-15T09:00:00Z,2025-03-15T09:00:00Z,,,
+RunEntry,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,runB-2025-03-15,Week B,WeekB,completed,CUST_B2,1,delivered,1,Donated,paypal,4,0,2025-03-15T09:00:00Z,2025-03-15T09:00:00Z,,,
+RunEntry,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,runB-2025-03-15,Week B,WeekB,completed,CUST_B3,2,delivered,4,Donated,ach,24,8,2025-03-15T09:00:00Z,2025-03-15T09:00:00Z,,,
+OneOffDonation,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,,,,,,,,,0,Donated,cash,20,8,,2025-02-10T10:00:00Z,,,
+OneOffDelivery,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,,,,,,,,,1,Donated,venmo,4,0,,2025-02-12T10:00:00Z,,,
+OneOffDonation,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,,,,,,,,,0,Donated,ach,30,6,,2025-02-20T10:00:00Z,,,
+OneOffDonation,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,,,,,,,,,0,Donated,cash,10,6,,2025-03-05T10:00:00Z,,,
+OneOffDonation,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,,,,,,,,,0,Donated,other,5,1,,2025-03-10T10:00:00Z,,,
+Delivery,Week A,CUST_A1,001,Alice Baker,101 N Main St,Canton,SD,57013,2,TRUE,Leave on front porch,1,,,,,,,,,,,,,,,42.00,5,10.00
+Delivery,Week A,CUST_A2,002,Ben Carter,220 Oak St,Canton,SD,57013,1,TRUE,Dog in yard – latch gate,1,,,,,,,,,,,,,,,5.00,2,1.00
+Delivery,Week A,CUST_A3,003,Cara Diaz,500 W 5th St,Canton,SD,57013,3,TRUE,Back door cooler,0,,,,,,,,,,,,,,,60.00,6,12.00
+Delivery,Week B,CUST_B1,001,Blake East,200 Elm St,Canton,SD,57013,2,TRUE,Prefers early morning delivery,1,,,,,,,,,,,,,,,8.00,5,0.00
+Delivery,Week B,CUST_B2,002,Casey Frost,45 Pine Ridge Rd,Canton,SD,57013,1,TRUE,Call if running late,0,,,,,,,,,,,,,,,15.00,2,7.00
+Delivery,Week B,CUST_B3,003,Drew Gale,710 Oak Ridge Dr,Inwood,IA,51240,4,TRUE,Store in garage fridge,1,,,,,,,,,,,,,,,20.00,4,4.00
