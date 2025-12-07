@@ -15,18 +15,24 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   @Input() suggestedAmount = 0;
   @Input() showNoDonation = true;
   @Input() allowReselect = false;
+  @Input() showQty = false;
+  @Input() qtyLabel = 'Quantity (dozen)';
+  @Input() qtyValue = 0;
 
   @Output() donationStatusChange = new EventEmitter<DonationStatus>();
   @Output() donationMethodChange = new EventEmitter<DonationMethod>();
   @Output() amountChange = new EventEmitter<number>();
+   @Output() qtyChange = new EventEmitter<number>();
 
   amountOptions: number[] = [];
   amountValue = 0;
+  qtyLocal = 0;
 
   ngOnInit(): void {
     const base = this.computeBaseAmount();
     this.amountValue = base;
     this.refreshAmountOptions(base);
+    this.qtyLocal = this.qtyValue;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -34,6 +40,9 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       const base = this.computeBaseAmount();
       this.amountValue = base;
       this.refreshAmountOptions(base);
+    }
+    if ('qtyValue' in changes) {
+      this.qtyLocal = this.qtyValue;
     }
     if (this.donation?.status === undefined && this.donation?.method) {
       this.donation.status = 'Donated';
@@ -63,6 +72,12 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       this.refreshAmountOptions(0);
       this.amountChange.emit(0);
     }
+  }
+
+  changeQty(delta: number): void {
+    const next = Math.max(0, (this.qtyLocal || 0) + delta);
+    this.qtyLocal = next;
+    this.qtyChange.emit(next);
   }
 
   onDonationMethod(method: DonationMethod): void {

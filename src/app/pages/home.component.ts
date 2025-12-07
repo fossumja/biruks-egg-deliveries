@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Papa from 'papaparse';
 import { Delivery, DeliveryStatus, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
+import { DeliveryRun } from '../models/delivery-run.model';
+import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { Route } from '../models/route.model';
 import { BackupService } from '../services/backup.service';
 import { BuildInfo, BuildInfoService } from '../services/build-info.service';
@@ -29,10 +31,11 @@ export class HomeComponent implements OnDestroy {
   routes: Route[] = [];
   lastBackupAt?: string;
   lastImportAt?: string;
+  lastRestoreAt?: string;
   isImporting = false;
   isExporting = false;
-  pendingImportAfterBackup = false;
-  showImportHint = false;
+  pendingRestoreAfterBackup = false;
+  showRestoreHint = false;
   showHelp = false;
   errorMessage = '';
   selectedRouteDate: string | null = null;
@@ -51,6 +54,7 @@ export class HomeComponent implements OnDestroy {
     await this.refreshRoutes();
     this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
     this.lastImportAt = localStorage.getItem('lastImportAt') || undefined;
+    this.lastRestoreAt = localStorage.getItem('lastRestoreAt') || undefined;
     this.currentRoute = localStorage.getItem('currentRoute') || undefined;
     this.suggestedRate = this.storage.getSuggestedRate();
     const storedDark = localStorage.getItem('darkModeEnabled');
@@ -75,7 +79,8 @@ export class HomeComponent implements OnDestroy {
       document.addEventListener('visibilitychange', this.visibilityHandler);
     }
 
-    // If this is a brand new install with no routes yet, auto-load bundled sample data.
+    // If this is a brand new install with no routes yet, auto-load bundled sample data
+    // and seed some history so the app feels "alive" on first run.
     if (!this.routes.length) {
       await this.importSampleDataIfAvailable();
     }
@@ -105,8 +110,6 @@ export class HomeComponent implements OnDestroy {
       const now = new Date().toISOString();
       localStorage.setItem('lastImportAt', now);
       this.lastImportAt = now;
-      this.pendingImportAfterBackup = false;
-      this.showImportHint = false;
       await this.refreshRoutes();
       this.autoselectRoute();
       this.toast.show('Import complete');
@@ -123,37 +126,11 @@ export class HomeComponent implements OnDestroy {
   }
 
   async onImportClick(fileInput: HTMLInputElement): Promise<void> {
-    // If a backup was just completed for this import, allow immediate file selection.
-    if (this.pendingImportAfterBackup) {
-      this.pendingImportAfterBackup = false;
-      this.showImportHint = false;
-      fileInput.click();
-      return;
-    }
-
     // Ensure we have the latest route list.
     if (!this.routes.length) {
       await this.refreshRoutes();
     }
-    const hasRoutes = this.routes.length > 0;
-    const lastSource = localStorage.getItem('lastImportSource');
-
-    // No real data yet, or only sample data: open the picker immediately.
-    if (!hasRoutes || lastSource === 'sample') {
-      fileInput.click();
-      return;
-    }
-
-    // Real data exists: run backup flow first. Due to browser security,
-    // we can't open the file picker after an async operation and still
-    // have it count as a user gesture, so we require a second tap.
-    const ok = await this.maybeBackupBeforeImport();
-    if (!ok) {
-      return;
-    }
-    this.pendingImportAfterBackup = true;
-    this.showImportHint = true;
-    this.toast.show('Backup ready. Tap "Import CSV" again to choose a file.');
+    fileInput.click();
   }
 
   async exportCsv(): Promise<void> {
@@ -162,8 +139,8 @@ export class HomeComponent implements OnDestroy {
     try {
       await this.backupService.exportAll();
       this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
-      // Manual backup: no special import hint.
-      this.showImportHint = false;
+      // Manual backup: no special hint.
+      this.showRestoreHint = false;
       this.toast.show('Backup ready');
     } catch (err) {
       console.error(err);
@@ -252,11 +229,11 @@ export class HomeComponent implements OnDestroy {
     }
   }
 
-  private async maybeBackupBeforeImport(): Promise<boolean> {
+  private async maybeBackupBeforeRestore(): Promise<boolean> {
     const confirmMessage =
-      'You already have delivery data loaded. Importing a new CSV will replace the current data in the app.\n\n' +
+      'You already have delivery data loaded. Restoring from a backup will replace all current deliveries, routes, and run history.\n\n' +
       'It is strongly recommended to export a backup first so you keep a copy of your past runs and donations.\n\n' +
-      'Press OK to export a backup now and then continue with the import, or Cancel to abort.';
+      'Press OK to export a backup now and then continue with Restore (CSV), or Cancel to abort.';
 
     const proceed = window.confirm(confirmMessage);
     if (!proceed) {
@@ -271,7 +248,7 @@ export class HomeComponent implements OnDestroy {
       return true;
     } catch (err) {
       console.error('Backup before import failed', err);
-      this.toast.show('Backup failed. Import cancelled.', 'error');
+      this.toast.show('Backup failed. Restore cancelled.', 'error');
       return false;
     } finally {
       this.isExporting = false;
@@ -308,10 +285,28 @@ export class HomeComponent implements OnDestroy {
         skipEmptyLines: true,
         complete: (results: Papa.ParseResult<Record<string, string>>) => {
           try {
-            const deliveries = this.normalizeRows(results.data, results.meta.fields ?? []);
             const headers = results.meta.fields ?? [];
+            const hasRowType = headers.some(
+              (h) => h.toLowerCase() === 'rowtype'
+            );
+            const filteredRows = hasRowType
+              ? results.data.filter((row) => {
+                  const value =
+                    row['RowType'] ??
+                    row['rowtype'] ??
+                    row['ROWTYPE'];
+                  // Treat missing or "Delivery" as a delivery row; ignore RunEntry rows.
+                  return !value || value.toString().toLowerCase() === 'delivery';
+                })
+              : results.data;
+            const deliveries = this.normalizeRows(filteredRows, headers);
             const rowsByBase = this.buildImportState(headers, results.data);
-            void this.storage.saveImportState({ id: 'default', headers, rowsByBaseRowId: rowsByBase });
+            void this.storage.saveImportState({
+              id: 'default',
+              headers,
+              rowsByBaseRowId: rowsByBase,
+              mode: 'baseline'
+            });
             resolve(deliveries);
           } catch (e) {
             reject(e);
@@ -437,6 +432,336 @@ export class HomeComponent implements OnDestroy {
     };
   }
 
+  private async restoreFromBackupFile(file: File): Promise<void> {
+    const text = await file.text();
+    const parsed = await new Promise<Papa.ParseResult<Record<string, string>>>(
+      (resolve, reject) => {
+        Papa.parse<Record<string, string>>(text, {
+          header: true,
+          skipEmptyLines: true,
+          complete: resolve,
+          error: reject
+        });
+      }
+    );
+
+    const headers = parsed.meta.fields ?? [];
+    const rows = parsed.data;
+
+    const rowTypeHeader =
+      headers.find((h) => h.toLowerCase() === 'rowtype') ?? null;
+
+    const deliveryRows: Record<string, string>[] = [];
+    const runEntryRows: Record<string, string>[] = [];
+    const oneOffDonationRows: Record<string, string>[] = [];
+    const oneOffDeliveryRows: Record<string, string>[] = [];
+
+    rows.forEach((row) => {
+      const rawType = rowTypeHeader
+        ? row[rowTypeHeader] ?? row['RowType'] ?? row['rowtype']
+        : row['RowType'] ?? row['rowtype'];
+      const v = (rawType ?? '').toString().toLowerCase();
+      if (!v || v === 'delivery') {
+        deliveryRows.push(row);
+      } else if (v === 'runentry') {
+        runEntryRows.push(row);
+      } else if (v === 'oneoffdonation') {
+        oneOffDonationRows.push(row);
+      } else if (v === 'oneoffdelivery') {
+        oneOffDeliveryRows.push(row);
+      }
+    });
+
+    const deliveries = this.normalizeRows(deliveryRows, headers);
+
+    // Rebuild one-off donations and deliveries from backup rows so they can
+    // participate in totals and history just like freshly-recorded events.
+    if (oneOffDonationRows.length || oneOffDeliveryRows.length) {
+      const byBaseId = new Map<string, Delivery[]>();
+      deliveries.forEach((d) => {
+        const key = d.baseRowId;
+        const arr = byBaseId.get(key) ?? [];
+        arr.push(d);
+        byBaseId.set(key, arr);
+      });
+
+      // Attach one-off donations.
+      oneOffDonationRows.forEach((row) => {
+        const baseRowId =
+          (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || row['RunBaseRowId'] || '').trim();
+        if (!baseRowId) return;
+        const targets = byBaseId.get(baseRowId);
+        if (!targets || !targets.length) return;
+        const dateRaw =
+          (row['EventDate'] ||
+            row['eventdate'] ||
+            row['Date'] ||
+            row['date'] ||
+            '') as string;
+        const date =
+          (dateRaw && dateRaw.toString().trim()) || new Date().toISOString();
+        const statusRaw =
+          (row['RunDonationStatus'] ||
+            row['DonationStatus'] ||
+            row['donationstatus'] ||
+            '') as DonationStatus;
+        const status: DonationStatus = statusRaw || 'NotRecorded';
+        const methodRaw =
+          (row['RunDonationMethod'] ||
+            row['DonationMethod'] ||
+            row['donationmethod'] ||
+            '') as DonationMethod;
+        const suggestedRaw = row['SuggestedAmount'] || row['suggestedamount'] || '';
+        const amountRaw =
+          row['RunDonationAmount'] ||
+          row['DonationAmount'] ||
+          row['donationamount'] ||
+          '';
+        const suggested = suggestedRaw ? Number(suggestedRaw) : undefined;
+        const amount = amountRaw ? Number(amountRaw) : suggested;
+        const taxableRaw =
+          row['RunTaxableAmount'] ||
+          row['TaxableAmount'] ||
+          row['taxableamount'] ||
+          '';
+        const taxable = taxableRaw ? Number(taxableRaw) : undefined;
+
+        const donation: DonationInfo = {
+          status,
+          method: methodRaw || undefined,
+          suggestedAmount: suggested,
+          amount,
+          taxableAmount: taxable,
+          date
+        };
+
+        targets.forEach((d) => {
+          d.oneOffDonations = [...(d.oneOffDonations ?? []), donation];
+        });
+      });
+
+      // Attach one-off deliveries.
+      oneOffDeliveryRows.forEach((row) => {
+        const baseRowId =
+          (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || row['RunBaseRowId'] || '').trim();
+        if (!baseRowId) return;
+        const targets = byBaseId.get(baseRowId);
+        if (!targets || !targets.length) return;
+        const dateRaw =
+          (row['EventDate'] ||
+            row['eventdate'] ||
+            row['Date'] ||
+            row['date'] ||
+            '') as string;
+        const date =
+          (dateRaw && dateRaw.toString().trim()) || new Date().toISOString();
+        const dozensRaw =
+          row['RunDozens'] || row['Dozens'] || row['dozens'] || row['Qty'] || '';
+        const deliveredDozens = dozensRaw ? Number(dozensRaw) || 0 : 0;
+
+        const statusRaw =
+          (row['RunDonationStatus'] ||
+            row['DonationStatus'] ||
+            row['donationstatus'] ||
+            '') as DonationStatus;
+        const status: DonationStatus = statusRaw || 'NotRecorded';
+        const methodRaw =
+          (row['RunDonationMethod'] ||
+            row['DonationMethod'] ||
+            row['donationmethod'] ||
+            '') as DonationMethod;
+        const suggestedRaw = row['SuggestedAmount'] || row['suggestedamount'] || '';
+        const amountRaw =
+          row['RunDonationAmount'] ||
+          row['DonationAmount'] ||
+          row['donationamount'] ||
+          '';
+        const suggested = suggestedRaw ? Number(suggestedRaw) : undefined;
+        const amount = amountRaw ? Number(amountRaw) : suggested;
+        const taxableRaw =
+          row['RunTaxableAmount'] ||
+          row['TaxableAmount'] ||
+          row['taxableamount'] ||
+          '';
+        const taxable = taxableRaw ? Number(taxableRaw) : undefined;
+
+        const donation: DonationInfo | undefined =
+          status === 'NotRecorded' && !methodRaw && amount == null
+            ? undefined
+            : {
+                status,
+                method: methodRaw || undefined,
+                suggestedAmount: suggested,
+                amount,
+                taxableAmount: taxable,
+                date
+              };
+
+        targets.forEach((d) => {
+          const list = [...(d.oneOffDeliveries ?? [])];
+          list.push({
+            deliveredDozens,
+            donation,
+            date
+          });
+          d.oneOffDeliveries = list;
+        });
+      });
+    }
+    const rowsByBase = this.buildImportState(headers, deliveryRows);
+    const importState = {
+      id: 'default',
+      headers,
+      rowsByBaseRowId: rowsByBase,
+      mode: 'restored' as const
+    };
+
+    const runsMap = new Map<string, DeliveryRun>();
+    const runEntries: RunSnapshotEntry[] = [];
+
+    runEntryRows.forEach((row) => {
+      const runId = (row['RunId'] || row['runid'] || '').trim();
+      if (!runId) return;
+
+      if (!runsMap.has(runId)) {
+        const routeDate = (row['RouteDate'] || row['routedate'] || '').trim();
+        const scheduleId =
+          (row['ScheduleId'] || row['scheduleid'] || '')
+            .toString()
+            .trim() || routeDate.replace(/\s+/g, '') || 'Schedule';
+        const runStatusRaw = (row['RunStatus'] || row['runstatus'] || '')
+          .toString()
+          .trim()
+          .toLowerCase();
+        const status =
+          runStatusRaw === 'endedearly' || runStatusRaw === 'ended_early'
+            ? 'endedEarly'
+            : runStatusRaw === 'completed'
+              ? 'completed'
+              : undefined;
+        const completedRaw =
+          (row['RunCompletedAt'] ||
+            row['runcompletedat'] ||
+            row['EventDate'] ||
+            row['eventdate'] ||
+            '') as string;
+        let runDateIso: string;
+        if (completedRaw && completedRaw.toString().trim()) {
+          const parsed = new Date(completedRaw);
+          runDateIso = isNaN(parsed.getTime())
+            ? new Date().toISOString()
+            : parsed.toISOString();
+        } else if (routeDate) {
+          const parsed = new Date(routeDate);
+          runDateIso = isNaN(parsed.getTime())
+            ? new Date().toISOString()
+            : parsed.toISOString();
+        } else {
+          runDateIso = new Date().toISOString();
+        }
+
+        const newRun: DeliveryRun = {
+          id: runId,
+          date: runDateIso,
+          weekType: scheduleId,
+          label: routeDate ? `${routeDate} – restored` : 'Restored run',
+          status,
+          routeDate: routeDate || undefined
+        };
+        runsMap.set(runId, newRun);
+      }
+
+      const baseRowId =
+        (row['RunBaseRowId'] ||
+          row['BaseRowId'] ||
+          row['baseRowId'] ||
+          row['BaseRowID'] ||
+          '').trim();
+      if (!baseRowId) return;
+
+      const deliveryOrderRaw =
+        row['RunDeliveryOrder'] ||
+        row['deliveryorder'] ||
+        row['RunOrder'] ||
+        '';
+      const deliveryOrder = Number(deliveryOrderRaw) || 0;
+
+      const entryStatusRaw =
+        (row['RunEntryStatus'] || row['status'] || '').toString().toLowerCase();
+      const entryStatus =
+        entryStatusRaw === 'skipped' ? 'skipped' : 'delivered';
+
+      const dozens = Number(
+        row['RunDozens'] || row['dozens'] || row['Dozens'] || 0
+      ) || 0;
+
+      const donationStatusRaw =
+        (row['RunDonationStatus'] ||
+          row['donationstatus'] ||
+          'NotRecorded') as DonationStatus;
+      const donationStatus: DonationStatus =
+        donationStatusRaw || 'NotRecorded';
+
+      const donationMethodRaw =
+        (row['RunDonationMethod'] ||
+          row['donationmethod'] ||
+          '') as DonationMethod;
+
+      const donationAmount = Number(
+        row['RunDonationAmount'] || row['donationamount'] || 0
+      ) || 0;
+
+      const taxableAmount = Number(
+        row['RunTaxableAmount'] || row['taxableamount'] || 0
+      ) || 0;
+
+      const name = (row['Name'] || row['name'] || '').trim();
+      const address = (row['Address'] || row['address'] || '').trim();
+      const city = (row['City'] || row['city'] || '').trim();
+      const state = (row['State'] || row['state'] || '').trim();
+      const zip =
+        (row['ZIP'] || row['Zip'] || row['zip'] || '').trim() || undefined;
+
+      runEntries.push({
+        id: crypto.randomUUID(),
+        runId,
+        baseRowId,
+        name,
+        address,
+        city,
+        state,
+        zip,
+        status: entryStatus,
+        dozens,
+        deliveryOrder,
+        donationStatus,
+        donationMethod:
+          donationStatus === 'Donated' && donationMethodRaw
+            ? donationMethodRaw
+            : undefined,
+        donationAmount: donationStatus === 'Donated' ? donationAmount : 0,
+        taxableAmount
+      });
+    });
+
+    const runs = Array.from(runsMap.values());
+
+    await this.storage.restoreAllFromBackup(
+      deliveries,
+      importState,
+      runs,
+      runEntries
+    );
+    const now = new Date().toISOString();
+    localStorage.setItem('lastRestoreAt', now);
+    this.lastRestoreAt = now;
+    // After restore, previous import/backup timestamps no longer describe current data.
+    localStorage.removeItem('lastBackupAt');
+    localStorage.removeItem('lastImportAt');
+    this.lastBackupAt = undefined;
+    this.lastImportAt = undefined;
+  }
+
   changeSuggested(delta: number): void {
     const next = Math.max(0, Math.min(100, Number(this.suggestedRate) + delta));
     this.suggestedRate = next;
@@ -444,20 +769,66 @@ export class HomeComponent implements OnDestroy {
     this.toast.show(`Suggested donation set to $${next}`);
   }
 
-  openHelp(): void {
-    this.showHelp = true;
+  toggleHelp(): void {
+    this.showHelp = !this.showHelp;
   }
 
-  closeHelp(): void {
-    this.showHelp = false;
+  onRestoreClick(input: HTMLInputElement): void {
+    if (this.isImporting || this.isExporting) {
+      return;
+    }
+    // If a backup was just completed for this restore, allow immediate file selection.
+    if (this.pendingRestoreAfterBackup) {
+      this.pendingRestoreAfterBackup = false;
+      this.showRestoreHint = false;
+      input.click();
+      return;
+    }
+
+    void this.handleRestoreWithBackup(input);
   }
 
-  togglePlannerReorderDefault(): void {
-    this.plannerReorderDefaultEnabled = !this.plannerReorderDefaultEnabled;
-    localStorage.setItem(
-      'plannerReorderEnabled',
-      this.plannerReorderDefaultEnabled ? 'true' : 'false'
-    );
+  private async handleRestoreWithBackup(input: HTMLInputElement): Promise<void> {
+    const ok = await this.maybeBackupBeforeRestore();
+    if (!ok) {
+      return;
+    }
+    this.pendingRestoreAfterBackup = true;
+    this.showRestoreHint = true;
+    this.toast.show('Backup ready. Tap "Restore (CSV)" again to choose a file.');
+  }
+
+  async onRestoreSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const confirmMessage =
+      'Restoring from backup will replace all current deliveries, routes, run history, and import data in this app with the contents of this file.\n\n' +
+      'This cannot be undone. Are you sure you want to continue?';
+    const proceed = window.confirm(confirmMessage);
+    if (!proceed) {
+      input.value = '';
+      return;
+    }
+
+    this.isImporting = true;
+    this.errorMessage = '';
+    try {
+      await this.restoreFromBackupFile(file);
+      await this.refreshRoutes();
+      localStorage.removeItem('currentRoute');
+      this.currentRoute = undefined;
+      this.autoselectRoute();
+      this.toast.show('Restore complete');
+    } catch (err) {
+      console.error('Restore failed', err);
+      this.errorMessage = 'Restore failed. Please check the backup file.';
+      this.toast.show(this.errorMessage, 'error');
+    } finally {
+      this.isImporting = false;
+      input.value = '';
+    }
   }
 
   toggleDarkMode(): void {

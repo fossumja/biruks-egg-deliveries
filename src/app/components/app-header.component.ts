@@ -47,6 +47,56 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   }
 
   private async refreshSummary(): Promise<void> {
+    const currentRunId = localStorage.getItem('currentRunId');
+    if (currentRunId === '__ALL_RECEIPTS__') {
+      const summary = await this.storage.getAllReceiptsSummary();
+      if (!summary) {
+        this.currentRouteSummary = null;
+        return;
+      }
+      this.currentRouteSummary = {
+        routeDate: 'All receipts',
+        delivered: summary.delivered,
+        skipped: summary.skipped,
+        total: summary.total,
+        dozensDelivered: summary.dozensDelivered,
+        dozensTotal: summary.dozensTotal
+      };
+      return;
+    }
+
+    if (currentRunId) {
+      const entries = await this.storage.getRunEntries(currentRunId);
+      if (!entries.length) {
+        this.currentRouteSummary = null;
+        return;
+      }
+      const deliveredEntries = entries.filter((e) => e.status === 'delivered');
+      const skippedEntries = entries.filter((e) => e.status === 'skipped');
+      const total = entries.length;
+      const dozensTotal = entries.reduce((sum, e) => sum + (e.dozens ?? 0), 0);
+      const dozensDelivered = deliveredEntries.reduce(
+        (sum, e) => sum + (e.dozens ?? 0),
+        0
+      );
+      // Try to get route label from run; fall back to first entry's routeDate via deliveries if needed.
+      const run = await this.storage.getRun(currentRunId);
+      const routeDate =
+        run?.routeDate ??
+        run?.weekType ??
+        localStorage.getItem('currentRoute') ??
+        'Run';
+      this.currentRouteSummary = {
+        routeDate,
+        delivered: deliveredEntries.length,
+        skipped: skippedEntries.length,
+        total,
+        dozensDelivered,
+        dozensTotal
+      };
+      return;
+    }
+
     const current =
       localStorage.getItem('currentRoute') || localStorage.getItem('lastSelectedRoute');
     if (!current) {

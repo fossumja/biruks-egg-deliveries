@@ -126,6 +126,11 @@
   color: var(--color-text-muted);
 }
 
+.status-pill.donation {
+  background: #fef3c7;
+  color: #c05621;
+}
+
 :host-context([data-theme="dark"]) .status-pill {
   background: #0f172a;
   color: #e2e8f0;
@@ -134,6 +139,11 @@
 :host-context([data-theme="dark"]) .status-pill.pending {
   background: #111827;
   color: #cbd5e1;
+}
+
+:host-context([data-theme="dark"]) .status-pill.donation {
+  background: #3b2500;
+  color: #fdba74;
 }
 
 .name-row {

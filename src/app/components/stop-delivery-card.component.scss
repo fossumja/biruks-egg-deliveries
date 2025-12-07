@@ -57,6 +57,10 @@
   color: #0369a1;
 }
 
+.status-pill.donation {
+  background: #fef3c7;
+  color: #c05621;
+}
 .status-pill.changed {
   background: #fffbeb;
   color: #b45309;
@@ -87,6 +91,10 @@
   color: #7dd3fc;
 }
 
+:host-context([data-theme='dark']) .status-pill.donation {
+  background: #3b2500;
+  color: #fdba74;
+}
 :host-context([data-theme='dark']) .status-pill.changed {
   background: #2b1c00;
   color: #fbbf24;

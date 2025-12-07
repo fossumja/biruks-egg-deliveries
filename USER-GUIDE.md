@@ -26,7 +26,7 @@ For each delivery week:
      - All the original columns from your file.
      - All completed runs the app knows about.
      - All one‑off deliveries and donations.
-     - Running totals for dozens, donations, and taxable donations per person.
+     - Running totals for dozens, donations, and the deductible charitable contribution per person.
 
 You can run many times per year on the same schedule. The app keeps all of that history and totals until you choose to import a brand new CSV.
 
@@ -168,9 +168,9 @@ You can run the same schedule again later. Each completed run adds another entry
 
 From the Planner hidden menu:
 
-- **Donation**:
-  - Record a donation for that person that is **not tied to a specific route run**.
-  - You choose method and amount; the app computes the taxable portion (amount minus the suggested donation).
+  - **Donation**:
+    - Record a donation for that person that is **not tied to a specific route run**.
+    - You choose method and amount; the app computes the deductible charitable contribution (amount minus the suggested donation).
 - **Delivery**:
   - Record an extra delivery outside of the normal schedule.
   - Allows you to specify dozens and donation for that one‑off event.
@@ -215,7 +215,7 @@ Per person, it includes:
     - All one‑off deliveries,
     - Any in‑progress run that hasn’t yet been completed.
   - `TotalDonation` – total donation amount across all of the above.
-  - `TotalTaxableDonation` – donation above the suggested amount across all of the above.
+  - `TotalDeductibleContribution` – donation above the suggested amount across all of the above.
 
 This means:
 
@@ -239,4 +239,3 @@ For each run:
    - Use it to build donor and tax statements.
 
 The app keeps all of the history in between. You can safely run many deliveries before exporting again, as long as you don’t import a new CSV in the meantime.
-

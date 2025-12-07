@@ -1,4 +1,4 @@
-RowType,Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter,RunId,RouteDate,ScheduleId,RunStatus,RunBaseRowId,RunDeliveryOrder,RunEntryStatus,RunDozens,RunDonationStatus,RunDonationMethod,RunDonationAmount,RunTaxableAmount,TotalDonation,TotalDozens,TotalTaxableDonation
+RowType,Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter,RunId,RouteDate,ScheduleId,RunStatus,RunBaseRowId,RunDeliveryOrder,RunEntryStatus,RunDozens,RunDonationStatus,RunDonationMethod,RunDonationAmount,RunTaxableAmount,TotalDonation,TotalDozens,TotalDeductibleContribution
 Delivery,Week A,CUST001,001,Kaylee Schroder,110 Oak St.,Fairview,SD,,1,TRUE,front door,1,,,,,,,,,,,,,144.00,3,132.00
 Delivery,Week A,CUST002,002,Tanya Van De Stroet,1524 290th St.,Inwood,IA,,1,TRUE,leave outside front door,1,,,,,,,,,,,,,0.00,1,0.00
 Delivery,Week A,CUST003,003,Oak Street Station,,,,,15,TRUE,verify delivery number. Needs invoice.,1,,,,,,,,,,,,,60.00,15,0.00
@@ -185,3 +185,5 @@ RunEntry,,,,Jennifer Skiles,600,,,,,,,,Week A_2025-12-06T21:24:46.179Z,Week A,We
 RunEntry,,,,Dana Van Middendorp,1200 N. Grant,,,,,,,,Week A_2025-12-06T21:24:46.179Z,Week A,WeekA,completed,CUST041,40,delivered,3,NotRecorded,,0,0,,,
 RunEntry,,,,Mary Eliason,First Bank & Trust,,,,,,,,Week A_2025-12-06T21:24:46.179Z,Week A,WeekA,completed,CUST063,62,delivered,2,NotRecorded,,0,0,,,
 RunEntry,,,,Sara Harris,27118 477th Ave. Harrisburg,,,,,,,,Week A_2025-12-06T21:24:46.179Z,Week A,WeekA,completed,CUST085,83,delivered,10,NotRecorded,,0,0,,,
+OneOffDonation,,,,Kaylee Schroder,110 Oak St.,Fairview,SD,,,,,,,,,,CUST001,,,0,Donated,paypal,134.00,130.00,,,
+OneOffDelivery,,,,Kaylee Schroder,110 Oak St.,Fairview,SD,,,,,,,,,,CUST001,,,2,Donated,ach,10.00,2.00,,,

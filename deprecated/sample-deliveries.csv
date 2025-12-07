@@ -1,6 +1,0 @@
-Schedule,BaseRowId,Name,Address,City,State,ZIP,Dozens,Subscribed,Run_2025-01-10_Status,Run_2025-01-10_DonationStatus,Run_2025-01-10_DonationMethod,Run_2025-01-10_DonationAmount
-Week A,CUST001,Smith Family,123 Main St,Canton,SD,57013,3,true,delivered,Donated,cash,12.00
-Week A,CUST002,Jones Cafe,45 Oak Ave,Sioux Falls,SD,57104,5,true,delivered,Donated,venmo,20.00
-Week A,CUST003,Andersons,789 Pine Rd,Inwood,IA,51240,2,true,delivered,NoDonation,,0
-Week B,CUST004,Green Farm,16 County Rd,Fairview,SD,57027,4,false,skipped,NotRecorded,,
-Week B,CUST005,Brown Family,9 Hill St,Canton,SD,57013,1,WeekA,true,,,,

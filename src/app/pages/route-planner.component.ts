@@ -74,17 +74,20 @@ export class RoutePlannerComponent {
   runOptions: DeliveryRun[] = [];
   selectedRunId: string | 'live' | null = 'live';
   viewingRun = false;
+  viewingAllReceipts = false;
   runEntries: RunSnapshotEntry[] = [];
+  filteredRunEntries: RunSnapshotEntry[] = [];
   allRuns: DeliveryRun[] = [];
   selectedRouteOrRun: string | null = null;
   editingRunEntry: RunSnapshotEntry | null = null;
   runEntryDraft: {
-    status: 'delivered' | 'skipped';
+    status: 'delivered' | 'skipped' | 'donation';
     dozens: number;
     deliveryOrder: number;
     donationStatus: DonationStatus;
     donationMethod: DonationMethod | '';
     donationAmount: number;
+    suggestedAmount?: number;
   } | null = null;
   newDelivery = {
     deliveryOrder: 0,
@@ -612,6 +615,29 @@ export class RoutePlannerComponent {
     this.pickerMode = null;
   }
 
+  onDonationQtyChange(qty: number): void {
+    if (!this.donationDraft) return;
+    const rate = this.storage.getSuggestedRate();
+    const safeQty = Math.max(0, Number(qty) || 0);
+    this.donationDraft.dozens = safeQty;
+    const donation =
+      this.donationDraft.donation ??
+      ({
+        status: 'NotRecorded',
+        suggestedAmount: safeQty * rate
+      } as DonationInfo);
+    const previousSuggested = donation.suggestedAmount ?? safeQty * rate;
+    donation.suggestedAmount = safeQty * rate;
+    // If amount hasn't been customized yet, keep it tied to suggested.
+    if (
+      donation.amount == null ||
+      donation.amount === previousSuggested
+    ) {
+      donation.amount = donation.suggestedAmount;
+    }
+    this.donationDraft.donation = donation;
+  }
+
   saveDonation(): void {
     if (!this.donationModalStop || !this.donationDraft?.donation) {
       this.closeDonationModal();
@@ -753,6 +779,31 @@ export class RoutePlannerComponent {
       donationMethod: entry.donationMethod ?? '',
       donationAmount: entry.donationAmount,
     };
+    if (entry.runId === 'oneoff' && entry.deliveryId && entry.oneOffIndex != null) {
+      void this.loadOneOffSuggested(entry);
+    }
+  }
+
+  private async loadOneOffSuggested(entry: RunSnapshotEntry): Promise<void> {
+    if (!entry.deliveryId && entry.oneOffIndex == null) return;
+    const currentDraft = this.runEntryDraft;
+    if (!currentDraft || this.editingRunEntry?.id !== entry.id) return;
+    const delivery = await this.storage.getDeliveryById(entry.deliveryId!);
+    if (!delivery) return;
+    let suggested: number | undefined;
+    if (entry.oneOffKind === 'donation') {
+      const d = delivery.oneOffDonations?.[entry.oneOffIndex!];
+      suggested = d?.suggestedAmount;
+    } else if (entry.oneOffKind === 'delivery') {
+      const e = delivery.oneOffDeliveries?.[entry.oneOffIndex!];
+      suggested = e?.donation?.suggestedAmount;
+    }
+    if (suggested != null && this.editingRunEntry?.id === entry.id && this.runEntryDraft) {
+      this.runEntryDraft = {
+        ...this.runEntryDraft,
+        suggestedAmount: suggested
+      };
+    }
   }
 
   async onRouteOrRunChange(key: string | null): Promise<void> {
@@ -763,10 +814,13 @@ export class RoutePlannerComponent {
     if (!key) {
       this.routeDate = undefined;
       this.viewingRun = false;
+      this.viewingAllReceipts = false;
       this.selectedRunId = 'live';
       this.deliveries = [];
       this.filteredDeliveries = [];
       this.runEntries = [];
+      this.filteredRunEntries = [];
+      localStorage.removeItem('currentRunId');
       return;
     }
 
@@ -777,11 +831,25 @@ export class RoutePlannerComponent {
       this.routeDate = route === this.ALL_SCHEDULES ? this.ALL_SCHEDULES : route;
       if (this.routeDate && this.routeDate !== this.ALL_SCHEDULES) {
         this.persistRouteSelection();
+        localStorage.removeItem('currentRunId');
       }
       this.viewingRun = false;
+      this.viewingAllReceipts = false;
       this.selectedRunId = 'live';
       this.runEntries = [];
+      this.filteredRunEntries = [];
       await this.loadDeliveries();
+      return;
+    }
+
+    if (key === 'receipts:all') {
+      this.viewingRun = true;
+      this.viewingAllReceipts = true;
+      this.selectedRunId = null;
+      // Sentinel so the header can show an All receipts summary.
+      localStorage.setItem('currentRunId', '__ALL_RECEIPTS__');
+      await this.loadAllReceipts();
+      this.filteredRunEntries = [...this.runEntries];
       return;
     }
 
@@ -789,6 +857,8 @@ export class RoutePlannerComponent {
       const runId = key.slice('run:'.length);
       this.selectedRunId = runId;
       this.viewingRun = true;
+      this.viewingAllReceipts = false;
+      localStorage.setItem('currentRunId', runId);
       const run =
         this.allRuns.find((r) => r.id === runId) ?? null;
       if (run?.routeDate) {
@@ -800,7 +870,12 @@ export class RoutePlannerComponent {
         .sort(
           (a, b) =>
             (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
-        );
+        )
+        .map((e) => ({
+          ...e,
+          eventDate: e.eventDate ?? run?.date
+        }));
+      this.filteredRunEntries = [...this.runEntries];
       return;
     }
   }
@@ -822,6 +897,170 @@ export class RoutePlannerComponent {
     return extra > 0 ? extra : 0;
   }
 
+  private async loadAllReceipts(): Promise<void> {
+    const [runs, entries, deliveries] = await Promise.all([
+      this.storage.getAllRuns(),
+      this.storage.getAllRunEntries(),
+      this.storage.getAllDeliveries()
+    ]);
+
+    const runDateById = new Map<string, string>();
+    runs.forEach((r) => {
+      if (r.id && r.date) {
+        runDateById.set(r.id, r.date);
+      }
+    });
+
+    type ReceiptKind = 'run' | 'oneOffDonation' | 'oneOffDelivery';
+    interface Receipt {
+      kind: ReceiptKind;
+      date: string;
+      baseRowId: string;
+      name: string;
+      address: string;
+      city: string;
+      state: string;
+      zip?: string;
+      status: 'delivered' | 'skipped' | 'donation';
+      dozens: number;
+      donationStatus: DonationStatus;
+      donationMethod?: DonationMethod;
+      donationAmount: number;
+      taxableAmount: number;
+      deliveryId?: string;
+      oneOffKind?: 'donation' | 'delivery';
+      oneOffIndex?: number;
+    }
+
+    const receipts: Receipt[] = [];
+
+    // Runs-first receipts.
+    entries.forEach((entry) => {
+      const date =
+        runDateById.get(entry.runId) ??
+        new Date().toISOString();
+      receipts.push({
+        kind: 'run',
+        date,
+        baseRowId: entry.baseRowId,
+        name: entry.name,
+        address: entry.address,
+        city: entry.city,
+        state: entry.state,
+        zip: entry.zip,
+        status: entry.status,
+        dozens: entry.dozens,
+        donationStatus: entry.donationStatus,
+        donationMethod: entry.donationMethod as DonationMethod | undefined,
+        donationAmount: entry.donationAmount,
+        taxableAmount: entry.taxableAmount
+      });
+    });
+
+    // One-off receipts.
+    deliveries.forEach((d) => {
+      const baseRowId = d.baseRowId;
+      const name = d.name;
+      const address = d.address;
+      const city = d.city;
+      const state = d.state;
+      const zip = d.zip;
+
+      (d.oneOffDonations ?? []).forEach((don, index) => {
+        const date = don.date ?? new Date().toISOString();
+        const suggested = Number(don.suggestedAmount ?? 0);
+        const amount = Number(don.amount ?? suggested);
+        const taxable =
+          don.taxableAmount ??
+          Math.max(0, amount - suggested);
+        receipts.push({
+          kind: 'oneOffDonation',
+          date,
+          baseRowId,
+          name,
+          address,
+          city,
+          state,
+          zip,
+          status: 'donation',
+          dozens: 0,
+          donationStatus: don.status as DonationStatus,
+          donationMethod: don.method as DonationMethod | undefined,
+          donationAmount: amount,
+          taxableAmount: taxable,
+          deliveryId: d.id,
+          oneOffKind: 'donation',
+          oneOffIndex: index
+        });
+      });
+
+      (d.oneOffDeliveries ?? []).forEach((entry, index) => {
+        const date = entry.date ?? new Date().toISOString();
+        const deliveredDozens = Number(entry.deliveredDozens ?? 0);
+        const don = entry.donation;
+        const suggested = Number(don?.suggestedAmount ?? 0);
+        const amount = Number(don?.amount ?? suggested);
+        const taxable =
+          don?.taxableAmount ??
+          Math.max(0, amount - suggested);
+        receipts.push({
+          kind: 'oneOffDelivery',
+          date,
+          baseRowId,
+          name,
+          address,
+          city,
+          state,
+          zip,
+          status: 'delivered',
+          dozens: deliveredDozens,
+          donationStatus: (don?.status ?? 'NotRecorded') as DonationStatus,
+          donationMethod: don?.method as DonationMethod | undefined,
+          donationAmount: amount,
+          taxableAmount: taxable,
+          deliveryId: d.id,
+          oneOffKind: 'delivery',
+          oneOffIndex: index
+        });
+      });
+    });
+
+    // Sort newest-first by date.
+    receipts.sort((a, b) => b.date.localeCompare(a.date));
+
+    // Project into RunSnapshotEntry-shaped view list.
+    const viewEntries: RunSnapshotEntry[] = receipts.map((r, index) => ({
+      id:
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `receipt_${index}_${r.baseRowId}`,
+      runId:
+        r.kind === 'run'
+          ? entries.find((e) => e.baseRowId === r.baseRowId)?.runId ?? 'run'
+          : 'oneoff',
+      baseRowId: r.baseRowId,
+      name: r.name,
+      address: r.address,
+      city: r.city,
+      state: r.state,
+      zip: r.zip,
+      status: r.status,
+      dozens: r.dozens,
+      deliveryOrder: index,
+      donationStatus: r.donationStatus,
+      donationMethod: r.donationMethod,
+      donationAmount: r.donationAmount,
+      taxableAmount: r.taxableAmount,
+      eventDate: r.date,
+      deliveryId: r.deliveryId,
+      oneOffKind: r.oneOffKind,
+      oneOffIndex: r.oneOffIndex
+    }));
+
+    this.runEntries = viewEntries;
+    this.filteredRunEntries = [...viewEntries];
+  }
+
   async saveRunEntryEdit(): Promise<void> {
     if (!this.editingRunEntry || !this.runEntryDraft) return;
     const original = this.editingRunEntry;
@@ -835,53 +1074,80 @@ export class RoutePlannerComponent {
       newAmount
     );
 
-    // Update ordering within current run entries.
-    const requestedOrderRaw = draft.deliveryOrder || 1;
-    const maxOrder = this.runEntries.length || 1;
-    const requestedOrder = Math.min(
-      Math.max(1, requestedOrderRaw),
-      maxOrder
-    );
+    if (original.runId === 'oneoff') {
+      // Editing a one-off receipt: update the underlying one-off record on the delivery,
+      // then reload the All receipts view so the change is reflected everywhere.
+      const suggested =
+        this.runEntryDraft.suggestedAmount != null
+          ? Number(this.runEntryDraft.suggestedAmount) || 0
+          : undefined;
+      if (original.oneOffKind === 'donation' && original.deliveryId != null && original.oneOffIndex != null) {
+        await this.storage.updateOneOffDonationByIndex(original.deliveryId, original.oneOffIndex, {
+          donationStatus: draft.donationStatus,
+          donationMethod: draft.donationMethod || undefined,
+          donationAmount: newAmount,
+          suggestedAmount: suggested
+        });
+      } else if (original.oneOffKind === 'delivery' && original.deliveryId != null && original.oneOffIndex != null) {
+        await this.storage.updateOneOffDeliveryByIndex(original.deliveryId, original.oneOffIndex, {
+          dozens: newDozens,
+          donationStatus: draft.donationStatus,
+          donationMethod: draft.donationMethod || undefined,
+          donationAmount: newAmount,
+          suggestedAmount: suggested
+        });
+      }
+      await this.loadAllReceipts();
+      this.applyFilter(false);
+    } else {
+      // Editing a historical run entry: update runEntries table and reorder within the run.
+      const requestedOrderRaw = draft.deliveryOrder || 1;
+      const maxOrder = this.runEntries.length || 1;
+      const requestedOrder = Math.min(
+        Math.max(1, requestedOrderRaw),
+        maxOrder
+      );
 
-    const entries = this.runEntries.slice();
-    const idx = entries.findIndex((e) => e.id === original.id);
-    if (idx !== -1) {
-      const [removed] = entries.splice(idx, 1);
-      entries.splice(requestedOrder - 1, 0, removed);
-      entries.forEach((e, i) => {
-        e.deliveryOrder = i;
-        if (e.id === original.id) {
-          e.dozens = newDozens;
-          e.donationStatus = draft.donationStatus;
-          e.donationMethod =
+      const entries = this.runEntries.slice();
+      const idx = entries.findIndex((e) => e.id === original.id);
+      if (idx !== -1) {
+        const [removed] = entries.splice(idx, 1);
+        entries.splice(requestedOrder - 1, 0, removed);
+        entries.forEach((e, i) => {
+          e.deliveryOrder = i;
+          if (e.id === original.id) {
+            e.dozens = newDozens;
+            e.donationStatus = draft.donationStatus;
+            e.donationMethod =
+              draft.donationStatus === 'Donated'
+                ? (draft.donationMethod || undefined)
+                : undefined;
+            e.donationAmount =
+              draft.donationStatus === 'Donated' ? newAmount : 0;
+            e.taxableAmount = taxable;
+            e.status = draft.status;
+          }
+        });
+        this.runEntries = entries;
+        await this.storage.saveRunEntryOrdering(
+          original.runId,
+          entries
+        );
+        await this.storage.updateRunEntry(original.id, {
+          dozens: newDozens,
+          donationStatus: draft.donationStatus,
+          donationMethod:
             draft.donationStatus === 'Donated'
               ? (draft.donationMethod || undefined)
-              : undefined;
-          e.donationAmount =
-            draft.donationStatus === 'Donated' ? newAmount : 0;
-          e.taxableAmount = taxable;
-          e.status = draft.status;
-        }
-      });
-      this.runEntries = entries;
-      await this.storage.saveRunEntryOrdering(
-        original.runId,
-        entries
-      );
-      await this.storage.updateRunEntry(original.id, {
-        dozens: newDozens,
-        donationStatus: draft.donationStatus,
-        donationMethod:
-          draft.donationStatus === 'Donated'
-            ? (draft.donationMethod || undefined)
-            : undefined,
-        donationAmount:
-          draft.donationStatus === 'Donated' ? newAmount : 0,
-        taxableAmount: taxable,
-        status: draft.status,
-        deliveryOrder:
-          requestedOrder - 1,
-      });
+              : undefined,
+          donationAmount:
+            draft.donationStatus === 'Donated' ? newAmount : 0,
+          taxableAmount: taxable,
+          status: draft.status,
+          deliveryOrder:
+            requestedOrder - 1,
+        });
+      }
     }
 
     this.editingRunEntry = null;
@@ -1055,16 +1321,31 @@ export class RoutePlannerComponent {
   applyFilter(resetScroll = true): void {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) {
-      this.filteredDeliveries = [...this.deliveries];
+      if (this.viewingRun) {
+        this.filteredRunEntries = [...this.runEntries];
+      } else {
+        this.filteredDeliveries = [...this.deliveries];
+      }
       return;
     }
-    this.filteredDeliveries = this.deliveries.filter((d) => {
+
+    const matches = (name?: string, address?: string, city?: string): boolean => {
       return (
-        d.name?.toLowerCase().includes(term) ||
-        d.address?.toLowerCase().includes(term) ||
-        d.city?.toLowerCase().includes(term)
+        !!name?.toLowerCase().includes(term) ||
+        !!address?.toLowerCase().includes(term) ||
+        !!city?.toLowerCase().includes(term)
       );
-    });
+    };
+
+    if (this.viewingRun) {
+      this.filteredRunEntries = this.runEntries.filter((e) =>
+        matches(e.name, e.address, e.city)
+      );
+    } else {
+      this.filteredDeliveries = this.deliveries.filter((d) =>
+        matches(d.name, d.address, d.city)
+      );
+    }
   }
 
   private normalizeDelivery(stop: Delivery): Delivery {

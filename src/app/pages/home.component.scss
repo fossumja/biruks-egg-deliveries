@@ -65,8 +65,14 @@
 .actions {
   display: flex;
   gap: var(--spacing-2);
-  align-items: center;
-  flex-wrap: wrap;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.actions .btn {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .actions .btn.active {

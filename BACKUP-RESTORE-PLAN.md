@@ -31,7 +31,7 @@
 
 **TODO:**
 
-- [ ] Add a `RowType` column to the CSV schema:
+- [x] Add a `RowType` column to the CSV schema:
   - `"Delivery"` – main per‑person row (current behavior).
   - `"RunEntry"` – per‑run snapshot row (new).
   - (Optional future) `"Meta"` – for versioning / migration notes.
@@ -82,8 +82,8 @@ We introduce a second logical row type to carry `RunSnapshotEntry` data.
 
 **TODO:**
 
-- [ ] Decide final column set and ordering for `RunEntry` rows.
-- [ ] Implement a new export helper that:
+- [x] Decide final column set and ordering for `RunEntry` rows.
+- [x] Implement a new export helper that:
   - Serializes all `runEntries` from Dexie into these rows.
   - Appends them after the Delivery rows (same CSV file).
 
@@ -108,7 +108,7 @@ We introduce a second logical row type to carry `RunSnapshotEntry` data.
 
 **TODO:**
 
-- [ ] Update `exportAll()` to:
+- [x] Update `exportAll()` to:
   - Generate the Delivery rows as today, adding `RowType`.
   - Generate the RunEntry rows from all `runEntries` using the new schema.
   - Append RunEntry rows to the same `Papa.unparse` call (fields + rows).
@@ -144,7 +144,7 @@ We introduce a second logical row type to carry `RunSnapshotEntry` data.
 
 **TODO:**
 
-- [ ] Extend CSV import parsing to:
+- [x] Extend CSV import parsing to:
   - Detect `RowType` column if present.
   - Filter out RunEntry rows for the normal Import flow.
 - [ ] Ensure `importDeliveries` continues to be a pure “load new base file” operation.
@@ -233,6 +233,90 @@ To avoid double‑counting history when a backup is re‑imported and re‑expor
 - [ ] Whether to include name/address columns on RunEntry rows (denormalized convenience vs. keeping it lean).
 - [ ] UI wording and placement for the **Restore backup** control:
   - Likely a low‑prominence text link or small button under Backup, with strong warning.
+
+---
+
+## 8. One‑off Events in History & Export
+
+One‑off donations and deliveries are currently stored on each delivery row as:
+
+- `oneOffDonations: DonationInfo[]`
+- `oneOffDeliveries: { deliveredDozens?: number; donation?: DonationInfo; date: string }[]`
+
+They are included in lifetime totals, but not represented as explicit history rows.
+
+### 8.1. Goals
+
+- Make one‑off events visible in history/export as **distinct events**, not just folded into totals.
+- Ensure one‑off events:
+  - **Do not** appear as separate runs in the Planner run dropdown.
+  - **Do** contribute to lifetime totals without being double‑counted.
+  - Provide enough detail in the CSV to “audit” how `TotalDonation`, `TotalDozens`, and `TotalTaxableDonation` were reached.
+
+### 8.2. Proposed Representation
+
+Instead of turning one‑offs into synthetic runs, we introduce new row types in the CSV:
+
+- `RowType = "OneOffDonation"`
+- `RowType = "OneOffDelivery"`
+
+**Columns (shared):**
+
+- `BaseRowId` – link back to the main customer row.
+- `Date` – ISO date/time when the one‑off was recorded.
+- `Dozens` – for deliveries; optional/0 for donation rows that aren’t tied to additional dozens.
+- `DonationStatus`, `DonationMethod`, `DonationAmount`, `TaxableAmount`.
+
+Additional columns may reuse the existing `"Schedule"`, `"Name"`, `"Address"`, etc., for readability, but the key identity is `BaseRowId`.
+
+### 8.3. Export Behavior for One‑offs
+
+**TODO:**
+
+- [ ] Extend `BackupService.exportAll()` to:
+  - After Delivery + RunEntry rows, append:
+    - One row per `oneOffDonation` with `RowType="OneOffDonation"`.
+    - One row per `oneOffDelivery` with `RowType="OneOffDelivery"`.
+  - Ensure these rows:
+    - Use the same `BaseRowId` as the main customer row.
+    - Include the date and dozens/donation/taxable fields.
+
+### 8.4. Totals Without Double Counting
+
+`computeTotalsByBase` already includes:
+
+- Import baseline totals (from `Total*` columns).
+- Completed runs (from `RunEntry` rows).
+- Current live deliveries, one‑off donations, and one‑off deliveries (from in‑memory Dexie).
+
+When we add OneOff rows to the CSV, we must keep totals consistent:
+
+**Import/Restore rules:**
+
+- **Import (CSV)**:
+  - Continues to use only baseline totals from the `Total*` columns for lifetime totals.
+  - OneOff rows are ignored except for raw storage in `importState` (for later restore).
+- **Restore (CSV)**:
+  - Rebuilds:
+    - `deliveries` and `routes` from `Delivery` rows.
+    - `runs` and `runEntries` from `RunEntry` rows.
+    - `oneOffDonations`/`oneOffDeliveries` from `OneOffDonation` / `OneOffDelivery` rows, so Dexie mirrors what was exported.
+  - `computeTotalsByBase` then re‑sums:
+    - Runs + one‑offs + live deliveries.
+
+Because totals are recomputed from the restored structures (rather than summing both totals columns and OneOff rows), we avoid double counting:
+
+- On import: only use `Total*` as the starting point; ignore OneOff rows.
+- On restore: use OneOff rows to rebuild the Dexie one‑off arrays and let `computeTotalsByBase` derive totals; `Total*` columns in the CSV become informational, not a second term in the sums.
+
+### 8.5. UI Considerations
+
+**TODO:**
+
+- [ ] Decide whether to surface one‑off events in a dedicated history tab for a customer (e.g., inside the donation hidden menu) without treating them as runs.
+- [ ] Confirm that these one‑off events should **not** appear in the Planner’s run selector (they are not runs), but may be visible in:
+  - The CSV (via `RowType="OneOff…"`) and
+  - A per‑customer “history” view.
 
 ---
 

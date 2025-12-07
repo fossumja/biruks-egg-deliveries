@@ -15,6 +15,9 @@
         </option>
       </optgroup>
       <optgroup *ngIf="allRuns.length" label="Past runs">
+        <option [ngValue]="'receipts:all'">
+          All receipts
+        </option>
         <option *ngFor="let run of allRuns" [ngValue]="'run:' + run.id">
           {{ run.routeDate }} — {{ run.date | date : 'shortDate' }}
           <span *ngIf="run.status === 'endedEarly'"> (ended early)</span>
@@ -33,7 +36,7 @@
       <span class="glyph">⇅</span>
     </button>
     <button
-      class="btn btn-primary icon-btn btn-add"
+      class="btn btn-secondary icon-btn btn-add"
       type="button"
       (click)="openNewDeliveryForm()"
       aria-label="Add delivery"
@@ -77,12 +80,6 @@
 <div class="card new-delivery-card" *ngIf="showNewForm">
   <div class="new-header">
     <h3 class="section-title">Add delivery</h3>
-    <div class="new-actions">
-      <button class="btn btn-text" type="button" (click)="cancelNewDelivery()">Cancel</button>
-      <button class="btn btn-primary" type="button" (click)="saveNewDelivery()" [disabled]="!canSaveNew || savingNew">
-        {{ savingNew ? 'Saving…' : 'Save' }}
-      </button>
-    </div>
   </div>
 
   <form class="new-form" (submit)="$event.preventDefault()">
@@ -151,6 +148,12 @@
       Address fields can be left blank if unknown. You can reorder or edit later.
     </div>
   </form>
+  <div class="donation-actions">
+    <button class="btn btn-text" type="button" (click)="cancelNewDelivery()">Cancel</button>
+    <button class="btn btn-primary" type="button" (click)="saveNewDelivery()" [disabled]="!canSaveNew || savingNew">
+      {{ savingNew ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
 </div>
 
 <div *ngIf="!loading && !errorMessage && deliveries.length && !viewingRun">
@@ -333,11 +336,11 @@
 <div *ngIf="!loading && !errorMessage && viewingRun">
   <div
     class="planner-swipe-row"
-    *ngFor="let entry of runEntries"
+    *ngFor="let entry of filteredRunEntries"
   >
     <div class="route-item run-history-card">
       <div class="drag-handle order-only">
-        <span class="order-number text-muted">
+        <span class="order-number text-muted" *ngIf="!viewingAllReceipts">
           {{ entry.deliveryOrder + 1 }}
         </span>
       </div>
@@ -351,6 +354,7 @@
               class="status-pill"
               [class.delivered]="entry.status === 'delivered'"
               [class.skipped]="entry.status === 'skipped'"
+              [class.donation]="entry.status === 'donation'"
             >
               {{ entry.status | titlecase }}
             </span>
@@ -358,10 +362,12 @@
         </div>
         <div class="row-bottom">
           <div class="stop-address text-muted">
-            {{ entry.address || '(no address)' }}<br />
-            {{ entry.city
-            }}<span *ngIf="entry.city && entry.state">,</span> {{ entry.state }}
-            {{ entry.zip }}
+            <ng-container *ngIf="entry.eventDate; else noDate">
+              {{ entry.eventDate | date : 'short' : undefined : 'en-US' }}
+            </ng-container>
+            <ng-template #noDate>
+              (no date)
+            </ng-template>
           </div>
           <div class="stop-qty">
             <span class="qty-display">{{ entry.dozens }}</span>
@@ -392,7 +398,7 @@
     <div class="edit-inline card" *ngIf="editingRunEntry?.id === entry.id && runEntryDraft">
       <h3>Edit run entry</h3>
       <div class="new-form">
-        <label>
+        <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
           Status
           <select
             class="form-control"
@@ -403,7 +409,7 @@
             <option value="skipped">Skipped</option>
           </select>
         </label>
-        <label>
+        <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
           Order in route
           <input
             class="form-control"
@@ -414,7 +420,7 @@
             name="runEntryOrder"
           />
         </label>
-        <label>
+        <label *ngIf="editingRunEntry?.runId !== 'oneoff' || editingRunEntry?.oneOffKind === 'delivery'">
           Dozen
           <input
             class="form-control"
@@ -422,6 +428,21 @@
             min="0"
             [(ngModel)]="runEntryDraft.dozens"
             name="runEntryDozens"
+          />
+        </label>
+        <label
+          *ngIf="
+            editingRunEntry?.runId === 'oneoff' &&
+            runEntryDraft.donationStatus === 'Donated'
+          "
+        >
+          Suggested amount (baseline)
+          <input
+            class="form-control"
+            type="number"
+            min="0"
+            [(ngModel)]="runEntryDraft.suggestedAmount"
+            name="runEntrySuggested"
           />
         </label>
         <label>
@@ -481,7 +502,10 @@
     </div>
   </div>
 </div>
-<div class="status text-muted card" *ngIf="!loading && !errorMessage && !deliveries.length">
+<div
+  class="status text-muted card"
+  *ngIf="!loading && !errorMessage && !viewingRun && !deliveries.length"
+>
   No deliveries found for this route.
 </div>
 
@@ -494,6 +518,9 @@
         [suggestedAmount]="donationDraft?.donation?.suggestedAmount || donationModalStop.dozens * getSuggestedRate()"
         [showNoDonation]="true"
         [allowReselect]="true"
+        [showQty]="true"
+        [qtyValue]="donationDraft?.dozens ?? donationModalStop.dozens"
+        (qtyChange)="onDonationQtyChange($event)"
         (donationStatusChange)="setDonationStatus($event)"
         (donationMethodChange)="setDonationMethod($event)"
         (amountChange)="onDonationAmountChange($event)"
@@ -509,7 +536,7 @@
         <span>{{ donationTotals.dozensTotal }}</span>
       </div>
       <div class="totals-row">
-        <span>Taxable Donations</span>
+        <span>Deductible charitable contribution</span>
         <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
       </div>
     </div>

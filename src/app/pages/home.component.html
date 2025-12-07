@@ -2,11 +2,11 @@
   <div class="actions">
     <button
       type="button"
-      class="btn btn-secondary btn-outline-primary"
+      class="btn btn-secondary"
       (click)="onImportClick(fileInput)"
       [disabled]="isImporting"
     >
-      {{ isImporting ? "Importing…" : "Import CSV" }}
+      {{ isImporting ? "Importing…" : "Import (CSV)" }}
     </button>
     <button
       type="button"
@@ -19,9 +19,10 @@
     <button
       type="button"
       class="btn btn-secondary"
-      (click)="openHelp()"
+      (click)="onRestoreClick(restoreInput)"
+      [disabled]="isImporting || isExporting"
     >
-      Help
+      Restore (CSV)
     </button>
     <input
       #fileInput
@@ -30,16 +31,28 @@
       hidden
       (change)="onFileSelected($event)"
     />
+    <input
+      #restoreInput
+      type="file"
+      accept=".csv,text/csv"
+      hidden
+      (change)="onRestoreSelected($event)"
+    />
   </div>
-  <div class="subtext text-muted" *ngIf="lastBackupAt">
-    Last backup: {{ lastBackupAt | date : "short" }}
-    <span *ngIf="showImportHint">
-      — tap “Import CSV” again to choose a file.
-    </span>
+  <div class="subtext text-muted" *ngIf="lastRestoreAt; else importBackupInfo">
+    Restored: {{ lastRestoreAt | date : "short" }}
   </div>
-  <div class="subtext text-muted" *ngIf="lastImportAt">
-    Imported: {{ lastImportAt | date : "short" }}
-  </div>
+  <ng-template #importBackupInfo>
+    <div class="subtext text-muted" *ngIf="lastBackupAt">
+      Last backup: {{ lastBackupAt | date : "short" }}
+      <span *ngIf="showRestoreHint">
+        — tap “Restore (CSV)” again to choose a file.
+      </span>
+    </div>
+    <div class="subtext text-muted" *ngIf="lastImportAt">
+      Imported: {{ lastImportAt | date : "short" }}
+    </div>
+  </ng-template>
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
 </section>
 
@@ -105,9 +118,26 @@
   </div>
 </section>
 
+<section class="card settings-card">
+  <div class="settings-row">
+    <div>
+      <div class="settings-title">Help</div>
+      <div class="text-muted settings-subtitle">Open the in-app guide.</div>
+    </div>
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="showHelp ? 'btn-primary' : 'btn-secondary'"
+      (click)="toggleHelp()"
+    >
+      {{ showHelp ? "Hide" : "Help" }}
+    </button>
+  </div>
+</section>
+
 <section class="card build-card" *ngIf="buildInfo as info">
   <div class="text-muted small">
-    Updated
+    Application updated
     {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
     <span *ngIf="info.commit"> (commit {{ info.commit.slice(0, 7) }})</span>
   </div>
@@ -118,53 +148,92 @@
     <h3>Biruk’s Egg Deliveries – Help</h3>
     <div class="help-content">
       <p>
-        This app helps you import your delivery CSV, plan routes, run deliveries,
-        record donations (including the taxable portion), and export a single CSV
-        that you can use for records and taxes.
+        This app helps you import your delivery CSV, plan routes, run
+        deliveries, record donations (including the deductible charitable
+        contribution), and export a single CSV that you can use for records and
+        taxes.
       </p>
 
       <h4>Daily / Weekly workflow</h4>
       <ul>
-        <li>Import your route CSV on the Home page.</li>
-        <li>Use <strong>Planner</strong> to review stops, adjust dozens, add/edit people, and manage subscriptions.</li>
-        <li>Use <strong>Run</strong> to deliver or skip each stop and record donations.</li>
-        <li>When finished, optionally <strong>Backup (CSV)</strong>, then tap <strong>Complete run</strong> on the Run page.</li>
+        <li>
+          Import your route CSV on the Home page using
+          <strong>Import (CSV)</strong>.
+        </li>
+        <li>
+          Use <strong>Planner</strong> to review stops, adjust dozens, add/edit
+          people, and manage subscriptions.
+        </li>
+        <li>
+          Use <strong>Run</strong> to deliver or skip each stop and record
+          donations.
+        </li>
+        <li>
+          When finished, optionally <strong>Backup (CSV)</strong>, then tap
+          <strong>Complete run</strong> on the Run page.
+        </li>
       </ul>
 
       <h4>Planner</h4>
       <ul>
         <li>Choose a schedule (e.g., Week A) from the dropdown.</li>
-        <li>Use the run selector (when present) to switch between <em>Current (live)</em> and past runs.</li>
-        <li>Swipe a card to open the hidden menu: Reset, Edit, Skip/Unskip, Unsubscribe/Resubscribe, one‑off Donation, one‑off Delivery.</li>
-        <li>Use the Reorder toggle + drag handle to change the order, or turn it off to avoid accidental moves.</li>
+        <li>
+          Use the run selector (when present) to switch between
+          <em>Current (live)</em> and past runs.
+        </li>
+        <li>
+          Swipe a card to open the hidden menu: Reset, Edit, Skip/Unskip,
+          Unsubscribe/Resubscribe, one‑off Donation, one‑off Delivery.
+        </li>
+        <li>
+          Use the Reorder toggle + drag handle to change the order, or turn it
+          off to avoid accidental moves.
+        </li>
       </ul>
 
       <h4>Run page</h4>
       <ul>
         <li>Deliver or Skip each stop; changes are saved immediately.</li>
-        <li>Use the donation buttons to record how much and how people paid.</li>
+        <li>
+          Use the donation buttons to record how much and how people paid.
+        </li>
         <li><strong>End Run</strong> marks all remaining stops as skipped.</li>
-        <li><strong>Complete run</strong> archives the run and resets the route so you can run it again later.</li>
+        <li>
+          <strong>Complete run</strong> archives the run and resets the route so
+          you can run it again later.
+        </li>
       </ul>
 
-      <h4>Exports & totals</h4>
+      <h4>Exports, restore & totals</h4>
       <ul>
         <li><strong>Backup (CSV)</strong> always contains:</li>
         <li>All original columns from your import.</li>
         <li>All completed runs recorded in the app.</li>
         <li>All one‑off deliveries and donations.</li>
-        <li>Running totals per person for dozens, donations, and taxable donations.</li>
+        <li>
+          Running totals per person for dozens, donations, and the deductible
+          charitable contribution (amount above the suggested donation).
+        </li>
+        <li>
+          <strong>Restore (CSV)</strong> fully replaces the current in‑app data
+          (deliveries, routes, and run history) with the contents of a backup
+          CSV.
+        </li>
+        <li>
+          Use <strong>Import (CSV)</strong> for loading a new baseline file
+          while keeping history, and <strong>Restore (CSV)</strong> only when
+          you want to roll back to, or start from, a specific backup.
+        </li>
       </ul>
 
       <p class="text-muted">
-        You can run many times during the year and export whenever you need.
-        For tax time, export a fresh CSV and use its totals to build donor statements.
+        You can run many times during the year and export whenever you need. For
+        tax time, export a fresh CSV and use its totals to build donor
+        statements.
       </p>
     </div>
     <div class="help-actions">
-      <button type="button" class="btn btn-secondary" (click)="closeHelp()">
-        Close
-      </button>
+      <!-- Help is now controlled by the toggle button; no separate close needed. -->
     </div>
   </div>
 </div>

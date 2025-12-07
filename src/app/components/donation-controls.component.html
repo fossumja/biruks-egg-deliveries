@@ -1,4 +1,26 @@
 <div class="donation-inline">
+  <div class="donation-qty" *ngIf="showQty">
+    <div class="qty-label text-muted">{{ qtyLabel }}</div>
+    <div class="qty-input">
+      <button
+        type="button"
+        class="qty-btn"
+        (click)="changeQty(-1)"
+      >
+        −
+      </button>
+      <span class="qty-display">
+        {{ qtyLocal }}
+      </span>
+      <button
+        type="button"
+        class="qty-btn"
+        (click)="changeQty(1)"
+      >
+        +
+      </button>
+    </div>
+  </div>
   <div class="donation-choices rows">
     <button
       *ngIf="showNoDonation"

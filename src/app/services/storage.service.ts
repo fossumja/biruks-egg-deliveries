@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
-import { Delivery, DeliveryStatus, DonationInfo } from '../models/delivery.model';
+import {
+  Delivery,
+  DeliveryStatus,
+  DonationInfo,
+  DonationMethod,
+  DonationStatus
+} from '../models/delivery.model';
 import { Route } from '../models/route.model';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { BaseStop } from '../models/base-stop.model';
@@ -174,6 +180,10 @@ export class StorageService {
     return this.db.deliveries.toArray();
   }
 
+  getDeliveryById(id: string): Promise<Delivery | undefined> {
+    return this.db.deliveries.get(id);
+  }
+
   getDeliveriesByRoute(routeDate: string): Promise<Delivery[]> {
     return this.db.deliveries.where('routeDate').equals(routeDate).sortBy('sortIndex');
   }
@@ -221,6 +231,108 @@ export class StorageService {
           (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
       );
     await this.db.runEntries.bulkPut(ordered);
+  }
+
+  async updateOneOffDonationByIndex(
+    deliveryId: string,
+    index: number,
+    patch: {
+      donationStatus: DonationStatus;
+      donationMethod?: DonationMethod;
+      donationAmount: number;
+      suggestedAmount?: number;
+    }
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const delivery = await this.db.deliveries.get(deliveryId);
+    if (!delivery || !Array.isArray((delivery as Delivery).oneOffDonations)) return;
+    const list = [...((delivery as Delivery).oneOffDonations ?? [])];
+    if (index < 0 || index >= list.length) return;
+    const existing = { ...list[index] } as DonationInfo;
+
+    const next: DonationInfo = {
+      ...existing,
+      status: patch.donationStatus,
+      method: patch.donationStatus === 'Donated' ? patch.donationMethod : undefined,
+      amount:
+        patch.donationStatus === 'Donated'
+          ? patch.donationAmount
+          : patch.donationStatus === 'NoDonation'
+            ? 0
+            : undefined,
+      taxableAmount: undefined
+    };
+    if (patch.suggestedAmount != null) {
+      next.suggestedAmount = patch.suggestedAmount;
+    }
+    next.taxableAmount = computeTaxableAmount(next);
+    list[index] = next;
+    await this.db.deliveries.update(deliveryId, {
+      oneOffDonations: list,
+      updatedAt: now,
+      synced: false
+    });
+  }
+
+  async updateOneOffDeliveryByIndex(
+    deliveryId: string,
+    index: number,
+    patch: {
+      dozens: number;
+      donationStatus: DonationStatus;
+      donationMethod?: DonationMethod;
+      donationAmount: number;
+      suggestedAmount?: number;
+    }
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const delivery = await this.db.deliveries.get(deliveryId);
+    if (!delivery || !Array.isArray((delivery as Delivery).oneOffDeliveries)) return;
+    const list = [...((delivery as Delivery).oneOffDeliveries ?? [])];
+    if (index < 0 || index >= list.length) return;
+    const existing = { ...list[index] };
+    const dozens = Math.max(0, Number(patch.dozens) || 0);
+    const rate = this.getSuggestedRate();
+
+    let donation: DonationInfo | undefined = existing.donation
+      ? { ...(existing.donation as DonationInfo) }
+      : undefined;
+
+    if (patch.donationStatus === 'NotRecorded') {
+      donation = undefined;
+    } else {
+      if (!donation) {
+        donation = {
+          status: 'Donated',
+          suggestedAmount: dozens * rate
+        };
+      }
+      donation.status = patch.donationStatus;
+      donation.method =
+        patch.donationStatus === 'Donated' ? patch.donationMethod : undefined;
+      donation.amount =
+        patch.donationStatus === 'Donated'
+          ? patch.donationAmount
+          : patch.donationStatus === 'NoDonation'
+            ? 0
+            : undefined;
+      donation.suggestedAmount =
+        patch.suggestedAmount != null ? patch.suggestedAmount : dozens * rate;
+      donation.taxableAmount = computeTaxableAmount(donation);
+    }
+
+    list[index] = {
+      ...existing,
+      deliveredDozens: dozens,
+      donation,
+      date: existing.date ?? now
+    };
+
+    await this.db.deliveries.update(deliveryId, {
+      oneOffDeliveries: list,
+      updatedAt: now,
+      synced: false
+    });
   }
 
   async markDelivered(id: string, deliveredDozens?: number): Promise<void> {
@@ -667,6 +779,54 @@ export class StorageService {
     return this.db.runs.get(id);
   }
 
+  async getAllReceiptsSummary(): Promise<{
+    delivered: number;
+    skipped: number;
+    total: number;
+    dozensDelivered: number;
+    dozensTotal: number;
+  } | null> {
+    const [entries, deliveries] = await Promise.all([
+      this.getAllRunEntries(),
+      this.getAllDeliveries()
+    ]);
+    if (!entries.length && !deliveries.length) {
+      return null;
+    }
+
+    const deliveredEntries = entries.filter((e) => e.status === 'delivered');
+    const skippedEntries = entries.filter((e) => e.status === 'skipped');
+    const runDozensTotal = entries.reduce(
+      (sum, e) => sum + (e.dozens ?? 0),
+      0
+    );
+    const runDozensDelivered = deliveredEntries.reduce(
+      (sum, e) => sum + (e.dozens ?? 0),
+      0
+    );
+
+    const oneOffDozens = deliveries.reduce((sum, d) => {
+      const extra = (d.oneOffDeliveries ?? []).reduce(
+        (inner, off) => inner + Number(off.deliveredDozens ?? 0),
+        0
+      );
+      return sum + extra;
+    }, 0);
+
+    const oneOffDeliveryCount = deliveries.reduce((sum, d) => {
+      return sum + (d.oneOffDeliveries?.length ?? 0);
+    }, 0);
+
+    return {
+      // One-off deliveries count as additional delivered stops.
+      delivered: deliveredEntries.length + oneOffDeliveryCount,
+      skipped: skippedEntries.length,
+      total: entries.length + oneOffDeliveryCount,
+      dozensDelivered: runDozensDelivered + oneOffDozens,
+      dozensTotal: runDozensTotal + oneOffDozens
+    };
+  }
+
   async saveBaseStops(stops: BaseStop[]): Promise<void> {
     await this.db.baseStops.clear();
     await this.db.baseStops.bulkPut(stops);
@@ -685,10 +845,90 @@ export class StorageService {
   }
 
   async clearAll(): Promise<void> {
-    await this.db.transaction('rw', this.db.deliveries, this.db.routes, async () => {
-      await this.db.deliveries.clear();
-      await this.db.routes.clear();
-    });
+    await this.db.transaction(
+      'rw',
+      [
+        this.db.deliveries,
+        this.db.routes,
+        this.db.runs,
+        this.db.runEntries,
+        this.db.baseStops,
+        this.db.importStates
+      ],
+      async () => {
+        await this.db.deliveries.clear();
+        await this.db.routes.clear();
+        await this.db.runs.clear();
+        await this.db.runEntries.clear();
+        await this.db.baseStops.clear();
+        await this.db.importStates.clear();
+      }
+    );
+  }
+
+  async restoreAllFromBackup(
+    deliveries: Delivery[],
+    importState: CsvImportState,
+    runs: DeliveryRun[],
+    runEntries: RunSnapshotEntry[]
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    await this.db.transaction(
+      'rw',
+      [
+        this.db.deliveries,
+        this.db.routes,
+        this.db.runs,
+        this.db.runEntries,
+        this.db.baseStops,
+        this.db.importStates
+      ],
+      async () => {
+        await this.db.deliveries.clear();
+        await this.db.routes.clear();
+        await this.db.runs.clear();
+        await this.db.runEntries.clear();
+        await this.db.baseStops.clear();
+        await this.db.importStates.clear();
+
+        if (deliveries.length) {
+          await this.db.deliveries.bulkAdd(deliveries);
+          const dates = Array.from(
+            new Set(deliveries.map((d) => d.routeDate))
+          );
+          for (const routeDate of dates) {
+            const routeDeliveries = deliveries.filter(
+              (d) => d.routeDate === routeDate
+            );
+            const totalStops = routeDeliveries.length;
+            const deliveredCount = routeDeliveries.filter(
+              (d) => d.status === 'delivered'
+            ).length;
+            const skippedCount = routeDeliveries.filter(
+              (d) => d.status === 'skipped'
+            ).length;
+            await this.db.routes.put({
+              routeDate,
+              totalStops,
+              deliveredCount,
+              skippedCount,
+              createdAt: now,
+              lastUpdatedAt: now,
+              completed: deliveredCount + skippedCount === totalStops
+            });
+          }
+        }
+
+        if (runs.length) {
+          await this.db.runs.bulkPut(runs);
+        }
+        if (runEntries.length) {
+          await this.db.runEntries.bulkAdd(runEntries);
+        }
+
+        await this.db.importStates.put(importState);
+      }
+    );
   }
 
   private async refreshRouteStats(routeDate: string, timestamp: string): Promise<void> {

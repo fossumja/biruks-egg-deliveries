@@ -11,9 +11,20 @@ export class BackupService {
     const deliveries = await this.storage.getAllDeliveries();
     const importState = await this.storage.getImportState('default');
     const runEntries = await this.storage.getAllRunEntries();
-    const totalsMap = this.computeTotalsByBase(deliveries, runEntries, importState ?? undefined);
+    const totalsMap = this.computeTotalsByBase(
+      deliveries,
+      runEntries,
+      importState ?? undefined
+    );
+    const runs = await this.storage.getAllRuns();
     const csv = importState
-      ? this.toCsvWithImportState(deliveries, importState, totalsMap)
+      ? this.toCsvWithImportStateAndHistory(
+          deliveries,
+          importState,
+          totalsMap,
+          runs,
+          runEntries
+        )
       : this.toCsv(deliveries, totalsMap);
     const filename = `BiruksEggDeliveries-${new Date().toISOString().slice(0, 10)}.csv`;
     const file = new File([csv], filename, { type: 'text/csv' });
@@ -91,7 +102,7 @@ export class BackupService {
       });
     });
 
-    ['TotalDonation', 'TotalDozens', 'TotalTaxableDonation'].forEach((col) => {
+    ['TotalDonation', 'TotalDozens', 'TotalDeductibleContribution'].forEach((col) => {
       if (!finalHeaders.includes(col)) {
         finalHeaders.push(col);
       }
@@ -136,15 +147,263 @@ export class BackupService {
 
       const totals = totalsMap.get(baseRowId);
       if (totals) {
-        const donationIdx = finalHeaders.indexOf('TotalDonation');
-        const dozensIdx = finalHeaders.indexOf('TotalDozens');
-        const taxableIdx = finalHeaders.indexOf('TotalTaxableDonation');
+      const donationIdx = finalHeaders.indexOf('TotalDonation');
+      const dozensIdx = finalHeaders.indexOf('TotalDozens');
+      const taxableIdx = finalHeaders.indexOf('TotalDeductibleContribution');
         if (donationIdx >= 0) rowVals[donationIdx] = totals.donation.toFixed(2);
         if (dozensIdx >= 0) rowVals[dozensIdx] = totals.dozens.toString();
         if (taxableIdx >= 0) rowVals[taxableIdx] = totals.taxable.toFixed(2);
       }
 
       rows.push(rowVals);
+    });
+
+    return Papa.unparse({ fields: finalHeaders, data: rows });
+  }
+
+  private toCsvWithImportStateAndHistory(
+    deliveries: Delivery[],
+    state: {
+      headers: string[];
+      rowsByBaseRowId: Record<string, string[]>;
+      mode?: 'baseline' | 'restored';
+    },
+    totalsMap: Map<string, { donation: number; dozens: number; taxable: number }>,
+    runs: {
+      id: string;
+      routeDate?: string;
+      weekType?: string;
+      status?: string;
+      date?: string;
+    }[],
+    runEntries: {
+      runId: string;
+      baseRowId: string;
+      deliveryOrder: number;
+      status: string;
+      dozens: number;
+      donationStatus: string;
+      donationMethod?: string;
+      donationAmount: number;
+      taxableAmount: number;
+      name: string;
+      address: string;
+      city: string;
+      state: string;
+      zip?: string;
+    }[]
+  ): string {
+    const baseHeaders = [...state.headers];
+    const finalHeaders: string[] = ['RowType', ...baseHeaders];
+
+    // Run-level metadata columns to support round-trip restore of history.
+    const runMetaCols = [
+      'RunId',
+      'RouteDate',
+      'ScheduleId',
+      'RunStatus',
+      'RunBaseRowId',
+      'RunDeliveryOrder',
+      'RunEntryStatus',
+      'RunDozens',
+      'RunDonationStatus',
+      'RunDonationMethod',
+      'RunDonationAmount',
+      'RunTaxableAmount',
+      // When the run was actually completed.
+      'RunCompletedAt',
+      // Event timestamp for this row (run entry or one-off).
+      'EventDate'
+    ];
+    runMetaCols.forEach((c) => {
+      if (!finalHeaders.includes(c)) {
+        finalHeaders.push(c);
+      }
+    });
+
+    ['TotalDonation', 'TotalDozens', 'TotalDeductibleContribution'].forEach((col) => {
+      if (!finalHeaders.includes(col)) {
+        finalHeaders.push(col);
+      }
+    });
+
+    const rows: string[][] = [];
+
+    // 1) Delivery rows – one per baseRowId, using importState as baseline.
+    Object.entries(state.rowsByBaseRowId).forEach(([baseRowId, originalValues]) => {
+      const rowVals = new Array<string>(finalHeaders.length).fill('');
+      rowVals[0] = 'Delivery';
+
+      const paddedOriginal = [...originalValues];
+      while (paddedOriginal.length < baseHeaders.length) paddedOriginal.push('');
+      for (let i = 0; i < baseHeaders.length; i++) {
+        const targetIndex = 1 + i;
+        rowVals[targetIndex] = paddedOriginal[i];
+      }
+
+      const totals = totalsMap.get(baseRowId);
+      if (totals) {
+      const donationIdx = finalHeaders.indexOf('TotalDonation');
+      const dozensIdx = finalHeaders.indexOf('TotalDozens');
+      const taxableIdx = finalHeaders.indexOf('TotalDeductibleContribution');
+        if (donationIdx >= 0) rowVals[donationIdx] = totals.donation.toFixed(2);
+        if (dozensIdx >= 0) rowVals[dozensIdx] = totals.dozens.toString();
+        if (taxableIdx >= 0) rowVals[taxableIdx] = totals.taxable.toFixed(2);
+      }
+
+      rows.push(rowVals);
+    });
+
+    // 2) RunEntry rows – one per historical run snapshot entry.
+    const setVal = (rowVals: string[], col: string, value: string | number | undefined) => {
+      const idx = finalHeaders.indexOf(col);
+      if (idx >= 0) {
+        rowVals[idx] = value != null ? String(value) : '';
+      }
+    };
+
+    runEntries.forEach((entry) => {
+      const rowVals = new Array<string>(finalHeaders.length).fill('');
+      rowVals[0] = 'RunEntry';
+
+      // Optionally denormalize some identity fields into the original columns.
+      const nameIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'name');
+      if (nameIdx >= 0) rowVals[1 + nameIdx] = entry.name;
+      const addressIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'address');
+      if (addressIdx >= 0) rowVals[1 + addressIdx] = entry.address;
+      const cityIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'city');
+      if (cityIdx >= 0) rowVals[1 + cityIdx] = entry.city;
+      const stateIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'state');
+      if (stateIdx >= 0) rowVals[1 + stateIdx] = entry.state;
+      const zipIdx = baseHeaders.findIndex(
+        (h) => h.toLowerCase() === 'zip' || h.toLowerCase() === 'zipcode'
+      );
+      if (zipIdx >= 0) rowVals[1 + zipIdx] = entry.zip ?? '';
+
+      const run = runs.find((r) => r.id === entry.runId);
+      setVal(rowVals, 'RunId', entry.runId);
+      setVal(rowVals, 'RouteDate', run?.routeDate ?? '');
+      setVal(rowVals, 'ScheduleId', run?.weekType ?? '');
+      setVal(rowVals, 'RunStatus', run?.status ?? '');
+      setVal(rowVals, 'RunBaseRowId', entry.baseRowId);
+      setVal(rowVals, 'RunDeliveryOrder', entry.deliveryOrder);
+      setVal(rowVals, 'RunEntryStatus', entry.status);
+      setVal(rowVals, 'RunDozens', entry.dozens);
+      setVal(rowVals, 'RunDonationStatus', entry.donationStatus);
+      setVal(rowVals, 'RunDonationMethod', entry.donationMethod ?? '');
+      setVal(rowVals, 'RunDonationAmount', entry.donationAmount);
+      setVal(rowVals, 'RunTaxableAmount', entry.taxableAmount);
+
+      // Prefer an explicit eventDate on the entry, then the run's completion
+      // timestamp, then the run's routeDate. This keeps history stable
+      // across backups/restores instead of defaulting to "now".
+      const completedAt = run?.date ?? '';
+      const eventDate =
+        (entry as any).eventDate ??
+        completedAt ??
+        run?.routeDate ??
+        '';
+      setVal(rowVals, 'RunCompletedAt', completedAt);
+      setVal(rowVals, 'EventDate', eventDate);
+
+      // Totals are per baseRowId, so we leave Total* columns blank here.
+      rows.push(rowVals);
+    });
+
+    // 3) One-off rows – donation and delivery events not tied to a specific run.
+    deliveries.forEach((d) => {
+      const baseRowId = d.baseRowId;
+      const name = d.name;
+      const address = d.address;
+      const city = d.city;
+      const state = d.state;
+      const zip = d.zip ?? '';
+
+      // One-off donations
+      (d.oneOffDonations ?? []).forEach((don) => {
+        const rowVals = new Array<string>(finalHeaders.length).fill('');
+        rowVals[0] = 'OneOffDonation';
+
+        const nameIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'name');
+        if (nameIdx >= 0) rowVals[1 + nameIdx] = name;
+        const addressIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'address');
+        if (addressIdx >= 0) rowVals[1 + addressIdx] = address;
+        const cityIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'city');
+        if (cityIdx >= 0) rowVals[1 + cityIdx] = city;
+        const stateIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'state');
+        if (stateIdx >= 0) rowVals[1 + stateIdx] = state;
+        const zipIdx = baseHeaders.findIndex(
+          (h) => h.toLowerCase() === 'zip' || h.toLowerCase() === 'zipcode'
+        );
+        if (zipIdx >= 0) rowVals[1 + zipIdx] = zip;
+
+        const setVal = (col: string, value: string | number | undefined) => {
+          const idx = finalHeaders.indexOf(col);
+          if (idx >= 0) {
+            rowVals[idx] = value != null ? String(value) : '';
+          }
+        };
+
+        const suggested = Number(don.suggestedAmount ?? 0);
+        const amount = Number(don.amount ?? suggested);
+        const taxable =
+          don.taxableAmount ?? Math.max(0, amount - suggested);
+
+        setVal('RunBaseRowId', baseRowId);
+        setVal('RunDozens', 0);
+        setVal('RunDonationStatus', don.status);
+        setVal('RunDonationMethod', don.method ?? '');
+        setVal('RunDonationAmount', amount.toFixed(2));
+        setVal('RunTaxableAmount', taxable.toFixed(2));
+        // Persist the one-off event timestamp so restores do not
+        // fall back to "now".
+        setVal('EventDate', don.date ?? '');
+
+        rows.push(rowVals);
+      });
+
+      // One-off deliveries
+      (d.oneOffDeliveries ?? []).forEach((entry) => {
+        const rowVals = new Array<string>(finalHeaders.length).fill('');
+        rowVals[0] = 'OneOffDelivery';
+
+        const nameIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'name');
+        if (nameIdx >= 0) rowVals[1 + nameIdx] = name;
+        const addressIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'address');
+        if (addressIdx >= 0) rowVals[1 + addressIdx] = address;
+        const cityIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'city');
+        if (cityIdx >= 0) rowVals[1 + cityIdx] = city;
+        const stateIdx = baseHeaders.findIndex((h) => h.toLowerCase() === 'state');
+        if (stateIdx >= 0) rowVals[1 + stateIdx] = state;
+        const zipIdx = baseHeaders.findIndex(
+          (h) => h.toLowerCase() === 'zip' || h.toLowerCase() === 'zipcode'
+        );
+        if (zipIdx >= 0) rowVals[1 + zipIdx] = zip;
+
+        const setVal = (col: string, value: string | number | undefined) => {
+          const idx = finalHeaders.indexOf(col);
+          if (idx >= 0) {
+            rowVals[idx] = value != null ? String(value) : '';
+          }
+        };
+
+        const deliveredDozens = Number(entry.deliveredDozens ?? 0);
+        const don = entry.donation;
+        const suggested = Number(don?.suggestedAmount ?? 0);
+        const amount = Number(don?.amount ?? suggested);
+        const taxable =
+          don?.taxableAmount ?? Math.max(0, amount - suggested);
+
+        setVal('RunBaseRowId', baseRowId);
+        setVal('RunDozens', deliveredDozens);
+        setVal('RunDonationStatus', don?.status ?? 'NotRecorded');
+        setVal('RunDonationMethod', don?.method ?? '');
+        setVal('RunDonationAmount', amount.toFixed(2));
+        setVal('RunTaxableAmount', taxable.toFixed(2));
+        setVal('EventDate', entry.date ?? '');
+
+        rows.push(rowVals);
+      });
     });
 
     return Papa.unparse({ fields: finalHeaders, data: rows });
@@ -164,8 +423,9 @@ export class BackupService {
       map.set(baseRowId, entry);
     };
 
-    // 1) Baseline from import state (if totals columns exist)
-    if (importState) {
+    // 1) Baseline from import state (if totals columns exist and represent baseline).
+    // For restored datasets, totals are derived from receipts instead.
+    if (importState && (importState as any).mode !== 'restored') {
       const { headers, rowsByBaseRowId } = importState;
       const donationIdx = headers.findIndex(
         (h) => h.toLowerCase() === 'totaldonation'
@@ -173,9 +433,14 @@ export class BackupService {
       const dozensIdx = headers.findIndex(
         (h) => h.toLowerCase() === 'totaldozens'
       );
-      const taxableIdx = headers.findIndex(
-        (h) => h.toLowerCase() === 'totaltaxabledonation'
-      );
+      const taxableIdx = headers.findIndex((h) => {
+        const v = h.toLowerCase();
+        return (
+          v === 'totaltaxabledonation' ||
+          v === 'totaldeductibledonation' ||
+          v === 'totaldeductiblecontribution'
+        );
+      });
 
       Object.entries(rowsByBaseRowId).forEach(([baseRowId, values]) => {
         let donation = 0;
