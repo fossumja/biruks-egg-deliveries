@@ -188,39 +188,66 @@ export class DeliveryRunComponent {
   }
 
   async backupNow(): Promise<void> {
+    // Ensure the current run is archived first so the backup
+    // includes this run's history, then export the CSV.
+    const finalized = await this.finalizeRunInternal(true);
+    if (!finalized) {
+      return;
+    }
+
     try {
       await this.backup.exportAll();
       this.toast.show('Backup ready');
     } catch (err) {
       console.error(err);
       this.toast.show('Backup failed', 'error');
+      return;
+    }
+
+    this.finishRoute();
+  }
+
+  async completeRun(): Promise<void> {
+    const finalized = await this.finalizeRunInternal(true);
+    if (finalized) {
+      this.finishRoute();
     }
   }
 
-  finishRoute(): void {
+  private finishRoute(): void {
     if (this.routeDate) {
       localStorage.removeItem('currentRoute');
     }
     this.router.navigate(['/']);
   }
 
-  async completeRun(): Promise<void> {
-    if (!this.routeDate || this.isCompleting) return;
+  private async finalizeRunInternal(showToast: boolean): Promise<boolean> {
+    if (!this.routeDate || this.isCompleting) return false;
     if (this.stops.some((s) => s.status === '' || s.status === 'changed')) {
-      this.toast.show('There are still pending stops. Deliver/skip or end run early first.', 'error');
-      return;
+      if (showToast) {
+        this.toast.show(
+          'There are still pending stops. Deliver/skip or end run early first.',
+          'error'
+        );
+      }
+      return false;
     }
     this.isCompleting = true;
     try {
       await this.storage.completeRun(this.routeDate, this.endedEarly);
-      this.toast.show('Run archived and route reset for next time');
+      if (showToast) {
+        this.toast.show('Run archived and route reset for next time');
+      }
       if (this.routeDate) {
         localStorage.removeItem('currentRoute');
       }
-      this.router.navigate(['/']);
+      return true;
     } catch (err) {
       console.error('Complete run failed', err);
-      this.toast.show('Failed to complete run', 'error');
+      if (showToast) {
+        this.toast.show('Failed to complete run', 'error');
+      }
+      return false;
     } finally {
       this.isCompleting = false;
     }
@@ -383,9 +410,15 @@ export class DeliveryRunComponent {
   private syncDonationDefaults(): void {
     if (!this.currentStop) return;
     const donation = this.currentDonation;
-    donation.suggestedAmount = this.suggestedDonationAmount;
-    if (donation.status === 'Donated' && donation.amount == null) {
-      donation.amount = donation.suggestedAmount;
+    const prevSuggested =
+      donation.suggestedAmount ?? this.suggestedDonationAmount;
+    const nextSuggested = this.suggestedDonationAmount;
+    donation.suggestedAmount = nextSuggested;
+    if (
+      donation.status === 'Donated' &&
+      (donation.amount == null || donation.amount === prevSuggested)
+    ) {
+      donation.amount = nextSuggested;
     }
     void this.persistCurrentStopDonation();
   }

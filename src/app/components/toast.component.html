@@ -1,3 +1,9 @@
-<div class="toast" *ngIf="toast" [class.error]="toast.type === 'error'" [class.info]="toast.type === 'info'">
+<div
+  class="toast"
+  *ngIf="toast"
+  [class.success]="toast.type === 'success'"
+  [class.error]="toast.type === 'error'"
+  [class.info]="toast.type === 'info'"
+>
   {{ toast.message }}
 </div>

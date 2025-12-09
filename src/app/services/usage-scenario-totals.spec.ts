@@ -197,7 +197,9 @@ describe('Usage scenario totals (data-level)', () => {
 
     const expectedDonation = 2 * rate + 10 + 15;
     const expectedDozens = 2 + 3;
-    const expectedTaxable = 0; // all donations match suggested in this scenario
+    // Baseline is 2*rate + 3*rate (deliveries only), so the extra $10
+    // one-off donation is fully deductible.
+    const expectedTaxable = 10;
 
     aliceRows.forEach((row) => {
       const totalDonation = parseFloat(row.TotalDonation);

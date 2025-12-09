@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Papa from 'papaparse';
 import { Delivery } from '../models/delivery.model';
+import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { StorageService } from './storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -221,6 +222,11 @@ export class BackupService {
       }
     });
 
+    // Optional per-event baseline column used primarily for one-off rows.
+    if (!finalHeaders.includes('SuggestedAmount')) {
+      finalHeaders.push('SuggestedAmount');
+    }
+
     ['TotalDonation', 'TotalDozens', 'TotalDeductibleContribution'].forEach((col) => {
       if (!finalHeaders.includes(col)) {
         finalHeaders.push(col);
@@ -355,6 +361,7 @@ export class BackupService {
         setVal('RunDonationMethod', don.method ?? '');
         setVal('RunDonationAmount', amount.toFixed(2));
         setVal('RunTaxableAmount', taxable.toFixed(2));
+        setVal('SuggestedAmount', suggested ? suggested.toFixed(2) : '');
         // Persist the one-off event timestamp so restores do not
         // fall back to "now".
         setVal('EventDate', don.date ?? '');
@@ -400,6 +407,7 @@ export class BackupService {
         setVal('RunDonationMethod', don?.method ?? '');
         setVal('RunDonationAmount', amount.toFixed(2));
         setVal('RunTaxableAmount', taxable.toFixed(2));
+        setVal('SuggestedAmount', suggested ? suggested.toFixed(2) : '');
         setVal('EventDate', entry.date ?? '');
 
         rows.push(rowVals);
@@ -409,23 +417,155 @@ export class BackupService {
     return Papa.unparse({ fields: finalHeaders, data: rows });
   }
 
+  /**
+   * Compute per-customer totals using the global formula:
+   *   totalDeductibleContribution = max(0, totalDonation - totalBaselineValue)
+   *
+   * The returned `taxable` field represents `totalDeductibleContribution`.
+   */
   private computeTotalsByBase(
     deliveries: Delivery[],
-    runEntries: { baseRowId: string; donationAmount: number; dozens: number; taxableAmount: number }[],
-    importState?: { headers: string[]; rowsByBaseRowId: Record<string, string[]> }
+    runEntries: RunSnapshotEntry[] = [],
+    importState?: {
+      headers: string[];
+      rowsByBaseRowId: Record<string, string[]>;
+      mode?: 'baseline' | 'restored';
+    }
   ): Map<string, { donation: number; dozens: number; taxable: number }> {
-    const map = new Map<string, { donation: number; dozens: number; taxable: number }>();
-    const addTotals = (baseRowId: string, donation: number, dozens: number, taxable: number) => {
-      const entry = map.get(baseRowId) ?? { donation: 0, dozens: 0, taxable: 0 };
-      entry.donation += donation;
-      entry.dozens += dozens;
-      entry.taxable += taxable;
-      map.set(baseRowId, entry);
+    const receiptsMap = new Map<
+      string,
+      { donation: number; dozens: number; baseline: number }
+    >();
+
+    const addReceipt = (
+      baseRowId: string,
+      donation: number,
+      dozens: number,
+      baseline: number
+    ) => {
+      const existing =
+        receiptsMap.get(baseRowId) ?? { donation: 0, dozens: 0, baseline: 0 };
+      existing.donation += donation;
+      existing.dozens += dozens;
+      existing.baseline += baseline;
+      receiptsMap.set(baseRowId, existing);
     };
 
-    // 1) Baseline from import state (if totals columns exist and represent baseline).
-    // For restored datasets, totals are derived from receipts instead.
-    if (importState && (importState as any).mode !== 'restored') {
+    const suggestedRate = this.storage.getSuggestedRate();
+
+    // 1) Completed runs from runEntries (historical receipts).
+    runEntries.forEach((e) => {
+      const baseId = e.baseRowId;
+      if (!baseId) return;
+
+      // Treat "donation" status as a pure donation receipt with no dozens/baseline.
+      if (e.status === 'donation') {
+        const amount =
+          e.donationStatus === 'Donated' ? Number(e.donationAmount ?? 0) : 0;
+        if (amount) {
+          addReceipt(baseId, amount, 0, 0);
+        }
+        return;
+      }
+
+      // Delivered / skipped entries – only delivered stops contribute dozens.
+      const dozens = e.status === 'delivered' ? Number(e.dozens ?? 0) : 0;
+      const amount =
+        e.donationStatus === 'Donated'
+          ? Number(e.donationAmount ?? 0)
+          : 0;
+
+      // If we have a taxableAmount, we can recover a per-event baseline as:
+      //   baseline_i = max(0, amount_i - taxable_i)
+      // Otherwise fall back to dozens * current suggested rate.
+      let baseline = 0;
+      if (amount > 0 && Number.isFinite(e.taxableAmount)) {
+        const recovered = amount - Number(e.taxableAmount ?? 0);
+        baseline = recovered > 0 ? recovered : 0;
+      } else if (dozens > 0) {
+        baseline = dozens * suggestedRate;
+      }
+
+      if (amount || dozens || baseline) {
+        addReceipt(baseId, amount, dozens, baseline);
+      }
+    });
+
+    // 2) Current live deliveries and one-offs (receipts not yet snapshotted into runs).
+    deliveries.forEach((d) => {
+      const baseId = d.baseRowId;
+      if (!baseId) return;
+
+      // Main route-level donation/dozens (only when delivered).
+      if (d.status === 'delivered') {
+        const dozens = Number(
+          d.deliveredDozens ?? d.dozens ?? 0
+        );
+        const donationInfo = d.donation;
+        const amount =
+          donationInfo?.status === 'Donated'
+            ? Number(
+                donationInfo.amount ??
+                  donationInfo.suggestedAmount ??
+                  dozens * suggestedRate
+              )
+            : 0;
+        const baseline =
+          dozens > 0
+            ? Number(
+                donationInfo?.suggestedAmount ?? dozens * suggestedRate
+              )
+            : 0;
+        if (amount || dozens || baseline) {
+          addReceipt(baseId, amount, dozens, baseline);
+        }
+      }
+
+      // One-off donations: pure donation events, no dozens/baseline.
+      (d.oneOffDonations ?? []).forEach((don) => {
+        const amount = Number(
+          don.amount ?? don.suggestedAmount ?? 0
+        );
+        if (!amount) return;
+        addReceipt(baseId, amount, 0, 0);
+      });
+
+      // One-off deliveries: additional dozens plus optional donation.
+      (d.oneOffDeliveries ?? []).forEach((entry) => {
+        const dozens = Number(entry.deliveredDozens ?? 0);
+        const donationInfo = entry.donation;
+        const amount =
+          donationInfo?.status === 'Donated'
+            ? Number(
+                donationInfo.amount ??
+                  donationInfo.suggestedAmount ??
+                  dozens * suggestedRate
+              )
+            : 0;
+        const baseline =
+          dozens > 0
+            ? Number(
+                donationInfo?.suggestedAmount ?? dozens * suggestedRate
+              )
+            : 0;
+        if (amount || dozens || baseline) {
+          addReceipt(baseId, amount, dozens, baseline);
+        }
+      });
+    });
+
+    // 3) Seed totals map from importState (baseline data from an imported CSV).
+    // For restored backups we ignore importState totals and recompute from receipts only.
+    const totalsMap = new Map<
+      string,
+      { donation: number; dozens: number; taxable: number }
+    >();
+    const baselineTotals = new Map<
+      string,
+      { donation: number; dozens: number; taxable: number }
+    >();
+
+    if (importState && importState.mode !== 'restored') {
       const { headers, rowsByBaseRowId } = importState;
       const donationIdx = headers.findIndex(
         (h) => h.toLowerCase() === 'totaldonation'
@@ -456,60 +596,56 @@ export class BackupService {
           taxable = Number(values[taxableIdx]) || 0;
         }
         if (donation || dozens || taxable) {
-          addTotals(baseRowId, donation, dozens, taxable);
+          baselineTotals.set(baseRowId, {
+            donation,
+            dozens,
+            taxable
+          });
         }
       });
     }
 
-    // 2) Completed runs from runEntries
-    runEntries.forEach((e) => {
-      addTotals(e.baseRowId, e.donationAmount, e.dozens, e.taxableAmount);
+    // 4) Combine baseline totals (if any) with contributions from receipts.
+    const allBaseRowIds = new Set<string>([
+      ...baselineTotals.keys(),
+      ...receiptsMap.keys()
+    ]);
+
+    allBaseRowIds.forEach((baseRowId) => {
+      const baseline = baselineTotals.get(baseRowId) ?? {
+        donation: 0,
+        dozens: 0,
+        taxable: 0
+      };
+      const receipts = receiptsMap.get(baseRowId) ?? {
+        donation: 0,
+        dozens: 0,
+        baseline: 0
+      };
+
+      const donation = baseline.donation + receipts.donation;
+      const dozens = baseline.dozens + receipts.dozens;
+      // Baseline value from imported history plus newly recorded receipts.
+      const baselineFromImport =
+        baseline.donation > 0
+          ? Math.max(0, baseline.donation - baseline.taxable)
+          : 0;
+      const baselineTotal = baselineFromImport + receipts.baseline;
+      const deductibleFromReceipts = Math.max(
+        0,
+        receipts.donation - receipts.baseline
+      );
+      const taxable = baseline.taxable + deductibleFromReceipts;
+
+      // Expose baselineTotal via an extra property so callers that know
+      // about it can show "Baseline value" in the UI, while existing
+      // callers that expect donation/dozens/taxable keep working.
+      totalsMap.set(
+        baseRowId,
+        { donation, dozens, taxable, baseline: baselineTotal } as any
+      );
     });
 
-    // 3) Current live deliveries and one-offs
-    deliveries.forEach((d) => {
-      const baseId = d.baseRowId;
-      if (!baseId) return;
-
-      // Main run donation/dozens (only when delivered)
-      if (d.status === 'delivered') {
-        const suggested = Number(d.donation?.suggestedAmount ?? 0);
-        const donationAmt =
-          d.donation?.status === 'Donated'
-            ? Number(d.donation.amount ?? d.donation.suggestedAmount ?? 0)
-            : 0;
-        const taxableAmt =
-          d.donation?.status === 'Donated'
-            ? Number(
-                d.donation.taxableAmount ??
-                  Math.max(0, donationAmt - suggested)
-              )
-            : 0;
-        const dozens = Number(d.deliveredDozens ?? d.dozens ?? 0);
-        addTotals(baseId, donationAmt, dozens, taxableAmt);
-      }
-
-      // One-off donations
-      (d.oneOffDonations ?? []).forEach((don) => {
-        const suggested = Number(don.suggestedAmount ?? 0);
-        const amt = Number(don.amount ?? don.suggestedAmount ?? 0);
-        const taxableAmt =
-          don.taxableAmount ?? Math.max(0, amt - suggested);
-        addTotals(baseId, amt, 0, taxableAmt);
-      });
-
-      // One-off deliveries (dozens + donation)
-      (d.oneOffDeliveries ?? []).forEach((entry) => {
-        const suggested = Number(entry.donation?.suggestedAmount ?? 0);
-        const amt = Number(entry.donation?.amount ?? entry.donation?.suggestedAmount ?? 0);
-        const taxableAmt =
-          entry.donation?.taxableAmount ??
-          Math.max(0, amt - suggested);
-        const dozens = Number(entry.deliveredDozens ?? 0);
-        addTotals(baseId, amt, dozens, taxableAmt);
-      });
-    });
-
-    return map;
+    return totalsMap;
   }
 }

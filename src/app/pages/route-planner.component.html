@@ -25,6 +25,7 @@
       </optgroup>
     </select>
     <button
+      *ngIf="!viewingRun"
       class="btn btn-secondary icon-btn btn-reorder"
       type="button"
       (click)="toggleReorder()"
@@ -36,6 +37,7 @@
       <span class="glyph">⇅</span>
     </button>
     <button
+      *ngIf="!viewingRun"
       class="btn btn-secondary icon-btn btn-add"
       type="button"
       (click)="openNewDeliveryForm()"
@@ -172,30 +174,32 @@
       [cdkDragDisabled]="isSwiping || !reorderEnabled"
       (cdkDragStarted)="handleDragStart()"
     >
-      <div class="planner-swipe-actions">
+      <div class="back-card">
         <div class="action-row">
           <button
             class="btn btn-text skip-btn"
             type="button"
-            (click)="isUnsubscribed(stop) ? resubscribeStop(stop) : (isSkipped(stop) ? unskipStop(stop) : skipStop(stop))"
+            (click)="onBackActionClick($event); isUnsubscribed(stop) ? resubscribeStop(stop) : (isSkipped(stop) ? unskipStop(stop) : skipStop(stop))"
           >
             {{ isUnsubscribed(stop) ? 'Resubscribe' : (isSkipped(stop) ? 'Unskip' : 'Skip') }}
           </button>
-          <button class="btn btn-text" type="button" (click)="openEdit(stop)">Edit</button>
-          <button class="btn btn-text reset-warn" type="button" (click)="resetStop(stop)">Reset</button>
+          <button class="btn btn-text" type="button" (click)="onBackActionClick($event); openEdit(stop)">Edit</button>
+          <button class="btn btn-text reset-warn" type="button" (click)="onBackActionClick($event); resetStop(stop)">Reset</button>
         </div>
         <div class="action-row">
-          <button class="btn btn-secondary" type="button" (click)="openDonationDetails(stop)">Donation</button>
-          <button class="btn btn-secondary" type="button" (click)="openOffScheduleDelivery(stop)">Delivery</button>
+          <button class="btn btn-secondary" type="button" (click)="onBackActionClick($event); openDonationDetails(stop)">Donation</button>
+          <button class="btn btn-secondary" type="button" (click)="onBackActionClick($event); openOffScheduleDelivery(stop)">Delivery</button>
         </div>
       </div>
 
-      <div class="route-item planner-row-content"
+      <div
+        class="front-card route-item planner-row-content"
         [style.transform]="getRowTransform(stop)"
         (pointerdown)="startSwipe($event, stop)"
         (pointermove)="moveSwipe($event, stop)"
         (pointerup)="endSwipe($event, stop)"
-        (click)="toggleRow(stop)">
+        (click)="toggleRow(stop)"
+      >
         <ng-container *ngIf="reorderEnabled; else orderOnly">
           <div class="drag-handle" cdkDragHandle aria-label="Reorder stop">
             <span class="glyph">≡</span>
@@ -329,22 +333,110 @@
           </div>
         </div>
       </div>
+
+      <!-- Inline donation card beneath this stop -->
+      <div class="inline-donation card" *ngIf="donationModalStop?.id === stop.id">
+        <h3>Donation for {{ donationModalStop?.name }}</h3>
+        <div class="inline-donation-body">
+          <div class="card">
+            <app-donation-controls
+              [donation]="donationDraft?.donation || null"
+              [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
+              [showNoDonation]="true"
+              [allowReselect]="true"
+              [showQty]="false"
+              (donationStatusChange)="setDonationStatus($event)"
+              (donationMethodChange)="setDonationMethod($event)"
+              (amountChange)="onDonationAmountChange($event)"
+            />
+          </div>
+          <div class="card totals-card">
+            <div class="totals-row">
+              <span>Total Donations</span>
+              <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Total Dozen</span>
+              <span>{{ donationTotals.dozensTotal }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Baseline value</span>
+              <span>${{ donationTotals.baselineTotal | number : '1.0-0' }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Deductible charitable contribution</span>
+              <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
+            </div>
+          </div>
+          <div class="donation-actions">
+            <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="saveDonation()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inline off-schedule delivery card beneath this stop -->
+      <div class="inline-donation card" *ngIf="offScheduleStop?.id === stop.id">
+        <h3>Delivery for {{ offScheduleStop?.name }}</h3>
+        <div class="inline-donation-body">
+          <div class="delivery-card card">
+            <app-stop-delivery-card
+              [stop]="offScheduleStop"
+              [deliveredQty]="offDeliveredQty"
+              [donation]="offDonationDraft"
+              [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
+              [showNoDonation]="true"
+              [allowDonationReselect]="false"
+              [showNotes]="false"
+              (adjustQty)="adjustOffDelivered($event)"
+              (donationStatusChange)="setOffDonationStatus($event)"
+              (donationMethodChange)="setOffDonationMethod($event)"
+              (amountChange)="onOffAmountChange($event)"
+              (copyAddress)="copyAddress(offScheduleStop)"
+              (openMap)="openMaps(offScheduleStop)"
+            />
+          </div>
+          <div class="card totals-card">
+            <div class="totals-row">
+              <span>Total Donations</span>
+              <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Total Dozen</span>
+              <span>{{ donationTotals.dozensTotal }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Baseline value</span>
+              <span>${{ donationTotals.baselineTotal | number : '1.0-0' }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Deductible charitable contribution</span>
+              <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
+            </div>
+          </div>
+          <div class="donation-actions">
+            <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="saveOffSchedule()">Save</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <div *ngIf="!loading && !errorMessage && viewingRun">
-  <div
-    class="planner-swipe-row"
-    *ngFor="let entry of filteredRunEntries"
-  >
-    <div class="route-item run-history-card">
-      <div class="drag-handle order-only">
-        <span class="order-number text-muted" *ngIf="!viewingAllReceipts">
-          {{ entry.deliveryOrder + 1 }}
-        </span>
-      </div>
-      <div class="route-item-body">
+  <div class="drop-list">
+    <div
+      class="planner-swipe-row"
+      *ngFor="let entry of filteredRunEntries"
+    >
+      <div class="route-item run-history-card">
+        <div class="drag-handle order-only">
+          <span class="order-number text-muted" *ngIf="!viewingAllReceipts">
+            {{ entry.deliveryOrder + 1 }}
+          </span>
+        </div>
+        <div class="route-item-body">
         <div class="row-top">
           <div class="stop-name">
             {{ entry.name }}
@@ -361,145 +453,176 @@
           </div>
         </div>
         <div class="row-bottom">
-          <div class="stop-address text-muted">
-            <ng-container *ngIf="entry.eventDate; else noDate">
-              {{ entry.eventDate | date : 'short' : undefined : 'en-US' }}
+          <div class="donation-summary text-muted">
+            <ng-container *ngIf="entry.status !== 'donation'; else donationOnly">
+              {{ entry.dozens }} dozen
+              &nbsp;–&nbsp;
+              <ng-container [ngSwitch]="entry.donationStatus">
+                <span *ngSwitchCase="'NoDonation'">No donation</span>
+                <span *ngSwitchCase="'NotRecorded'">Donation not recorded</span>
+                <span *ngSwitchCase="'Donated'">
+                  {{ entry.donationMethod ? (entry.donationMethod | titlecase) : 'Donated' }}
+                  ${{ entry.donationAmount | number : '1.0-0' }}
+                </span>
+              </ng-container>
             </ng-container>
-            <ng-template #noDate>
-              (no date)
+            <ng-template #donationOnly>
+              <ng-container [ngSwitch]="entry.donationStatus">
+                <span *ngSwitchCase="'NoDonation'">No donation</span>
+                <span *ngSwitchCase="'NotRecorded'">Donation not recorded</span>
+                <span *ngSwitchCase="'Donated'">
+                  {{ entry.donationMethod ? (entry.donationMethod | titlecase) : 'Donated' }}
+                  ${{ entry.donationAmount | number : '1.0-0' }}
+                </span>
+              </ng-container>
             </ng-template>
           </div>
-          <div class="stop-qty">
-            <span class="qty-display">{{ entry.dozens }}</span>
+        </div>
+          <div class="run-entry-meta">
+            <div class="entry-date text-muted">
+              <ng-container *ngIf="entry.eventDate; else noDate">
+                {{ entry.eventDate | date : 'short' : undefined : 'en-US' }}
+              </ng-container>
+            </div>
+            <div class="run-entry-actions">
+              <button
+                type="button"
+                class="btn btn-text btn-inline"
+                (click)="openRunEntryEdit(entry)"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+          <ng-template #noDate>
+            <span class="entry-date-missing">(no date)</span>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Inline edit card for receipts (All receipts / runs view) -->
+      <div
+        class="inline-donation card"
+        *ngIf="editingRunEntry?.id === entry.id && runEntryDraft"
+      >
+        <h3>Edit receipt</h3>
+        <div class="inline-donation-body">
+          <div class="card">
+            <div class="new-form">
+              <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
+                Status
+                <select
+                  class="form-control"
+                  [(ngModel)]="runEntryDraft.status"
+                  name="runEntryStatus"
+                >
+                  <option value="delivered">Delivered</option>
+                  <option value="skipped">Skipped</option>
+                </select>
+              </label>
+              <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
+                Order in route
+                <input
+                  class="form-control"
+                  type="number"
+                  min="1"
+                  [max]="runEntries.length"
+                  [(ngModel)]="runEntryDraft.deliveryOrder"
+                  name="runEntryOrder"
+                />
+              </label>
+              <label *ngIf="editingRunEntry?.runId !== 'oneoff' || editingRunEntry?.oneOffKind === 'delivery'">
+                Dozen
+                <input
+                  class="form-control"
+                  type="number"
+                  min="0"
+                  [(ngModel)]="runEntryDraft.dozens"
+                  name="runEntryDozens"
+                />
+              </label>
+              <label
+                *ngIf="
+                  editingRunEntry?.runId === 'oneoff' &&
+                  runEntryDraft.donationStatus === 'Donated'
+                "
+              >
+                Suggested amount (baseline)
+                <select
+                  class="form-control"
+                  [(ngModel)]="runEntryDraft.suggestedAmount"
+                  name="runEntrySuggested"
+                >
+                  <option
+                    *ngFor="let val of receiptAmountOptions"
+                    [ngValue]="val"
+                  >
+                    ${{ val }}
+                  </option>
+                </select>
+              </label>
+              <label>
+                Donation status
+                <select
+                  class="form-control"
+                  [(ngModel)]="runEntryDraft.donationStatus"
+                  name="runEntryDonationStatus"
+                >
+                  <option value="NotRecorded">Not recorded</option>
+                  <option value="NoDonation">No donation</option>
+                  <option value="Donated">Donated</option>
+                </select>
+              </label>
+              <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
+                Donation method
+                <select
+                  class="form-control"
+                  [(ngModel)]="runEntryDraft.donationMethod"
+                  name="runEntryDonationMethod"
+                >
+                  <option value="">(none)</option>
+                  <option value="cash">Cash</option>
+                  <option value="ach">Ach</option>
+                  <option value="venmo">Venmo</option>
+                  <option value="paypal">Paypal</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+              <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
+                Donation amount
+                <select
+                  class="form-control"
+                  [(ngModel)]="runEntryDraft.donationAmount"
+                  name="runEntryDonationAmount"
+                >
+                  <option
+                    *ngFor="let val of receiptAmountOptions"
+                    [ngValue]="val"
+                  >
+                    ${{ val }}
+                  </option>
+                </select>
+              </label>
+            </div>
+            <div class="donation-actions">
+              <button
+                class="btn btn-text"
+                type="button"
+                (click)="cancelRunEntryEdit()"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-primary"
+                type="button"
+                (click)="saveRunEntryEdit()"
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
-        <div class="donation-summary text-muted">
-          <ng-container [ngSwitch]="entry.donationStatus">
-            <span *ngSwitchCase="'NoDonation'">No donation</span>
-            <span *ngSwitchCase="'NotRecorded'">Donation not recorded</span>
-            <span *ngSwitchCase="'Donated'">
-              {{ entry.donationMethod ? (entry.donationMethod | titlecase) : 'Donated' }}
-              ${{ entry.donationAmount | number : '1.0-0' }}
-            </span>
-          </ng-container>
-        </div>
-        <div class="run-entry-actions">
-          <button
-            type="button"
-            class="btn btn-text"
-            (click)="openRunEntryEdit(entry)"
-          >
-            Edit
-          </button>
-        </div>
       </div>
-    </div>
-
-    <div class="edit-inline card" *ngIf="editingRunEntry?.id === entry.id && runEntryDraft">
-      <h3>Edit run entry</h3>
-      <div class="new-form">
-        <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
-          Status
-          <select
-            class="form-control"
-            [(ngModel)]="runEntryDraft.status"
-            name="runEntryStatus"
-          >
-            <option value="delivered">Delivered</option>
-            <option value="skipped">Skipped</option>
-          </select>
-        </label>
-        <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
-          Order in route
-          <input
-            class="form-control"
-            type="number"
-            min="1"
-            [max]="runEntries.length"
-            [(ngModel)]="runEntryDraft.deliveryOrder"
-            name="runEntryOrder"
-          />
-        </label>
-        <label *ngIf="editingRunEntry?.runId !== 'oneoff' || editingRunEntry?.oneOffKind === 'delivery'">
-          Dozen
-          <input
-            class="form-control"
-            type="number"
-            min="0"
-            [(ngModel)]="runEntryDraft.dozens"
-            name="runEntryDozens"
-          />
-        </label>
-        <label
-          *ngIf="
-            editingRunEntry?.runId === 'oneoff' &&
-            runEntryDraft.donationStatus === 'Donated'
-          "
-        >
-          Suggested amount (baseline)
-          <input
-            class="form-control"
-            type="number"
-            min="0"
-            [(ngModel)]="runEntryDraft.suggestedAmount"
-            name="runEntrySuggested"
-          />
-        </label>
-        <label>
-          Donation status
-          <select
-            class="form-control"
-            [(ngModel)]="runEntryDraft.donationStatus"
-            name="runEntryDonationStatus"
-          >
-            <option value="NotRecorded">Not recorded</option>
-            <option value="NoDonation">No donation</option>
-            <option value="Donated">Donated</option>
-          </select>
-        </label>
-        <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
-          Donation method
-          <select
-            class="form-control"
-            [(ngModel)]="runEntryDraft.donationMethod"
-            name="runEntryDonationMethod"
-          >
-            <option value="">(none)</option>
-            <option value="cash">Cash</option>
-            <option value="ach">Ach</option>
-            <option value="venmo">Venmo</option>
-            <option value="paypal">Paypal</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-        <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
-          Donation amount
-          <input
-            class="form-control"
-            type="number"
-            min="0"
-            [(ngModel)]="runEntryDraft.donationAmount"
-            name="runEntryDonationAmount"
-          />
-        </label>
-      </div>
-      <div class="donation-actions">
-        <button
-          class="btn btn-text"
-          type="button"
-          (click)="cancelRunEntryEdit()"
-        >
-          Cancel
-        </button>
-        <button
-          class="btn btn-primary"
-          type="button"
-          (click)="saveRunEntryEdit()"
-        >
-          Save
-        </button>
-      </div>
-    </div>
   </div>
 </div>
 <div
@@ -509,70 +632,7 @@
   No deliveries found for this route.
 </div>
 
-<div class="donation-overlay" *ngIf="donationModalStop">
-  <div class="donation-dialog">
-    <h3>Donation for {{ donationModalStop!.name }}</h3>
-    <div class="card">
-      <app-donation-controls
-        [donation]="donationDraft?.donation || null"
-        [suggestedAmount]="donationDraft?.donation?.suggestedAmount || donationModalStop.dozens * getSuggestedRate()"
-        [showNoDonation]="true"
-        [allowReselect]="true"
-        [showQty]="true"
-        [qtyValue]="donationDraft?.dozens ?? donationModalStop.dozens"
-        (qtyChange)="onDonationQtyChange($event)"
-        (donationStatusChange)="setDonationStatus($event)"
-        (donationMethodChange)="setDonationMethod($event)"
-        (amountChange)="onDonationAmountChange($event)"
-      />
-    </div>
-    <div class="card totals-card">
-      <div class="totals-row">
-        <span>Total Donations</span>
-        <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
-      </div>
-      <div class="totals-row">
-        <span>Total Dozen</span>
-        <span>{{ donationTotals.dozensTotal }}</span>
-      </div>
-      <div class="totals-row">
-        <span>Deductible charitable contribution</span>
-        <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
-      </div>
-    </div>
-    <div class="donation-actions">
-      <button type="button" class="ghost" (click)="closeDonationModal()">Cancel</button>
-      <button type="button" class="btn btn-primary" (click)="saveDonation()">Save</button>
-    </div>
-  </div>
-</div>
-
-<div class="donation-overlay" *ngIf="offScheduleStop">
-  <div class="donation-dialog">
-    <h3>Delivery for {{ offScheduleStop!.name }}</h3>
-    <div class="delivery-card card">
-      <app-stop-delivery-card
-        [stop]="offScheduleStop"
-        [deliveredQty]="offDeliveredQty"
-        [donation]="offDonationDraft"
-        [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
-        [showNoDonation]="true"
-        [allowDonationReselect]="false"
-        [showNotes]="false"
-        (adjustQty)="adjustOffDelivered($event)"
-        (donationStatusChange)="setOffDonationStatus($event)"
-        (donationMethodChange)="setOffDonationMethod($event)"
-        (amountChange)="onOffAmountChange($event)"
-        (copyAddress)="copyAddress(offScheduleStop)"
-        (openMap)="openMaps(offScheduleStop)"
-      />
-    </div>
-    <div class="donation-actions">
-      <button type="button" class="ghost" (click)="closeOffSchedule()">Cancel</button>
-      <button type="button" class="btn btn-primary" (click)="saveOffSchedule()">Save</button>
-    </div>
-  </div>
-</div>
+<!-- Full-screen overlays removed; donation and delivery edit now inline per stop -->
 
 <div class="amount-overlay" *ngIf="showAmountPicker">
   <app-donation-amount-picker

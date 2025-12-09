@@ -73,7 +73,10 @@ describe('BackupService totals with mini route', () => {
     expect(c1Totals!.donation).toBeCloseTo(2 * rate + 10 + 15, 5);
     // Dozens = run delivered (2) + one-off delivery (3)
     expect(c1Totals!.dozens).toBe(2 + 3);
-    // All donations match suggested in this scenario, so taxable should be 0.
-    expect(c1Totals!.taxable).toBeCloseTo(0, 5);
+    // Global deductible contribution = totalDonation - baselineValue.
+    // Baseline counts only deliveries (2*rate + 3*rate), so the extra $10
+    // one-off donation is fully deductible.
+    const expectedDeductible = 10;
+    expect(c1Totals!.taxable).toBeCloseTo(expectedDeductible, 5);
   });
 });

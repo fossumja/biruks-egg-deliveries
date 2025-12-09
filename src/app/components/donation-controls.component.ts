@@ -22,11 +22,12 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   @Output() donationStatusChange = new EventEmitter<DonationStatus>();
   @Output() donationMethodChange = new EventEmitter<DonationMethod>();
   @Output() amountChange = new EventEmitter<number>();
-   @Output() qtyChange = new EventEmitter<number>();
+  @Output() qtyChange = new EventEmitter<number>();
 
   amountOptions: number[] = [];
   amountValue = 0;
   qtyLocal = 0;
+  private amountTouched = false;
 
   ngOnInit(): void {
     const base = this.computeBaseAmount();
@@ -36,9 +37,19 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('donation' in changes || 'suggestedAmount' in changes) {
+    // When suggestedAmount changes (e.g., quantity changed), refresh the picker
+    // to follow the new suggestion until the user explicitly customizes it.
+    if ('suggestedAmount' in changes) {
+      const nextSuggested = Number(this.suggestedAmount ?? 0) || 0;
+      if (!this.amountTouched) {
+        this.amountValue = nextSuggested;
+      }
+      this.refreshAmountOptions(nextSuggested);
+    } else if ('donation' in changes) {
       const base = this.computeBaseAmount();
-      this.amountValue = base;
+      if (!this.amountTouched) {
+        this.amountValue = base;
+      }
       this.refreshAmountOptions(base);
     }
     if ('qtyValue' in changes) {
@@ -94,6 +105,7 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   onAmountChangeSelect(value: number): void {
     const num = Number(value) || 0;
     this.amountValue = num;
+    this.amountTouched = true;
     this.amountChange.emit(num);
   }
 

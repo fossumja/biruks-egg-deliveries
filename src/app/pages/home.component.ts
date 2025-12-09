@@ -821,9 +821,19 @@ export class HomeComponent implements OnDestroy {
       this.currentRoute = undefined;
       this.autoselectRoute();
       this.toast.show('Restore complete');
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Restore failed', err);
-      this.errorMessage = 'Restore failed. Please check the backup file.';
+      const reason =
+        err instanceof Error && err.message
+          ? err.message
+          : typeof err === 'string'
+            ? err
+            : '';
+      if (reason) {
+        this.errorMessage = `Restore failed: ${reason}`;
+      } else {
+        this.errorMessage = 'Restore failed. The backup file could not be processed.';
+      }
       this.toast.show(this.errorMessage, 'error');
     } finally {
       this.isImporting = false;

@@ -93,27 +93,30 @@
   max-width: 380px;
   margin-left: auto;
   align-items: stretch;
-  height: 44px;
   padding: 0 0 2px;
   text-align: right;
 }
 
 .progress-line {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  min-width: 0;
   white-space: nowrap;
-  justify-content: space-between;
+  /* Scale text down on smaller screens so long numbers stay on one line */
+  font-size: clamp(10px, 2.6vw, var(--font-size-sm));
 }
 
 .progress-summary {
-  font-size: var(--font-size-sm);
+  font-size: inherit;
   color: var(--color-text);
 }
 
 .progress-divider {
   color: var(--color-text-subtle, #6b7280);
-  font-size: var(--font-size-sm);
+  font-size: inherit;
 }
 
 .bar {
@@ -126,7 +129,7 @@
 }
 
 .progress-skipped {
-  font-size: var(--font-size-xs);
+  font-size: inherit;
   color: var(--color-text-subtle, #6b7280);
   white-space: nowrap;
 }

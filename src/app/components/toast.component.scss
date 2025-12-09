@@ -15,6 +15,11 @@
     transform var(--duration-base) var(--easing-ease-out);
 }
 
+.toast.success {
+  background: var(--color-primary);
+  color: #111827;
+}
+
 .toast.info {
   background: rgba(59, 130, 246, 0.9);
 }

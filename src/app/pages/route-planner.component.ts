@@ -4,7 +4,7 @@ import {
   DragDropModule,
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import { Component, inject } from '@angular/core';
+import { Component, NgZone, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DonationAmountPickerComponent } from '../components/donation-amount-picker.component';
@@ -21,6 +21,7 @@ import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
+import { BackupService } from '../services/backup.service';
 
 @Component({
   selector: 'app-route-planner',
@@ -42,6 +43,8 @@ export class RoutePlannerComponent {
   private storage = inject(StorageService);
   private router = inject(Router);
   private toast = inject(ToastService);
+  private backup = inject(BackupService);
+  private zone = inject(NgZone);
 
   routeDate?: string;
   routes: Route[] = [];
@@ -51,10 +54,19 @@ export class RoutePlannerComponent {
   errorMessage = '';
   donationModalStop: Delivery | null = null;
   donationDraft?: Delivery;
-  donationTotals = { donationTotal: 0, dozensTotal: 0, taxableTotal: 0 };
+  donationTotals = {
+    donationTotal: 0,
+    dozensTotal: 0,
+    taxableTotal: 0,
+    baselineTotal: 0,
+  };
   showAmountPicker = false;
   amountOptions: number[] = [];
   selectedAmount = 0;
+   readonly receiptAmountOptions: number[] = Array.from(
+    { length: 101 },
+    (_, i) => i
+  );
   offScheduleStop: Delivery | null = null;
   offDonationDraft: DonationInfo | null = null;
   offDeliveredQty = 0;
@@ -124,6 +136,7 @@ export class RoutePlannerComponent {
 
   openOffScheduleDelivery(stop: Delivery): void {
     this.closeSwipe();
+    console.log('openOffScheduleDelivery fired for', stop.id);
     this.offScheduleStop = stop;
     const rate = this.storage.getSuggestedRate();
     const suggested = (stop.dozens ?? 0) * rate;
@@ -134,10 +147,20 @@ export class RoutePlannerComponent {
       suggestedAmount: suggested,
     };
     this.offDeliveredQty = stop.deliveredDozens ?? stop.dozens ?? 0;
+    // Seed totals based on the current stop so the overlay has
+    // sensible values immediately; full global totals will be
+    // refreshed after save.
     this.donationTotals = this.computeOneOffTotals(stop);
   }
 
-  closeOffSchedule(): void {
+  closeOffSchedule(showToast = false): void {
+    if (showToast && this.offScheduleStop) {
+      this.toast.show(
+        `Delivery edit cancelled for ${this.offScheduleStop.name}`,
+        'error',
+        2600
+      );
+    }
     this.offScheduleStop = null;
     this.offDonationDraft = null;
     this.offDeliveredQty = 0;
@@ -169,12 +192,20 @@ export class RoutePlannerComponent {
   }
 
   adjustOffDelivered(delta: number): void {
-    const next = Math.max(0, (this.offDeliveredQty || 0) + delta);
+    const prev = this.offDeliveredQty || 0;
+    const prevSuggested =
+      this.offDonationDraft?.suggestedAmount ?? prev * 4;
+    const next = Math.max(0, prev + delta);
     this.offDeliveredQty = next;
     if (this.offDonationDraft) {
       this.offDonationDraft.suggestedAmount = next * 4;
-      if (this.offDonationDraft.status === 'Donated' && this.offDonationDraft.amount == null) {
-        this.offDonationDraft.amount = next * 4;
+      if (this.offDonationDraft.status === 'Donated') {
+        if (
+          this.offDonationDraft.amount == null ||
+          this.offDonationDraft.amount === prevSuggested
+        ) {
+          this.offDonationDraft.amount = next * 4;
+        }
       }
     }
   }
@@ -270,6 +301,12 @@ export class RoutePlannerComponent {
     if (this.swipeMode === 'swipe') {
       if (deltaX < -this.swipeThreshold) {
         this.openRowId = stop.id;
+        // Close any open inline donation/delivery when a row's
+        // action menu is revealed via swipe.
+        if (this.donationModalStop || this.offScheduleStop) {
+          this.closeDonationModal(true);
+          this.closeOffSchedule(true);
+        }
       } else if (deltaX > this.swipeThreshold) {
         this.openRowId = null;
       }
@@ -285,7 +322,19 @@ export class RoutePlannerComponent {
     if (this.editingStop) {
       this.editingStop = null;
     }
-    this.openRowId = this.openRowId === stop.id ? null : stop.id;
+    const willOpen = this.openRowId !== stop.id;
+    this.openRowId = willOpen ? stop.id : null;
+    if (willOpen && (this.donationModalStop || this.offScheduleStop)) {
+      // Tapping to open the hidden menu should behave like pressing
+      // Cancel on any open donation/delivery editor.
+      this.closeDonationModal(true);
+      this.closeOffSchedule(true);
+    }
+  }
+
+  onBackActionClick(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
   }
 
   closeSwipe(): void {
@@ -605,10 +654,20 @@ export class RoutePlannerComponent {
         note: stop.donation?.note,
       },
     };
+    // Seed totals based on the current stop so the overlay has
+    // sensible values immediately; full global totals will be
+    // refreshed after save.
     this.donationTotals = this.computeOneOffTotals(stop);
   }
 
-  closeDonationModal(): void {
+  closeDonationModal(showToast = false): void {
+    if (showToast && this.donationModalStop) {
+      this.toast.show(
+        `Donation edit cancelled for ${this.donationModalStop.name}`,
+        'error',
+        2600
+      );
+    }
     this.donationModalStop = null;
     this.donationDraft = undefined;
     this.showAmountPicker = false;
@@ -648,14 +707,13 @@ export class RoutePlannerComponent {
     donation.date = new Date().toISOString();
     void this.storage.appendOneOffDonation(this.donationModalStop.id, donation);
     this.toast.show('Donation saved');
-    // Update local totals immediately so reopening shows the latest value.
     if (this.donationModalStop) {
       const list = Array.isArray(this.donationModalStop.oneOffDonations)
         ? [...this.donationModalStop.oneOffDonations]
         : [];
       list.push(donation);
       this.donationModalStop.oneOffDonations = list;
-      this.donationTotals = this.computeOneOffTotals(this.donationModalStop);
+      void this.refreshDonationTotals(this.donationModalStop);
     }
     this.closeDonationModal();
   }
@@ -927,6 +985,10 @@ export class RoutePlannerComponent {
       donationMethod?: DonationMethod;
       donationAmount: number;
       taxableAmount: number;
+      // For historical run entries
+      runId?: string;
+      runEntryId?: string;
+      // For one-off receipts
       deliveryId?: string;
       oneOffKind?: 'donation' | 'delivery';
       oneOffIndex?: number;
@@ -953,7 +1015,9 @@ export class RoutePlannerComponent {
         donationStatus: entry.donationStatus,
         donationMethod: entry.donationMethod as DonationMethod | undefined,
         donationAmount: entry.donationAmount,
-        taxableAmount: entry.taxableAmount
+        taxableAmount: entry.taxableAmount,
+        runId: entry.runId,
+        runEntryId: entry.id
       });
     });
 
@@ -1029,33 +1093,33 @@ export class RoutePlannerComponent {
     receipts.sort((a, b) => b.date.localeCompare(a.date));
 
     // Project into RunSnapshotEntry-shaped view list.
-    const viewEntries: RunSnapshotEntry[] = receipts.map((r, index) => ({
-      id:
+    const viewEntries: RunSnapshotEntry[] = receipts.map((r, index) => {
+      const generatedId =
         typeof crypto !== 'undefined' && crypto.randomUUID
           ? crypto.randomUUID()
-          : `receipt_${index}_${r.baseRowId}`,
-      runId:
-        r.kind === 'run'
-          ? entries.find((e) => e.baseRowId === r.baseRowId)?.runId ?? 'run'
-          : 'oneoff',
-      baseRowId: r.baseRowId,
-      name: r.name,
-      address: r.address,
-      city: r.city,
-      state: r.state,
-      zip: r.zip,
-      status: r.status,
-      dozens: r.dozens,
-      deliveryOrder: index,
-      donationStatus: r.donationStatus,
-      donationMethod: r.donationMethod,
-      donationAmount: r.donationAmount,
-      taxableAmount: r.taxableAmount,
-      eventDate: r.date,
-      deliveryId: r.deliveryId,
-      oneOffKind: r.oneOffKind,
-      oneOffIndex: r.oneOffIndex
-    }));
+          : `receipt_${index}_${r.baseRowId}`;
+      return {
+        id: r.runEntryId ?? generatedId,
+        runId: r.kind === 'run' ? (r.runId ?? 'run') : 'oneoff',
+        baseRowId: r.baseRowId,
+        name: r.name,
+        address: r.address,
+        city: r.city,
+        state: r.state,
+        zip: r.zip,
+        status: r.status,
+        dozens: r.dozens,
+        deliveryOrder: index,
+        donationStatus: r.donationStatus,
+        donationMethod: r.donationMethod,
+        donationAmount: r.donationAmount,
+        taxableAmount: r.taxableAmount,
+        eventDate: r.date,
+        deliveryId: r.deliveryId,
+        oneOffKind: r.oneOffKind,
+        oneOffIndex: r.oneOffIndex
+      };
+    });
 
     this.runEntries = viewEntries;
     this.filteredRunEntries = [...viewEntries];
@@ -1097,6 +1161,23 @@ export class RoutePlannerComponent {
           suggestedAmount: suggested
         });
       }
+      await this.loadAllReceipts();
+      this.applyFilter(false);
+    } else if (this.viewingAllReceipts) {
+      // Editing a historical run entry from the All receipts view:
+      // update just that entry in the runEntries table and refresh receipts.
+      await this.storage.updateRunEntry(original.id, {
+        dozens: newDozens,
+        donationStatus: draft.donationStatus,
+        donationMethod:
+          draft.donationStatus === 'Donated'
+            ? (draft.donationMethod || undefined)
+            : undefined,
+        donationAmount:
+          draft.donationStatus === 'Donated' ? newAmount : 0,
+        taxableAmount: taxable,
+        status: draft.status
+      });
       await this.loadAllReceipts();
       this.applyFilter(false);
     } else {
@@ -1369,8 +1450,14 @@ export class RoutePlannerComponent {
 
   private computeOneOffTotals(
     stop: Delivery
-  ): { donationTotal: number; dozensTotal: number; taxableTotal: number } {
-    const suggestedMain = (stop.dozens ?? 0) * this.storage.getSuggestedRate();
+  ): {
+    donationTotal: number;
+    dozensTotal: number;
+    taxableTotal: number;
+    baselineTotal: number;
+  } {
+    const rate = this.storage.getSuggestedRate();
+    const suggestedMain = (stop.dozens ?? 0) * rate;
     const mainDonation =
       stop.donation?.status === 'Donated'
         ? Number(stop.donation.amount ?? stop.donation.suggestedAmount ?? suggestedMain)
@@ -1419,10 +1506,78 @@ export class RoutePlannerComponent {
       0
     );
 
+    const baselineMain =
+      mainDozens > 0
+        ? Number(stop.donation?.suggestedAmount ?? mainDozens * rate)
+        : 0;
+    const baselineOneOff = (stop.oneOffDeliveries ?? []).reduce((sum, d) => {
+      const dozens = Number(d.deliveredDozens ?? 0);
+      if (!dozens) return sum;
+      const suggested = Number(
+        d.donation?.suggestedAmount ?? dozens * rate
+      );
+      return sum + suggested;
+    }, 0);
+    const baselineTotal = baselineMain + baselineOneOff;
+
     return {
       donationTotal: mainDonation + oneOffDonationTotal,
       dozensTotal: mainDozens + oneOffDozensTotal,
       taxableTotal: mainTaxable + oneOffTaxableTotal,
+      baselineTotal,
     };
   }
+
+  /**
+   * Recompute totals for the given stop using the shared
+   * global totals helper. This reflects all receipts for
+   * that customer (runs + one-offs + live state), so the
+   * donation modal matches CSV/backup totals.
+   */
+  private async refreshDonationTotals(stop: Delivery): Promise<void> {
+    try {
+      const [allDeliveries, allRunEntries, importState] = await Promise.all([
+        this.storage.getAllDeliveries(),
+        this.storage.getAllRunEntries(),
+        this.storage.getImportState('default'),
+      ]);
+
+      const totalsMap = (this.backup as any).computeTotalsByBase(
+        allDeliveries,
+        allRunEntries,
+        importState ?? undefined
+      ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+
+      const totals = totalsMap.get(stop.baseRowId);
+      if (totals) {
+        const anyTotals = totals as any;
+        const baseline =
+          typeof anyTotals.baseline === 'number'
+            ? anyTotals.baseline
+            : Math.max(0, totals.donation - totals.taxable);
+        this.donationTotals = {
+          donationTotal: totals.donation,
+          dozensTotal: totals.dozens,
+          taxableTotal: totals.taxable,
+          baselineTotal: baseline,
+        };
+      } else {
+        this.donationTotals = {
+          donationTotal: 0,
+          dozensTotal: 0,
+          taxableTotal: 0,
+          baselineTotal: 0,
+        };
+      }
+    } catch (err) {
+      console.error('Failed to refresh donation totals', err);
+      this.donationTotals = {
+        donationTotal: 0,
+        dozensTotal: 0,
+        taxableTotal: 0,
+        baselineTotal: 0,
+      };
+    }
+  }
+
 }

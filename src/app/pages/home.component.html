@@ -6,7 +6,7 @@
       (click)="onImportClick(fileInput)"
       [disabled]="isImporting"
     >
-      {{ isImporting ? "Importing…" : "Import (CSV)" }}
+      {{ isImporting ? "Importing…" : "Import CSV" }}
     </button>
     <button
       type="button"
@@ -14,7 +14,7 @@
       (click)="exportCsv()"
       [disabled]="isExporting"
     >
-      {{ isExporting ? "Preparing…" : "Backup (CSV)" }}
+      {{ isExporting ? "Preparing…" : "Backup CSV" }}
     </button>
     <button
       type="button"
@@ -22,7 +22,7 @@
       (click)="onRestoreClick(restoreInput)"
       [disabled]="isImporting || isExporting"
     >
-      Restore (CSV)
+      Restore CSV
     </button>
     <input
       #fileInput
@@ -46,7 +46,7 @@
     <div class="subtext text-muted" *ngIf="lastBackupAt">
       Last backup: {{ lastBackupAt | date : "short" }}
       <span *ngIf="showRestoreHint">
-        — tap “Restore (CSV)” again to choose a file.
+        — tap “Restore CSV” again to choose a file.
       </span>
     </div>
     <div class="subtext text-muted" *ngIf="lastImportAt">
@@ -158,7 +158,7 @@
       <ul>
         <li>
           Import your route CSV on the Home page using
-          <strong>Import (CSV)</strong>.
+          <strong>Import CSV</strong>.
         </li>
         <li>
           Use <strong>Planner</strong> to review stops, adjust dozens, add/edit
@@ -169,7 +169,7 @@
           donations.
         </li>
         <li>
-          When finished, optionally <strong>Backup (CSV)</strong>, then tap
+          When finished, optionally <strong>Backup CSV</strong>, then tap
           <strong>Complete run</strong> on the Run page.
         </li>
       </ul>
@@ -206,7 +206,7 @@
 
       <h4>Exports, restore & totals</h4>
       <ul>
-        <li><strong>Backup (CSV)</strong> always contains:</li>
+        <li><strong>Backup CSV</strong> always contains:</li>
         <li>All original columns from your import.</li>
         <li>All completed runs recorded in the app.</li>
         <li>All one‑off deliveries and donations.</li>
@@ -215,14 +215,14 @@
           charitable contribution (amount above the suggested donation).
         </li>
         <li>
-          <strong>Restore (CSV)</strong> fully replaces the current in‑app data
+          <strong>Restore CSV</strong> fully replaces the current in‑app data
           (deliveries, routes, and run history) with the contents of a backup
           CSV.
         </li>
         <li>
-          Use <strong>Import (CSV)</strong> for loading a new baseline file
-          while keeping history, and <strong>Restore (CSV)</strong> only when
-          you want to roll back to, or start from, a specific backup.
+          Use <strong>Import CSV</strong> for loading a new baseline file while
+          keeping history, and <strong>Restore CSV</strong> only when you want
+          to roll back to, or start from, a specific backup.
         </li>
       </ul>
 

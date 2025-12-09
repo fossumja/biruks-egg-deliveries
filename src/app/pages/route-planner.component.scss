@@ -3,11 +3,11 @@
   align-items: center;
   justify-content: flex-start;
   gap: var(--spacing-2);
-  margin-bottom: var(--spacing-3);
+  margin-bottom: var(--spacing-1);
   padding: 0 var(--spacing-2);
   position: relative;
   min-height: 44px;
-  background: var(--color-surface);
+  background: var(--color-muted);
 }
 
 :host-context([data-theme="dark"]) .page-header {
@@ -30,7 +30,6 @@
 .route-select {
   flex: 1 1 auto;
   min-width: 120px;
-  max-width: calc(100% - 160px); /* leaves room for 3 buttons + gaps */
   height: 40px;
   padding: 8px 10px;
   width: auto;
@@ -133,33 +132,33 @@
 
 .drop-list {
   display: grid;
-  gap: var(--spacing-2);
+  row-gap: var(--spacing-1);
+  column-gap: var(--spacing-2);
 }
 
 .planner-swipe-row {
   position: relative;
-  overflow: hidden;
-  background: var(--color-surface);
+  background: transparent;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
 }
 
-.planner-swipe-actions {
+.back-card {
   position: absolute;
-  right: var(--spacing-2);
-  top: 0;
-  bottom: 0;
+  inset: 0;
+  padding: 0 var(--spacing-2);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-end;
   gap: var(--spacing-1);
-  z-index: 0;
+  background: var(--color-muted);
   opacity: 0;
+  transition: opacity 150ms var(--easing-ease-out);
+  z-index: 1;
   pointer-events: none;
-  padding: 0;
 }
 
-.planner-swipe-actions .action-row {
+.back-card .action-row {
   display: flex;
   gap: var(--spacing-1);
   justify-content: flex-end;
@@ -168,14 +167,21 @@
 .planner-row-content {
   transition: transform 250ms var(--easing-ease-out);
   position: relative;
-  z-index: 1;
+  z-index: 2;
   /* Allow custom horizontal swipe; let JS decide when to block scroll */
   touch-action: pan-y pan-x;
 }
 
-.planner-swipe-row.open .planner-swipe-actions {
-  opacity: 1;
+.front-card {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.planner-swipe-row.open .back-card {
   pointer-events: auto;
+  opacity: 1;
 }
 
 .route-item {
@@ -187,6 +193,16 @@
   border-radius: 0;
   border: none;
   background: transparent;
+}
+
+.front-card.route-item {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+:host-context([data-theme='dark']) .front-card.route-item {
+  background: var(--color-bg-elevated, #1f2933);
 }
 
 .drag-handle {
@@ -251,10 +267,16 @@
 .run-history-card {
   display: grid;
   gap: var(--spacing-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-3);
 }
 
-.run-history-card .donation-summary {
-  margin-top: var(--spacing-1);
+:host-context([data-theme='dark']) .run-history-card {
+  background: var(--color-bg-elevated, #1f2933);
+  border-color: color-mix(in srgb, #ffffff 10%, var(--color-border));
 }
 
 .stop-qty {
@@ -316,6 +338,33 @@
   padding: 4px 8px;
   min-height: auto;
   white-space: nowrap;
+}
+
+.run-history-card .donation-summary {
+  margin-top: 0;
+}
+
+.run-entry-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-1);
+}
+
+.entry-date {
+  font-size: var(--font-size-xs);
+}
+
+.entry-date-missing {
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+}
+
+.run-entry-actions .btn-inline {
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: var(--font-size-sm);
 }
 
 .item-bottom {
@@ -448,16 +497,27 @@
   color: var(--color-text);
 }
 
-.donation-overlay,
-.amount-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-4);
-  z-index: 2000;
+.edit-inline.card,
+.inline-donation.card {
+  margin-top: var(--spacing-2);
+  width: 100%;
+}
+
+.inline-donation-body {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .donation-dialog .off-card {

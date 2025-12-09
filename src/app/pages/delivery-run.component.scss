@@ -32,7 +32,7 @@
 
 .content {
   display: grid;
-  gap: var(--spacing-3);
+  gap: var(--spacing-1);
 }
 
 .delivery-card {
@@ -241,14 +241,15 @@
   width: 100%;
   display: flex;
   gap: var(--spacing-2);
-  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  background: var(--color-muted);
   backdrop-filter: blur(12px);
-  padding: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-2)
+    env(safe-area-inset-bottom, var(--spacing-2));
   border-radius: var(--radius-lg);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-:host-context([data-theme='dark']) .bottom-bar {
+:host-context([data-theme="dark"]) .bottom-bar {
   background: color-mix(in srgb, var(--color-bg) 92%, transparent);
 }
 
@@ -267,7 +268,7 @@
   background: color-mix(in srgb, #fef2f2 80%, var(--color-surface) 20%);
 }
 
-:host-context([data-theme='dark']) .bottom-bar .btn-end-run {
+:host-context([data-theme="dark"]) .bottom-bar .btn-end-run {
   background: color-mix(in srgb, #3b0f0f 80%, var(--color-bg) 20%);
   color: #fecaca;
   border-color: #fca5a5;
@@ -308,6 +309,7 @@
 .custom-reason {
   display: flex;
   gap: var(--spacing-2);
+  padding-top: var(--spacing-4);
 }
 
 .custom-reason input {
@@ -357,7 +359,7 @@
   background: color-mix(in srgb, #fef2f2 80%, var(--color-surface) 20%);
 }
 
-:host-context([data-theme='dark']) .btn-proceed-small {
+:host-context([data-theme="dark"]) .btn-proceed-small {
   background: color-mix(in srgb, #3b0f0f 80%, var(--color-bg) 20%);
   color: #fecaca;
   border-color: #fca5a5;

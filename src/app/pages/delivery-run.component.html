@@ -106,6 +106,13 @@
       >
         Canceled
       </button>
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="confirmSkip('No cooler')"
+      >
+        No cooler
+      </button>
     </div>
     <div class="custom-reason">
       <input [(ngModel)]="otherReason" placeholder="Other reason" />
