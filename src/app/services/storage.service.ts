@@ -436,7 +436,9 @@ export class StorageService {
           const d = raw as Delivery;
           if (d.status !== 'delivered' && d.status !== 'skipped') continue;
 
-          const dozens = Number(d.deliveredDozens ?? d.dozens ?? 0);
+          const deliveredDozens = Number(d.deliveredDozens ?? d.dozens ?? 0);
+          const dozens =
+            d.status === 'delivered' ? deliveredDozens : 0;
           const deliveryOrder = Number(
             d.deliveryOrder ?? d.sortIndex ?? 0
           );

@@ -255,9 +255,26 @@ export class DeliveryRunComponent {
 
   openMaps(): void {
     if (!this.currentStop) return;
-    const address = `${this.currentStop.address}, ${this.currentStop.city}, ${this.currentStop.state} ${this.currentStop.zip ?? ''}`;
-    const url = `https://maps.apple.com/?daddr=${encodeURIComponent(address)}`;
-    window.location.assign(url);
+    const address = `${this.currentStop.address}, ${this.currentStop.city}, ${
+      this.currentStop.state
+    } ${this.currentStop.zip ?? ''}`.trim();
+    const encoded = encodeURIComponent(address);
+
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent || '';
+      if (/iPad|iPhone|iPod/.test(ua)) {
+        window.location.assign(`maps://?q=${encoded}`);
+        return;
+      }
+      if (/Android/i.test(ua)) {
+        window.location.assign(`geo:0,0?q=${encoded}`);
+        return;
+      }
+    }
+
+    window.location.assign(
+      `https://www.google.com/maps/search/?api=1&query=${encoded}`
+    );
   }
 
   async copyAddress(): Promise<void> {

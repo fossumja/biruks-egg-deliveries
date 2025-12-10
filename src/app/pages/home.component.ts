@@ -3,7 +3,13 @@ import { Component, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Papa from 'papaparse';
-import { Delivery, DeliveryStatus, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
+import {
+  Delivery,
+  DeliveryStatus,
+  DonationInfo,
+  DonationMethod,
+  DonationStatus,
+} from '../models/delivery.model';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { Route } from '../models/route.model';
@@ -17,7 +23,7 @@ import { ToastService } from '../services/toast.service';
   standalone: true,
   imports: [NgIf, NgClass, FormsModule, DatePipe],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnDestroy {
   private wakeLock: any | null = null;
@@ -41,7 +47,8 @@ export class HomeComponent implements OnDestroy {
   selectedRouteDate: string | null = null;
   selectedRouteSummary?: Route;
   currentRoute?: string;
-  wakeLockSupported = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
+  wakeLockSupported =
+    typeof navigator !== 'undefined' && 'wakeLock' in navigator;
   wakeLockActive = false;
   private wakeLockKey = 'keepScreenAwake';
   suggestedRate = 4;
@@ -72,7 +79,11 @@ export class HomeComponent implements OnDestroy {
 
     if (this.wakeLockSupported) {
       this.visibilityHandler = () => {
-        if (document.visibilityState === 'visible' && this.wakeLockActive && !this.wakeLock) {
+        if (
+          document.visibilityState === 'visible' &&
+          this.wakeLockActive &&
+          !this.wakeLock
+        ) {
           void this.requestWakeLock();
         }
       };
@@ -87,7 +98,6 @@ export class HomeComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.releaseWakeLock();
     if (this.visibilityHandler) {
       document.removeEventListener('visibilitychange', this.visibilityHandler);
     }
@@ -116,7 +126,9 @@ export class HomeComponent implements OnDestroy {
     } catch (err) {
       console.error(err);
       const message =
-        err instanceof Error ? err.message : 'Please check CSV format and try again.';
+        err instanceof Error
+          ? err.message
+          : 'Please check CSV format and try again.';
       this.errorMessage = `Import failed: ${message}`;
       this.toast.show(this.errorMessage, 'error');
     } finally {
@@ -157,7 +169,12 @@ export class HomeComponent implements OnDestroy {
 
   async toggleWakeLock(): Promise<void> {
     if (!this.wakeLockSupported) {
-      this.toast.show('Screen wake lock not supported', 'error');
+      this.wakeLockActive = false;
+      localStorage.setItem(this.wakeLockKey, 'false');
+      this.toast.show(
+        'Screen wake lock is not supported on this device/browser.',
+        'error'
+      );
       return;
     }
     if (this.wakeLockActive) {
@@ -191,6 +208,12 @@ export class HomeComponent implements OnDestroy {
       console.warn('Wake lock failed', err);
       this.wakeLock = null;
       this.wakeLockActive = false;
+      this.wakeLockSupported = false;
+      localStorage.setItem(this.wakeLockKey, 'false');
+      this.toast.show(
+        'Screen wake lock is not supported on this device/browser.',
+        'error'
+      );
       return false;
     }
   }
@@ -201,7 +224,6 @@ export class HomeComponent implements OnDestroy {
     }
     this.wakeLock = null;
   }
-
 
   async startRoute(): Promise<void> {
     if (!this.selectedRouteDate) return;
@@ -218,14 +240,18 @@ export class HomeComponent implements OnDestroy {
       return;
     }
     this.selectedRouteDate = routeDate;
-    this.selectedRouteSummary = this.routes.find((r) => r.routeDate === routeDate);
+    this.selectedRouteSummary = this.routes.find(
+      (r) => r.routeDate === routeDate
+    );
     localStorage.setItem('lastSelectedRoute', routeDate);
   }
 
   private async refreshRoutes(): Promise<void> {
     this.routes = await this.storage.getRoutes();
     if (this.selectedRouteDate) {
-      this.selectedRouteSummary = this.routes.find((r) => r.routeDate === this.selectedRouteDate);
+      this.selectedRouteSummary = this.routes.find(
+        (r) => r.routeDate === this.selectedRouteDate
+      );
     }
   }
 
@@ -257,7 +283,9 @@ export class HomeComponent implements OnDestroy {
 
   private async importSampleDataIfAvailable(): Promise<void> {
     try {
-      const response = await fetch('sample-deliveries.csv', { cache: 'no-cache' });
+      const response = await fetch('sample-deliveries.csv', {
+        cache: 'no-cache',
+      });
       if (!response.ok) {
         return;
       }
@@ -292,11 +320,11 @@ export class HomeComponent implements OnDestroy {
             const filteredRows = hasRowType
               ? results.data.filter((row) => {
                   const value =
-                    row['RowType'] ??
-                    row['rowtype'] ??
-                    row['ROWTYPE'];
+                    row['RowType'] ?? row['rowtype'] ?? row['ROWTYPE'];
                   // Treat missing or "Delivery" as a delivery row; ignore RunEntry rows.
-                  return !value || value.toString().toLowerCase() === 'delivery';
+                  return (
+                    !value || value.toString().toLowerCase() === 'delivery'
+                  );
                 })
               : results.data;
             const deliveries = this.normalizeRows(filteredRows, headers);
@@ -305,29 +333,35 @@ export class HomeComponent implements OnDestroy {
               id: 'default',
               headers,
               rowsByBaseRowId: rowsByBase,
-              mode: 'baseline'
+              mode: 'baseline',
             });
             resolve(deliveries);
           } catch (e) {
             reject(e);
           }
         },
-        error: (error: Error) => reject(error)
+        error: (error: Error) => reject(error),
       });
     });
   }
 
-  private normalizeRows(rows: Record<string, string>[], headers: string[]): Delivery[] {
+  private normalizeRows(
+    rows: Record<string, string>[],
+    headers: string[]
+  ): Delivery[] {
     const now = new Date().toISOString();
     const grouped = new Map<string, Delivery[]>();
     const statusBlank: DeliveryStatus = '';
 
     const scheduleHeader =
-      headers.find((h) => ['schedule', '\ufeffschedule', 'date'].includes(h.toLowerCase())) ?? null;
+      headers.find((h) =>
+        ['schedule', '\ufeffschedule', 'date'].includes(h.toLowerCase())
+      ) ?? null;
     if (!scheduleHeader) {
       throw new Error('Missing required column "Schedule" (or "Date").');
     }
-    const deliveryOrderHeader = headers.find((h) => h.toLowerCase() === 'delivery order') ?? null;
+    const deliveryOrderHeader =
+      headers.find((h) => h.toLowerCase() === 'delivery order') ?? null;
 
     rows.forEach((row, rawIndex) => {
       const routeDateRaw =
@@ -356,13 +390,26 @@ export class HomeComponent implements OnDestroy {
         row['Delivery Order'] ||
         row['delivery order'] ||
         row['Order'];
-      const deliveryOrder = deliveryOrderRaw ? Number(deliveryOrderRaw) || 0 : rawIndex;
-      const baseRowId = (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || '').trim() || `ROW_${rawIndex}`;
-      const subscribedRaw = (row['Subscribed'] || row['subscribed'] || '').toString().trim().toLowerCase();
+      const deliveryOrder = deliveryOrderRaw
+        ? Number(deliveryOrderRaw) || 0
+        : rawIndex;
+      const baseRowId =
+        (
+          row['BaseRowId'] ||
+          row['baseRowId'] ||
+          row['BaseRowID'] ||
+          ''
+        ).trim() || `ROW_${rawIndex}`;
+      const subscribedRaw = (row['Subscribed'] || row['subscribed'] || '')
+        .toString()
+        .trim()
+        .toLowerCase();
       const subscribed =
         subscribedRaw === ''
           ? true
-          : subscribedRaw === 'true' || subscribedRaw === 'yes' || subscribedRaw === '1';
+          : subscribedRaw === 'true' ||
+            subscribedRaw === 'yes' ||
+            subscribedRaw === '1';
       const runId = routeDate;
       const donation = this.buildDonationFromRow(row, planned);
       const delivery: Delivery = {
@@ -386,7 +433,7 @@ export class HomeComponent implements OnDestroy {
         subscribed,
         createdAt: now,
         updatedAt: now,
-        synced: false
+        synced: false,
       };
       const arr = grouped.get(routeDate) ?? [];
       arr.push(delivery);
@@ -399,7 +446,10 @@ export class HomeComponent implements OnDestroy {
         d.sortIndex = i;
         d.deliveryOrder = i;
         if (!d.donation) {
-          d.donation = { status: 'NotRecorded', suggestedAmount: d.dozens * this.storage.getSuggestedRate() };
+          d.donation = {
+            status: 'NotRecorded',
+            suggestedAmount: d.dozens * this.storage.getSuggestedRate(),
+          };
         }
       });
       deliveries.push(...list);
@@ -408,19 +458,35 @@ export class HomeComponent implements OnDestroy {
     return deliveries;
   }
 
-  private buildImportState(headers: string[], rows: Record<string, string>[]): Record<string, string[]> {
+  private buildImportState(
+    headers: string[],
+    rows: Record<string, string>[]
+  ): Record<string, string[]> {
     const rowsByBase: Record<string, string[]> = {};
     rows.forEach((row, idx) => {
-      const baseRowId = (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || '').trim() || `ROW_${idx}`;
+      const baseRowId =
+        (
+          row['BaseRowId'] ||
+          row['baseRowId'] ||
+          row['BaseRowID'] ||
+          ''
+        ).trim() || `ROW_${idx}`;
       const values = headers.map((h) => row[h] ?? '');
       rowsByBase[baseRowId] = values;
     });
     return rowsByBase;
   }
 
-  private buildDonationFromRow(row: Record<string, string>, plannedDozens: number): DonationInfo {
-    const statusRaw = (row['DonationStatus'] || row['donationstatus']) as DonationStatus | undefined;
-    const methodRaw = (row['DonationMethod'] || row['donationmethod']) as DonationMethod | undefined;
+  private buildDonationFromRow(
+    row: Record<string, string>,
+    plannedDozens: number
+  ): DonationInfo {
+    const statusRaw = (row['DonationStatus'] || row['donationstatus']) as
+      | DonationStatus
+      | undefined;
+    const methodRaw = (row['DonationMethod'] || row['donationmethod']) as
+      | DonationMethod
+      | undefined;
     const amountRaw = row['DonationAmount'] || row['donationamount'];
     const amount = amountRaw ? Number(amountRaw) : undefined;
     const status: DonationStatus = statusRaw ?? 'NotRecorded';
@@ -428,7 +494,7 @@ export class HomeComponent implements OnDestroy {
       status,
       method: methodRaw,
       amount,
-      suggestedAmount: plannedDozens * this.storage.getSuggestedRate()
+      suggestedAmount: plannedDozens * this.storage.getSuggestedRate(),
     };
   }
 
@@ -440,7 +506,7 @@ export class HomeComponent implements OnDestroy {
           header: true,
           skipEmptyLines: true,
           complete: resolve,
-          error: reject
+          error: reject,
         });
       }
     );
@@ -487,31 +553,34 @@ export class HomeComponent implements OnDestroy {
 
       // Attach one-off donations.
       oneOffDonationRows.forEach((row) => {
-        const baseRowId =
-          (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || row['RunBaseRowId'] || '').trim();
+        const baseRowId = (
+          row['BaseRowId'] ||
+          row['baseRowId'] ||
+          row['BaseRowID'] ||
+          row['RunBaseRowId'] ||
+          ''
+        ).trim();
         if (!baseRowId) return;
         const targets = byBaseId.get(baseRowId);
         if (!targets || !targets.length) return;
-        const dateRaw =
-          (row['EventDate'] ||
-            row['eventdate'] ||
-            row['Date'] ||
-            row['date'] ||
-            '') as string;
+        const dateRaw = (row['EventDate'] ||
+          row['eventdate'] ||
+          row['Date'] ||
+          row['date'] ||
+          '') as string;
         const date =
           (dateRaw && dateRaw.toString().trim()) || new Date().toISOString();
-        const statusRaw =
-          (row['RunDonationStatus'] ||
-            row['DonationStatus'] ||
-            row['donationstatus'] ||
-            '') as DonationStatus;
+        const statusRaw = (row['RunDonationStatus'] ||
+          row['DonationStatus'] ||
+          row['donationstatus'] ||
+          '') as DonationStatus;
         const status: DonationStatus = statusRaw || 'NotRecorded';
-        const methodRaw =
-          (row['RunDonationMethod'] ||
-            row['DonationMethod'] ||
-            row['donationmethod'] ||
-            '') as DonationMethod;
-        const suggestedRaw = row['SuggestedAmount'] || row['suggestedamount'] || '';
+        const methodRaw = (row['RunDonationMethod'] ||
+          row['DonationMethod'] ||
+          row['donationmethod'] ||
+          '') as DonationMethod;
+        const suggestedRaw =
+          row['SuggestedAmount'] || row['suggestedamount'] || '';
         const amountRaw =
           row['RunDonationAmount'] ||
           row['DonationAmount'] ||
@@ -532,7 +601,7 @@ export class HomeComponent implements OnDestroy {
           suggestedAmount: suggested,
           amount,
           taxableAmount: taxable,
-          date
+          date,
         };
 
         targets.forEach((d) => {
@@ -542,35 +611,42 @@ export class HomeComponent implements OnDestroy {
 
       // Attach one-off deliveries.
       oneOffDeliveryRows.forEach((row) => {
-        const baseRowId =
-          (row['BaseRowId'] || row['baseRowId'] || row['BaseRowID'] || row['RunBaseRowId'] || '').trim();
+        const baseRowId = (
+          row['BaseRowId'] ||
+          row['baseRowId'] ||
+          row['BaseRowID'] ||
+          row['RunBaseRowId'] ||
+          ''
+        ).trim();
         if (!baseRowId) return;
         const targets = byBaseId.get(baseRowId);
         if (!targets || !targets.length) return;
-        const dateRaw =
-          (row['EventDate'] ||
-            row['eventdate'] ||
-            row['Date'] ||
-            row['date'] ||
-            '') as string;
+        const dateRaw = (row['EventDate'] ||
+          row['eventdate'] ||
+          row['Date'] ||
+          row['date'] ||
+          '') as string;
         const date =
           (dateRaw && dateRaw.toString().trim()) || new Date().toISOString();
         const dozensRaw =
-          row['RunDozens'] || row['Dozens'] || row['dozens'] || row['Qty'] || '';
+          row['RunDozens'] ||
+          row['Dozens'] ||
+          row['dozens'] ||
+          row['Qty'] ||
+          '';
         const deliveredDozens = dozensRaw ? Number(dozensRaw) || 0 : 0;
 
-        const statusRaw =
-          (row['RunDonationStatus'] ||
-            row['DonationStatus'] ||
-            row['donationstatus'] ||
-            '') as DonationStatus;
+        const statusRaw = (row['RunDonationStatus'] ||
+          row['DonationStatus'] ||
+          row['donationstatus'] ||
+          '') as DonationStatus;
         const status: DonationStatus = statusRaw || 'NotRecorded';
-        const methodRaw =
-          (row['RunDonationMethod'] ||
-            row['DonationMethod'] ||
-            row['donationmethod'] ||
-            '') as DonationMethod;
-        const suggestedRaw = row['SuggestedAmount'] || row['suggestedamount'] || '';
+        const methodRaw = (row['RunDonationMethod'] ||
+          row['DonationMethod'] ||
+          row['donationmethod'] ||
+          '') as DonationMethod;
+        const suggestedRaw =
+          row['SuggestedAmount'] || row['suggestedamount'] || '';
         const amountRaw =
           row['RunDonationAmount'] ||
           row['DonationAmount'] ||
@@ -594,7 +670,7 @@ export class HomeComponent implements OnDestroy {
                 suggestedAmount: suggested,
                 amount,
                 taxableAmount: taxable,
-                date
+                date,
               };
 
         targets.forEach((d) => {
@@ -602,7 +678,7 @@ export class HomeComponent implements OnDestroy {
           list.push({
             deliveredDozens,
             donation,
-            date
+            date,
           });
           d.oneOffDeliveries = list;
         });
@@ -613,7 +689,7 @@ export class HomeComponent implements OnDestroy {
       id: 'default',
       headers,
       rowsByBaseRowId: rowsByBase,
-      mode: 'restored' as const
+      mode: 'restored' as const,
     };
 
     const runsMap = new Map<string, DeliveryRun>();
@@ -626,9 +702,9 @@ export class HomeComponent implements OnDestroy {
       if (!runsMap.has(runId)) {
         const routeDate = (row['RouteDate'] || row['routedate'] || '').trim();
         const scheduleId =
-          (row['ScheduleId'] || row['scheduleid'] || '')
-            .toString()
-            .trim() || routeDate.replace(/\s+/g, '') || 'Schedule';
+          (row['ScheduleId'] || row['scheduleid'] || '').toString().trim() ||
+          routeDate.replace(/\s+/g, '') ||
+          'Schedule';
         const runStatusRaw = (row['RunStatus'] || row['runstatus'] || '')
           .toString()
           .trim()
@@ -637,14 +713,13 @@ export class HomeComponent implements OnDestroy {
           runStatusRaw === 'endedearly' || runStatusRaw === 'ended_early'
             ? 'endedEarly'
             : runStatusRaw === 'completed'
-              ? 'completed'
-              : undefined;
-        const completedRaw =
-          (row['RunCompletedAt'] ||
-            row['runcompletedat'] ||
-            row['EventDate'] ||
-            row['eventdate'] ||
-            '') as string;
+            ? 'completed'
+            : undefined;
+        const completedRaw = (row['RunCompletedAt'] ||
+          row['runcompletedat'] ||
+          row['EventDate'] ||
+          row['eventdate'] ||
+          '') as string;
         let runDateIso: string;
         if (completedRaw && completedRaw.toString().trim()) {
           const parsed = new Date(completedRaw);
@@ -666,17 +741,18 @@ export class HomeComponent implements OnDestroy {
           weekType: scheduleId,
           label: routeDate ? `${routeDate} – restored` : 'Restored run',
           status,
-          routeDate: routeDate || undefined
+          routeDate: routeDate || undefined,
         };
         runsMap.set(runId, newRun);
       }
 
-      const baseRowId =
-        (row['RunBaseRowId'] ||
-          row['BaseRowId'] ||
-          row['baseRowId'] ||
-          row['BaseRowID'] ||
-          '').trim();
+      const baseRowId = (
+        row['RunBaseRowId'] ||
+        row['BaseRowId'] ||
+        row['baseRowId'] ||
+        row['BaseRowID'] ||
+        ''
+      ).trim();
       if (!baseRowId) return;
 
       const deliveryOrderRaw =
@@ -686,34 +762,29 @@ export class HomeComponent implements OnDestroy {
         '';
       const deliveryOrder = Number(deliveryOrderRaw) || 0;
 
-      const entryStatusRaw =
-        (row['RunEntryStatus'] || row['status'] || '').toString().toLowerCase();
+      const entryStatusRaw = (row['RunEntryStatus'] || row['status'] || '')
+        .toString()
+        .toLowerCase();
       const entryStatus =
         entryStatusRaw === 'skipped' ? 'skipped' : 'delivered';
 
-      const dozens = Number(
-        row['RunDozens'] || row['dozens'] || row['Dozens'] || 0
-      ) || 0;
+      const dozens =
+        Number(row['RunDozens'] || row['dozens'] || row['Dozens'] || 0) || 0;
 
-      const donationStatusRaw =
-        (row['RunDonationStatus'] ||
-          row['donationstatus'] ||
-          'NotRecorded') as DonationStatus;
-      const donationStatus: DonationStatus =
-        donationStatusRaw || 'NotRecorded';
+      const donationStatusRaw = (row['RunDonationStatus'] ||
+        row['donationstatus'] ||
+        'NotRecorded') as DonationStatus;
+      const donationStatus: DonationStatus = donationStatusRaw || 'NotRecorded';
 
-      const donationMethodRaw =
-        (row['RunDonationMethod'] ||
-          row['donationmethod'] ||
-          '') as DonationMethod;
+      const donationMethodRaw = (row['RunDonationMethod'] ||
+        row['donationmethod'] ||
+        '') as DonationMethod;
 
-      const donationAmount = Number(
-        row['RunDonationAmount'] || row['donationamount'] || 0
-      ) || 0;
+      const donationAmount =
+        Number(row['RunDonationAmount'] || row['donationamount'] || 0) || 0;
 
-      const taxableAmount = Number(
-        row['RunTaxableAmount'] || row['taxableamount'] || 0
-      ) || 0;
+      const taxableAmount =
+        Number(row['RunTaxableAmount'] || row['taxableamount'] || 0) || 0;
 
       const name = (row['Name'] || row['name'] || '').trim();
       const address = (row['Address'] || row['address'] || '').trim();
@@ -740,7 +811,7 @@ export class HomeComponent implements OnDestroy {
             ? donationMethodRaw
             : undefined,
         donationAmount: donationStatus === 'Donated' ? donationAmount : 0,
-        taxableAmount
+        taxableAmount,
       });
     });
 
@@ -788,14 +859,18 @@ export class HomeComponent implements OnDestroy {
     void this.handleRestoreWithBackup(input);
   }
 
-  private async handleRestoreWithBackup(input: HTMLInputElement): Promise<void> {
+  private async handleRestoreWithBackup(
+    input: HTMLInputElement
+  ): Promise<void> {
     const ok = await this.maybeBackupBeforeRestore();
     if (!ok) {
       return;
     }
     this.pendingRestoreAfterBackup = true;
     this.showRestoreHint = true;
-    this.toast.show('Backup ready. Tap "Restore (CSV)" again to choose a file.');
+    this.toast.show(
+      'Backup ready. Tap "Restore (CSV)" again to choose a file.'
+    );
   }
 
   async onRestoreSelected(event: Event): Promise<void> {
@@ -827,12 +902,13 @@ export class HomeComponent implements OnDestroy {
         err instanceof Error && err.message
           ? err.message
           : typeof err === 'string'
-            ? err
-            : '';
+          ? err
+          : '';
       if (reason) {
         this.errorMessage = `Restore failed: ${reason}`;
       } else {
-        this.errorMessage = 'Restore failed. The backup file could not be processed.';
+        this.errorMessage =
+          'Restore failed. The backup file could not be processed.';
       }
       this.toast.show(this.errorMessage, 'error');
     } finally {
@@ -843,7 +919,10 @@ export class HomeComponent implements OnDestroy {
 
   toggleDarkMode(): void {
     this.darkModeEnabled = !this.darkModeEnabled;
-    localStorage.setItem('darkModeEnabled', this.darkModeEnabled ? 'true' : 'false');
+    localStorage.setItem(
+      'darkModeEnabled',
+      this.darkModeEnabled ? 'true' : 'false'
+    );
     this.applyTheme(this.darkModeEnabled);
     this.toast.show(this.darkModeEnabled ? 'Dark mode on' : 'Dark mode off');
   }
@@ -861,8 +940,11 @@ export class HomeComponent implements OnDestroy {
   private autoselectRoute(): void {
     const lastSelected = localStorage.getItem('lastSelectedRoute');
     const preferred =
-      (this.currentRoute && this.routes.find((r) => r.routeDate === this.currentRoute)?.routeDate) ||
-      (lastSelected && this.routes.find((r) => r.routeDate === lastSelected)?.routeDate) ||
+      (this.currentRoute &&
+        this.routes.find((r) => r.routeDate === this.currentRoute)
+          ?.routeDate) ||
+      (lastSelected &&
+        this.routes.find((r) => r.routeDate === lastSelected)?.routeDate) ||
       (this.routes.length === 1 ? this.routes[0]?.routeDate : null);
     if (preferred) {
       this.onSelectRoute(preferred);
@@ -873,7 +955,9 @@ export class HomeComponent implements OnDestroy {
     const currentRoute = localStorage.getItem('currentRoute');
     if (!currentRoute) return;
     const deliveries = await this.storage.getDeliveriesByRoute(currentRoute);
-    const hasPending = deliveries.some((d) => d.status === '' || d.status === 'changed');
+    const hasPending = deliveries.some(
+      (d) => d.status === '' || d.status === 'changed'
+    );
     if (!hasPending) {
       localStorage.removeItem('currentRoute');
       this.currentRoute = undefined;

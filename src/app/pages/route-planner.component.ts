@@ -266,9 +266,29 @@ export class RoutePlannerComponent {
   openMaps(stop?: Delivery | null): void {
     const target = stop ?? this.offScheduleStop;
     if (!target) return;
-    const address = `${target.address}, ${target.city}, ${target.state} ${target.zip ?? ''}`;
-    const url = `https://maps.apple.com/?daddr=${encodeURIComponent(address)}`;
-    window.location.assign(url);
+    const address = `${target.address}, ${target.city}, ${
+      target.state
+    } ${target.zip ?? ''}`.trim();
+    const encoded = encodeURIComponent(address);
+
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent || '';
+      // iOS: use maps:// so the system picks the Maps app.
+      if (/iPad|iPhone|iPod/.test(ua)) {
+        window.location.assign(`maps://?q=${encoded}`);
+        return;
+      }
+      // Android: use geo: so the system chooser/default app handles it.
+      if (/Android/i.test(ua)) {
+        window.location.assign(`geo:0,0?q=${encoded}`);
+        return;
+      }
+    }
+
+    // Fallback for desktop/unknown: open web Maps.
+    window.location.assign(
+      `https://www.google.com/maps/search/?api=1&query=${encoded}`
+    );
   }
 
   moveSwipe(event: PointerEvent, stop: Delivery): void {
@@ -461,6 +481,10 @@ export class RoutePlannerComponent {
       if (this.routeDate === this.ALL_SCHEDULES) {
         const all = await this.storage.getAllDeliveries();
         fetched = all.sort((a, b) => {
+          const nameA = (a.name || '').toLocaleLowerCase();
+          const nameB = (b.name || '').toLocaleLowerCase();
+          const nameCmp = nameA.localeCompare(nameB);
+          if (nameCmp !== 0) return nameCmp;
           const dateCmp = (a.routeDate || '').localeCompare(b.routeDate || '');
           if (dateCmp !== 0) return dateCmp;
           return (a.sortIndex ?? 0) - (b.sortIndex ?? 0);
@@ -1314,6 +1338,9 @@ export class RoutePlannerComponent {
     } else {
       // Same route: apply simple updates first.
       await this.storage.updateDeliveryFields(stop.id, updates);
+      // Reflect updates in local state so subsequent sort saving doesn't
+      // overwrite fields like ZIP or notes with stale values.
+      Object.assign(stop, updates);
       // Then reorder within this.deliveries based on requestedOrder.
       const list = [...this.deliveries];
       const currentIdx = list.findIndex(d => d.id === stop.id);

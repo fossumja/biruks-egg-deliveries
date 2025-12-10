@@ -30,6 +30,15 @@
   justify-content: flex-start;
 }
 
+.brand.logo {
+  background: #e5e7eb;
+  border-radius: var(--radius-lg);
+}
+
+:host-context([data-theme="dark"]) .brand.logo {
+  background: transparent;
+}
+
 .brand.logo img {
   height: 50px;
   width: auto;
