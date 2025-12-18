@@ -2,7 +2,7 @@
   <h3>Donation</h3>
 
   <div class="amount-hint text-muted">
-    Current: ${{ currentAmount ?? suggestedAmount ?? 0 }} · Suggested: ${{ suggestedAmount ?? 0 }}
+    Current: ${{ (currentAmount ?? suggestedAmount ?? 0) | number : '1.2-2' }} · Suggested: ${{ (suggestedAmount ?? 0) | number : '1.2-2' }}
   </div>
   <select
     id="donation-amount-select"

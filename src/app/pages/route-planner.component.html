@@ -353,7 +353,7 @@
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
-              <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
+              <span>${{ donationTotals.donationTotal | number : '1.2-2' }}</span>
             </div>
             <div class="totals-row">
               <span>Total Dozen</span>
@@ -361,11 +361,11 @@
             </div>
             <div class="totals-row">
               <span>Baseline value</span>
-              <span>${{ donationTotals.baselineTotal | number : '1.0-0' }}</span>
+              <span>${{ donationTotals.baselineTotal | number : '1.2-2' }}</span>
             </div>
             <div class="totals-row">
               <span>Deductible charitable contribution</span>
-              <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
+              <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
           </div>
           <div class="donation-actions">
@@ -399,7 +399,7 @@
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
-              <span>${{ donationTotals.donationTotal | number : '1.0-0' }}</span>
+              <span>${{ donationTotals.donationTotal | number : '1.2-2' }}</span>
             </div>
             <div class="totals-row">
               <span>Total Dozen</span>
@@ -407,11 +407,11 @@
             </div>
             <div class="totals-row">
               <span>Baseline value</span>
-              <span>${{ donationTotals.baselineTotal | number : '1.0-0' }}</span>
+              <span>${{ donationTotals.baselineTotal | number : '1.2-2' }}</span>
             </div>
             <div class="totals-row">
               <span>Deductible charitable contribution</span>
-              <span>${{ donationTotals.taxableTotal | number : '1.0-0' }}</span>
+              <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
           </div>
           <div class="donation-actions">
@@ -462,7 +462,7 @@
                 <span *ngSwitchCase="'NotRecorded'">Donation not recorded</span>
                 <span *ngSwitchCase="'Donated'">
                   {{ entry.donationMethod ? (entry.donationMethod | titlecase) : 'Donated' }}
-                  ${{ entry.donationAmount | number : '1.0-0' }}
+                  ${{ entry.donationAmount | number : '1.2-2' }}
                 </span>
               </ng-container>
             </ng-container>
@@ -472,7 +472,7 @@
                 <span *ngSwitchCase="'NotRecorded'">Donation not recorded</span>
                 <span *ngSwitchCase="'Donated'">
                   {{ entry.donationMethod ? (entry.donationMethod | titlecase) : 'Donated' }}
-                  ${{ entry.donationAmount | number : '1.0-0' }}
+                  ${{ entry.donationAmount | number : '1.2-2' }}
                 </span>
               </ng-container>
             </ng-template>
