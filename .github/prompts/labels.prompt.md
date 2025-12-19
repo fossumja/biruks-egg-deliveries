@@ -1,4 +1,5 @@
 ---
+mode: "agent"
 name: labels
 description: Manage issue/PR labels – create standard label sets, sync labels across repos, and apply labels to items.
 argument-hint: 'Try: "init labels", "sync labels from <repo>", "label issue <num> <label>"'

@@ -1,4 +1,5 @@
 ---
+mode: "agent"
 name: repo
 description: Create new repositories and apply standard bootstrap settings (visibility, projects, branch protection).
 argument-hint: 'Try: "create repo <name> <visibility>" or "apply repo defaults"'
@@ -11,7 +12,7 @@ Context:
 - Unless otherwise specified, new repositories should use **private** visibility by default (to avoid exposing code by accident).
 - All repos should have issues and discussions enabled (for collaboration), and use **Projects (v2)** for planning.
 - Default branch name is "main". We enforce protection on the main branch (require PR for merges).
-- We maintain a standard set of labels (types, areas, priorities) across repositories for consistency [oai_citation:8‡file_000000000f2c71fd8e444e9fdb76d513](file://file_000000000f2c71fd8e444e9fdb76d513#:~:text=,Priority%2C%20Target%20date%2C%20Iteration%2C%20Estimate).
+- We maintain a standard set of labels (types, areas, priorities) across repositories for consistency.
 
 General rules:
 

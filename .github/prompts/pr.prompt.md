@@ -1,4 +1,5 @@
 ---
+mode: "agent"
 name: pr
 description: Help manage pull requests: creation, review, linking issues, auto-merge, and more.
 argument-hint: 'Try commands like: "open pr", "review pr <number>", "merge pr <number>"'

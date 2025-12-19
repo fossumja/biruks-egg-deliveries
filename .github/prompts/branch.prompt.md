@@ -1,4 +1,5 @@
 ---
+mode: "agent"
 name: branch
 description: Intelligent branching operations: create new branches with conventions, update or sync branches, and cleanup.
 argument-hint: 'Try: "create branch <description>", "update branch from main"'

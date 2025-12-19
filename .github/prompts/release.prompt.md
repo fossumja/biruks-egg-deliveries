@@ -1,4 +1,5 @@
 ---
+mode: "agent"
 name: release
 description: Status, ship, send, and rollback releases for biruks-egg-deliveries.
 argument-hint: "Optional: add any extra context about the changes you just made"
@@ -43,6 +44,7 @@ Supported commands I will say to you:
      - A proposed commit message.
      - A proposed next tag version (including why it’s a patch/minor/major bump).
      - Draft release notes with sections: Summary / Changes / Notes.
+   - Ask: "Update docs before release? (yes/no)" — if yes, pause and invoke the docs workflow (see `.github/prompts/docs.prompt.md`) to refresh README/USER-GUIDE/etc., then resume status once docs are staged.
    - Suggest what "ship it", "send it", and "roll it back" would do in this state, but DO NOT run any git or build commands.
 
 2) "ship it" (optionally with a version, e.g. "ship it v2025.1.0")
@@ -54,6 +56,7 @@ Supported commands I will say to you:
       - Propose a commit message.
       - Propose the next tag and why it’s patch/minor/major.
       - Draft release notes (Summary / Changes / Notes).
+      - Ask: "Update docs before release? (yes/no)" — if yes, use the docs prompt to update README/USER-GUIDE/etc., stage those doc changes, then re-run status quickly if needed.
    2. If I did not provide a version tag (like v2025.1.0) in my message:
       - Inspect existing tags to detect the version pattern:
         - If tags look like `vYYYY.M.P` (e.g. v2025.1.0), keep that pattern (YYYY = calendar year of the release).

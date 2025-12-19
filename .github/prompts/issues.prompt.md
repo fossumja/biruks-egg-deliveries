@@ -1,4 +1,5 @@
 ---
+mode: "agent"
 name: issues
 description: Help log issues, break them down, and scaffold Projects for biruks-egg-deliveries.
 argument-hint: 'Type a command like "log issue", "breakdown issue", or "project setup" plus any context'
@@ -144,4 +145,3 @@ If I say something like:
 - "project update: shipped cents support and planning next iteration"
 
 …interpret them according to the definitions above, ask only minimal clarifying questions when essential, and then generate ready-to-paste Markdown for GitHub issues, projects, or status notes.
-
