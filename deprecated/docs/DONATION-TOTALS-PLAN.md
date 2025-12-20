@@ -1,5 +1,19 @@
 # Donation Totals & Deductible Contribution Plan
 
+Archived plan for donation totals and deductible contribution calculations. Superseded by `docs/decisions/adr-2025-12-19-donation-totals-global-formula.md`.
+
+- **Status**: Deprecated
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: donation totals, baseline calculations, and export logic planning
+- **Non-goals**: current implementation details or UX changes
+- **Applies to**: `src/app/services/storage.service.ts`, `src/app/services/backup.service.ts`
+
+## Replacement
+
+- `docs/decisions/adr-2025-12-19-donation-totals-global-formula.md`
+
 ## Goals
 
 - Make donation totals and “Deductible charitable contribution” consistent everywhere:

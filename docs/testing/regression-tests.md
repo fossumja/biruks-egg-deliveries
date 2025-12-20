@@ -1,19 +1,25 @@
 # Regression Test Plan – Biruk's Egg Deliveries
 
-This document tracks the core behaviors of the app and how we intend to regression‑test them as the code evolves.
+Tracks core app behaviors and the regression checklist as the code evolves. Organized by feature area and mapped to key components/services in the repo.
 
-It’s organized by feature area and maps to the main components/services in the repo.
-
----
+- **Status**: Draft
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: regression coverage for core app workflows
+- **Non-goals**: authoring new features or automation strategy changes
+- **Applies to**: `src/app/**`
 
 ## 1. Import, Routes, and Home Page
 
-**Code:**  
+**Code:**
+
 - Home component: `src/app/pages/home.component.ts/html/scss`  
 - Storage service: `src/app/services/storage.service.ts`  
 - Backup/export: `src/app/services/backup.service.ts` (and CSV helpers)
 
 **Behaviors to verify**
+
 - [ ] CSV import accepts the real route files (e.g., “A Week Deliveries 2025.csv”) and fails with a clear message when required columns are missing or malformed.
 - [ ] All input columns (including unused ones) are preserved in the import state so they can be exported later in the original order.
 - [ ] Route list on Home reflects imported routes with accurate counts (delivered / skipped / total).
@@ -24,6 +30,7 @@ It’s organized by feature area and maps to the main components/services in the
   - [ ] Data that matches what has been recorded in the app (see sections 3–5).
 
 **Planned automated tests**
+
 - [ ] Unit tests for `StorageService.importDeliveries` + CSV normalization.
 - [ ] Unit tests for `BackupService.exportAll()` (or equivalent) verifying columns and ordering.
 
@@ -31,11 +38,13 @@ It’s organized by feature area and maps to the main components/services in the
 
 ## 2. Planner Page – Core Route Editing
 
-**Code:**  
+**Code:**
+
 - Planner component: `src/app/pages/route-planner.component.ts/html/scss`  
 - Storage: `StorageService` (route queries, saveSortOrder, resetRoute, etc.)
 
 **Behaviors to verify**
+
 - [ ] Route selector + header (sticky at top) always show the active route and “All Schedules” option.
 - [ ] “Reset Route”:
   - [ ] Clears per‑run status, donation, and quantity overrides for subscribed stops.
@@ -52,6 +61,7 @@ It’s organized by feature area and maps to the main components/services in the
     - [ ] Moving to a different route appends to that route and remains consistent after reload.
 
 **Planned automated tests**
+
 - [ ] Component tests for `RoutePlannerComponent` covering:
   - [ ] Adding a delivery and verifying it appears in the correct position.
   - [ ] Editing and reordering via “Order in route”.
@@ -61,13 +71,15 @@ It’s organized by feature area and maps to the main components/services in the
 
 ## 3. Planner Hidden Menu – One‑Off Donation & Delivery
 
-**Code:**  
+**Code:**
+
 - Planner component hidden actions: `route-planner.component.html/ts`  
 - Donation controls: `src/app/components/donation-controls.component.*`  
 - Stop card (shared with run/off‑schedule): `src/app/components/stop-delivery-card.component.*`  
 - Storage: `oneOffDonations`, `oneOffDeliveries` in `Delivery` model and related logic in `StorageService`
 
 **Behaviors to verify**
+
 - [ ] Swipe or tap reveals hidden menu (Reset / Edit / Skip plus Donation/Delivery row).
 - [ ] Opening hidden Donation:
   - [ ] Shows a donation UI matching the run card’s donation layout.
@@ -82,6 +94,7 @@ It’s organized by feature area and maps to the main components/services in the
   - [ ] Are included in the exported per‑person totals columns.
 
 **Planned automated tests**
+
 - [ ] Component tests for `RoutePlannerComponent`:
   - [ ] Clicking Donation opens the modal and initializes `donationDraft` and totals correctly.
   - [ ] Clicking Delivery opens the off‑schedule modal and initializes `offDonationDraft` and `offDeliveredQty`.
@@ -92,13 +105,15 @@ It’s organized by feature area and maps to the main components/services in the
 
 ## 4. Run Page – Delivery Flow & Donation
 
-**Code:**  
+**Code:**
+
 - Run component: `src/app/pages/delivery-run.component.ts/html/scss`  
 - Shared stop card: `stop-delivery-card.component.*`  
 - Shared donation controls: `donation-controls.component.*`  
 - Storage: `StorageService.markDelivered`, `markSkipped`, `computeChangeStatus`
 
 **Behaviors to verify**
+
 - [ ] Current stop card shows:
   - [ ] Name, address, quantity (dozen) with +/- controls.
   - [ ] Status pill consistent with Planner (Pending / Delivered / Skipped / Changed / Unsubscribed).
@@ -117,6 +132,7 @@ It’s organized by feature area and maps to the main components/services in the
   - [ ] Skip marks status `'skipped'` with reason and advances, and progress header updates (N/M delivered, N skipped).
 
 **Planned automated tests**
+
 - [ ] Component tests for `StopDeliveryCardComponent`:
   - [ ] Status transitions when qty/donation change and revert.
   - [ ] Donation type toggle behavior (on/off).
@@ -127,12 +143,14 @@ It’s organized by feature area and maps to the main components/services in the
 
 ## 5. Unsubscribe / Resubscribe & Status Pills
 
-**Code:**  
+**Code:**
+
 - Planner inline edit + hidden menu: `route-planner.component.*`  
 - Run card and Planner pills: `delivery-run.component.html/scss`, `stop-delivery-card.component.html/scss`  
 - Storage: `StorageService.resetDelivery`, `resetRoute`, `markSkipped`
 
 **Behaviors to verify**
+
 - [ ] Unsubscribing a person:
   - [ ] Sets `subscribed = false`, `status = 'skipped'`, and `skippedReason` containing “unsubscribed”.
   - [ ] Moves them to the end of the route.
@@ -148,6 +166,7 @@ It’s organized by feature area and maps to the main components/services in the
   - [ ] Show skipped counts separately (N skipped) in the header.
 
 **Planned automated tests**
+
 - [ ] Unit tests for `resetDelivery` / `resetRoute` on unsubscribed vs subscribed rows.
 - [ ] Component tests verifying pill text and colors for all statuses across Planner and Run.
 
@@ -155,10 +174,12 @@ It’s organized by feature area and maps to the main components/services in the
 
 ## 6. Ordering, Drag & Swipe
 
-**Code:**  
+**Code:**
+
 - Planner drag + swipe: `route-planner.component.ts/html/scss` (CDK DragDrop, swipe handlers)
 
 **Behaviors to verify**
+
 - [ ] Drag handle:
   - [ ] Only the handle (≡) reorders; other parts of the row do not start drag.
   - [ ] Drag target is large enough on mobile (as currently sized).
@@ -168,17 +189,20 @@ It’s organized by feature area and maps to the main components/services in the
   - [ ] Only one row’s hidden menu is open at a time.
 
 **Planned automated tests**
+
 - (Gesture behavior is hard to automate reliably across browsers; treat this as a manual regression checklist for now.)
 
 ---
 
 ## 7. Export CSV & Totals
 
-**Code:**  
+**Code:**
+
 - Backup/export service and helpers: `BackupService` and CSV formatting logic  
 - Storage: uses `Delivery` records, including `donation`, `oneOffDonations`, `oneOffDeliveries`
 
 **Behaviors to verify**
+
 - [ ] Exported CSV:
   - [ ] Contains original columns + new appended columns for current run state and totals.
   - [ ] For each person, “Total Donations” and “Total Dozen” reflect:
@@ -187,6 +211,7 @@ It’s organized by feature area and maps to the main components/services in the
   - [ ] Fields that are not used by the app are still round‑tripped unchanged.
 
 **Planned automated tests**
+
 - [ ] Unit tests around the CSV writer using a small synthetic dataset that includes:
   - [ ] Multiple runs.
   - [ ] Unsubscribed stops.
@@ -196,7 +221,8 @@ It’s organized by feature area and maps to the main components/services in the
 
 ## 8. PWA & UX Specific Behaviors (Manual)
 
-**Code:**  
+**Code:**
+
 - App shell: `src/app/app.component.*`, `src/styles.scss`  
 - Wake lock: `HomeComponent.toggleWakeLock`  
 - Dark mode: global theme (`[data-theme='dark']`) + page‑level SCSS  

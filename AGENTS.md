@@ -1,6 +1,15 @@
 # Agent Instructions – Biruk’s Egg Deliveries
 
-These instructions apply to all code in this repository.
+These instructions apply to all code in this repository and define how agents should operate here.
+Follow them alongside system and developer instructions.
+
+- **Status**: Stable
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: Reference
+- **Scope**: agent behavior and repo-specific standards
+- **Non-goals**: replace system/developer instructions or code-level standards
+- **Applies to**: all files in this repository
 
 ## Canonical coding standards
 
@@ -10,11 +19,16 @@ These instructions apply to all code in this repository.
 
 ## Prompt and workflow helpers
 
-- Reusable workflow prompts live under `.github/prompts`. In particular:
-  - `release.prompt.md` – release, tagging, and GitHub Pages deployment workflows.
-  - `issues.prompt.md` – logging and breaking down issues, and project setup guidance.
-  - `branch.prompt.md`, `pr.prompt.md`, `labels.prompt.md`, `repo.prompt.md` – git/PR/label/repo workflows.
-- When asked to perform any of these workflows (for example, "status", "ship it", "log issue"), agents should consult the corresponding prompt file and follow its guidance as closely as the current environment allows.
+- Reusable workflow prompts live under `.github/prompts`.
+- When asked to perform any workflow (for example, "status", "ship it", "log issue"), agents should consult the corresponding prompt file and follow its guidance as closely as the current environment allows.
+
+## Documentation index
+
+- The repository index lives in `index.md`.
+- Update `index.md` when documentation is added, removed, or moved.
+- Developer best-practice stubs live in `docs/dev/best-practices/` and `docs/dev/workflows/` and should be filled/maintained over time.
+- Documentation style for Markdown lives in `docs/dev/best-practices/documentation-style-guide.md` and applies to all human-facing docs.
+- When a best practice changes, confirm the new standard first, then update the relevant best-practices doc before applying it elsewhere.
 
 ## Scope
 

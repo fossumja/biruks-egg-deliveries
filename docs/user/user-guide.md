@@ -1,8 +1,14 @@
 # Biruk’s Egg Deliveries – User Guide
 
-This guide explains how to use the app day‑to‑day: importing routes, planning, running deliveries, recording donations, and exporting data for your records and taxes.
+How to use the app day‑to‑day: importing routes, planning, running deliveries, recording donations, and exporting data for your records and taxes. Written for the primary user, not as a developer reference.
 
-It’s written for you as the user, not as a developer.
+- **Status**: Draft
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: end‑to‑end app usage for delivery weeks
+- **Non-goals**: developer setup or architectural detail
+- **Applies to**: end users of the app
 
 ---
 
@@ -28,6 +34,8 @@ For each delivery week:
      - All one‑off deliveries and donations.
      - Running totals for dozens, donations, and the deductible charitable contribution per person.
 
+Deductible totals use a global formula: total donations minus the baseline value of delivered dozens at the time of each delivery (never below zero).
+
 You can run many times per year on the same schedule. The app keeps all of that history and totals until you choose to import a brand new CSV.
 
 ---
@@ -41,6 +49,8 @@ The Home page has three main sections:
     - If you already have real data in the app, you’ll see a warning and the app will offer to back up before replacing it.
   - **Backup (CSV)**: export everything the app currently knows to a CSV file.
     - Safe to press as often as you like.
+  - **Restore backup (CSV)**: replace in‑app data with a full backup file.
+    - Restores deliveries, run history, and one‑offs; settings stay the same.
   - **Help**: opens this guide inside the app.
   - The page also shows:
     - **Last backup** timestamp (only when the last backup matches the current data).
@@ -73,6 +83,8 @@ Use the **Import CSV** button on Home.
 - Importing **replaces** the current in‑app data:
   - All current deliveries and route info are cleared.
   - All run history entries are kept, but they’re no longer tied to the new live data if you change `BaseRowId`s.
+- Use **Restore backup** only when you need a full rebuild:
+  - It clears deliveries, routes, and run history and restores them from the backup file.
 - If the app sees that you already have real data, it will:
   1. Ask if you want to back up.
   2. Run a backup before letting you pick a new file (two taps on Import: one to back up, one to choose).
@@ -179,6 +191,7 @@ These one‑offs:
 
 - Do not change the main run status (Pending/Delivered/Skipped).
 - Are included in per‑person totals and the CSV export.
+- One‑off donations add dollars only; dozens totals come only from deliveries (runs and one‑off deliveries).
 
 ---
 

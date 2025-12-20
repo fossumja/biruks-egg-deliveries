@@ -1,0 +1,61 @@
+# Development Workflow
+
+Use this workflow to set up and run the app locally during active development.
+
+- **Status**: Draft
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: local development workflow
+- **Non-goals**: CI/release procedures
+- **Applies to**: contributors working in `src/`
+
+## Trigger
+
+- You are starting new work or resuming local development.
+- You need to run the app to validate changes.
+
+## Inputs
+
+- The task you are working on (feature, fix, docs-only).
+- Current branch and base branch.
+
+## Constraints
+
+- Follow naming rules in `docs/dev/best-practices/file-naming.md`.
+- Use best-practice docs as the source of truth for standards.
+- Avoid adding new tooling without approval.
+- Prefer prompts for repeatable tasks; create a prompt if one is missing.
+
+## Steps
+
+1. Set up the branch (if needed):
+   - Use `.github/prompts/branch.prompt.md` for branch creation or sync.
+2. Read the repo overview:
+   - Review `README.md` for setup and dev server commands.
+3. Prepare dependencies:
+   - Install dependencies per `README.md`.
+4. Start the dev server:
+   - Run the documented start command.
+5. Make changes and validate:
+   - Use targeted checks (lint/test) when the change affects behavior.
+6. Update docs when behavior changes:
+   - Apply `doc: guide <file>` to edited docs as needed.
+
+## Checks
+
+- App runs locally and loads without errors.
+- Changes render/behave as expected.
+- Relevant docs updated when behavior changes.
+
+## Outputs
+
+- Local changes ready for review.
+- Updated docs or notes for any user-visible changes.
+
+## Related docs
+
+- `.github/prompts/branch.prompt.md`
+- `README.md`
+- `docs/dev/workflows/docs.md`
+- `docs/dev/workflows/quality.md`

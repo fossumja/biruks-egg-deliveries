@@ -1,4 +1,21 @@
-Architecture Overview
+# Plan: Task Breakdown
+
+Archived early planning notes retained for historical context.
+
+- **Status**: Deprecated
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: early architecture and implementation planning notes
+- **Non-goals**: current implementation details or finalized requirements
+- **Applies to**: `src/app/**`
+
+## Replacement
+
+- No direct replacement. For current planning, see `docs/plans/documentation-refresh-plan.md`.
+
+## Architecture Overview
+
 The application will be a local-first Angular PWA optimized for offline use and data safety. It consists of a front-end Angular app (installable on the iPhone home screen) with no complex server dependencies. The Angular PWA will cache all static assets via a service worker, so it can load and run fully offline[1]. The core data (delivery routes and statuses) is stored in IndexedDB on the device for durability. All user interactions (importing routes, marking deliveries) happen against this local database, ensuring that even with no connectivity, the app is fully functional. Each delivery action is written to IndexedDB immediately in a transactionally safe way so that closing the app or a crash won’t lose data.
 On top of the offline core, we plan an optional lightweight backend sync (which can be omitted in v1 and added later). This would be a simple REST API on your server that the app can periodically upload new delivery records to as a backup. The backend is not a source of truth for daily operation – it’s only a secondary backup and for emergency data recovery. The security model is kept simple: all users are trusted and share access, so we avoid complex logins. If we enable the server, we’ll secure it with HTTPS and a static API token for requests.
 High-level component breakdown:
@@ -8,7 +25,9 @@ High-level component breakdown:
 • UI Components: Three main UI screens – a Home/Dashboard for importing and selecting routes, a Route Planner (stop list) for optional reordering, and a Delivery Run screen (single-stop view with Deliver/Skip actions). The UI is deliberately simple, high-contrast, and touch-friendly, following mobile UI best practices (e.g. large text and buttons, minimal clutter).
 • (Optional) Sync Service: Runs in the background (when online) to send new delivery statuses to the backend API. It queues unsynced changes and flushes them when connectivity is detected.
 Overall, the architecture prioritizes simplicity and reliability. By using a local-first approach, the app can function with poor or no connectivity. The service worker and IndexedDB combo means the app loads and runs offline, and data is safely stored on the device. The server, if used, is only a backup: loss of server connectivity does not affect the app’s usage. This isolates any network issues and makes sure your aunt can always record her deliveries on the spot. All data is ultimately exportable as CSV for easy use in Excel, maintaining her existing workflow.
-Data Model
+
+## Data Model
+
 We will use TypeScript interfaces to define the data structures. Below is a refined data model incorporating additional fields for timestamps and route metadata:
 • DeliveryStatus – a union type for delivery state:
 type DeliveryStatus = "" | "delivered" | "skipped";
@@ -52,7 +71,9 @@ o extra?: string – e.g. skip reason or any other detail.
 Data relationships: The data essentially has a one-to-many between Route and Delivery (a route day has many deliveries). We can enforce that by including routeDate in each Delivery and querying by it. The id on Delivery is unique across all routes (especially if using UUID). If we use composite keys (like routeDate + name) for identification, it gets messy if there are duplicates, so a single surrogate id is simplest.
 Example: After importing a CSV, suppose it has 30 rows across two dates. We will have 30 Delivery objects in IndexedDB. If we also populate a Routes store, we might have 2 Route entries (with date, totalStops 15 each, etc.). Initially, all deliveries have status = "" and no deliveredAt/skippedAt. As the user marks deliveries, those fields get filled.
 We include createdAt and updatedAt to help with robustness – e.g., if a backup happens, we know when each record was last changed. The app can also use these to order events if needed, or to ensure we don’t overwrite newer data with older (if something weird happens with syncing). The day-level metadata (Route) isn’t strictly required to function, but it simplifies route selection and can store summary info (which is useful for display and quick calculations).
-Storage & Offline Design
+
+## Storage & Offline Design
+
 IndexedDB via Dexie
 We will use IndexedDB as the primary storage because it’s built for structured data and works offline. To interact with it easily, we’ll use Dexie.js (a well-established IndexedDB wrapper). Dexie allows us to declare a schema and use async methods to read/write without boilerplate. It’s also designed for exactly this scenario – fast, local-first storage with optional sync[2].
 Database Schema: We’ll create an IndexedDB database (say name: "EggDeliveryDB") with at least two object stores (tables): - deliveries – key: id (string). We will index fields that we frequently query: - routeDate index (to retrieve all deliveries for a chosen day quickly). - Possibly an index on status as well, if we want to query incomplete vs complete stops easily, but we can also just filter in memory since number of stops is small. - Example Dexie schema definition: deliveries: 'id, routeDate, status'. (This means primary key is id; and we have indexes on routeDate and status). - routes (optional) – key: routeDate (or a composite key if needed). We may index routeDate as primary, and maybe nothing else is needed except if we wanted to query by completed/active status. This store can be omitted if we derive route list from deliveries on the fly, but having it can make listing available routes straightforward (just .toArray() on routes store). - We might add a logs store if implementing DeliveryLog for audit (key could be auto-increment or separate id).
@@ -101,7 +122,9 @@ Additional Considerations
 • Backup Frequency: We rely on immediate local writes for safety. For extra backup, the user has the manual “Backup now” button. We are not implementing automatic cloud backup for every entry (to avoid complexity and because network may not be available). But one could press “Backup now” mid-route as well if desired (e.g., after completing a large portion) – the app will allow that. The manual nature ensures the user consciously saves a snapshot (e.g., before closing for a break).
 • Testing IndexedDB: We’ll include steps in the test phase to simulate failures: e.g., using Safari dev tools to delete the database and see if our localStorage backup kicks in, or toggling airplane mode to see that everything still works.
 In summary, the storage strategy is robust: use IndexedDB as the primary, with transactions for reliability, request persistent storage to avoid eviction, and keep an extra JSON backup locally. Combined with the optional server sync, the chances of losing data are extremely low. Even in worst-case scenarios (device failure mid-route), the app encourages frequent backups (CSV export to iCloud) so data can be recovered from outside the device as well.
-Backend & Security
+
+## Backend & Security
+
 (Note: This backend is optional – we can launch the PWA without any server and rely solely on manual CSV backups. But I’ll design it so it can be added later without affecting the offline functionality.)
 Proposed API Design
 We will implement a very simple REST API on your server (or as a serverless function) to accept backups. The API does not need to provide the app’s primary data – it’s only receiving data pushes.

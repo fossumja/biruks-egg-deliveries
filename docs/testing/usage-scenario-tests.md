@@ -1,5 +1,15 @@
 # Usage-Focused Scenario Tests – Biruk's Egg Deliveries
 
+Realistic, end-to-end scenarios that exercise the app the way it is used on delivery days. Validates one-off flows, full runs, and CSV exports against expected behavior.
+
+- **Status**: Draft
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: manual usage scenarios and automation roadmap
+- **Non-goals**: full automation implementation or test harness design
+- **Applies to**: `src/app/**`
+
 This document describes realistic, end-to-end scenarios that exercise the app the way you actually use it on delivery days. The goal is to validate that:
 
 - One-time donations and deliveries (via the Planner hidden menu) are captured correctly.

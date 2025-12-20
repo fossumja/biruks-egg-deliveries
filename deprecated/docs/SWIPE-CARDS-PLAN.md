@@ -1,5 +1,20 @@
 # Swipe Front/Back Card Plan
 
+Archived plan for the planner swipe front/back card refactor. Superseded by `docs/decisions/adr-2025-12-19-planner-swipe-front-back.md` and `docs/ux/ux-overview.md`.
+
+- **Status**: Deprecated
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: swipe card structure and gesture behavior in the planner
+- **Non-goals**: full implementation details or UX styling changes
+- **Applies to**: `src/app/pages/route-planner.component.*`
+
+## Replacement
+
+- `docs/decisions/adr-2025-12-19-planner-swipe-front-back.md`
+- `docs/ux/ux-overview.md`
+
 ## Goals
 - Explicit front/back card layers for each stop.
 - Smooth swipe with clear states (closed, open) and reliable click targets.

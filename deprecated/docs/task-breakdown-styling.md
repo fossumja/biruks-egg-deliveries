@@ -1,4 +1,18 @@
----
+# Plan: Styling Task Breakdown
+
+Archived styling task breakdown retained for historical context.
+
+- **Status**: Deprecated
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: styling system rollout and UI refactor sequencing
+- **Non-goals**: feature work unrelated to styling or UX polish
+- **Applies to**: `src/app/**`, `src/styles.scss`
+
+## Replacement
+
+- No direct replacement. For current planning, see `docs/plans/documentation-refresh-plan.md`.
 
 ## Phase 0 – Prep & Safety Net
 
@@ -25,7 +39,7 @@
 
 3. **Inventory the screens & components**
 
-   * In a doc or `README-ux.md`, list what you currently have:
+   * In a doc or `docs/ux/ux-overview.md`, list what you currently have:
 
      * Home / dashboard component(s).
      * Route planner list component(s).

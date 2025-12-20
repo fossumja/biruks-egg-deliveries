@@ -1,50 +1,126 @@
 ---
-mode: "agent"
-description: "Maintain and update project documentation (README, etc.)"
+name: "docs"
+description: "Create or refresh project documentation (README, USER GUIDE, UX, Architecture) optimized for agent-first maintenance."
+argument-hint: "action=baseline|update|create|adr|guide|align topic={decision} file={path}"
+agent: "agent"
 ---
 
-# Documentation Maintenance and Automation
+You are my documentation assistant.
 
-You are a documentation bot responsible for keeping all project documentation up-to-date in an Angular PWA repository.
+## Goals
 
-**Context:**
+- Prefer Markdown; legacy `.txt` docs should be migrated to `.md` when touched.
+- Optimize for AI agents and humans: clear structure, low ambiguity
+- Keep code comments minimal; put rationale and workflow in docs
+- Prefer existing repo docs over inventing new file names
+- Keep `index.md` up to date when docs are added, removed, or moved
+- Use `docs/dev/best-practices/documentation-style-guide.md` as the source of truth for doc structure and formatting.
+- For `action=update` and `action=create`, apply the documentation style guide to the target file.
 
-- Key documentation files for this repo include:
-  - `README.md`, `USER-GUIDE.md`, `README-ux.md`, `Architecture Overview.txt`
-  - Plans/coverage docs: `DONATION-TOTALS-PLAN.md`, `RUN-HISTORY-PLAN.md`, `SWIPE-CARDS-PLAN.md`, `REGRESSION-TESTS.md`, `USAGE-SCENARIO-TESTS.md`
-  - CSV example: `public/sample-deliveries.csv`
-  - Build metadata: `public/build-info.json`
-  - Add `CONTRIBUTING.md`, `LICENSE`, or `CHANGELOG.md` if missing and relevant.
-- The project’s package.json scripts and Angular configuration provide clues for installation and usage instructions.
-- Documentation should be updated whenever the codebase or configuration changes (new features, new scripts, etc.).
+## action=baseline
 
-**Goal:** Automate the creation and updating of documentation (especially README and changelog) with minimal prompts, ensuring all important sections are present and current.
+Create/update (only if missing or clearly outdated):
 
-**Tasks:**
+- `README.md` (what/why/how, dev setup, scripts, build/deploy, troubleshooting)
+- `docs/user/user-guide.md` (day-to-day workflow for non-dev use)
+- `docs/ux/ux-overview.md` (screen inventory and UX/styling notes)
+- `docs/architecture/architecture-overview.md` (high-level modules, data flow, key tradeoffs)
+- `index.md` (docs inventory and navigation)
+- `CONTRIBUTING.md` (branching, PR rules, commit message rules, release flow) if it does not exist
+- `SECURITY.md` / `CHANGELOG.md` only if requested or clearly missing for a release
+- Avoid introducing ADRs unless explicitly requested
 
-- **Ensure Standard Sections in README:** Open or create `README.md` and maintain the following sections:
-  - **Project Description:** A brief description of the Angular PWA, its purpose and features (if not already present).
-  - **Installation:** Step-by-step instructions to get the project running locally. Include prerequisites (Node.js version, Angular CLI if needed), then installation (`git clone ...`, `npm install`), and how to start the dev server (`npm start` or `ng serve`). If the project uses PWA features, mention any extra setup (like running `ng build --configuration=production` to generate the service worker).
-  - **Usage:** Explain how to use or access the running application. If it’s a PWA, mention how to install it to home screen, work offline, etc. Include examples or screenshots if possible (only if images are available in the repo; do not generate new images).
-  - **Contributing:** Provide guidelines for contributing. If `CONTRIBUTING.md` exists, ensure the README links to it. Otherwise, summarize contribution steps: how to fork and clone, create a branch, run tests and lint before pushing, how to submit a pull request. Include any coding style guidelines (for example, reference the use of Prettier, ESLint rules, commit message conventions like Conventional Commits).
-  - **License:** Ensure the project’s license is stated. If a `LICENSE` file exists, mention the license type (e.g., MIT) and link to the file. If no license is present, highlight this so the user can add one.
-- **Update Docs on Code Changes:** Whenever the codebase changes in a way that affects usage or configuration, update the docs accordingly:
-  - If a new script or command is added (e.g., a script for running end-to-end tests or building for production), add it to the appropriate section of the README (Installation or Usage).
-  - If environment configuration changed (for example, new environment variables), document these in a "Configuration" section.
-  - Document any new features or modules in a "Features" section or within the Usage instructions, so users know what's available.
-  - Keep the tone clear and instructive, and avoid internal jargon. The README should be understandable by new developers or users.
-- **Changelog and Release Notes:** If not already present, maintain a `CHANGELOG.md`:
-  - For each release or major update, list the changes (features added, bugs fixed, breaking changes). Use a consistent format (for example, the Keep a Changelog format or simple dated entries).
-  - This can be automated by gathering commit messages or PR titles since the last release. When preparing a release (see release prompt), ensure the latest changes are summarized here.
-  - If a CHANGELOG doesn’t exist, create one when a release is being prepared, summarizing older changes as needed.
-- **Automation via GitHub CLI:** After updating documentation, use the GitHub CLI to commit and push the changes:
-  - e.g., `gh pr create -t "docs: update documentation" -b "Update README and other docs to reflect recent changes."` to create a pull request with documentation updates.
-  - If the docs update is part of a larger PR (like adding a feature), ensure the documentation commit is included in that PR.
-- **No Unnecessary Prompts:** Infer details from the repository:
-  - Determine latest version or release date from git tags or package.json for changelog entries.
-  - Read `angular.json` or package.json to get default project name, output path, etc., for documentation accuracy (e.g., the build output folder to mention in deployment instructions).
-  - Only ask the user for input if crucial information is missing (for example, if no description is provided anywhere, you might prompt for a one-liner description — otherwise, use a placeholder).
-- **Maintain Consistency:** Use Markdown best practices (proper headings, bullet points, links). Ensure all headings in README are at the appropriate level and listed in a Table of Contents if the README is long.
-- **Continuous Updates:** This prompt can be triggered whenever a PR is merged or a release is being cut, to automatically adjust documentation. Encourage developers (in the Contributing section) to run this or follow its guidelines whenever they make changes.
+## action=update
 
-By following these steps, the project’s documentation will remain useful and up-to-date without requiring extensive manual editing.
+Given a feature/change description:
+
+- Update the relevant existing docs (README / docs/user/user-guide.md / docs/ux/ux-overview.md / docs/architecture/architecture-overview.md)
+- Add/adjust diagrams in ASCII/Markdown (no fancy tooling unless asked)
+- Keep changes small and consistent
+- After updating, apply `doc: guide {file}` to enforce the documentation style guide
+
+## action=align
+
+Align a documentation file with the current codebase and related docs.
+
+Inputs:
+- `file=<path>` (required; supports shorthand `doc: align <file>`)
+
+Procedure:
+1. Read `docs/dev/best-practices/documentation-style-guide.md`.
+2. Read the target file and list its key claims, workflows, and references.
+3. Inspect relevant code and config to confirm current behavior:
+   - UI: components, routes, templates, and styles under `src/app/`.
+   - Data: models, schema references, and CSV formats.
+   - Runtime: configuration files and assets that affect behavior.
+   - Decisions: relevant ADRs or plans in `docs/decisions/` and `docs/plans/`.
+4. Update the target file to match verified behavior and remove stale content.
+5. Check for collateral doc drift:
+   - Update impacted core docs in the same pass when confidence is high:
+     - `README.md`
+     - `docs/user/user-guide.md`
+     - `docs/ux/ux-overview.md`
+     - `docs/architecture/architecture-overview.md`
+     - `index.md`
+     - `AGENTS.md`
+   - If you cannot update a related doc, call it out in the output with a reason.
+6. Apply the style guide to the updated files (including required headers for human-facing docs).
+7. Update `index.md` if doc locations or scope references change.
+
+## action=adr
+
+Write an ADR in `docs/decisions/adr-<yyyy-mm-dd>-<slug>.md` with:
+
+- Context
+- Decision
+- Alternatives considered
+- Consequences
+- Follow-ups
+
+### Special case: ADR from a PLAN file
+If the input references a `*PLAN.md` file (for example: `docs: adr RUN-HISTORY-PLAN.md`), do this:
+1) Read the plan and extract the high-level decisions (what was chosen and why).
+2) Ensure those decisions are captured in the appropriate permanent docs:
+   - `README.md` if it impacts usage or setup.
+   - `docs/user/user-guide.md` if it impacts day-to-day workflow.
+   - `docs/ux/ux-overview.md` if it impacts UI behavior.
+   - `docs/architecture/architecture-overview.md` if it impacts data flow or architecture.
+3) Write the ADR summarizing the decision, alternatives, and consequences.
+4) Archive the original plan by moving it into `deprecated/docs/` (keep the filename the same).
+   - Do not delete the plan; move it so history is preserved.
+
+## action=guide
+
+Apply the documentation style guide to an existing file.
+
+Inputs:
+- `file=<path>` (required; supports shorthand `doc: guide <file>`)
+
+Procedure:
+1. Read `docs/dev/best-practices/documentation-style-guide.md`.
+2. Read the target file.
+3. Detect the doc type:
+   - If it is a doc in `docs/` or a root-level doc: add the required header and align structure to the appropriate template.
+   - If it is a prompt/instruction file under `.github/`: keep YAML front matter and apply the prompt/instruction structure rules only.
+4. Keep content intact where possible; restructure only to match required sections and rules.
+5. Update `index.md` if doc locations change.
+
+## action=create
+
+Create a new doc using the documentation style guide.
+
+Inputs:
+- `file={path}` (required; supports shorthand `doc: create {file}`)
+
+Procedure:
+1. Read `docs/dev/best-practices/documentation-style-guide.md`.
+2. Select the correct template based on doc type.
+3. Create the file with the required header and metadata (for `docs/` and root docs).
+4. Populate sections with the provided technical details; keep content concise and task-focused.
+5. Apply `doc: guide {file}` to ensure formatting and structure compliance.
+6. Update `index.md` if this introduces a new doc location or folder.
+
+## Output
+
+- Files created/updated
+- Suggested next prompt (often `/release` or `/quality`)

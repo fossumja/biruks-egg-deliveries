@@ -8,7 +8,7 @@ import Papa from 'papaparse';
  * Usage-oriented totals tests
  *
  * These are small, data-level tests that mirror some of the
- * scenarios described in USAGE-SCENARIO-TESTS.md, focusing on
+ * scenarios described in docs/testing/usage-scenario-tests.md, focusing on
  * TotalDonation / TotalDozens behavior.
  */
 

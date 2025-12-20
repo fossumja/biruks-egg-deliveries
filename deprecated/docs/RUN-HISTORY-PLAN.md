@@ -1,5 +1,20 @@
 # Multi‑Run History & Run Completion – Implementation Plan
 
+Archived implementation plan for multi-run history and completion. Superseded by `docs/decisions/adr-2025-12-19-run-history-snapshots.md` and `docs/reference/data-model.md`.
+
+- **Status**: Deprecated
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: run history storage, completion flow, and export planning
+- **Non-goals**: current implementation details or UI design
+- **Applies to**: `src/app/services/storage.service.ts`, `src/app/services/backup.service.ts`
+
+## Replacement
+
+- `docs/decisions/adr-2025-12-19-run-history-snapshots.md`
+- `docs/reference/data-model.md`
+
 This document describes how to evolve Biruk’s Egg Deliveries from a “single live run per route” model into a multi‑run, history‑aware system that:
 
 - Keeps every run’s results (deliver/skip, dozens, donations, taxable) in‑app.

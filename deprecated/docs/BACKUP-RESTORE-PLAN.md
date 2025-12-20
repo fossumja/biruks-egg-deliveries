@@ -1,5 +1,20 @@
 # Backup & Restore – Run History Round‑Trip Plan
 
+Archived plan for backup and restore CSV round-trips. Superseded by `docs/ops/backup-restore.md` and `docs/reference/csv-format.md`.
+
+- **Status**: Deprecated
+- **Owner**: repo maintainers
+- **Last updated**: 2025-12-19
+- **Type**: How-to
+- **Scope**: backup, restore, and CSV format planning for run history
+- **Non-goals**: current implementation details or operational runbooks
+- **Applies to**: `src/app/services/backup.service.ts`, `docs/reference/csv-format.md`
+
+## Replacement
+
+- `docs/ops/backup-restore.md`
+- `docs/reference/csv-format.md`
+
 > Goal: Be able to export a single CSV that contains both the current delivery data and detailed run history, and later restore the app state (deliveries + runs + totals) from that CSV without duplicating history.
 
 ---
