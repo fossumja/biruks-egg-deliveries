@@ -64,7 +64,8 @@ You are my feature delivery assistant.
 1. Confirm all child issues are closed and the parent checklist is complete.
 2. Run the quality workflow if applicable.
 3. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`).
-4. Suggest release workflow if requested.
+4. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+5. Suggest release workflow if requested.
 
 ## Output
 

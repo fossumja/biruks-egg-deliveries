@@ -19,6 +19,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - The task you are working on (feature, fix, docs-only).
 - Current branch and base branch.
+- Trunk branch (default: `main`).
 
 ## Constraints
 
@@ -26,6 +27,7 @@ Use this workflow to set up and run the app locally during active development.
 - Use best-practice docs as the source of truth for standards.
 - Avoid adding new tooling without approval.
 - Prefer prompts for repeatable tasks; create a prompt if one is missing.
+- Use short-lived feature branches off `main`; delete them after merge.
 
 ## Steps
 
@@ -41,6 +43,9 @@ Use this workflow to set up and run the app locally during active development.
    - Use targeted checks (lint/test) when the change affects behavior.
 6. Update docs when behavior changes:
    - Apply `doc: guide <file>` to edited docs as needed.
+7. Cleanup after merge:
+   - Delete the feature branch (local + remote) with `/branch action=delete name={branch}`.
+   - Prune refs with `git fetch --prune`.
 
 ## Checks
 

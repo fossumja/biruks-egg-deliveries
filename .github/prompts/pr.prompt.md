@@ -77,6 +77,7 @@ Given `pr=<id>` (or current branch):
 
 - `gh pr merge <id> --squash --delete-branch`
 - If checks pending, `gh pr merge <id> --auto` (and add `--squash` if required/allowed)
+- If branch deletion is blocked, follow with `/branch action=delete name=<branch>`.
 
 3. Summarize what merged and which issue(s) closed.
 

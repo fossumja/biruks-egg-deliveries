@@ -70,6 +70,8 @@ If an `issue` number/URL is provided:
   - `git branch -d <branch>` (or `-D` only with confirmation)
 - Delete remote:
   - `git push origin --delete <branch>`
+- Prune stale refs:
+  - `git fetch --prune`
 - If the remote branch is already gone, report it and proceed.
 
 ## Output

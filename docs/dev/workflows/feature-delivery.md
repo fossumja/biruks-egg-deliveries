@@ -43,6 +43,9 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 4. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Open a PR linked to the parent issue.
+5. Cleanup after merge:
+   - Ensure the feature branch is deleted (auto-delete or `/branch action=delete name={branch}`).
+   - Prune refs with `git fetch --prune` and switch back to `main`.
 
 ## Checks
 
@@ -50,6 +53,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - All child issues are closed or explicitly deferred.
 - Parent issue checklist reflects completion.
 - PR includes `Fixes #{parent}` in the description.
+- Feature branch is deleted and local refs are pruned.
 
 ## Outputs
 
