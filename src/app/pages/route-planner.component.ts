@@ -22,6 +22,7 @@ import { ToastService } from '../services/toast.service';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { BackupService } from '../services/backup.service';
+import { normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
 
 @Component({
   selector: 'app-route-planner',
@@ -1023,7 +1024,7 @@ export class RoutePlannerComponent {
     // Runs-first receipts.
     entries.forEach((entry) => {
       const date =
-        runDateById.get(entry.runId) ??
+        normalizeEventDate(runDateById.get(entry.runId)) ??
         new Date().toISOString();
       receipts.push({
         kind: 'run',
@@ -1055,7 +1056,8 @@ export class RoutePlannerComponent {
       const zip = d.zip;
 
       (d.oneOffDonations ?? []).forEach((don, index) => {
-        const date = don.date ?? new Date().toISOString();
+        const date =
+          normalizeEventDate(don.date) ?? new Date().toISOString();
         const suggested = Number(don.suggestedAmount ?? 0);
         const amount = Number(don.amount ?? suggested);
         const taxable =
@@ -1083,7 +1085,8 @@ export class RoutePlannerComponent {
       });
 
       (d.oneOffDeliveries ?? []).forEach((entry, index) => {
-        const date = entry.date ?? new Date().toISOString();
+        const date =
+          normalizeEventDate(entry.date) ?? new Date().toISOString();
         const deliveredDozens = Number(entry.deliveredDozens ?? 0);
         const don = entry.donation;
         const suggested = Number(don?.suggestedAmount ?? 0);
@@ -1114,7 +1117,9 @@ export class RoutePlannerComponent {
     });
 
     // Sort newest-first by date.
-    receipts.sort((a, b) => b.date.localeCompare(a.date));
+    receipts.sort(
+      (a, b) => toSortableTimestamp(b.date) - toSortableTimestamp(a.date)
+    );
 
     // Project into RunSnapshotEntry-shaped view list.
     const viewEntries: RunSnapshotEntry[] = receipts.map((r, index) => {

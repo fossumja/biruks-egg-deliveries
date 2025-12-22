@@ -82,7 +82,7 @@ These columns are appended on export and used during restore.
 | `RunDonationAmount` | number | Donation amount for the event. |
 | `RunTaxableAmount` | number | Deductible portion of the donation. |
 | `RunCompletedAt` | string | ISO timestamp of run completion. |
-| `EventDate` | string | ISO timestamp for the event. |
+| `EventDate` | string | ISO timestamp for the event; date-only inputs are normalized to ISO at local midday to avoid timezone drift. |
 | `SuggestedAmount` | number | Baseline amount used at the time of the event. |
 
 ### Totals columns

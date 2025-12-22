@@ -12,6 +12,7 @@ import { DeliveryRun } from '../models/delivery-run.model';
 import { BaseStop } from '../models/base-stop.model';
 import { CsvImportState } from '../models/csv-import-state.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
+import { normalizeEventDate } from '../utils/date-utils';
 
 const SUGGESTED_KEY = 'suggestedDonationRate';
 
@@ -35,21 +36,6 @@ function computeTaxableAmount(d: DonationInfo): number {
   const amount = Number(d.amount ?? suggested);
   const extra = amount - suggested;
   return extra > 0 ? extra : 0;
-}
-
-const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
-function normalizeEventDate(raw?: string): string | undefined {
-  if (!raw) return undefined;
-  const value = raw.toString().trim();
-  if (!value) return undefined;
-  if (DATE_ONLY_PATTERN.test(value)) {
-    const [year, month, day] = value.split('-').map((part) => Number(part));
-    const localMidday = new Date(year, month - 1, day, 12, 0, 0, 0);
-    return Number.isNaN(localMidday.getTime()) ? value : localMidday.toISOString();
-  }
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
 }
 
 class AppDB extends Dexie {

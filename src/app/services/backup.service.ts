@@ -3,6 +3,7 @@ import Papa from 'papaparse';
 import { Delivery } from '../models/delivery.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { StorageService } from './storage.service';
+import { normalizeEventDate } from '../utils/date-utils';
 
 @Injectable({ providedIn: 'root' })
 export class BackupService {
@@ -304,11 +305,11 @@ export class BackupService {
       // timestamp, then the run's routeDate. This keeps history stable
       // across backups/restores instead of defaulting to "now".
       const completedAt = run?.date ?? '';
-      const eventDate =
-        (entry as any).eventDate ??
-        completedAt ??
-        run?.routeDate ??
-        '';
+      const eventDate = normalizeEventDate(
+        entry.eventDate ??
+          completedAt ??
+          run?.routeDate
+      ) ?? '';
       setVal(rowVals, 'RunCompletedAt', completedAt);
       setVal(rowVals, 'EventDate', eventDate);
 
@@ -364,7 +365,7 @@ export class BackupService {
         setVal('SuggestedAmount', suggested ? suggested.toFixed(2) : '');
         // Persist the one-off event timestamp so restores do not
         // fall back to "now".
-        setVal('EventDate', don.date ?? '');
+        setVal('EventDate', normalizeEventDate(don.date) ?? '');
 
         rows.push(rowVals);
       });
@@ -408,7 +409,7 @@ export class BackupService {
         setVal('RunDonationAmount', amount.toFixed(2));
         setVal('RunTaxableAmount', taxable.toFixed(2));
         setVal('SuggestedAmount', suggested ? suggested.toFixed(2) : '');
-        setVal('EventDate', entry.date ?? '');
+        setVal('EventDate', normalizeEventDate(entry.date) ?? '');
 
         rows.push(rowVals);
       });
