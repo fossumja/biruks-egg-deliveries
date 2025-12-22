@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -44,7 +44,8 @@ Use this workflow to set up and run the app locally during active development.
    - Use targeted checks (lint/test) when the change affects behavior.
 6. Update docs when behavior changes:
    - Apply `doc: guide <file>` to edited docs as needed.
-7. Capture process learnings:
+7. Retrospective (regular):
+   - After each feature or significant change, capture what worked, what hurt, and the next improvement.
    - Update prompts/workflows when you find friction or missing steps.
    - Update `docs/dev/workflows/prompts.md` when prompt behavior changes.
 8. Cleanup after merge:
@@ -56,11 +57,13 @@ Use this workflow to set up and run the app locally during active development.
 - App runs locally and loads without errors.
 - Changes render/behave as expected.
 - Relevant docs updated when behavior changes.
+- Retrospective notes captured for completed features.
 
 ## Outputs
 
 - Local changes ready for review.
 - Updated docs or notes for any user-visible changes.
+- Retrospective notes recorded when applicable.
 
 ## Related docs
 

@@ -39,7 +39,8 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Complete acceptance criteria, update docs, and close the issue.
    - Update the parent checklist safely; if tooling is missing, leave a progress comment instead of editing the body.
-3. Capture process learnings:
+3. Retrospective (per feature):
+   - Capture what worked, what hurt, and the next improvement in the parent issue or PR.
    - Update prompts/workflows and the prompt catalog when you discover gaps or hazards.
 4. Keep the branch current:
    - Use `/branch action=sync` as needed.
@@ -57,13 +58,14 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Parent issue checklist reflects completion.
 - PR includes `Fixes #{parent}` in the description.
 - Feature branch is deleted and local refs are pruned.
-- Prompt/workflow updates are recorded when new lessons are learned.
+- Retrospective notes and prompt/workflow updates are recorded when new lessons are learned.
 
 ## Outputs
 
 - Feature branch with all changes implemented.
 - Parent issue updated or closed.
 - PR ready for review.
+- Retrospective notes captured for the feature.
 
 ## Related docs
 

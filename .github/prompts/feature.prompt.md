@@ -56,7 +56,8 @@ You are my feature delivery assistant.
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-7. Capture any workflow/prompt learnings and update docs if needed.
+7. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+8. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
@@ -70,8 +71,9 @@ You are my feature delivery assistant.
 2. Run the quality workflow if applicable.
 3. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`).
 4. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-5. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-6. Suggest release workflow if requested.
+5. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+6. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+7. Suggest release workflow if requested.
 
 ## Output
 
