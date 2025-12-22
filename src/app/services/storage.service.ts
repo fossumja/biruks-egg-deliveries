@@ -37,6 +37,21 @@ function computeTaxableAmount(d: DonationInfo): number {
   return extra > 0 ? extra : 0;
 }
 
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+function normalizeEventDate(raw?: string): string | undefined {
+  if (!raw) return undefined;
+  const value = raw.toString().trim();
+  if (!value) return undefined;
+  if (DATE_ONLY_PATTERN.test(value)) {
+    const [year, month, day] = value.split('-').map((part) => Number(part));
+    const localMidday = new Date(year, month - 1, day, 12, 0, 0, 0);
+    return Number.isNaN(localMidday.getTime()) ? value : localMidday.toISOString();
+  }
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
+}
+
 class AppDB extends Dexie {
   deliveries!: Table<Delivery, string>;
   routes!: Table<Route, string>;
@@ -705,10 +720,11 @@ export class StorageService {
     const list = Array.isArray(existing.oneOffDonations)
       ? [...existing.oneOffDonations]
       : [];
+    const normalizedDate = normalizeEventDate(donation.date) ?? now;
     const normalizedDonation: DonationInfo = {
       ...donation,
       taxableAmount: computeTaxableAmount(donation),
-      date: donation.date ?? now
+      date: normalizedDate
     };
     list.push(normalizedDonation);
     await this.db.deliveries.update(id, {
@@ -729,17 +745,18 @@ export class StorageService {
     const list = Array.isArray(existing.oneOffDeliveries)
       ? [...existing.oneOffDeliveries]
       : [];
+    const normalizedDate = normalizeEventDate(donation?.date) ?? now;
     const normalizedDonation = donation
       ? ({
           ...donation,
           taxableAmount: computeTaxableAmount(donation),
-          date: donation.date ?? now
+          date: normalizedDate
         } as DonationInfo)
       : undefined;
     list.push({
       deliveredDozens,
       donation: normalizedDonation,
-      date: now
+      date: normalizedDate
     });
     await this.db.deliveries.update(id, {
       oneOffDeliveries: list,
