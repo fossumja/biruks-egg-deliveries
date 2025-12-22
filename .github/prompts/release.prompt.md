@@ -1,7 +1,7 @@
 ---
 name: "release"
 description: "Ship GH Pages releases for biruks-egg-deliveries (status/ship/send/rollback)."
-argument-hint: "Try: status, ship it, send it, or roll it back"
+argument-hint: "Try: status, ship it, send it, or roll it back (shorthand: release {command})"
 agent: "agent"
 ---
 
@@ -25,6 +25,11 @@ General rules:
 - Ask whether to run tests before shipping.
 - If any command fails, stop and report the error and repo state.
 - Use the repo’s default branch (detect via `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name` or `git symbolic-ref refs/remotes/origin/HEAD`).
+
+Shorthand:
+
+- `release status`, `release ship it`, `release send it`, `release roll it back` map to their respective commands.
+- The bare phrases (“status”, “ship it”, “send it”, “roll it back”) remain valid.
 
 Supported commands I will say to you:
 

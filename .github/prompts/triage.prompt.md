@@ -1,7 +1,7 @@
 ---
 name: "triage"
 description: "Triage issues/PRs in bulk: label, prioritize, assign, and add to Projects with consistent workflow metadata."
-argument-hint: "query=is:open is:issue owner=@me project=<number>"
+argument-hint: "query=is:open is:issue owner=@me project=<number> (shorthand: triage {query})"
 agent: "agent"
 ---
 
@@ -18,6 +18,7 @@ You are my triage assistant for GitHub issues and PRs.
 - `query` (GitHub search syntax; default: `is:open is:issue`)
 - `owner` / `repo` (infer from current repo if possible)
 - `project` (optional project number to add important items)
+- Shorthand: `triage {query}` maps to `query={query}`; use quotes for multi-word queries.
 
 ## Procedure
 

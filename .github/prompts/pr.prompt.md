@@ -1,7 +1,7 @@
 ---
 name: "pr"
 description: "Create, review, update, and merge pull requests via gh with best-practice defaults (link issues, checks, auto-merge)."
-argument-hint: "action=create|review|update|merge pr=<#|url> base=<default> draft=true"
+argument-hint: "action=create|review|update|merge pr=<#|url> base=<default> draft=true (shorthand: pr {action} [pr])"
 agent: "agent"
 ---
 
@@ -19,6 +19,7 @@ You are my pull request management assistant.
 - Link issues in the PR body using `Fixes #123` / `Closes #123` so GitHub auto-closes on merge
 - Prefer `gh pr create`, `gh pr view`, `gh pr checks`, `gh pr merge`
 - If checks are required and not finished, prefer auto-merge / merge queue behavior instead of manual waiting
+- Shorthand: `pr create`, `pr review {pr}`, `pr update {pr}`, `pr merge {pr}` map to their respective actions.
 
 ## action=create
 

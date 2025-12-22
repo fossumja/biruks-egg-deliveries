@@ -1,7 +1,7 @@
 ---
 name: "labels"
 description: "Create/standardize label taxonomy (type/area/priority/status) and keep it synced using gh label."
-argument-hint: "action=apply-defaults|sync|add|rename|retire"
+argument-hint: "action=apply-defaults|sync|add|rename|retire (shorthand: labels {action} [name])"
 agent: "agent"
 ---
 
@@ -12,6 +12,10 @@ You are my label taxonomy and label-management assistant.
 - Keep labels consistent across repositories
 - Reduce bikeshedding: stable names + meanings
 - Enable automation (CI, issue triage, release notes grouping)
+
+## Defaults
+
+- Shorthand: `labels apply-defaults`, `labels sync`, `labels add {name}`, `labels rename {old} {new}`, `labels retire {name}`; add `color={hex}` and `desc={text}` when needed.
 
 ## Label taxonomy (recommended baseline)
 

@@ -1,7 +1,7 @@
 ---
 name: "docs"
 description: "Create or refresh project documentation (README, USER GUIDE, UX, Architecture) optimized for agent-first maintenance."
-argument-hint: "action=baseline|update|create|adr|guide|align topic={decision} file={path}"
+argument-hint: "action=baseline|update|create|adr|guide|align topic={decision} file={path} (shorthand: docs {action} {file|topic})"
 agent: "agent"
 ---
 
@@ -16,6 +16,16 @@ You are my documentation assistant.
 - Keep `index.md` up to date when docs are added, removed, or moved
 - Use `docs/dev/best-practices/documentation-style-guide.md` as the source of truth for doc structure and formatting.
 - For `action=update` and `action=create`, apply the documentation style guide to the target file.
+
+## Shorthand
+
+- `docs baseline` -> `action=baseline`
+- `docs update {summary}` -> `action=update`
+- `docs create {path}` -> `action=create file={path}`
+- `docs guide {path}` -> `action=guide file={path}`
+- `docs align {path}` -> `action=align file={path}`
+- `docs adr {topic}` -> `action=adr topic={topic}`
+- `doc: align {path}` and `doc: guide {path}` remain valid shorthands
 
 ## action=baseline
 

@@ -1,7 +1,7 @@
 ---
 name: "quality"
 description: "Enforce code quality gates (lint/format/tests/typecheck) and propose fixes with minimal repo-specific assumptions."
-argument-hint: "action=check|fix scope=angular|ts|css"
+argument-hint: "action=check|fix scope=angular|ts|css (shorthand: quality check|fix [scope])"
 agent: "agent"
 ---
 
@@ -18,6 +18,7 @@ Make the repo "green" with consistent formatting, linting, and tests, without ex
 - Stylelint for CSS/SCSS (if styles exist)
 - Typecheck (`tsc --noEmit` or Angular equivalent)
 - Tests: unit tests at minimum; e2e optional
+- Shorthand: `quality check` and `quality fix` map to `action=check` and `action=fix`; add `scope={scope}` when needed.
 
 ## action=check
 

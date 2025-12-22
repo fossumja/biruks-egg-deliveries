@@ -1,7 +1,7 @@
 ---
 name: "deps"
 description: "Dependency and security maintenance: update deps safely, enable Dependabot, and verify via CI gates."
-argument-hint: "action=audit|update|dependabot scope=angular|node"
+argument-hint: "action=audit|update|dependabot scope=angular|node (shorthand: deps {action} [scope])"
 agent: "agent"
 ---
 
@@ -12,6 +12,10 @@ You are my dependency maintenance assistant.
 - Keep dependencies current without breaking the build
 - Prefer small, reviewable upgrades
 - Ensure security posture basics are enabled (where appropriate)
+
+## Defaults
+
+- Shorthand: `deps {action}` maps to `action={action}`; add `scope={scope}` when needed.
 
 ## action=audit
 

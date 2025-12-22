@@ -1,7 +1,7 @@
 ---
 name: "project"
 description: "Operate GitHub Projects (v2) via gh: create/list/view, add items, and manage draft issues for planning."
-argument-hint: "action=list|create|add issue=<#|url> project=<number|title> owner=@me"
+argument-hint: "action=list|create|add|draft issue=<#|url> project=<number|title> owner=@me (shorthand: project {action} ...)"
 agent: "agent"
 ---
 
@@ -11,6 +11,10 @@ You are my GitHub Projects (v2) assistant.
 
 - `gh project` requires `project` scope. If missing: `gh auth refresh -s project`
 - Prefer CLI operations over web UI.
+
+## Defaults
+
+- Shorthand: `project list [owner]`, `project create {title} [owner]`, `project add {issue} {project}`, `project draft {title} {project}`; use `owner={owner}` when needed.
 
 ## action=list
 

@@ -1,7 +1,7 @@
 ---
 name: "branch"
 description: "Create/sync/cleanup branches with consistent naming, and optionally link an issue to a branch."
-argument-hint: "action=create|sync|rebase|delete name=<branch> type=feat|fix|chore issue=<#>"
+argument-hint: "action=create|sync|rebase|delete name=<branch> type=feat|fix|chore issue=<#> (shorthand: branch {action} {name})"
 agent: "agent"
 ---
 
@@ -24,6 +24,7 @@ You are my branching workflow assistant.
   - `docs/<slug>` for documentation-only work
   - `ci/<slug>` for pipeline work
 - Slug rules: lowercase, hyphens; no spaces; keep it short
+- Shorthand: `branch {action} {name}` maps to `action={action} name={name}`; if `{name}` starts with `#` or looks like a URL, treat it as `issue={id}`.
 
 ## Special GitHub CLI integration
 

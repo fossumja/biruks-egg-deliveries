@@ -1,7 +1,7 @@
 ---
 name: "ci"
 description: "Create or improve GitHub Actions workflows (lint/test/build) with sensible caching and Angular-friendly defaults."
-argument-hint: "scope=angular|node workflow=ci|pages|release"
+argument-hint: "scope=angular|node workflow=ci|pages|release (shorthand: ci {workflow} [scope])"
 agent: "agent"
 ---
 
@@ -12,6 +12,10 @@ You are my CI/CD assistant for GitHub Actions.
 - Add a reliable CI workflow that runs on PRs and the repo’s default branch
 - Keep it fast (dependency caching) and deterministic (lockfile-based installs)
 - Prefer standard, maintained actions
+
+## Defaults
+
+- Shorthand: `ci {workflow}` maps to `workflow={workflow}`; `ci {scope} {workflow}` maps to `scope={scope} workflow={workflow}`.
 
 ## Baseline recommendations
 

@@ -1,7 +1,7 @@
 ---
 name: "repo"
 description: "Create or bootstrap a GitHub repository using GitHub CLI (visibility, defaults, protections, labels, CI, docs)."
-argument-hint: "repoName=<name> visibility=private|public org=<org> template=<owner/repo> angular=true"
+argument-hint: "repoName=<name> visibility=private|public org=<org> template=<owner/repo> angular=true (shorthand: repo {name} [visibility])"
 agent: "agent"
 ---
 
@@ -18,6 +18,7 @@ Minimize time spent in the GitHub web UI by using **GitHub CLI (`gh`)** and repo
 - `visibility` (default **private** unless explicitly asked otherwise)
 - `template` (optional `OWNER/REPO` or URL)
 - `angular` (optional; if true or if you detect Angular via `angular.json`, apply Angular-specific defaults)
+- Shorthand: `repo {name} [visibility] [org={org}] [template={owner/repo}] [angular=true]` maps to the corresponding inputs.
 
 ## Non‑negotiables
 
