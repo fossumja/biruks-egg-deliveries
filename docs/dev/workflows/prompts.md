@@ -37,7 +37,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 ## Constraints
 
 - Keep shorthand inputs consistent with each prompt definition.
-- Update this catalog and `index.md` when new prompts are added.
+- Update this catalog and `index.md` when prompts are added or behavior changes.
 
 ## Steps
 
@@ -89,6 +89,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 - If a prompt is missing, add it under `.github/prompts/` and update this file.
 - If a prompt lacks shorthand, update its `argument-hint` and Defaults section.
+- If a prompt changes behavior, update its catalog entry and related workflow doc.
 
 ## Related docs
 

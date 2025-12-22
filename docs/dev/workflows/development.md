@@ -28,6 +28,7 @@ Use this workflow to set up and run the app locally during active development.
 - Avoid adding new tooling without approval.
 - Prefer prompts for repeatable tasks; create a prompt if one is missing.
 - Use short-lived feature branches off `main`; delete them after merge.
+- Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
 
 ## Steps
 
@@ -43,7 +44,10 @@ Use this workflow to set up and run the app locally during active development.
    - Use targeted checks (lint/test) when the change affects behavior.
 6. Update docs when behavior changes:
    - Apply `doc: guide <file>` to edited docs as needed.
-7. Cleanup after merge:
+7. Capture process learnings:
+   - Update prompts/workflows when you find friction or missing steps.
+   - Update `docs/dev/workflows/prompts.md` when prompt behavior changes.
+8. Cleanup after merge:
    - Delete the feature branch (local + remote) with `/branch action=delete name={branch}`.
    - Prune refs with `git fetch --prune`.
 

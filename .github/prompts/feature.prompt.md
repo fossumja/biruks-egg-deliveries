@@ -41,8 +41,9 @@ You are my feature delivery assistant.
    - If a linked branch exists, check it out.
    - Prefer `gh issue develop <issue>` if available.
    - Otherwise follow the branch naming convention in `.github/prompts/branch.prompt.md`.
-4. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
-5. Report the branch name and planned issue order.
+4. Verify the current branch matches the feature branch; if not, check out the local branch from `origin/<branch>`.
+5. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
+6. Report the branch name and planned issue order.
 
 ## action=next
 
@@ -51,7 +52,11 @@ You are my feature delivery assistant.
 3. Sync the branch with the base branch if needed.
 4. Implement the issue, run targeted tests, and update docs if required.
 5. Update the child issue status (close or comment with progress and test notes).
-6. Update the parent issue checklist to reflect completion.
+6. Update the parent issue checklist to reflect completion:
+   - Prefer `python3` or `node` for body edits.
+   - Validate the new body is non-empty before calling `gh issue edit`.
+   - If tooling is missing or validation fails, add a progress comment instead of editing the body.
+7. Capture any workflow/prompt learnings and update docs if needed.
 
 ## action=status
 
@@ -65,7 +70,8 @@ You are my feature delivery assistant.
 2. Run the quality workflow if applicable.
 3. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`).
 4. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-5. Suggest release workflow if requested.
+5. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+6. Suggest release workflow if requested.
 
 ## Output
 
