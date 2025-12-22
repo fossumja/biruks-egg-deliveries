@@ -42,6 +42,8 @@ Use this workflow to set up and run the app locally during active development.
    - Run the documented start command.
 5. Make changes and validate:
    - Use targeted checks (lint/test) when the change affects behavior.
+   - Run at least one base check (default: `npm run build`) for each issue-sized change.
+   - If `public/build-info.json` changes, restore it before committing.
 6. Update docs when behavior changes:
    - Apply `doc: guide <file>` to edited docs as needed.
 7. Retrospective (regular):
@@ -58,6 +60,7 @@ Use this workflow to set up and run the app locally during active development.
 - Changes render/behave as expected.
 - Relevant docs updated when behavior changes.
 - Retrospective notes captured for completed features.
+- Base checks run for each issue-sized change.
 
 ## Outputs
 

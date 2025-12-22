@@ -38,6 +38,8 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 2. Implement each child issue:
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Complete acceptance criteria, update docs, and close the issue.
+   - Run at least one base check (default: `npm run build`) and note results.
+   - If `public/build-info.json` changes, restore it before committing.
    - Update the parent checklist safely; if tooling is missing, leave a progress comment instead of editing the body.
 3. Retrospective (per feature):
    - Capture what worked, what hurt, and the next improvement in the parent issue or PR.
@@ -59,6 +61,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - PR includes `Fixes #{parent}` in the description.
 - Feature branch is deleted and local refs are pruned.
 - Retrospective notes and prompt/workflow updates are recorded when new lessons are learned.
+- Base checks run for each child issue; full quality run before PR.
 
 ## Outputs
 

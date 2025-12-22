@@ -51,13 +51,14 @@ You are my feature delivery assistant.
 2. Restate its acceptance criteria, impacted files, and unknowns before changes.
 3. Sync the branch with the base branch if needed.
 4. Implement the issue, run targeted tests, and update docs if required.
-5. Update the child issue status (close or comment with progress and test notes).
-6. Update the parent issue checklist to reflect completion:
+5. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
+6. Update the child issue status (close or comment with progress and test notes).
+7. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-7. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-8. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+8. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+9. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
@@ -68,7 +69,7 @@ You are my feature delivery assistant.
 ## action=finish
 
 1. Confirm all child issues are closed and the parent checklist is complete.
-2. Run the quality workflow if applicable.
+2. Run the quality workflow if applicable (this is the full check for the feature).
 3. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`).
 4. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
 5. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
