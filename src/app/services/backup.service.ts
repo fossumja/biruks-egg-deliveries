@@ -178,22 +178,7 @@ export class BackupService {
       status?: string;
       date?: string;
     }[],
-    runEntries: {
-      runId: string;
-      baseRowId: string;
-      deliveryOrder: number;
-      status: string;
-      dozens: number;
-      donationStatus: string;
-      donationMethod?: string;
-      donationAmount: number;
-      taxableAmount: number;
-      name: string;
-      address: string;
-      city: string;
-      state: string;
-      zip?: string;
-    }[]
+    runEntries: RunSnapshotEntry[]
   ): string {
     const baseHeaders = [...state.headers];
     const finalHeaders: string[] = ['RowType', ...baseHeaders];
