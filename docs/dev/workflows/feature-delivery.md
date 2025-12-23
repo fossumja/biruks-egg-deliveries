@@ -26,6 +26,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - Use `.github/prompts/feature.prompt.md` as the primary workflow driver.
 - Follow branch naming rules in `.github/prompts/branch.prompt.md`.
+- Use the development workflow to validate each issue plan before implementation.
 - Keep child issues and the parent checklist updated as work completes.
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
@@ -51,8 +52,10 @@ Use this once per repo to keep `main` safe without blocking work.
 1. Start the feature workflow:
    - Run `/feature action=start issue={parent}` or `feature start {parent}`.
    - Confirm the branch name and ordered child issues.
+   - Validate the parent issue plan per `docs/dev/workflows/development.md` and comment if changes are needed.
 2. Implement each child issue:
    - Run `/feature action=next` or `feature next` to select the next issue.
+   - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
    - Complete acceptance criteria, update docs, and close the issue.
    - Run at least one base check (default: `npm run build`) and note results.
    - If `public/build-info.json` changes, restore it before committing.
@@ -75,6 +78,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Branch is created and linked to the parent issue.
 - All child issues are closed or explicitly deferred.
 - Parent issue checklist reflects completion.
+- Issue plans reviewed and approved before implementation.
 - PR includes `Fixes #{parent}` in the description.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
@@ -88,6 +92,11 @@ Use this once per repo to keep `main` safe without blocking work.
 - Parent issue updated or closed.
 - PR ready for review.
 - Retrospective notes captured for the feature.
+
+## What changed / Why
+
+- Added explicit development workflow plan checks to keep issue plans feasible before coding.
+- Recorded plan review as a checklist item so it is tracked alongside delivery steps.
 
 ## Related docs
 

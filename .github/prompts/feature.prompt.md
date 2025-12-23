@@ -34,32 +34,34 @@ You are my feature delivery assistant.
 ## action=start
 
 1. Read the parent issue and extract child issue links or checklists.
-2. If no child issues are listed:
+2. Validate the parent plan against the codebase per `docs/dev/workflows/development.md` and comment if changes are needed.
+3. If no child issues are listed:
    - Search for issues referencing the parent (for example, `#{parent}` in the issue body).
    - If still missing, ask once whether to create them via `/issues action=breakdown`.
-3. Create or reuse a feature branch:
+4. Create or reuse a feature branch:
    - If a linked branch exists, check it out.
    - Prefer `gh issue develop <issue>` if available.
    - Otherwise follow the branch naming convention in `.github/prompts/branch.prompt.md`.
-4. Verify the current branch matches the feature branch; if not, check out the local branch from `origin/<branch>`.
-5. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
-6. Report the branch name and planned issue order.
+5. Verify the current branch matches the feature branch; if not, check out the local branch from `origin/<branch>`.
+6. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
+7. Report the branch name and planned issue order.
 
 ## action=next
 
 1. Identify the next open child issue (or ask if multiple are equally valid).
 2. Restate its acceptance criteria, impacted files, and unknowns before changes.
-3. Sync the branch with the base branch if needed.
-4. Implement the issue, run targeted tests, and update docs if required.
-5. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
-6. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
-7. Update the child issue status (close or comment with progress and test notes).
-8. Update the parent issue checklist to reflect completion:
+3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
+4. Sync the branch with the base branch if needed.
+5. Implement the issue, run targeted tests, and update docs if required.
+6. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
+7. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
+8. Update the child issue status (close or comment with progress and test notes).
+9. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-9. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-10. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+10. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+11. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
@@ -87,6 +89,7 @@ You are my feature delivery assistant.
 ## Related docs
 
 - `docs/dev/workflows/feature-delivery.md`
+- `docs/dev/workflows/development.md`
 - `.github/prompts/issues.prompt.md`
 - `.github/prompts/branch.prompt.md`
 - `.github/prompts/pr.prompt.md`

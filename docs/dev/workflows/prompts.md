@@ -59,7 +59,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Delivery flow
 
-- `feature` — deliver a parent feature with child issues. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
+- `feature` — deliver a parent feature with child issues, including plan validation via the development workflow. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
@@ -91,6 +91,11 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - If a prompt is missing, add it under `.github/prompts/` and update this file.
 - If a prompt lacks shorthand, update its `argument-hint` and Defaults section.
 - If a prompt changes behavior, update its catalog entry and related workflow doc.
+
+## What changed / Why
+
+- Documented the feature prompt's plan-validation step so the catalog matches current behavior.
+- Reaffirmed catalog maintenance when prompt behavior shifts.
 
 ## Related docs
 
