@@ -46,6 +46,18 @@ export function normalizeEventDate(
   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
 }
 
+export function getEventYear(
+  raw?: string | number | null,
+  fallbackDate: Date = new Date()
+): number {
+  const normalized = normalizeEventDate(raw);
+  if (!normalized) return fallbackDate.getFullYear();
+  const parsed = new Date(normalized);
+  return Number.isNaN(parsed.getTime())
+    ? fallbackDate.getFullYear()
+    : parsed.getFullYear();
+}
+
 export function toSortableTimestamp(raw?: string): number {
   const normalized = normalizeEventDate(raw);
   if (!normalized) return 0;

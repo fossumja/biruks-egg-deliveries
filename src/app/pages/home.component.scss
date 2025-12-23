@@ -23,6 +23,16 @@
   gap: var(--spacing-2);
 }
 
+.tax-year-card .select-row {
+  justify-content: flex-end;
+}
+
+.tax-year-warning {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
 .build-card {
   margin-top: var(--spacing-3);
 }

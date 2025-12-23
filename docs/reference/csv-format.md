@@ -4,7 +4,7 @@ Reference for the CSV files the app imports, exports, and restores. Covers basel
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: Reference
 - **Scope**: CSV import/export schema and parsing rules
 - **Non-goals**: UI steps for importing/exporting CSV files
@@ -18,6 +18,8 @@ The app supports two CSV variants:
 - Backup exports that include run history and one-off events using `RowType`.
 
 Baseline imports read delivery rows only. Backup restores read all row types and rebuild history.
+
+Backup exports include all history rows, while totals columns are scoped to the tax year selected at export time.
 
 ## Column conventions
 
@@ -105,6 +107,8 @@ Totals are computed and exported as:
 - `TotalDonation`
 - `TotalDozens`
 - `TotalDeductibleContribution`
+
+Totals reflect the tax year selected on Home at export time. Backup filenames include a `-tax-year-YYYY` suffix to show the year used for totals.
 
 Exports without an import state use `TotalTaxableDonation` instead of `TotalDeductibleContribution`.
 

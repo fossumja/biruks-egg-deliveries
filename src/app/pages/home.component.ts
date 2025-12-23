@@ -1,4 +1,4 @@
-import { DatePipe, NgIf, NgClass, NgFor } from '@angular/common';
+import { DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { BackupService } from '../services/backup.service';
 import { BuildInfo, BuildInfoService } from '../services/build-info.service';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
-import { normalizeEventDate } from '../utils/date-utils';
+import { getEventYear, normalizeEventDate } from '../utils/date-utils';
 
 @Component({
   selector: 'app-home',
@@ -57,9 +57,13 @@ export class HomeComponent implements OnDestroy {
   darkModeEnabled = false;
   buildInfo?: BuildInfo | null;
   plannerReorderDefaultEnabled = false;
+  taxYearOptions: number[] = [];
+  selectedTaxYear = new Date().getFullYear();
+  hasMultiYearData = false;
 
   async ngOnInit(): Promise<void> {
     await this.refreshRoutes();
+    await this.refreshTaxYearOptions();
     this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
     this.lastImportAt = localStorage.getItem('lastImportAt') || undefined;
     this.lastRestoreAt = localStorage.getItem('lastRestoreAt') || undefined;
@@ -123,6 +127,7 @@ export class HomeComponent implements OnDestroy {
       this.lastImportAt = now;
       await this.refreshRoutes();
       this.autoselectRoute();
+      await this.refreshTaxYearOptions();
       this.toast.show('Import complete');
     } catch (err) {
       console.error(err);
@@ -150,7 +155,7 @@ export class HomeComponent implements OnDestroy {
     this.isExporting = true;
     this.errorMessage = '';
     try {
-      await this.backupService.exportAll();
+      await this.backupService.exportAll(this.selectedTaxYear);
       this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
       // Manual backup: no special hint.
       this.showRestoreHint = false;
@@ -162,6 +167,16 @@ export class HomeComponent implements OnDestroy {
     } finally {
       this.isExporting = false;
     }
+  }
+
+  onTaxYearChange(event: Event): void {
+    const target = event.target as HTMLSelectElement | null;
+    if (!target) return;
+    const parsed = Number(target.value);
+    if (!Number.isFinite(parsed)) return;
+    const nextYear = Math.trunc(parsed);
+    this.selectedTaxYear = nextYear;
+    this.persistSelectedTaxYear(nextYear);
   }
 
   goTo(route: string): void {
@@ -256,6 +271,87 @@ export class HomeComponent implements OnDestroy {
     }
   }
 
+  private async refreshTaxYearOptions(): Promise<void> {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const dataYears = new Set<number>();
+    const baselineYear = this.resolveBaselineYear(currentYear);
+    dataYears.add(baselineYear);
+
+    const [deliveries, runEntries, runs] = await Promise.all([
+      this.storage.getAllDeliveries(),
+      this.storage.getAllRunEntries(),
+      this.storage.getAllRuns(),
+    ]);
+
+    const runDateById = new Map<string, string>();
+    runs.forEach((run) => {
+      const raw = run.date ?? run.routeDate;
+      if (!raw) return;
+      runDateById.set(run.id, raw);
+      dataYears.add(getEventYear(raw, now));
+    });
+
+    runEntries.forEach((entry) => {
+      const raw = entry.eventDate ?? runDateById.get(entry.runId);
+      if (!raw) return;
+      dataYears.add(getEventYear(raw, now));
+    });
+
+    deliveries.forEach((delivery) => {
+      if (delivery.status === 'delivered') {
+        dataYears.add(getEventYear(delivery.deliveredAt, now));
+      }
+      (delivery.oneOffDonations ?? []).forEach((donation) => {
+        dataYears.add(getEventYear(donation.date, now));
+      });
+      (delivery.oneOffDeliveries ?? []).forEach((entry) => {
+        dataYears.add(getEventYear(entry.date, now));
+      });
+    });
+
+    const availableYears = new Set<number>(dataYears);
+    availableYears.add(currentYear);
+
+    const sortedYears = Array.from(availableYears).sort((a, b) => a - b);
+    this.taxYearOptions = sortedYears;
+    this.hasMultiYearData = dataYears.size > 1;
+
+    const storedYear = this.readStoredTaxYear();
+    const nextYear =
+      (storedYear != null && availableYears.has(storedYear)
+        ? storedYear
+        : availableYears.has(currentYear)
+        ? currentYear
+        : sortedYears[sortedYears.length - 1]) ?? currentYear;
+
+    this.selectedTaxYear = nextYear;
+    this.persistSelectedTaxYear(nextYear);
+  }
+
+  private readStoredTaxYear(): number | undefined {
+    if (typeof localStorage === 'undefined') return undefined;
+    const raw = localStorage.getItem('selectedTaxYear');
+    if (!raw) return undefined;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? Math.trunc(parsed) : undefined;
+  }
+
+  private persistSelectedTaxYear(year: number): void {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem('selectedTaxYear', year.toString());
+  }
+
+  private resolveBaselineYear(fallbackYear: number): number {
+    if (typeof localStorage === 'undefined') return fallbackYear;
+    const raw = localStorage.getItem('lastImportAt');
+    if (!raw) return fallbackYear;
+    const parsed = new Date(raw);
+    return Number.isNaN(parsed.getTime())
+      ? fallbackYear
+      : parsed.getFullYear();
+  }
+
   private async maybeBackupBeforeRestore(): Promise<boolean> {
     const confirmMessage =
       'You already have delivery data loaded. Restoring from a backup will replace all current deliveries, routes, and run history.\n\n' +
@@ -269,7 +365,7 @@ export class HomeComponent implements OnDestroy {
 
     try {
       this.isExporting = true;
-      await this.backupService.exportAll();
+      await this.backupService.exportAll(this.selectedTaxYear);
       this.lastBackupAt = localStorage.getItem('lastBackupAt') || undefined;
       this.toast.show('Backup ready');
       return true;
@@ -296,6 +392,7 @@ export class HomeComponent implements OnDestroy {
       localStorage.setItem('lastImportSource', 'sample');
       await this.refreshRoutes();
       this.autoselectRoute();
+      await this.refreshTaxYearOptions();
       this.toast.show('Loaded sample deliveries');
     } catch (err) {
       console.warn('Sample CSV could not be loaded', err);
@@ -913,6 +1010,7 @@ export class HomeComponent implements OnDestroy {
       localStorage.removeItem('currentRoute');
       this.currentRoute = undefined;
       this.autoselectRoute();
+      await this.refreshTaxYearOptions();
       this.toast.show('Restore complete');
     } catch (err: unknown) {
       console.error('Restore failed', err);

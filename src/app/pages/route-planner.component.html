@@ -344,8 +344,8 @@
               <input
                 class="form-control"
                 type="date"
-                [min]="currentYearStart"
-                [max]="currentYearEnd"
+                [min]="oneOffDateMin"
+                [max]="oneOffDateMax"
                 [ngModel]="oneOffDonationDate"
                 (ngModelChange)="onOneOffDonationDateChange($event)"
                 name="oneOffDonationDate"
@@ -417,8 +417,8 @@
               <input
                 class="form-control"
                 type="date"
-                [min]="currentYearStart"
-                [max]="currentYearEnd"
+                [min]="oneOffDateMin"
+                [max]="oneOffDateMax"
                 [ngModel]="oneOffDeliveryDate"
                 (ngModelChange)="onOneOffDeliveryDateChange($event)"
                 name="oneOffDeliveryDate"
