@@ -32,6 +32,20 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 - Confirm branch protection and rulesets for `main` before merging so required checks match available CI.
 
+## Branch Protection (One-Time Setup)
+
+Use this once per repo to keep `main` safe without blocking work.
+
+1. Go to GitHub → Settings → Rules → Rulesets → New ruleset.
+2. Target `main` only.
+3. Enable:
+   - Require pull requests before merging.
+   - Block force pushes.
+   - Block branch deletion.
+4. Optional when the team is ready:
+   - Require 1 approval and resolve conversations.
+5. Do **not** require status checks until CI is stable, or merges will be blocked.
+
 ## Steps
 
 1. Start the feature workflow:
