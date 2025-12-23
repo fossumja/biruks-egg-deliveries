@@ -3,6 +3,7 @@ import { StorageService } from './storage.service';
 import { BackupService } from './backup.service';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
 import Papa from 'papaparse';
+import { normalizeEventDate } from '../utils/date-utils';
 
 /**
  * Usage-oriented totals tests
@@ -15,6 +16,21 @@ import Papa from 'papaparse';
 describe('Usage scenario totals (data-level)', () => {
   let storage: StorageService;
   let backup: BackupService;
+
+  const buildImportState = (deliveries: { baseRowId: string; name: string }[]) => {
+    const headers = ['BaseRowId', 'Name'];
+    const rowsByBaseRowId: Record<string, string[]> = {};
+    deliveries.forEach((delivery) => {
+      if (!rowsByBaseRowId[delivery.baseRowId]) {
+        rowsByBaseRowId[delivery.baseRowId] = [delivery.baseRowId, delivery.name];
+      }
+    });
+    return {
+      headers,
+      rowsByBaseRowId,
+      mode: 'baseline' as const
+    };
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -209,5 +225,67 @@ describe('Usage scenario totals (data-level)', () => {
       expect(totalDozens).toBe(expectedDozens);
       expect(totalTaxable).toBeCloseTo(expectedTaxable, 5);
     });
+  });
+
+  it('persists one-off dates and exports EventDate values', async () => {
+    const donationDateInput = '2025-06-15';
+    const deliveryDateInput = '2025-11-20';
+    const expectedDonationDate = normalizeEventDate(donationDateInput);
+    const expectedDeliveryDate = normalizeEventDate(deliveryDateInput);
+    expect(expectedDonationDate).toBeTruthy();
+    expect(expectedDeliveryDate).toBeTruthy();
+
+    await storage.appendOneOffDonation('c1-r1', {
+      status: 'Donated' as const,
+      method: 'cash' as const,
+      amount: 8,
+      suggestedAmount: 8,
+      date: donationDateInput
+    });
+
+    await storage.appendOneOffDelivery('c2-r1', 2, {
+      status: 'Donated' as const,
+      method: 'ach' as const,
+      amount: 12,
+      suggestedAmount: 12,
+      date: deliveryDateInput
+    });
+
+    const updatedDonation = await storage.getDeliveryById('c1-r1');
+    expect(updatedDonation?.oneOffDonations?.[0]?.date).toBe(expectedDonationDate);
+
+    const updatedDelivery = await storage.getDeliveryById('c2-r1');
+    expect(updatedDelivery?.oneOffDeliveries?.[0]?.date).toBe(expectedDeliveryDate);
+    expect(updatedDelivery?.oneOffDeliveries?.[0]?.donation?.date).toBe(expectedDeliveryDate);
+
+    const deliveries = await storage.getAllDeliveries();
+    const importState = buildImportState(deliveries);
+    const totalsMap = (backup as any).computeTotalsByBase(
+      deliveries,
+      [],
+      importState
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const csv = (backup as any).toCsvWithImportStateAndHistory(
+      deliveries,
+      importState,
+      totalsMap,
+      [],
+      []
+    ) as string;
+
+    const parsed = Papa.parse(csv, { header: true });
+    const rows = parsed.data as Record<string, string>[];
+    const donationRow = rows.find(
+      (row) =>
+        row['RowType'] === 'OneOffDonation' && row['RunBaseRowId'] === 'c1'
+    );
+    const deliveryRow = rows.find(
+      (row) =>
+        row['RowType'] === 'OneOffDelivery' && row['RunBaseRowId'] === 'c2'
+    );
+
+    expect(donationRow?.['EventDate']).toBe(expectedDonationDate);
+    expect(donationRow?.['RunTaxableAmount']).toBe('8.00');
+    expect(deliveryRow?.['EventDate']).toBe(expectedDeliveryDate);
   });
 });

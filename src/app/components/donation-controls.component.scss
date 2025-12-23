@@ -123,9 +123,16 @@
   background: var(--color-surface);
   color: var(--color-text);
   text-align: center;
-  appearance: auto;
+  appearance: textfield;
+  -moz-appearance: textfield;
   font-size: 16px;
   line-height: 1.2;
+}
+
+.donation-picker .amount-select::-webkit-outer-spin-button,
+.donation-picker .amount-select::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .donation-picker .amount-prefix {

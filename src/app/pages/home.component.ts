@@ -17,6 +17,7 @@ import { BackupService } from '../services/backup.service';
 import { BuildInfo, BuildInfoService } from '../services/build-info.service';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
+import { normalizeEventDate } from '../utils/date-utils';
 
 @Component({
   selector: 'app-home',
@@ -498,6 +499,13 @@ export class HomeComponent implements OnDestroy {
     };
   }
 
+  private coerceEventDate(raw?: string | number | null): string | undefined {
+    const normalized = normalizeEventDate(raw);
+    if (!normalized) return undefined;
+    const parsed = new Date(normalized);
+    return Number.isNaN(parsed.getTime()) ? undefined : normalized;
+  }
+
   private async restoreFromBackupFile(file: File): Promise<void> {
     const text = await file.text();
     const parsed = await new Promise<Papa.ParseResult<Record<string, string>>>(
@@ -568,8 +576,7 @@ export class HomeComponent implements OnDestroy {
           row['Date'] ||
           row['date'] ||
           '') as string;
-        const date =
-          (dateRaw && dateRaw.toString().trim()) || new Date().toISOString();
+        const normalizedDate = this.coerceEventDate(dateRaw);
         const statusRaw = (row['RunDonationStatus'] ||
           row['DonationStatus'] ||
           row['donationstatus'] ||
@@ -595,16 +602,21 @@ export class HomeComponent implements OnDestroy {
           '';
         const taxable = taxableRaw ? Number(taxableRaw) : undefined;
 
-        const donation: DonationInfo = {
+        const donationBase = {
           status,
           method: methodRaw || undefined,
           suggestedAmount: suggested,
           amount,
           taxableAmount: taxable,
-          date,
         };
 
         targets.forEach((d) => {
+          const fallbackDate = this.coerceEventDate(d.routeDate);
+          const eventDate = normalizedDate ?? fallbackDate ?? '';
+          const donation: DonationInfo = {
+            ...donationBase,
+            date: eventDate,
+          };
           d.oneOffDonations = [...(d.oneOffDonations ?? []), donation];
         });
       });
@@ -626,8 +638,7 @@ export class HomeComponent implements OnDestroy {
           row['Date'] ||
           row['date'] ||
           '') as string;
-        const date =
-          (dateRaw && dateRaw.toString().trim()) || new Date().toISOString();
+        const normalizedDate = this.coerceEventDate(dateRaw);
         const dozensRaw =
           row['RunDozens'] ||
           row['Dozens'] ||
@@ -661,7 +672,7 @@ export class HomeComponent implements OnDestroy {
           '';
         const taxable = taxableRaw ? Number(taxableRaw) : undefined;
 
-        const donation: DonationInfo | undefined =
+        const donationBase: DonationInfo | undefined =
           status === 'NotRecorded' && !methodRaw && amount == null
             ? undefined
             : {
@@ -670,15 +681,22 @@ export class HomeComponent implements OnDestroy {
                 suggestedAmount: suggested,
                 amount,
                 taxableAmount: taxable,
-                date,
               };
 
         targets.forEach((d) => {
+          const fallbackDate = this.coerceEventDate(d.routeDate);
+          const eventDate = normalizedDate ?? fallbackDate ?? '';
+          const donation = donationBase
+            ? {
+                ...donationBase,
+                date: eventDate,
+              }
+            : undefined;
           const list = [...(d.oneOffDeliveries ?? [])];
           list.push({
             deliveredDozens,
             donation,
-            date,
+            date: eventDate,
           });
           d.oneOffDeliveries = list;
         });
@@ -720,20 +738,10 @@ export class HomeComponent implements OnDestroy {
           row['EventDate'] ||
           row['eventdate'] ||
           '') as string;
-        let runDateIso: string;
-        if (completedRaw && completedRaw.toString().trim()) {
-          const parsed = new Date(completedRaw);
-          runDateIso = isNaN(parsed.getTime())
-            ? new Date().toISOString()
-            : parsed.toISOString();
-        } else if (routeDate) {
-          const parsed = new Date(routeDate);
-          runDateIso = isNaN(parsed.getTime())
-            ? new Date().toISOString()
-            : parsed.toISOString();
-        } else {
-          runDateIso = new Date().toISOString();
-        }
+        const normalizedCompleted = this.coerceEventDate(completedRaw);
+        const normalizedRoute = this.coerceEventDate(routeDate);
+        const runDateIso =
+          normalizedCompleted ?? normalizedRoute ?? new Date().toISOString();
 
         const newRun: DeliveryRun = {
           id: runId,
@@ -754,6 +762,15 @@ export class HomeComponent implements OnDestroy {
         ''
       ).trim();
       if (!baseRowId) return;
+
+      const run = runsMap.get(runId);
+      const eventDateRaw = (row['EventDate'] ||
+        row['eventdate'] ||
+        row['RunCompletedAt'] ||
+        row['runcompletedat'] ||
+        '') as string;
+      const normalizedEventDate = this.coerceEventDate(eventDateRaw);
+      const eventDate = normalizedEventDate ?? run?.date;
 
       const deliveryOrderRaw =
         row['RunDeliveryOrder'] ||
@@ -812,6 +829,7 @@ export class HomeComponent implements OnDestroy {
             : undefined,
         donationAmount: donationStatus === 'Donated' ? donationAmount : 0,
         taxableAmount,
+        eventDate: eventDate ?? undefined,
       });
     });
 

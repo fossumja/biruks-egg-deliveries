@@ -22,6 +22,7 @@ import { ToastService } from '../services/toast.service';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { BackupService } from '../services/backup.service';
+import { normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
 
 @Component({
   selector: 'app-route-planner',
@@ -60,6 +61,17 @@ export class RoutePlannerComponent {
     taxableTotal: 0,
     baselineTotal: 0,
   };
+  readonly currentYear = new Date().getFullYear();
+  readonly currentYearStart = `${this.currentYear}-01-01`;
+  readonly currentYearEnd = `${this.currentYear}-12-31`;
+  oneOffDonationDate = '';
+  oneOffDonationDateError = '';
+  private oneOffDonationDateTouched = false;
+  oneOffDonationTypeError = '';
+  oneOffDeliveryDate = '';
+  oneOffDeliveryDateError = '';
+  private oneOffDeliveryDateTouched = false;
+  oneOffDeliveryTypeError = '';
   showAmountPicker = false;
   amountOptions: number[] = [];
   selectedAmount = 0;
@@ -127,6 +139,138 @@ export class RoutePlannerComponent {
 
   noop(): void {}
 
+  private formatDateInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private getTodayDateInput(): string {
+    return this.formatDateInput(new Date());
+  }
+
+  private validateOneOffDate(value: string): string {
+    if (!value) return 'Date is required.';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Enter a valid date.';
+    if (value < this.currentYearStart || value > this.currentYearEnd) {
+      return `Date must be within ${this.currentYear}.`;
+    }
+    return '';
+  }
+
+  private validateDonationSelection(
+    donation: DonationInfo | null | undefined
+  ): string {
+    if (!donation || donation.status === 'NotRecorded') {
+      return 'Select a donation type before saving.';
+    }
+    if (donation.status === 'Donated' && !donation.method) {
+      return 'Select a donation method before saving.';
+    }
+    return '';
+  }
+
+  private setOneOffDonationDate(value: string): void {
+    this.oneOffDonationDate = value;
+    this.oneOffDonationDateError = this.validateOneOffDate(value);
+    if (this.donationDraft?.donation) {
+      this.donationDraft.donation.date = value;
+    }
+  }
+
+  private setOneOffDeliveryDate(value: string): void {
+    this.oneOffDeliveryDate = value;
+    this.oneOffDeliveryDateError = this.validateOneOffDate(value);
+    if (this.offDonationDraft) {
+      this.offDonationDraft.date = value;
+    }
+  }
+
+  private resetOneOffDonationDate(): void {
+    this.oneOffDonationDate = '';
+    this.oneOffDonationDateError = '';
+    this.oneOffDonationDateTouched = false;
+  }
+
+  private resetOneOffDeliveryDate(): void {
+    this.oneOffDeliveryDate = '';
+    this.oneOffDeliveryDateError = '';
+    this.oneOffDeliveryDateTouched = false;
+  }
+
+  private resetOneOffDonationTypeError(): void {
+    this.oneOffDonationTypeError = '';
+  }
+
+  private resetOneOffDeliveryTypeError(): void {
+    this.oneOffDeliveryTypeError = '';
+  }
+
+  private ensureOneOffDonationType(): boolean {
+    const error = this.validateDonationSelection(this.donationDraft?.donation);
+    this.oneOffDonationTypeError = error;
+    return !error;
+  }
+
+  private ensureOneOffDeliveryType(): boolean {
+    const error = this.validateDonationSelection(this.offDonationDraft);
+    this.oneOffDeliveryTypeError = error;
+    return !error;
+  }
+
+  private refreshOneOffDonationTypeError(): void {
+    if (this.oneOffDonationTypeError) {
+      this.oneOffDonationTypeError = this.validateDonationSelection(
+        this.donationDraft?.donation
+      );
+    }
+  }
+
+  private refreshOneOffDeliveryTypeError(): void {
+    if (this.oneOffDeliveryTypeError) {
+      this.oneOffDeliveryTypeError = this.validateDonationSelection(
+        this.offDonationDraft
+      );
+    }
+  }
+
+  private resolveOneOffDonationTimestamp(): string {
+    if (!this.oneOffDonationDateTouched) {
+      return new Date().toISOString();
+    }
+    return this.oneOffDonationDate;
+  }
+
+  private resolveOneOffDeliveryTimestamp(): string {
+    if (!this.oneOffDeliveryDateTouched) {
+      return new Date().toISOString();
+    }
+    return this.oneOffDeliveryDate;
+  }
+
+  private ensureOneOffDonationDate(): boolean {
+    const error = this.validateOneOffDate(this.oneOffDonationDate);
+    this.oneOffDonationDateError = error;
+    return !error;
+  }
+
+  private ensureOneOffDeliveryDate(): boolean {
+    const error = this.validateOneOffDate(this.oneOffDeliveryDate);
+    this.oneOffDeliveryDateError = error;
+    return !error;
+  }
+
+  onOneOffDonationDateChange(value: string): void {
+    this.oneOffDonationDateTouched = true;
+    this.setOneOffDonationDate(value);
+  }
+
+  onOneOffDeliveryDateChange(value: string): void {
+    this.oneOffDeliveryDateTouched = true;
+    this.setOneOffDeliveryDate(value);
+  }
+
   startSwipe(event: PointerEvent, stop: Delivery): void {
     this.swipeStartX = event.clientX;
     this.swipeStartY = event.clientY;
@@ -140,12 +284,17 @@ export class RoutePlannerComponent {
     this.offScheduleStop = stop;
     const rate = this.storage.getSuggestedRate();
     const suggested = (stop.dozens ?? 0) * rate;
+    const today = this.getTodayDateInput();
+    this.oneOffDeliveryDateTouched = false;
     this.offDonationDraft = {
       status: stop.donation?.status ?? 'NotRecorded',
       method: stop.donation?.method,
       amount: stop.donation?.amount ?? suggested,
       suggestedAmount: suggested,
+      date: today,
     };
+    this.setOneOffDeliveryDate(today);
+    this.resetOneOffDeliveryTypeError();
     this.offDeliveredQty = stop.deliveredDozens ?? stop.dozens ?? 0;
     // Seed totals based on the current stop so the overlay has
     // sensible values immediately; full global totals will be
@@ -165,6 +314,8 @@ export class RoutePlannerComponent {
     this.offDonationDraft = null;
     this.offDeliveredQty = 0;
     this.pickerMode = null;
+    this.resetOneOffDeliveryDate();
+    this.resetOneOffDeliveryTypeError();
   }
 
   setOffDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
@@ -180,6 +331,7 @@ export class RoutePlannerComponent {
       this.offDonationDraft.amount =
         this.offDonationDraft.amount ?? this.offDonationDraft.suggestedAmount ?? 0;
     }
+    this.refreshOneOffDeliveryTypeError();
   }
 
   setOffDonationMethod(method: 'cash' | 'venmo' | 'ach' | 'paypal' | 'other'): void {
@@ -189,6 +341,7 @@ export class RoutePlannerComponent {
     if (this.offDonationDraft.amount == null) {
       this.offDonationDraft.amount = this.offDonationDraft.suggestedAmount ?? 0;
     }
+    this.refreshOneOffDeliveryTypeError();
   }
 
   adjustOffDelivered(delta: number): void {
@@ -215,8 +368,13 @@ export class RoutePlannerComponent {
       this.closeOffSchedule();
       return;
     }
+    if (!this.ensureOneOffDeliveryDate()) return;
+    if (!this.ensureOneOffDeliveryType()) return;
     const stop = this.offScheduleStop;
-    const donation = { ...this.offDonationDraft, date: new Date().toISOString() };
+    const donation = {
+      ...this.offDonationDraft,
+      date: this.resolveOneOffDeliveryTimestamp()
+    };
     await this.storage.appendOneOffDelivery(
       stop.id,
       this.offDeliveredQty || stop.dozens,
@@ -235,10 +393,11 @@ export class RoutePlannerComponent {
     if (!this.offDonationDraft) return;
     this.offDonationDraft.status = 'Donated';
     this.offDonationDraft.amount = amount;
-    this.offDonationDraft.method = this.offDonationDraft.method ?? 'cash';
-    this.offDonationDraft.date = new Date().toISOString();
+    this.offDonationDraft.date =
+      this.oneOffDeliveryDate || this.offDonationDraft.date;
     this.offDonationDraft.suggestedAmount =
       this.offDonationDraft.suggestedAmount ?? this.offDeliveredQty * 4;
+    this.refreshOneOffDeliveryTypeError();
   }
 
   async copyAddress(stop?: Delivery | null): Promise<void> {
@@ -666,6 +825,8 @@ export class RoutePlannerComponent {
     this.closeSwipe();
     this.donationModalStop = stop;
     const rate = this.storage.getSuggestedRate();
+    const today = this.getTodayDateInput();
+    this.oneOffDonationDateTouched = false;
     // shallow clone to edit
     this.donationDraft = {
       ...stop,
@@ -674,10 +835,12 @@ export class RoutePlannerComponent {
         method: stop.donation?.method,
         amount: stop.donation?.amount,
         suggestedAmount: (stop.dozens ?? 0) * rate,
-        date: stop.donation?.date,
+        date: today,
         note: stop.donation?.note,
       },
     };
+    this.setOneOffDonationDate(today);
+    this.resetOneOffDonationTypeError();
     // Seed totals based on the current stop so the overlay has
     // sensible values immediately; full global totals will be
     // refreshed after save.
@@ -696,6 +859,8 @@ export class RoutePlannerComponent {
     this.donationDraft = undefined;
     this.showAmountPicker = false;
     this.pickerMode = null;
+    this.resetOneOffDonationDate();
+    this.resetOneOffDonationTypeError();
   }
 
   onDonationQtyChange(qty: number): void {
@@ -726,9 +891,11 @@ export class RoutePlannerComponent {
       this.closeDonationModal();
       return;
     }
+    if (!this.ensureOneOffDonationDate()) return;
+    if (!this.ensureOneOffDonationType()) return;
     const donation = this.donationDraft.donation;
     donation.suggestedAmount = (this.donationModalStop.dozens ?? 0) * this.storage.getSuggestedRate();
-    donation.date = new Date().toISOString();
+    donation.date = this.resolveOneOffDonationTimestamp();
     void this.storage.appendOneOffDonation(this.donationModalStop.id, donation);
     this.toast.show('Donation saved');
     if (this.donationModalStop) {
@@ -759,6 +926,7 @@ export class RoutePlannerComponent {
     }
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * rate;
     this.donationDraft.donation = donation;
+    this.refreshOneOffDonationTypeError();
   }
 
   setDonationMethod(method: 'cash' | 'venmo' | 'ach' | 'paypal' | 'other'): void {
@@ -775,6 +943,7 @@ export class RoutePlannerComponent {
       donation.amount = donation.suggestedAmount;
     }
     this.donationDraft.donation = donation;
+    this.refreshOneOffDonationTypeError();
   }
 
   openAmountPicker(): void {
@@ -797,8 +966,9 @@ export class RoutePlannerComponent {
       if (!this.offDonationDraft) return;
       this.offDonationDraft.status = this.offDonationDraft.status || 'Donated';
       this.offDonationDraft.amount = amount;
-      this.offDonationDraft.method = this.offDonationDraft.method ?? 'cash';
-      this.offDonationDraft.date = new Date().toISOString();
+      this.offDonationDraft.date =
+        this.oneOffDeliveryDate || this.offDonationDraft.date;
+      this.refreshOneOffDeliveryTypeError();
     } else {
       if (!this.donationDraft) return;
       const donation = this.donationDraft.donation ?? {
@@ -807,10 +977,10 @@ export class RoutePlannerComponent {
       };
       donation.status = 'Donated';
       donation.amount = amount;
-      donation.method = donation.method ?? 'cash';
-      donation.date = donation.date ?? new Date().toISOString();
+      donation.date = this.oneOffDonationDate || donation.date;
       donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
       this.donationDraft.donation = donation;
+      this.refreshOneOffDonationTypeError();
     }
     this.showAmountPicker = false;
     this.pickerMode = null;
@@ -821,10 +991,10 @@ export class RoutePlannerComponent {
     const donation = this.donationDraft.donation;
     donation.status = 'Donated';
     donation.amount = amount;
-    donation.method = donation.method ?? 'cash';
-    donation.date = donation.date ?? new Date().toISOString();
+    donation.date = this.oneOffDonationDate || donation.date;
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
     this.donationDraft.donation = donation;
+    this.refreshOneOffDonationTypeError();
   }
 
   openEdit(stop: Delivery): void {
@@ -1023,8 +1193,8 @@ export class RoutePlannerComponent {
     // Runs-first receipts.
     entries.forEach((entry) => {
       const date =
-        runDateById.get(entry.runId) ??
-        new Date().toISOString();
+        normalizeEventDate(entry.eventDate ?? runDateById.get(entry.runId)) ??
+        '';
       receipts.push({
         kind: 'run',
         date,
@@ -1055,7 +1225,7 @@ export class RoutePlannerComponent {
       const zip = d.zip;
 
       (d.oneOffDonations ?? []).forEach((don, index) => {
-        const date = don.date ?? new Date().toISOString();
+        const date = normalizeEventDate(don.date) ?? '';
         const suggested = Number(don.suggestedAmount ?? 0);
         const amount = Number(don.amount ?? suggested);
         const taxable =
@@ -1083,7 +1253,7 @@ export class RoutePlannerComponent {
       });
 
       (d.oneOffDeliveries ?? []).forEach((entry, index) => {
-        const date = entry.date ?? new Date().toISOString();
+        const date = normalizeEventDate(entry.date) ?? '';
         const deliveredDozens = Number(entry.deliveredDozens ?? 0);
         const don = entry.donation;
         const suggested = Number(don?.suggestedAmount ?? 0);
@@ -1114,7 +1284,9 @@ export class RoutePlannerComponent {
     });
 
     // Sort newest-first by date.
-    receipts.sort((a, b) => b.date.localeCompare(a.date));
+    receipts.sort(
+      (a, b) => toSortableTimestamp(b.date) - toSortableTimestamp(a.date)
+    );
 
     // Project into RunSnapshotEntry-shaped view list.
     const viewEntries: RunSnapshotEntry[] = receipts.map((r, index) => {
@@ -1515,9 +1687,8 @@ export class RoutePlannerComponent {
 
     const oneOffTaxableTotal =
       (stop.oneOffDonations ?? []).reduce((sum, d) => {
-        const suggested = Number(d.suggestedAmount ?? 0);
-        const amount = Number(d.amount ?? suggested);
-        const taxable = d.taxableAmount ?? Math.max(0, amount - suggested);
+        const amount = Number(d.amount ?? d.suggestedAmount ?? 0);
+        const taxable = amount > 0 ? amount : 0;
         return sum + taxable;
       }, 0) +
       (stop.oneOffDeliveries ?? []).reduce((sum, d) => {

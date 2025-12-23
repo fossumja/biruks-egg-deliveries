@@ -378,7 +378,6 @@ export class DeliveryRunComponent {
     const donation = this.currentDonation;
     donation.status = 'Donated';
     donation.amount = amount;
-    donation.method = donation.method ?? 'cash';
     donation.date = new Date().toISOString();
     await this.persistCurrentStopDonation();
     this.selectedAmount = amount;
@@ -413,7 +412,6 @@ export class DeliveryRunComponent {
 
     // For Donated (or statuses promoted to Donated)
     donation.amount = amount;
-    donation.method = donation.method ?? 'cash';
     donation.date = now;
     await this.persistCurrentStopDonation();
   }

@@ -4,7 +4,7 @@ How to use the app day‑to‑day: importing routes, planning, running deliverie
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
 - **Scope**: end‑to‑end app usage for delivery weeks
 - **Non-goals**: developer setup or architectural detail
@@ -183,9 +183,11 @@ From the Planner hidden menu:
   - **Donation**:
     - Record a donation for that person that is **not tied to a specific route run**.
     - You choose method and amount; the app computes the deductible charitable contribution (amount minus the suggested donation).
+    - Choose an **event date** (defaults to today). Dates must be within the current calendar year.
 - **Delivery**:
   - Record an extra delivery outside of the normal schedule.
   - Allows you to specify dozens and donation for that one‑off event.
+  - Choose an **event date** (defaults to today). Dates must be within the current calendar year.
 
 These one‑offs:
 

@@ -12,6 +12,7 @@ import { DeliveryRun } from '../models/delivery-run.model';
 import { BaseStop } from '../models/base-stop.model';
 import { CsvImportState } from '../models/csv-import-state.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
+import { normalizeEventDate } from '../utils/date-utils';
 
 const SUGGESTED_KEY = 'suggestedDonationRate';
 
@@ -35,6 +36,12 @@ function computeTaxableAmount(d: DonationInfo): number {
   const amount = Number(d.amount ?? suggested);
   const extra = amount - suggested;
   return extra > 0 ? extra : 0;
+}
+
+function computeOneOffDonationTaxableAmount(d: DonationInfo): number {
+  if (d.status !== 'Donated') return 0;
+  const amount = Number(d.amount ?? d.suggestedAmount ?? 0);
+  return amount > 0 ? amount : 0;
 }
 
 class AppDB extends Dexie {
@@ -265,7 +272,7 @@ export class StorageService {
     if (patch.suggestedAmount != null) {
       next.suggestedAmount = patch.suggestedAmount;
     }
-    next.taxableAmount = computeTaxableAmount(next);
+    next.taxableAmount = computeOneOffDonationTaxableAmount(next);
     list[index] = next;
     await this.db.deliveries.update(deliveryId, {
       oneOffDonations: list,
@@ -705,10 +712,11 @@ export class StorageService {
     const list = Array.isArray(existing.oneOffDonations)
       ? [...existing.oneOffDonations]
       : [];
+    const normalizedDate = normalizeEventDate(donation.date) ?? now;
     const normalizedDonation: DonationInfo = {
       ...donation,
-      taxableAmount: computeTaxableAmount(donation),
-      date: donation.date ?? now
+      taxableAmount: computeOneOffDonationTaxableAmount(donation),
+      date: normalizedDate
     };
     list.push(normalizedDonation);
     await this.db.deliveries.update(id, {
@@ -729,17 +737,18 @@ export class StorageService {
     const list = Array.isArray(existing.oneOffDeliveries)
       ? [...existing.oneOffDeliveries]
       : [];
+    const normalizedDate = normalizeEventDate(donation?.date) ?? now;
     const normalizedDonation = donation
       ? ({
           ...donation,
           taxableAmount: computeTaxableAmount(donation),
-          date: donation.date ?? now
+          date: normalizedDate
         } as DonationInfo)
       : undefined;
     list.push({
       deliveredDozens,
       donation: normalizedDonation,
-      date: now
+      date: normalizedDate
     });
     await this.db.deliveries.update(id, {
       oneOffDeliveries: list,
