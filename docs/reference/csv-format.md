@@ -4,7 +4,7 @@ Reference for the CSV files the app imports, exports, and restores. Covers basel
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: Reference
 - **Scope**: CSV import/export schema and parsing rules
 - **Non-goals**: UI steps for importing/exporting CSV files
@@ -82,8 +82,21 @@ These columns are appended on export and used during restore.
 | `RunDonationAmount` | number | Donation amount for the event. |
 | `RunTaxableAmount` | number | Deductible portion of the donation. |
 | `RunCompletedAt` | string | ISO timestamp of run completion. |
-| `EventDate` | string | ISO timestamp for the event; date-only inputs are normalized to ISO at local midday to avoid timezone drift. |
+| `EventDate` | string | ISO timestamp for the event; date-only inputs are normalized to ISO at local midday to avoid timezone drift. One-off events saved without changing the default date capture the current timestamp. |
 | `SuggestedAmount` | number | Baseline amount used at the time of the event. |
+
+#### EventDate parsing and fallbacks
+
+On restore, `EventDate` is normalized with the same rules used on export:
+
+- ISO timestamps are normalized to ISO.
+- `YYYY-MM-DD` date-only values are normalized to ISO at local midday.
+- Excel serial numbers (for example, `45215` or `45215.5`) are converted using the 1900 date system.
+
+If `EventDate` is missing or invalid, restore falls back to:
+
+- `RunEntry`: `RunCompletedAt`, then `RouteDate` for the run; if both are missing, the restore timestamp is used.
+- `OneOffDonation`/`OneOffDelivery`: the delivery `RouteDate` (Schedule/Date) for the matched base row; if missing, the date remains blank.
 
 ### Totals columns
 

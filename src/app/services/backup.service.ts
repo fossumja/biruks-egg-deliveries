@@ -338,8 +338,7 @@ export class BackupService {
 
         const suggested = Number(don.suggestedAmount ?? 0);
         const amount = Number(don.amount ?? suggested);
-        const taxable =
-          don.taxableAmount ?? Math.max(0, amount - suggested);
+        const taxable = amount > 0 ? amount : 0;
 
         setVal('RunBaseRowId', baseRowId);
         setVal('RunDozens', 0);

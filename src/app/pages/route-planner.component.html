@@ -339,6 +339,28 @@
         <h3>Donation for {{ donationModalStop?.name }}</h3>
         <div class="inline-donation-body">
           <div class="card">
+            <label class="date-field">
+              Donation date
+              <input
+                class="form-control"
+                type="date"
+                [min]="currentYearStart"
+                [max]="currentYearEnd"
+                [ngModel]="oneOffDonationDate"
+                (ngModelChange)="onOneOffDonationDateChange($event)"
+                name="oneOffDonationDate"
+                required
+                [attr.aria-invalid]="oneOffDonationDateError ? 'true' : null"
+                [attr.aria-describedby]="oneOffDonationDateError ? 'one-off-donation-date-error' : null"
+              />
+            </label>
+            @if (oneOffDonationDateError) {
+              <p class="error-text" id="one-off-donation-date-error">
+                {{ oneOffDonationDateError }}
+              </p>
+            }
+          </div>
+          <div class="card">
             <app-donation-controls
               [donation]="donationDraft?.donation || null"
               [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
@@ -350,6 +372,9 @@
               (amountChange)="onDonationAmountChange($event)"
             />
           </div>
+          @if (oneOffDonationTypeError) {
+            <p class="error-text">{{ oneOffDonationTypeError }}</p>
+          }
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
@@ -370,7 +395,14 @@
           </div>
           <div class="donation-actions">
             <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="saveDonation()">Save</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!!oneOffDonationDateError || !!oneOffDonationTypeError"
+              (click)="saveDonation()"
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>
@@ -379,6 +411,28 @@
       <div class="inline-donation card" *ngIf="offScheduleStop?.id === stop.id">
         <h3>Delivery for {{ offScheduleStop?.name }}</h3>
         <div class="inline-donation-body">
+          <div class="card">
+            <label class="date-field">
+              Delivery date
+              <input
+                class="form-control"
+                type="date"
+                [min]="currentYearStart"
+                [max]="currentYearEnd"
+                [ngModel]="oneOffDeliveryDate"
+                (ngModelChange)="onOneOffDeliveryDateChange($event)"
+                name="oneOffDeliveryDate"
+                required
+                [attr.aria-invalid]="oneOffDeliveryDateError ? 'true' : null"
+                [attr.aria-describedby]="oneOffDeliveryDateError ? 'one-off-delivery-date-error' : null"
+              />
+            </label>
+            @if (oneOffDeliveryDateError) {
+              <p class="error-text" id="one-off-delivery-date-error">
+                {{ oneOffDeliveryDateError }}
+              </p>
+            }
+          </div>
           <div class="delivery-card card">
             <app-stop-delivery-card
               [stop]="offScheduleStop"
@@ -396,6 +450,9 @@
               (openMap)="openMaps(offScheduleStop)"
             />
           </div>
+          @if (oneOffDeliveryTypeError) {
+            <p class="error-text">{{ oneOffDeliveryTypeError }}</p>
+          }
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
@@ -416,7 +473,14 @@
           </div>
           <div class="donation-actions">
             <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="saveOffSchedule()">Save</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!!oneOffDeliveryDateError || !!oneOffDeliveryTypeError"
+              (click)="saveOffSchedule()"
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>

@@ -38,6 +38,12 @@ function computeTaxableAmount(d: DonationInfo): number {
   return extra > 0 ? extra : 0;
 }
 
+function computeOneOffDonationTaxableAmount(d: DonationInfo): number {
+  if (d.status !== 'Donated') return 0;
+  const amount = Number(d.amount ?? d.suggestedAmount ?? 0);
+  return amount > 0 ? amount : 0;
+}
+
 class AppDB extends Dexie {
   deliveries!: Table<Delivery, string>;
   routes!: Table<Route, string>;
@@ -266,7 +272,7 @@ export class StorageService {
     if (patch.suggestedAmount != null) {
       next.suggestedAmount = patch.suggestedAmount;
     }
-    next.taxableAmount = computeTaxableAmount(next);
+    next.taxableAmount = computeOneOffDonationTaxableAmount(next);
     list[index] = next;
     await this.db.deliveries.update(deliveryId, {
       oneOffDonations: list,
@@ -709,7 +715,7 @@ export class StorageService {
     const normalizedDate = normalizeEventDate(donation.date) ?? now;
     const normalizedDonation: DonationInfo = {
       ...donation,
-      taxableAmount: computeTaxableAmount(donation),
+      taxableAmount: computeOneOffDonationTaxableAmount(donation),
       date: normalizedDate
     };
     list.push(normalizedDonation);

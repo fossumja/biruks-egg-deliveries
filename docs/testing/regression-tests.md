@@ -4,7 +4,7 @@ Tracks core app behaviors and the regression checklist as the code evolves. Orga
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
 - **Scope**: regression coverage for core app workflows
 - **Non-goals**: authoring new features or automation strategy changes
@@ -28,6 +28,7 @@ Tracks core app behaviors and the regression checklist as the code evolves. Orga
   - [ ] All original CSV columns in the same order.
   - [ ] Additional columns for delivery/donation state (including totals).
   - [ ] Data that matches what has been recorded in the app (see sections 3–5).
+- [ ] Backup restore parses `EventDate` values from Excel (numeric serials and date-only strings) and applies the documented fallback when missing.
 
 **Planned automated tests**
 
@@ -84,11 +85,19 @@ Tracks core app behaviors and the regression checklist as the code evolves. Orga
 - [ ] Opening hidden Donation:
   - [ ] Shows a donation UI matching the run card’s donation layout.
   - [ ] Defaults suggested amount based on dozens and the global suggested rate.
-  - [ ] “Save” records a one‑off donation for that person with current datetime without changing run status.
+  - [ ] Defaults the one-off event date to today and blocks saving when outside the current year.
+  - [ ] Leaving the date unchanged stores the current timestamp for the one-off event.
+  - [ ] Requires selecting a donation type (None or a payment method) before saving.
+  - [ ] Changing the amount does not auto-select a donation method.
+  - [ ] “Save” records a one‑off donation for that person with the selected event date without changing run status.
 - [ ] Opening hidden Delivery:
   - [ ] Shows the same delivery card layout as the Run page (shared component).
   - [ ] Allows adjusting quantity and donation for a one‑off delivery.
-  - [ ] “Save” records a one‑off delivery entry (dozens + donation + date) without changing run status.
+  - [ ] Defaults the one-off event date to today and blocks saving when outside the current year.
+  - [ ] Leaving the date unchanged stores the current timestamp for the one-off event.
+  - [ ] Requires selecting a donation type (None or a payment method) before saving.
+  - [ ] Changing the amount does not auto-select a donation method.
+  - [ ] “Save” records a one‑off delivery entry (dozens + donation + event date) without changing run status.
 - [ ] One‑off donations and deliveries:
   - [ ] Are included in the totals card in the Donation modal (Total Donations / Total Dozen).
   - [ ] Are included in the exported per‑person totals columns.
@@ -127,6 +136,7 @@ Tracks core app behaviors and the regression checklist as the code evolves. Orga
 - [ ] Donation button behavior:
   - [ ] Buttons toggle on/off as intended (Run card can clear the selection).
   - [ ] Reset for a stop resets qty and donation back to original but respects unsubscribed state.
+  - [ ] Changing the donation amount does not auto-select a donation method.
 - [ ] Deliver/Skip actions:
   - [ ] Deliver marks status `'delivered'`, sets `deliveredDozens`, sets donation date, and advances to next stop.
   - [ ] Skip marks status `'skipped'` with reason and advances, and progress header updates (N/M delivered, N skipped).
