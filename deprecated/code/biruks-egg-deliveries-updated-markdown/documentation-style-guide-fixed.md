@@ -4,7 +4,7 @@ This guide defines how to write and structure documentation in this repo so it s
 
 - **Status**: Stable
 - **Owner**: (set per-doc)
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-19
 - **Type**: Reference
 - **Scope**: writing and structuring Markdown docs in this repo
 - **Non-goals**: tooling-specific setup steps (see repo tooling docs)
@@ -93,11 +93,6 @@ You are my {role} assistant.
 
 - ...
 ````
-
-Workflow linkage:
-
-- Every prompt should have a corresponding workflow doc in `docs/dev/workflows/` (or a domain-specific workflow doc).
-- The workflow doc must link to the prompt, and the prompt should be referenced in the workflow’s “Related docs.”
 
 ### Instruction files (`.github/instructions/*.instructions.md`)
 
@@ -227,22 +222,13 @@ Use the template that matches the doc type. When a template applies, its section
 
 ### One source of truth
 
-- Don’t copy long blocks from other docs.
+- Don't copy long blocks from other docs.
 - Link to the canonical doc or code location.
-- When a best practice changes, confirm the new standard first, then update the relevant best-practices doc before applying it elsewhere.
 
 ### Use concrete, testable language
 
 - Prefer: "Run `npm test` and confirm all tests pass."
 - Avoid: "Make sure tests look good."
-- Use **MUST / SHOULD / MAY** intentionally:
-  - MUST: required for correctness or team consistency
-  - SHOULD: default choice; deviations require rationale
-  - MAY: optional; choose when it helps
-
-### Change notes for edits
-
-When you change a standard or workflow, add a short **What changed / Why** note in the relevant section. Keep it to 2-5 bullets.
 
 ### Define terms once
 
@@ -277,7 +263,6 @@ If you truly need repeated headings in different sections, either:
 
 ### Blank lines
 
-- Surround headings with a blank line before and after (except the first H1 at the top). (MD022)
 - Surround lists with a blank line before and after. (MD032)
 - Surround fenced code blocks with a blank line before and after. (MD031)
 - Avoid multiple consecutive blank lines. (MD012)
@@ -803,18 +788,6 @@ Baseline rules implied by this guide:
 - Prefer language tags on fenced code blocks.
 
 If you add stricter rules (like line length), document exceptions and provide an auto-format path.
-
-## Common doc smells
-
-- Large docs with no "Rules" or "Steps" section.
-- Repeating the same standards in multiple places.
-- Long paragraphs with multiple ideas instead of bullets.
-- Rules with no example where an example would clarify intent.
-
-## What changed / Why
-
-- Added MUST/SHOULD/MAY guidance to clarify normative language.
-- Added change-note guidance and a doc-smell checklist to reduce drift.
 
 ## Maintenance
 

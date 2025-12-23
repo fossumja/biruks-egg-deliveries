@@ -1,14 +1,9 @@
-# Angular Standards (v20+)
+# Angular standards (v20+)
 
-Guidance for building this app with modern Angular features and repo-specific constraints. Use this as the single source of truth for Angular patterns in this codebase.
-
-- **Status**: Draft
-- **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
-- **Type**: Reference
-- **Scope**: Angular-specific standards for components, templates, routing, and DI
-- **Non-goals**: TypeScript, testing, and accessibility standards (see related docs)
-- **Applies to**: `src/app/**` and shared libs used by the Angular app
+- **Path:** `docs/dev/best-practices/angular-standards.md`
+- **Last updated:** 2025-12-19
+- **Applies to:** `src/app/**` and shared libs used by the Angular app
+- **Audience:** developers, reviewers, and AI coding agents
 
 ## Purpose
 
@@ -16,20 +11,15 @@ This document defines **Angular-specific** standards for this repo. It assumes o
 
 When a project preference conflicts with Angular best practices, **follow Angular best practice** and note the exception in the PR/ADR.
 
-## Version alignment
-
-This standard targets Angular v20+. The current app dependencies in `package.json` are Angular 19.x. If the repo remains on v19, document any temporary exceptions in the PR and track the upgrade work. Remove those exceptions once v20+ is adopted.
-
 ## Non-goals
 
-- Testing guidelines (covered in `docs/dev/best-practices/testing-practices.md`)
+- Testing guidelines (covered in `docs/dev/best-practices/testing-*.md`)
 - General TypeScript conventions (covered in `docs/dev/best-practices/typescript-standards.md`)
-- General accessibility standards (covered in `docs/dev/best-practices/accessibility.md`)
+- General accessibility standards (covered in `docs/dev/best-practices/accessibility-standards.md`)
 
 ## Repo defaults (already adopted)
 
 - Standalone components only
-- Do not set `standalone: true` in decorators (standalone is the default in Angular v20+)
 - Signals for state
 - No `@HostBinding`/`@HostListener`; use the `host` object in decorators
 - Use `input()` and `output()` functions instead of `@Input()`/`@Output()`
@@ -45,17 +35,15 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
 
 - **MUST** keep components **standalone** and import what they use via `imports: []` in `@Component`.
 - **MUST** keep components small and single-purpose; compose features from components rather than “mega components”.
-- **MUST** use `input()` and `output()` functions instead of `@Input()` and `@Output()`.
 - **SHOULD** prefer **feature folders** with clear public entry points.
   - Recommended per-feature layout:
     - `feature.routes.ts` (lazy route entry)
-    - `feature-page.component.ts` (route-level page component)
+    - `feature.page.ts` (route-level page component)
     - `components/` (presentational components)
     - `data-access/` (services, stores, API clients)
     - `ui/` (dumb UI building blocks, reusable within the feature)
 - **MUST** keep route-level components “thin”: orchestration, data loading, and wiring only.
-- **SHOULD** use inline templates/styles for tiny components and external templates/styles for larger components. ([Components essentials](https://angular.dev/guide/components))
-- **MUST** use template/style paths relative to the component TypeScript file.
+- **SHOULD** keep templates and styles external (`templateUrl`/`styleUrl`) except for truly tiny components. ([Components essentials](https://angular.dev/guide/components))
 
 ### Signals and state ([Signals](https://angular.dev/guide/signals))
 
@@ -65,12 +53,10 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
 - **MUST** prefer `computed()` for derived state.
 - **SHOULD** use `effect()` sparingly:
   - Side effects only (I/O, logging, bridging to non-signal APIs), not for “deriving state”. ([effect](https://angular.dev/api/core/effect))
-- **MAY** use `linkedSignal()` when you need a signal that tracks an input plus local edits, if it is stable in the target Angular version. ([linkedSignal](https://angular.dev/api/core/linkedSignal))
+- **SHOULD** prefer `linkedSignal()`/`model()` when you need a signal that tracks an input + local edits. ([linkedSignal](https://angular.dev/api/core/linkedSignal))
 
-#### Avoid mutation patterns
-
+**Avoid mutation patterns**
 - **DON’T** mutate arrays/objects in-place inside state; create new references instead.
-- **DON’T** use `mutate` on signals; use `set()` or `update()` instead.
 - **DON’T** put HTTP calls directly in effects unless you understand cancellation and teardown. Prefer RxJS for cancellable streams.
 
 ### RxJS interop and async data ([RxJS interop](https://angular.dev/api/core/rxjs-interop))
@@ -82,8 +68,7 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
   - Prefer `AsyncPipe` in templates, or `takeUntilDestroyed()` in code. ([takeUntilDestroyed](https://angular.dev/api/core/rxjs-interop/takeUntilDestroyed))
 - **SHOULD** keep “business streams” in services/data-access, not in presentational components.
 
-#### NgRx
-
+**NgRx**
 - Allowed when the app needs global, event-driven, multi-feature state with strong tooling (devtools, time-travel, effects).  
 - If using NgRx, keep components dumb: selectors in the store layer, minimal glue at the route level.
 
@@ -115,8 +100,6 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
 - **MUST** keep templates “safe”:
   - No side-effectful work in template expressions
   - Prefer pure derived values (`computed`) and bind to those
-- **MUST** use the `async` pipe for template-bound observables.
-- **MUST** avoid arrow functions in templates (they are not supported).
 - **MUST** avoid conditionally including `<ng-content>` (it still instantiates content). ([Content projection note](https://angular.dev/guide/components/content-projection))
 
 ### Dependency injection with `inject()` ([inject](https://angular.dev/api/core/inject))
@@ -137,8 +120,8 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
 
 ### Forms guidance ([Forms overview](https://angular.dev/guide/forms))
 
-- **MUST** prefer **Reactive Forms** for new forms. ([Forms overview](https://angular.dev/guide/forms))
-- **MAY** use **Template-driven forms** only with a documented exception for very small/simple forms. ([Template-driven forms](https://angular.dev/guide/forms/template-driven-forms))
+- **MUST** default to **Reactive Forms** for non-trivial forms (validation, dynamic controls, multi-step flows). ([Forms overview](https://angular.dev/guide/forms))
+- **MAY** use **Template-driven forms** for very small/simple forms where logic is mostly in the template. ([Template-driven forms](https://angular.dev/guide/forms/template-driven-forms))
 - **SHOULD** keep form state in the form model, not duplicated across signals and forms unless there is a clear reason.
 - **SHOULD** isolate complex form logic in a “form service” or feature store rather than bloating the component.
 
@@ -147,12 +130,11 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
 - **MUST** use `NgOptimizedImage` for static images (app assets, known URLs). ([NgOptimizedImage](https://angular.dev/api/common/NgOptimizedImage))
 - **MUST** specify required sizing info (`width`/`height` or `fill`, plus `sizes` when responsive) to prevent layout shift.
 - **SHOULD** use `priority` for LCP images (hero images) and avoid it elsewhere.
-- **DON’T** use `NgOptimizedImage` with inline base64 images.
 - **DON’T** use `NgOptimizedImage` for cases it does not support (e.g., highly dynamic URLs without known dimensions); fall back to `<img>` with careful sizing and `loading` attributes.
 
 ### Accessibility-focused Angular patterns ([Event listeners](https://angular.dev/guide/templates/event-listeners))
 
-> This section focuses on Angular-specific implementation patterns; broader a11y rules live in `docs/dev/best-practices/accessibility.md`.
+> This section focuses on Angular-specific implementation patterns; broader a11y rules live in the accessibility standards doc.
 
 - **MUST** keep interactive behavior on semantic elements (button/link/input) whenever possible.
 - **MUST** bind ARIA attributes using attribute binding:
@@ -305,8 +287,7 @@ export const APP_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () =>
-      import('./pages/home.component').then((m) => m.HomeComponent),
+    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },
   {
     path: 'admin',
@@ -368,19 +349,7 @@ Update this document when any of the following change materially:
 - **Forms direction**
   - If “Signal Forms” moves from experimental to recommended for this repo, this doc must be updated. ([Forms](https://angular.dev/guide/forms))
 
-## 6) What changed / Why
-
-- Added a version alignment note to flag the Angular 19 dependency mismatch.
-
-## 7) Related docs
-
-- `docs/dev/best-practices/accessibility.md`
-- `docs/dev/best-practices/testing-practices.md`
-- `docs/dev/best-practices/typescript-standards.md`
-- `docs/dev/best-practices/file-naming.md`
-- `docs/dev/best-practices/documentation-style-guide.md`
-
-## 8) Official Angular references (no third-party links)
+## 6) Official Angular references (no third-party links)
 
 - [Components](https://angular.dev/guide/components)
 - [Signals](https://angular.dev/guide/signals)

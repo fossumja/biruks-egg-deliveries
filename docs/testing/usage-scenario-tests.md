@@ -4,7 +4,7 @@ Realistic, end-to-end scenarios that exercise the app the way it is used on deli
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
 - **Scope**: manual usage scenarios and automation roadmap
 - **Non-goals**: full automation implementation or test harness design
@@ -19,6 +19,11 @@ This document describes realistic, end-to-end scenarios that exercise the app th
 These are intended as **manual** tests you can walk through periodically, especially after bigger changes.
 
 Over time, we want these scenarios to be **fully automated**. The TODO plan below describes how to get there.
+
+## How this fits the modular test packs
+
+- This doc is part of the full regression run and maps to packs TP-06 through TP-08 in `docs/testing/regression-tests.md`.
+- Run these scenarios when changes affect Planner one-offs, Run flow, or receipts/history.
 
 ---
 

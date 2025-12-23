@@ -1,101 +1,65 @@
-# Documentation Refresh Plan
+# Plan: Documentation Refresh and Validation
 
-This plan lists the documents to create/update now. We will work through each file one by one, double‑checking the codebase and current docs before editing, and incorporating research/best practices as they come in.
+This plan refreshes and validates repo documentation so standards stay current, redundant docs are removed, and agents can navigate the codebase quickly.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
-- **Scope**: documentation refresh and best-practices rollout
-- **Non-goals**: implement code changes unrelated to documentation
+- **Scope**: documentation refresh, validation, and pruning across the repo
+- **Non-goals**: application code changes unrelated to documentation
 - **Applies to**: `docs/` and root-level documentation
 
-## Goals
+## Objective
 
-- Establish clear, reusable best‑practice guidance for agents and contributors.
-- Align all docs with the current repo structure and feature set.
-- Keep the repository index (`index.md`) accurate as structure evolves.
+Bring docs up to date with current code and standards while keeping the documentation surface area focused and easy to navigate for agents and contributors.
 
-## Research needed (to inform drafting)
+## Success criteria
 
-- [ ] File naming conventions and repository layout best practices for Angular/TS projects.
-  - Project preference: all lower‑case, kebab‑case filenames and folder names; avoid spaces. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] Angular v20+ best practices (standalone components, signals, routing, and performance).
-  - Project preference: always target the latest Angular and adjust standards per release; record version-specific rules in `docs/dev/best-practices/angular-standards.md`. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] Angular release cadence and migration guides (deprecations, required practices per version).
-  - Project preference: prioritize forward‑compatible patterns over legacy APIs; document any temporary exceptions. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] TypeScript strictness and typing guidelines for app-scale projects.
-  - Project preference: no `any` in app code; prefer `unknown` and narrow; document acceptable exceptions. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] Accessibility standards for web apps (WCAG AA focus, ARIA patterns).
-  - Project preference: prioritize mobile PWA usage and large touch targets; document UI patterns for accessible swipe/drag. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] Documentation style guidelines for developer-facing and user-facing docs.
-  - Project preference: keep docs concise, task‑oriented, and scoped to this repo; include “what changed/why” when updating. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] Testing strategy references (unit vs. integration vs. scenario/E2E).
-  - Project preference: emphasize scenario tests that mirror real delivery flows; document when to add or update scenarios. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] Operational runbook basics (deployment, backup/restore, incident response).
-  - Project preference: include simple, repeatable steps for non‑developer use; avoid external dependencies where possible. If this conflicts with best practice, follow best practice and document the deviation.
-- [ ] CSV import/export documentation patterns (schemas, versioning, compatibility).
-  - Project preference: backward‑compatible imports, additive exports, and explicit versioning when formats change. If this conflicts with best practice, follow best practice and document the deviation.
+- Every doc has a clear purpose and a single source of truth.
+- Best-practices docs reflect current standards and config.
+- Core product docs (README, architecture, UX, user guide, testing) match current behavior.
+- Workflows and prompts reference the right standards and templates.
+- `index.md` accurately maps doc locations and entry points.
+- Deprecated or redundant docs are marked **Deprecated** and link to replacements.
 
-## Worklist (in order)
+## Constraints
 
-### Developer best practices
+- Use the docs prompt (`/docs`) for updates and alignment whenever possible.
+- Follow `docs/dev/best-practices/documentation-style-guide.md` and file naming rules.
+- Prefer existing docs over new files; reduce duplication instead of expanding it.
+- If updated drafts conflict with current docs, trust the current docs and only adopt improvements.
+- Validate claims against code and config; call out anything that cannot be verified.
 
-- [x] docs/dev/best-practices/file-naming.md
-- [x] docs/dev/best-practices/angular-standards.md
-- [x] docs/dev/best-practices/typescript-standards.md
-- [x] docs/dev/best-practices/documentation-style-guide.md
-- [x] docs/dev/best-practices/testing-practices.md
-- [x] docs/dev/best-practices/accessibility.md
+## Milestones
 
-### Developer workflows
+- Milestone 1: Refresh best-practices docs and the documentation style guide.
+- Milestone 2: Align core product docs with the codebase and data formats.
+- Milestone 3: Align workflows and prompts, then update `index.md` and deprecations.
 
-- [x] docs/dev/workflows/development.md
-- [x] docs/dev/workflows/docs.md
-- [x] docs/dev/workflows/quality.md
-- [x] docs/dev/workflows/release.md
-- [x] docs/dev/workflows/triage.md
+## Work breakdown
 
-### Reference material
+1. Inventory docs and map each to a single purpose; flag duplicates and candidates for deprecation.
+2. Merge improvements from the updated draft docs into current best-practices standards.
+3. Align README, architecture, UX, user guide, and testing docs using `doc: align`.
+4. Audit workflows and prompts for alignment with updated standards.
+5. Update `index.md` and cross-links; mark deprecated docs and link replacements.
+6. Verify metadata and spot-check for stale claims or broken references.
 
-- [x] docs/reference/data-model.md
-- [x] docs/reference/csv-format.md
-- [x] docs/reference/glossary.md
+## Risks and mitigations
 
-### Operations
+- Risk: outdated claims remain after refresh.
+  - Mitigation: align with code/config and add explicit notes for unverified areas.
+- Risk: documentation sprawl makes onboarding harder.
+  - Mitigation: enforce doc purpose, deprecate redundant docs, and keep `index.md` current.
 
-- [x] docs/ops/deployment.md
-- [x] docs/ops/backup-restore.md
-- [x] docs/ops/runbook.md
+## Open questions
 
-### Repo-wide doc metadata alignment
+- Should we upgrade Angular to v20+ to match the Angular standards doc?
+- Do we want markdownlint and link checks in CI?
 
-- [x] Apply the required doc header metadata to all human-facing docs in `docs/` and root docs.
-- [x] Update ADR statuses to match the documentation style guide (Draft | Review | Stable | Deprecated).
+## Related docs
 
-### Core product docs (review + align)
-
-- [x] docs/architecture/architecture-overview.md
-- [x] docs/ux/ux-overview.md
-- [x] docs/ux/style-guide.md
-- [x] docs/testing/regression-tests.md
-- [x] docs/testing/usage-scenario-tests.md
-- [x] docs/user/user-guide.md
-
-### Root docs
-
-- [x] README.md
-- [x] AGENTS.md
-- [x] index.md
-
-### Deprecated docs
-
-- [x] Add required doc headers to `deprecated/docs/*.md` and mark archived plans as Deprecated.
-- [x] Link deprecated plans to their replacement docs where available.
-
-## Working rules
-
-- Update `index.md` if folder structure or doc placement changes.
-- Keep naming lower‑case and kebab‑case for new docs.
-- For each file: review existing content, cross‑check with code/ADRs, then update.
-- Use the best‑practices docs in `docs/dev/best-practices/` as the source of truth for rules; update them instead of restating rules in other docs.
+- `docs/dev/workflows/docs.md`
+- `docs/dev/best-practices/documentation-style-guide.md`
+- `index.md`

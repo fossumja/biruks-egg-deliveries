@@ -4,7 +4,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
 - **Scope**: code quality checks for this repo
 - **Non-goals**: introducing new tooling without explicit approval
@@ -55,5 +55,6 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 ## Related docs
 
 - `.github/prompts/quality.prompt.md`
+- `docs/dev/workflows/testing.md`
 - `docs/dev/best-practices/documentation-style-guide.md`
 - `docs/dev/workflows/docs.md`

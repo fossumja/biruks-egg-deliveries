@@ -4,7 +4,7 @@ This file describes the folder layout for the entire repo and where new files sh
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: Reference
 - **Scope**: repository structure and documentation locations
 - **Non-goals**: detailed file-by-file inventories
@@ -48,12 +48,24 @@ This file describes the folder layout for the entire repo and where new files sh
 - UX inventory and style system: `docs/ux/ux-overview.md`, `docs/ux/style-guide.md`
 - Testing plans: `docs/testing/regression-tests.md`, `docs/testing/usage-scenario-tests.md`
 - Developer standards: `docs/dev/best-practices/angular-standards.md`, `docs/dev/best-practices/typescript-standards.md`, `docs/dev/best-practices/testing-practices.md`, `docs/dev/best-practices/accessibility.md`, `docs/dev/best-practices/documentation-style-guide.md`
-- Developer workflows: `docs/dev/workflows/development.md`, `docs/dev/workflows/feature-delivery.md`, `docs/dev/workflows/docs.md`, `docs/dev/workflows/prompts.md`, `docs/dev/workflows/quality.md`, `docs/dev/workflows/release.md`, `docs/dev/workflows/triage.md`
+- Developer workflows: `docs/dev/workflows/development.md`, `docs/dev/workflows/feature-delivery.md`, `docs/dev/workflows/docs.md`, `docs/dev/workflows/prompts.md`, `docs/dev/workflows/quality.md`, `docs/dev/workflows/testing.md`, `docs/dev/workflows/release.md`, `docs/dev/workflows/triage.md`
 - Operations runbooks: `docs/ops/deployment.md`, `docs/ops/backup-restore.md`, `docs/ops/runbook.md`
 - Reference docs: `docs/reference/data-model.md`, `docs/reference/csv-format.md`, `docs/reference/glossary.md`
 - Decisions (ADRs): `docs/decisions/`
 - Active planning: `docs/plans/documentation-refresh-plan.md`
 - Archived planning notes: `deprecated/docs/task-breakdown.md`, `deprecated/docs/task-breakdown-styling.md`
+
+## Documentation purpose map
+
+- Best practices (`docs/dev/best-practices/`): repo standards and single sources of truth.
+- Workflows (`docs/dev/workflows/`): repeatable procedures with inputs, steps, and checks.
+- Reference (`docs/reference/`): schemas, formats, and definitions.
+- Plans (`docs/plans/`): temporary coordination notes; move to `deprecated/` when complete.
+- Decisions (`docs/decisions/`): ADRs and lasting architectural decisions.
+- UX (`docs/ux/`): behavior, screens, and style guidance.
+- User (`docs/user/`): non-developer usage and day-to-day flows.
+- Ops (`docs/ops/`): runbooks, backup/restore, and operational steps.
+- Deprecated (`deprecated/`): historical artifacts; do not use for new work.
 
 ## Root-level files (by purpose)
 

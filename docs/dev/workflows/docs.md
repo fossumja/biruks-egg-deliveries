@@ -4,7 +4,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: How-to
 - **Scope**: creating and updating documentation in this repo
 - **Non-goals**: modifying application code or external tooling
@@ -43,6 +43,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 1. Apply the style guide:
    - Use the appropriate template.
    - Keep sections relevant; remove unused sections.
+1. Add a short "What changed / Why" note when updating standards or workflows.
 1. Update links and references:
    - Adjust any doc links affected by renames or moves.
 1. Update `index.md` if folders or doc locations changed.
@@ -57,12 +58,17 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 - `doc: guide <file>` applied for human-facing docs.
 - References in `README.md`, `AGENTS.md`, and `index.md` are correct.
 - No new markdownlint warnings for headings or lists.
+- "What changed / Why" notes added for standards and workflow updates.
 
 ## Outputs
 
 - Updated doc(s) that follow the style guide.
 - Updated `index.md` when applicable.
 - ADR added if a decision was made.
+
+## What changed / Why
+
+- Added a reminder to include "What changed / Why" notes when updating standards or workflows.
 
 ## Related docs
 

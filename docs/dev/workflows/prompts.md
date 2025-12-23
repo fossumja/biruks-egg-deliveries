@@ -64,6 +64,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
 - `quality` — run quality gates. Shorthand: `quality check`. Workflow: `docs/dev/workflows/quality.md`.
+- `testing` — select and run modular regression packs. Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
 
 ### Documentation and knowledge
 

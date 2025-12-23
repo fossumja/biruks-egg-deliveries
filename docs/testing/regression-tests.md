@@ -1,268 +1,307 @@
-# Regression Test Plan – Biruk's Egg Deliveries
+# Regression Test Plan - Biruk's Egg Deliveries
 
-Tracks core app behaviors and the regression checklist as the code evolves. Organized by feature area and mapped to key components/services in the repo.
+This plan defines modular regression packs for the entire app so testing is reliable and scoped to the changes made. Use it to run targeted coverage for a feature change or a full regression before releases.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
 - **Last updated**: 2025-12-22
 - **Type**: How-to
-- **Scope**: regression coverage for core app workflows
-- **Non-goals**: authoring new features or automation strategy changes
-- **Applies to**: `src/app/**`
-
-## 1. Import, Routes, and Home Page
-
-**Code:**
-
-- Home component: `src/app/pages/home.component.ts/html/scss`  
-- Storage service: `src/app/services/storage.service.ts`  
-- Backup/export: `src/app/services/backup.service.ts` (and CSV helpers)
-
-**Behaviors to verify**
-
-- [ ] CSV import accepts the real route files (e.g., “A Week Deliveries 2025.csv”) and fails with a clear message when required columns are missing or malformed.
-- [ ] All input columns (including unused ones) are preserved in the import state so they can be exported later in the original order.
-- [ ] Route list on Home reflects imported routes with accurate counts (delivered / skipped / total).
-- [ ] “Start Route / Planner / Run” navigation uses the selected route and persists the last selected route in local storage.
-- [ ] Export (Backup CSV) writes:
-  - [ ] All original CSV columns in the same order.
-  - [ ] Additional columns for delivery/donation state (including totals).
-  - [ ] Data that matches what has been recorded in the app (see sections 3–5).
-- [ ] Backup restore parses `EventDate` values from Excel (numeric serials and date-only strings) and applies the documented fallback when missing.
-
-**Planned automated tests**
-
-- [ ] Unit tests for `StorageService.importDeliveries` + CSV normalization.
-- [ ] Unit tests for `BackupService.exportAll()` (or equivalent) verifying columns and ordering.
-
----
-
-## 2. Planner Page – Core Route Editing
-
-**Code:**
-
-- Planner component: `src/app/pages/route-planner.component.ts/html/scss`  
-- Storage: `StorageService` (route queries, saveSortOrder, resetRoute, etc.)
-
-**Behaviors to verify**
-
-- [ ] Route selector + header (sticky at top) always show the active route and “All Schedules” option.
-- [ ] “Reset Route”:
-  - [ ] Clears per‑run status, donation, and quantity overrides for subscribed stops.
-  - [ ] Does **not** resubscribe unsubscribed customers.
-- [ ] “Add Delivery”:
-  - [ ] Defaults Schedule to the current route’s schedule.
-  - [ ] Requires name and a positive dozen count; address fields may be blank.
-  - [ ] Honors “Order in route” to insert the new person at the correct position and reindex the rest.
-- [ ] Inline “Edit delivery”:
-  - [ ] Opens below the selected person’s card.
-  - [ ] Allows editing name, address, notes, and “Order in route”.
-  - [ ] Saving:
-    - [ ] Updates fields and reorders the route using the given order number.
-    - [ ] Moving to a different route appends to that route and remains consistent after reload.
-
-**Planned automated tests**
-
-- [ ] Component tests for `RoutePlannerComponent` covering:
-  - [ ] Adding a delivery and verifying it appears in the correct position.
-  - [ ] Editing and reordering via “Order in route”.
-- [ ] Unit tests for `StorageService.saveSortOrder` and `addDelivery` (dense `sortIndex` / `deliveryOrder`).
-
----
-
-## 3. Planner Hidden Menu – One‑Off Donation & Delivery
-
-**Code:**
-
-- Planner component hidden actions: `route-planner.component.html/ts`  
-- Donation controls: `src/app/components/donation-controls.component.*`  
-- Stop card (shared with run/off‑schedule): `src/app/components/stop-delivery-card.component.*`  
-- Storage: `oneOffDonations`, `oneOffDeliveries` in `Delivery` model and related logic in `StorageService`
-
-**Behaviors to verify**
-
-- [ ] Swipe or tap reveals hidden menu (Reset / Edit / Skip plus Donation/Delivery row).
-- [ ] Opening hidden Donation:
-  - [ ] Shows a donation UI matching the run card’s donation layout.
-  - [ ] Defaults suggested amount based on dozens and the global suggested rate.
-  - [ ] Defaults the one-off event date to today and blocks saving when outside the current year.
-  - [ ] Leaving the date unchanged stores the current timestamp for the one-off event.
-  - [ ] Requires selecting a donation type (None or a payment method) before saving.
-  - [ ] Changing the amount does not auto-select a donation method.
-  - [ ] “Save” records a one‑off donation for that person with the selected event date without changing run status.
-- [ ] Opening hidden Delivery:
-  - [ ] Shows the same delivery card layout as the Run page (shared component).
-  - [ ] Allows adjusting quantity and donation for a one‑off delivery.
-  - [ ] Defaults the one-off event date to today and blocks saving when outside the current year.
-  - [ ] Leaving the date unchanged stores the current timestamp for the one-off event.
-  - [ ] Requires selecting a donation type (None or a payment method) before saving.
-  - [ ] Changing the amount does not auto-select a donation method.
-  - [ ] “Save” records a one‑off delivery entry (dozens + donation + event date) without changing run status.
-- [ ] One‑off donations and deliveries:
-  - [ ] Are included in the totals card in the Donation modal (Total Donations / Total Dozen).
-  - [ ] Are included in the exported per‑person totals columns.
-
-**Planned automated tests**
-
-- [ ] Component tests for `RoutePlannerComponent`:
-  - [ ] Clicking Donation opens the modal and initializes `donationDraft` and totals correctly.
-  - [ ] Clicking Delivery opens the off‑schedule modal and initializes `offDonationDraft` and `offDeliveredQty`.
-  - [ ] Saving each calls the expected `StorageService` methods and does **not** call `markDelivered`/`markSkipped`.
-- [ ] Unit tests for total calculation helpers (if extracted) or `StorageService` helper that aggregates one‑offs + run data.
+- **Scope**: end-to-end regression coverage across all app features
+- **Non-goals**: performance/load testing, backend API testing
+- **Applies to**: `src/app/**`, `src/testing/**`, `public/**`
 
----
+## Scope
 
-## 4. Run Page – Delivery Flow & Donation
+Covered:
 
-**Code:**
+- Home, Planner, and Run flows.
+- CSV import, export, backup, restore, and totals.
+- One-off donations and deliveries.
+- Run history, receipts, and edits.
+- Storage and data utilities.
+- PWA and device integrations (wake lock, sharing, maps, clipboard).
 
-- Run component: `src/app/pages/delivery-run.component.ts/html/scss`  
-- Shared stop card: `stop-delivery-card.component.*`  
-- Shared donation controls: `donation-controls.component.*`  
-- Storage: `StorageService.markDelivered`, `markSkipped`, `computeChangeStatus`
+Not covered:
 
-**Behaviors to verify**
+- Performance or load testing.
+- Cross-browser certification beyond the target devices.
+- Backend integration (this is a standalone app).
 
-- [ ] Current stop card shows:
-  - [ ] Name, address, quantity (dozen) with +/- controls.
-  - [ ] Status pill consistent with Planner (Pending / Delivered / Skipped / Changed / Unsubscribed).
-  - [ ] Donation section with:
-    - [ ] No Donation, Cash, ACH, Venmo, PayPal, Other buttons.
-    - [ ] Suggested amount per dozen using the global suggested rate.
-    - [ ] Picker/qty-style control for donation amount.
-- [ ] Quantity + donation interactions:
-  - [ ] Changing qty or donation type/amount changes status to “Changed”.
-  - [ ] Reverting all three (qty, type, amount) to original values returns status to “Pending”.
-- [ ] Donation button behavior:
-  - [ ] Buttons toggle on/off as intended (Run card can clear the selection).
-  - [ ] Reset for a stop resets qty and donation back to original but respects unsubscribed state.
-  - [ ] Changing the donation amount does not auto-select a donation method.
-- [ ] Deliver/Skip actions:
-  - [ ] Deliver marks status `'delivered'`, sets `deliveredDozens`, sets donation date, and advances to next stop.
-  - [ ] Skip marks status `'skipped'` with reason and advances, and progress header updates (N/M delivered, N skipped).
+## Test strategy
 
-**Planned automated tests**
+- Use modular test packs to match the change scope.
+- Prioritize data and service tests, then component tests, then manual scenarios.
+- Run full regression packs before releases or high-risk changes.
+- Treat device and PWA checks as manual until automated coverage exists.
 
-- [ ] Component tests for `StopDeliveryCardComponent`:
-  - [ ] Status transitions when qty/donation change and revert.
-  - [ ] Donation type toggle behavior (on/off).
-- [ ] Component tests for `DeliveryRunComponent`:
-  - [ ] Deliver and Skip update route stats and header progress correctly.
+## Environments
 
----
+- Local: `ng test` and manual browser checks.
+- CI: headless test runs when configured.
+- Device: iOS/Android PWA checks for gesture and wake lock behavior.
 
-## 5. Unsubscribe / Resubscribe & Status Pills
+## Test pack catalog
 
-**Code:**
+| Pack ID | Name | Scope summary | Primary code areas | Automation status |
+| --- | --- | --- | --- | --- |
+| TP-01 | Home and app shell | Navigation, settings, help overlay, route resume | `src/app/pages/home.component.*`, `src/app/components/app-header.component.*` | Partial |
+| TP-02 | CSV import and baseline data | Import, validation, sample data, routes list | `src/app/pages/home.component.*`, `src/app/services/storage.service.ts` | Partial |
+| TP-03 | Backup, export, restore | Export formats, totals, restore parsing | `src/app/services/backup.service.ts`, `src/app/pages/home.component.*` | Partial |
+| TP-04 | Planner core | Route selection, search, reorder, add/edit | `src/app/pages/route-planner.component.*` | Minimal |
+| TP-05 | Planner status actions | Skip/unskip, unsubscribe, reset, status pills | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Minimal |
+| TP-06 | One-off donations and deliveries | Planner hidden menu, date validation, totals | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Partial |
+| TP-07 | Run flow and donation controls | Deliver/skip, donations, qty changes | `src/app/pages/delivery-run.component.*`, `src/app/components/stop-delivery-card.component.*` | Minimal |
+| TP-08 | Run completion and receipts | Complete run, run history, receipts edits | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Minimal |
+| TP-09 | Shared UI components | Donation controls, amount picker, toast | `src/app/components/**`, `src/app/services/toast.service.ts` | Minimal |
+| TP-10 | Data and utilities | Storage, date utils, import state | `src/app/services/storage.service.ts`, `src/app/utils/**` | Partial |
+| TP-11 | Device and PWA | Wake lock, share, maps, clipboard, manifest | `public/**`, `ngsw-config.json`, device APIs | Manual |
 
-- Planner inline edit + hidden menu: `route-planner.component.*`  
-- Run card and Planner pills: `delivery-run.component.html/scss`, `stop-delivery-card.component.html/scss`  
-- Storage: `StorageService.resetDelivery`, `resetRoute`, `markSkipped`
+## Test pack details
 
-**Behaviors to verify**
+### TP-01 Home and app shell
 
-- [ ] Unsubscribing a person:
-  - [ ] Sets `subscribed = false`, `status = 'skipped'`, and `skippedReason` containing “unsubscribed”.
-  - [ ] Moves them to the end of the route.
-  - [ ] Status pill shows “Unsubscribed” on both Planner and Run.
-- [ ] Resubscribing:
-  - [ ] Clears `skippedReason` and resets status to pending (if no other changes).
-  - [ ] Allows them to appear in route progress again.
-- [ ] Reset (route or individual):
-  - [ ] Does not resubscribe unsubscribed customers.
-  - [ ] Uses `originalDozens` and original donation as baseline.
-- [ ] Header progress and route stats:
-  - [ ] Exclude unsubscribed stops from the total and delivered counts.
-  - [ ] Show skipped counts separately (N skipped) in the header.
+Scope:
 
-**Planned automated tests**
+- Navigation links and route persistence.
+- Help overlay content and toggle.
+- Suggested donation rate controls and persistence.
+- Dark mode toggle and theme application.
+- Build info display and fetch behavior.
 
-- [ ] Unit tests for `resetDelivery` / `resetRoute` on unsubscribed vs subscribed rows.
-- [ ] Component tests verifying pill text and colors for all statuses across Planner and Run.
+Automated coverage:
 
----
+- Expand `src/app/pages/home.component.spec.ts` beyond create.
+- Add app header progress tests in `src/app/components/app-header.component.spec.ts`.
 
-## 6. Ordering, Drag & Swipe
+Manual checks:
 
-**Code:**
+- Home buttons show correct enabled/disabled states.
+- Route resume returns to the last selected route.
+- Header progress bar matches run state.
 
-- Planner drag + swipe: `route-planner.component.ts/html/scss` (CDK DragDrop, swipe handlers)
+### TP-02 CSV import and baseline data
 
-**Behaviors to verify**
+Scope:
 
-- [ ] Drag handle:
-  - [ ] Only the handle (≡) reorders; other parts of the row do not start drag.
-  - [ ] Drag target is large enough on mobile (as currently sized).
-- [ ] Swipe to reveal hidden menu:
-  - [ ] Horizontal swipes (with slight vertical movement) reliably open/close the hidden menu.
-  - [ ] Vertical scrolling is still usable and not blocked by swipe when movement is clearly vertical.
-  - [ ] Only one row’s hidden menu is open at a time.
+- CSV import validation (required columns, numeric dozens).
+- Column normalization and preservation for export.
+- Sample data auto-load when no routes exist.
+- Routes list and counts on Home.
 
-**Planned automated tests**
+Automated coverage:
 
-- (Gesture behavior is hard to automate reliably across browsers; treat this as a manual regression checklist for now.)
+- Add storage import tests in `src/app/services/storage.service.spec.ts`.
+- Add CSV parsing tests in `src/app/pages/home.component.spec.ts` if needed.
 
----
+Manual checks:
 
-## 7. Export CSV & Totals
+- Import accepts real route CSVs and shows helpful errors for malformed files.
+- Imported routes appear with correct totals and can be opened.
 
-**Code:**
+### TP-03 Backup, export, restore
 
-- Backup/export service and helpers: `BackupService` and CSV formatting logic  
-- Storage: uses `Delivery` records, including `donation`, `oneOffDonations`, `oneOffDeliveries`
+Scope:
 
-**Behaviors to verify**
+- Export totals and history rows (delivery, run entry, one-off rows).
+- Restore behavior for run history and one-off events.
+- Event date normalization (Excel serials, date-only strings).
+- Share API fallback and file naming.
 
-- [ ] Exported CSV:
-  - [ ] Contains original columns + new appended columns for current run state and totals.
-  - [ ] For each person, “Total Donations” and “Total Dozen” reflect:
-    - [ ] All completed run deliveries.
-    - [ ] All one‑off deliveries and donations via hidden menu.
-  - [ ] Fields that are not used by the app are still round‑tripped unchanged.
+Automated coverage:
 
-**Planned automated tests**
+- `src/app/services/backup.service.spec.ts`
+- `src/app/services/usage-scenario-totals.spec.ts`
+- `src/app/services/usage-scenario-runner.spec.ts`
 
-- [ ] Unit tests around the CSV writer using a small synthetic dataset that includes:
-  - [ ] Multiple runs.
-  - [ ] Unsubscribed stops.
-  - [ ] Mixture of one‑off and run‑delivered donations.
+Manual checks:
 
----
+- Backup CSV opens with all original columns preserved.
+- Restore replaces existing data and rebuilds run history.
+- Totals in export match app totals after one-offs.
 
-## 8. PWA & UX Specific Behaviors (Manual)
+### TP-04 Planner core
 
-**Code:**
+Scope:
 
-- App shell: `src/app/app.component.*`, `src/styles.scss`  
-- Wake lock: `HomeComponent.toggleWakeLock`  
-- Dark mode: global theme (`[data-theme='dark']`) + page‑level SCSS  
-- PWA config: `public/manifest.webmanifest`, service worker config
+- Route selection and All Schedules view.
+- Search and filtering.
+- Reorder toggle and drag behavior.
+- Add delivery form validation and ordering.
+- Edit delivery fields and route changes.
 
-**Behaviors to verify manually**
-- [ ] iOS PWA:
-  - [ ] Button “pressed” states do not linger after touch release (hover effectively disabled on touch).
-  - [ ] Swipe gestures on Planner work without fighting scroll.
-  - [ ] Dynamic Island / status bar background matches the app background in both light and dark mode.
-  - [ ] App icon and splash use the correct assets.
-- [ ] “Keep screen awake”:
-  - [ ] When ON, screen doesn’t auto‑sleep while the app is in foreground.
-  - [ ] State is persisted and reflected correctly on Home.
-- [ ] Dark mode:
-  - [ ] Applies consistently across Home, Planner, Run, modals, chips, qty controls, pills, and hidden menus.
-  - [ ] Hover/focus colors remain readable in dark mode.
+Automated coverage:
 
----
+- Expand `src/app/pages/route-planner.component.spec.ts` with mocked storage.
 
-## 9. How to Use This Document
+Manual checks:
 
-- Treat each bullet as either:
-  - A **manual regression step** you can walk through on device (especially PWA and gestures), or
-  - A **candidate test case** to codify in unit/component tests.
-- As tests are implemented, update the checkboxes and, if helpful, link to specific spec files (e.g., `storage.service.spec.ts`, `route-planner.component.spec.ts`).
+- Reorder only works when toggle is active.
+- New deliveries insert at the correct order and reindex.
+- Search hides non-matching stops and is reversible.
 
----
+### TP-05 Planner status actions
 
-## 10. Backlog / Tech Debt
+Scope:
 
-- [ ] Add a Dexie **compound index** on `deliveries` for `[routeDate+status]` to remove the “would benefit from a compound index [routeDate+status]” warnings and keep route/status queries fast as the dataset grows.
-- [ ] Add a simple **“How this app works”** help/readme view (linked from Home) that explains import/backup/run behavior, instead of relying on inline instructional text in the Home header.
+- Skip and unskip behavior.
+- Unsubscribe and resubscribe behavior.
+- Reset route and reset stop behavior.
+- Status pills across Planner and Run views.
+
+Automated coverage:
+
+- Add storage reset tests in `src/app/services/storage.service.spec.ts`.
+- Component tests for status pill rendering in `src/app/components/stop-delivery-card.component.spec.ts`.
+
+Manual checks:
+
+- Unsubscribed stops move to the end and stay skipped after reset.
+- Reset does not resubscribe users.
+
+### TP-06 One-off donations and deliveries
+
+Scope:
+
+- Hidden menu donation and delivery flows.
+- Date validation and current-year constraint.
+- Donation type selection and amount handling.
+- Totals and receipts inclusion.
+
+Automated coverage:
+
+- Extend scenario runner tests for one-offs.
+- Add planner component tests for modal state and validation.
+
+Manual checks:
+
+- One-off saves do not change live run status.
+- Totals include one-off donations and deliveries.
+
+### TP-07 Run flow and donation controls
+
+Scope:
+
+- Deliver and skip actions with reasons.
+- Quantity adjustments and status changes.
+- Donation status and method toggles.
+- Address copy and map launch behavior.
+
+Automated coverage:
+
+- Expand `src/app/pages/delivery-run.component.spec.ts`.
+- Add unit tests for `computeChangeStatus` in storage.
+
+Manual checks:
+
+- Status transitions: Pending -> Changed -> Delivered.
+- Skip dialog updates counts and progress.
+
+### TP-08 Run completion and receipts
+
+Scope:
+
+- Complete run, end early, and archive behaviors.
+- Run history selection and run entry ordering.
+- All receipts view (runs + one-offs).
+- Editing run entries and one-off receipts.
+
+Automated coverage:
+
+- Add tests for `StorageService.completeRun` and run entry ordering.
+- Add planner receipts view tests using mocked run entries.
+
+Manual checks:
+
+- Completing a run resets the route for the next run.
+- All receipts view shows both run entries and one-offs.
+
+### TP-09 Shared UI components
+
+Scope:
+
+- Donation controls defaulting and reselect behavior.
+- Donation amount picker defaults and save/cancel.
+- Stop card emits correct events.
+- Toast message lifecycle.
+
+Automated coverage:
+
+- Add component tests in `src/app/components/*.spec.ts`.
+
+Manual checks:
+
+- Donation controls respect allow-reselect behavior.
+- Toasts appear and auto-dismiss.
+
+### TP-10 Data and utilities
+
+Scope:
+
+- Storage state transitions and persistence.
+- Import state save/load and baseRowId handling.
+- Date normalization rules and sorting.
+
+Automated coverage:
+
+- Add `src/app/services/storage.service.spec.ts` and `src/app/utils/date-utils.spec.ts`.
+
+Manual checks:
+
+- Suggested donation rate persists across sessions.
+- Import state survives backup and restore.
+
+### TP-11 Device and PWA
+
+Scope:
+
+- Wake lock support and fallback behavior.
+- Share API fallback to download.
+- Maps deep links and clipboard copy.
+- PWA manifest and service worker caching.
+
+Automated coverage:
+
+- Manual only until device automation is added.
+
+Manual checks:
+
+- iOS and Android PWA behaviors match expectations.
+- App icon and splash screen assets are correct.
+
+## Change-impact map
+
+Use this table to choose packs based on changed files.
+
+| Change area | Required packs | Notes |
+| --- | --- | --- |
+| `src/app/pages/home.component.*` | TP-01, TP-02, TP-03, TP-11 | Home owns import/export/restore and settings. |
+| `src/app/pages/route-planner.component.*` | TP-04, TP-05, TP-06, TP-08 | Planner owns editing, one-offs, and receipts. |
+| `src/app/pages/delivery-run.component.*` | TP-07, TP-08 | Run flow and completion logic. |
+| `src/app/services/storage.service.ts` | TP-02, TP-03, TP-04, TP-05, TP-06, TP-07, TP-08, TP-10 | Storage touches most workflows. |
+| `src/app/services/backup.service.ts` | TP-03, TP-08, TP-10 | Export, totals, and history. |
+| `src/app/components/donation-controls.component.*` | TP-06, TP-07, TP-09 | Used in Planner and Run. |
+| `src/app/components/stop-delivery-card.component.*` | TP-07, TP-09 | Run card behaviors. |
+| `src/app/components/donation-amount-picker.component.*` | TP-06, TP-07, TP-09 | Used in one-offs and run. |
+| `src/app/utils/date-utils.ts` | TP-03, TP-06, TP-08, TP-10 | Affects restore and receipts. |
+| `public/**`, `ngsw-config.json` | TP-11 | PWA behaviors and assets. |
+
+If changes span more than three packs or touch storage + backup, run a full regression.
+
+## Acceptance criteria
+
+- Targeted change: all required packs for the change area are executed with no failures.
+- Release: all packs TP-01 through TP-11 are executed, plus usage scenarios.
+- Any known failures are documented with follow-up issues.
+
+## Reporting
+
+- Record test packs run and results in the PR or release notes.
+- Update this plan when new features or tests are added.
+
+## Related docs
+
+- `docs/testing/usage-scenario-tests.md`
+- `docs/dev/best-practices/testing-practices.md`
+- `docs/dev/workflows/testing.md`
+- `.github/prompts/testing.prompt.md`
+- `docs/dev/workflows/quality.md`

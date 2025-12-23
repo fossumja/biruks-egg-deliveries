@@ -4,7 +4,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-22
 - **Type**: Reference
 - **Scope**: unit, integration, component, and scenario testing practices
 - **Non-goals**: detailed test cases or framework selection changes
@@ -15,6 +15,11 @@ This document defines how we test the app and what coverage we prioritize. Use i
 - Protect delivery-day workflows and CSV export accuracy.
 - Keep tests fast, deterministic, and focused on real user behavior.
 - Prefer scenario coverage that mirrors actual delivery runs.
+
+## Current baseline
+
+- Default runner: `ng test` with Karma + Jasmine.
+- If test tooling changes, update this doc and `docs/dev/workflows/quality.md` before migrating.
 
 ## Test layers (priority order)
 
@@ -34,6 +39,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 - Cover Planner and Run page behaviors that drive storage updates.
 - Validate status transitions, quantity changes, and donation logic.
 - Mock services at the boundary and assert calls plus local state changes.
+- Prefer stable selectors (`data-testid` or ARIA labels) over brittle class names.
 
 ### Scenario tests
 
@@ -68,17 +74,33 @@ This document defines how we test the app and what coverage we prioritize. Use i
 - Prefer explicit assertions over snapshot-style checks.
 - If a bug fix ships, add a regression test that fails without the fix.
 
-## Tooling
+## Do / Don't
 
-- Default runner: `ng test` with Karma + Jasmine.
-- If tooling changes, update this doc and `docs/dev/workflows/quality.md`.
+- **Do** test the highest-risk logic where a bug would lose data or block deliveries.
+- **Do** bias toward unit and integration tests for speed and stability.
+- **Do** treat flaky tests as priority fixes or delete them if they are not valuable.
+- **Don't** duplicate the same assertion across many tests.
+- **Don't** over-mock everything; prefer simple fakes and real templates.
 
-## Documentation updates
+## Common pitfalls
 
-- When tests are added or retired, update:
-  - `docs/testing/regression-tests.md`
-  - `docs/testing/usage-scenario-tests.md`
-- When a testing standard changes, update this doc before applying it elsewhere.
+- Asserting implementation details instead of user-visible behavior.
+- Snapshot-heavy tests that churn on unrelated UI changes.
+- Flaky async tests (missing awaits, uncontrolled timers).
+- Overusing TestBed setup instead of shared helpers.
+
+## Version watchlist
+
+Update this doc when any of the following change:
+
+- Angular CLI default testing guidance changes.
+- The repo migrates from Karma/Jasmine to a different runner.
+- New Angular features require new test patterns (SSR/hydration changes).
+
+## What changed / Why
+
+- Clarified the current runner baseline and added a watchlist for tooling shifts.
+- Added guidance on stable selectors and common pitfalls to reduce flaky tests.
 
 ## Related docs
 
