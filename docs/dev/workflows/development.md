@@ -28,6 +28,7 @@ Use this workflow to set up and run the app locally during active development.
 - Avoid adding new tooling without approval.
 - Prefer prompts for repeatable tasks; create a prompt if one is missing.
 - Use short-lived feature branches off `main`; delete them after merge.
+- Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
 
 ## Steps
