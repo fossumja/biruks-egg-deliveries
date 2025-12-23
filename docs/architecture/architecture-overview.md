@@ -4,7 +4,7 @@ This document describes the current architecture of the Biruk's Egg Deliveries P
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-23
 - **Type**: Reference
 - **Scope**: system architecture, storage design, and key data flows
 - **Non-goals**: UI walkthroughs or operational procedures
@@ -19,7 +19,7 @@ This document describes the current architecture of the Biruk's Egg Deliveries P
 ## High-level architecture
 
 - **Frontend**: Standalone Angular app with three main pages:
-  - Home (`src/app/pages/home.component.*`)
+  - Home (`src/app/pages/home.component.*`) with the tax-year selector for totals and exports.
   - Route planner (`src/app/pages/route-planner.component.*`)
   - Delivery run (`src/app/pages/delivery-run.component.*`)
 - **Routing**: Defined in `src/app/app.routes.ts` with routes for home, planner, and run views.
@@ -47,14 +47,14 @@ This document describes the current architecture of the Biruk's Egg Deliveries P
 
 - **CSV parsing**: Imports use PapaParse in `home.component.ts`.
 - **Baseline imports**: Read delivery rows into the local database.
-- **Backups**: `BackupService` exports CSV using Web Share when available, or a local file download.
+- **Backups**: `BackupService` exports CSV using Web Share when available, or a local file download. Totals are scoped to the selected tax year and the filename includes a tax-year suffix.
 - **Restore**: Backup CSV restores replace deliveries, routes, run history, and import state in one operation.
 - **Formats**: See `docs/reference/csv-format.md` for column rules and `RowType` handling.
 
 ## Run history and donation totals
 
 - Completed runs are snapshotted into `runs` and `runEntries` via `StorageService.completeRun`.
-- Donation totals are computed from per-event receipts using the global formula and stored on export.
+- Donation totals are computed from per-event receipts using the global formula and stored on export, with optional tax-year filtering.
 - See decisions and reference docs for the rationale and formula details.
 
 ## Offline behavior

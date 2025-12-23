@@ -75,6 +75,40 @@ describe('Usage scenario totals (data-level)', () => {
     expect(c2Totals!.dozens).toBe(0);
   });
 
+  it('filters one-off totals by tax year', async () => {
+    await storage.appendOneOffDonation('c2-r1', {
+      status: 'Donated' as const,
+      method: 'cash' as const,
+      amount: 5,
+      suggestedAmount: 5,
+      date: '2024-11-10'
+    });
+    await storage.appendOneOffDonation('c2-r2', {
+      status: 'Donated' as const,
+      method: 'venmo' as const,
+      amount: 7,
+      suggestedAmount: 7,
+      date: '2025-01-10'
+    });
+
+    const deliveries = await storage.getAllDeliveries();
+    const totals2024 = (backup as any).computeTotalsByBase(
+      deliveries,
+      [],
+      undefined,
+      2024
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const totals2025 = (backup as any).computeTotalsByBase(
+      deliveries,
+      [],
+      undefined,
+      2025
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+
+    expect(totals2024.get('c2')?.donation ?? 0).toBeCloseTo(5, 5);
+    expect(totals2025.get('c2')?.donation ?? 0).toBeCloseTo(7, 5);
+  });
+
   it('totals one-off deliveries only (dozens + donation)', async () => {
     const rate = storage.getSuggestedRate();
 

@@ -22,7 +22,7 @@ import { ToastService } from '../services/toast.service';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { BackupService } from '../services/backup.service';
-import { normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
+import { getEventYear, normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
 
 @Component({
   selector: 'app-route-planner',
@@ -61,9 +61,11 @@ export class RoutePlannerComponent {
     taxableTotal: 0,
     baselineTotal: 0,
   };
-  readonly currentYear = new Date().getFullYear();
-  readonly currentYearStart = `${this.currentYear}-01-01`;
-  readonly currentYearEnd = `${this.currentYear}-12-31`;
+  oneOffMinYear = new Date().getFullYear();
+  oneOffMaxYear = this.oneOffMinYear + 1;
+  oneOffDateMin = `${this.oneOffMinYear}-01-01`;
+  oneOffDateMax = `${this.oneOffMaxYear}-12-31`;
+  oneOffYearRangeLabel = `${this.oneOffMinYear} and ${this.oneOffMaxYear}`;
   oneOffDonationDate = '';
   oneOffDonationDateError = '';
   private oneOffDonationDateTouched = false;
@@ -153,10 +155,86 @@ export class RoutePlannerComponent {
   private validateOneOffDate(value: string): string {
     if (!value) return 'Date is required.';
     if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Enter a valid date.';
-    if (value < this.currentYearStart || value > this.currentYearEnd) {
-      return `Date must be within ${this.currentYear}.`;
+    if (value < this.oneOffDateMin || value > this.oneOffDateMax) {
+      return `Date must be between ${this.oneOffYearRangeLabel}.`;
     }
     return '';
+  }
+
+  private async refreshOneOffDateRange(): Promise<void> {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const dataYears = new Set<number>();
+    const baselineYear = this.resolveBaselineYear(currentYear);
+    dataYears.add(baselineYear);
+
+    const [deliveries, runEntries, runs] = await Promise.all([
+      this.storage.getAllDeliveries(),
+      this.storage.getAllRunEntries(),
+      this.storage.getAllRuns(),
+    ]);
+
+    const runDateById = new Map<string, string>();
+    runs.forEach((run) => {
+      const raw = run.date ?? run.routeDate;
+      if (!raw) return;
+      runDateById.set(run.id, raw);
+      dataYears.add(getEventYear(raw, now));
+    });
+
+    runEntries.forEach((entry) => {
+      const raw = entry.eventDate ?? runDateById.get(entry.runId);
+      if (!raw) return;
+      dataYears.add(getEventYear(raw, now));
+    });
+
+    deliveries.forEach((delivery) => {
+      if (delivery.status === 'delivered') {
+        dataYears.add(getEventYear(delivery.deliveredAt, now));
+      }
+      (delivery.oneOffDonations ?? []).forEach((donation) => {
+        dataYears.add(getEventYear(donation.date, now));
+      });
+      (delivery.oneOffDeliveries ?? []).forEach((entry) => {
+        dataYears.add(getEventYear(entry.date, now));
+      });
+    });
+
+    const earliestYear =
+      dataYears.size > 0 ? Math.min(...dataYears) : currentYear;
+    const latestYear =
+      dataYears.size > 0 ? Math.max(...dataYears) : currentYear;
+    const maxYear = Math.max(latestYear, currentYear) + 1;
+    this.setOneOffDateRange(earliestYear, maxYear);
+  }
+
+  private setOneOffDateRange(minYear: number, maxYear: number): void {
+    this.oneOffMinYear = minYear;
+    this.oneOffMaxYear = maxYear;
+    this.oneOffDateMin = `${minYear}-01-01`;
+    this.oneOffDateMax = `${maxYear}-12-31`;
+    this.oneOffYearRangeLabel =
+      minYear === maxYear ? `${minYear}` : `${minYear} and ${maxYear}`;
+    if (this.oneOffDonationDateTouched) {
+      this.oneOffDonationDateError = this.validateOneOffDate(
+        this.oneOffDonationDate
+      );
+    }
+    if (this.oneOffDeliveryDateTouched) {
+      this.oneOffDeliveryDateError = this.validateOneOffDate(
+        this.oneOffDeliveryDate
+      );
+    }
+  }
+
+  private resolveBaselineYear(fallbackYear: number): number {
+    if (typeof localStorage === 'undefined') return fallbackYear;
+    const raw = localStorage.getItem('lastImportAt');
+    if (!raw) return fallbackYear;
+    const parsed = new Date(raw);
+    return Number.isNaN(parsed.getTime())
+      ? fallbackYear
+      : parsed.getFullYear();
   }
 
   private validateDonationSelection(
@@ -623,6 +701,7 @@ export class RoutePlannerComponent {
       return;
     }
     await this.loadDeliveries();
+    await this.refreshOneOffDateRange();
     this.persistRouteSelection();
   }
 

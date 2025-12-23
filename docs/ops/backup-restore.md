@@ -4,7 +4,7 @@ Runbook for backing up data and restoring from a backup CSV.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: data backup and restore workflows
 - **Non-goals**: changing CSV formats or implementing new storage features
@@ -26,8 +26,9 @@ Runbook for backing up data and restoring from a backup CSV.
 ### Backup (CSV)
 
 1. Go to Home.
-2. Use **Backup (CSV)** to export.
-3. Save the file in a safe location.
+2. Confirm the correct **Tax year** is selected (totals and filename follow it).
+3. Use **Backup (CSV)** to export.
+4. Save the file in a safe location.
 
 ### Restore (CSV)
 

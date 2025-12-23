@@ -3,20 +3,22 @@ import Papa from 'papaparse';
 import { Delivery } from '../models/delivery.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { StorageService } from './storage.service';
-import { normalizeEventDate } from '../utils/date-utils';
+import { getEventYear, normalizeEventDate } from '../utils/date-utils';
 
 @Injectable({ providedIn: 'root' })
 export class BackupService {
   constructor(private storage: StorageService) {}
 
-  async exportAll(): Promise<void> {
+  async exportAll(taxYear?: number): Promise<void> {
     const deliveries = await this.storage.getAllDeliveries();
     const importState = await this.storage.getImportState('default');
     const runEntries = await this.storage.getAllRunEntries();
+    const exportTaxYear = this.resolveExportTaxYear(taxYear);
     const totalsMap = this.computeTotalsByBase(
       deliveries,
       runEntries,
-      importState ?? undefined
+      importState ?? undefined,
+      exportTaxYear
     );
     const runs = await this.storage.getAllRuns();
     const csv = importState
@@ -28,7 +30,7 @@ export class BackupService {
           runEntries
         )
       : this.toCsv(deliveries, totalsMap);
-    const filename = `BiruksEggDeliveries-${new Date().toISOString().slice(0, 10)}.csv`;
+    const filename = this.buildExportFilename(exportTaxYear);
     const file = new File([csv], filename, { type: 'text/csv' });
 
     if (navigator.share && typeof navigator.share === 'function' && (navigator as any).canShare?.({ files: [file] })) {
@@ -407,6 +409,7 @@ export class BackupService {
    *   totalDeductibleContribution = max(0, totalDonation - totalBaselineValue)
    *
    * The returned `taxable` field represents `totalDeductibleContribution`.
+   * When `taxYear` is provided, receipts are filtered to that year.
    */
   private computeTotalsByBase(
     deliveries: Delivery[],
@@ -415,8 +418,22 @@ export class BackupService {
       headers: string[];
       rowsByBaseRowId: Record<string, string[]>;
       mode?: 'baseline' | 'restored';
-    }
+    },
+    taxYear?: number
   ): Map<string, { donation: number; dozens: number; taxable: number }> {
+    const now = new Date();
+    const fallbackYear = now.getFullYear();
+    const targetYear = typeof taxYear === 'number' ? taxYear : undefined;
+    const includeEvent = (raw?: string | number | null): boolean => {
+      if (targetYear == null) return true;
+      return getEventYear(raw, now) === targetYear;
+    };
+    const includeRunEntry = (entry: RunSnapshotEntry): boolean => {
+      if (targetYear == null) return true;
+      const runIdDate = entry.runId?.split('_').pop();
+      const eventSource = entry.eventDate ?? runIdDate;
+      return getEventYear(eventSource, now) === targetYear;
+    };
     const receiptsMap = new Map<
       string,
       { donation: number; dozens: number; baseline: number }
@@ -442,6 +459,7 @@ export class BackupService {
     runEntries.forEach((e) => {
       const baseId = e.baseRowId;
       if (!baseId) return;
+      if (!includeRunEntry(e)) return;
 
       // Treat "donation" status as a pure donation receipt with no dozens/baseline.
       if (e.status === 'donation') {
@@ -483,6 +501,7 @@ export class BackupService {
 
       // Main route-level donation/dozens (only when delivered).
       if (d.status === 'delivered') {
+        if (!includeEvent(d.deliveredAt)) return;
         const dozens = Number(
           d.deliveredDozens ?? d.dozens ?? 0
         );
@@ -508,6 +527,7 @@ export class BackupService {
 
       // One-off donations: pure donation events, no dozens/baseline.
       (d.oneOffDonations ?? []).forEach((don) => {
+        if (!includeEvent(don.date)) return;
         const amount = Number(
           don.amount ?? don.suggestedAmount ?? 0
         );
@@ -517,6 +537,7 @@ export class BackupService {
 
       // One-off deliveries: additional dozens plus optional donation.
       (d.oneOffDeliveries ?? []).forEach((entry) => {
+        if (!includeEvent(entry.date)) return;
         const dozens = Number(entry.deliveredDozens ?? 0);
         const donationInfo = entry.donation;
         const amount =
@@ -549,8 +570,10 @@ export class BackupService {
       string,
       { donation: number; dozens: number; taxable: number }
     >();
+    const includeBaselineTotals =
+      targetYear == null || targetYear === this.resolveBaselineYear(fallbackYear);
 
-    if (importState && importState.mode !== 'restored') {
+    if (importState && importState.mode !== 'restored' && includeBaselineTotals) {
       const { headers, rowsByBaseRowId } = importState;
       const donationIdx = headers.findIndex(
         (h) => h.toLowerCase() === 'totaldonation'
@@ -632,5 +655,33 @@ export class BackupService {
     });
 
     return totalsMap;
+  }
+
+  private resolveBaselineYear(fallbackYear: number): number {
+    if (typeof localStorage === 'undefined') return fallbackYear;
+    const raw = localStorage.getItem('lastImportAt');
+    if (!raw) return fallbackYear;
+    const parsed = new Date(raw);
+    return Number.isNaN(parsed.getTime())
+      ? fallbackYear
+      : parsed.getFullYear();
+  }
+
+  private resolveExportTaxYear(taxYear?: number): number | undefined {
+    if (Number.isFinite(taxYear)) {
+      return Math.trunc(taxYear as number);
+    }
+    if (typeof localStorage === 'undefined') return undefined;
+    const raw = localStorage.getItem('selectedTaxYear');
+    if (!raw) return undefined;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? Math.trunc(parsed) : undefined;
+  }
+
+  private buildExportFilename(taxYear?: number): string {
+    const datePart = new Date().toISOString().slice(0, 10);
+    const yearSuffix =
+      typeof taxYear === 'number' ? `-tax-year-${taxYear}` : '';
+    return `BiruksEggDeliveries-${datePart}${yearSuffix}.csv`;
   }
 }

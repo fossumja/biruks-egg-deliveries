@@ -4,7 +4,7 @@ How to use the app day‑to‑day: importing routes, planning, running deliverie
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: end‑to‑end app usage for delivery weeks
 - **Non-goals**: developer setup or architectural detail
@@ -32,17 +32,19 @@ For each delivery week:
      - All the original columns from your file.
      - All completed runs the app knows about.
      - All one‑off deliveries and donations.
-     - Running totals for dozens, donations, and the deductible charitable contribution per person.
+     - Running totals for dozens, donations, and the deductible charitable contribution per person for the selected tax year.
+
+Set the tax year on Home before exporting so the totals and filename match the year you need.
 
 Deductible totals use a global formula: total donations minus the baseline value of delivered dozens at the time of each delivery (never below zero).
 
-You can run many times per year on the same schedule. The app keeps all of that history and totals until you choose to import a brand new CSV.
+You can run many times per year on the same schedule. The app keeps all of that history and totals; if it sees more than one year of data, Home shows a warning to export and start a new file for the new year.
 
 ---
 
 ## 2. Home Page
 
-The Home page has three main sections:
+The Home page has four main sections:
 
 - **Import / Backup / Help**
   - **Import CSV**: load a route file from your device.
@@ -55,6 +57,10 @@ The Home page has three main sections:
   - The page also shows:
     - **Last backup** timestamp (only when the last backup matches the current data).
     - **Imported** timestamp for when the current dataset was loaded.
+
+- **Tax year**
+  - **Tax year selector**: choose the year used for totals and exports.
+  - If the app detects multiple years of data, it shows a warning to export and start a new file for the new year.
 
 - **Settings**
   - **Dark mode**: toggle between light and dark themes.
@@ -180,14 +186,14 @@ You can run the same schedule again later. Each completed run adds another entry
 
 From the Planner hidden menu:
 
-  - **Donation**:
+- **Donation**:
     - Record a donation for that person that is **not tied to a specific route run**.
     - You choose method and amount; the app computes the deductible charitable contribution (amount minus the suggested donation).
-    - Choose an **event date** (defaults to today). Dates must be within the current calendar year.
+    - Choose an **event date** (defaults to today). Dates must be within the range shown in the picker (earliest data year through next year).
 - **Delivery**:
   - Record an extra delivery outside of the normal schedule.
   - Allows you to specify dozens and donation for that one‑off event.
-  - Choose an **event date** (defaults to today). Dates must be within the current calendar year.
+  - Choose an **event date** (defaults to today). Dates must be within the range shown in the picker (earliest data year through next year).
 
 These one‑offs:
 
@@ -217,13 +223,13 @@ These one‑offs:
 
 ## 8. Exporting for Taxes and Records
 
-The **Backup (CSV)** export is your master snapshot.
+The **Backup (CSV)** export is your master snapshot. Totals are scoped to the tax year selected on Home, and the filename includes that tax year.
 
 Per person, it includes:
 
 - All original columns from your CSV (for reference).
 - Run‑level state for each run (depending on how many runs you’ve completed).
-- Cumulative totals:
+- Totals for the selected tax year:
   - `TotalDozens` – dozens from:
     - Imported totals from your original file (if present),
     - All runs completed in the app,
@@ -250,6 +256,7 @@ For each run:
    - Tap **Backup now**.
    - Tap **Complete run**.
 5. At year‑end:
+   - Set the tax year on Home.
    - Export a final CSV.
    - Use it to build donor and tax statements.
 

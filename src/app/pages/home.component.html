@@ -56,6 +56,36 @@
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
 </section>
 
+<section class="card settings-card tax-year-card">
+  <div class="settings-row">
+    <div>
+      <label class="settings-title" for="tax-year-select">Tax year</label>
+      <div class="text-muted settings-subtitle" id="tax-year-help">
+        Totals and backups use this year.
+      </div>
+    </div>
+    <div class="select-row">
+      <select
+        id="tax-year-select"
+        class="form-control compact"
+        [value]="selectedTaxYear"
+        (change)="onTaxYearChange($event)"
+        [attr.aria-describedby]="hasMultiYearData ? 'tax-year-help tax-year-warning' : 'tax-year-help'"
+      >
+        @for (year of taxYearOptions; track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+  </div>
+  @if (hasMultiYearData) {
+    <div class="tax-year-warning" id="tax-year-warning">
+      Multiple years detected. Export and start a new file for the new year to
+      avoid tax mix-ups.
+    </div>
+  }
+</section>
+
 <section class="card settings-card">
   <div class="settings-row">
     <div>
