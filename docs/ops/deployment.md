@@ -4,7 +4,7 @@ Runbook for deploying the app to GitHub Pages.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-24
 - **Type**: How-to
 - **Scope**: production deployment to `gh-pages`
 - **Non-goals**: changing hosting providers or build tooling
@@ -40,6 +40,10 @@ Runbook for deploying the app to GitHub Pages.
 
 - Open the deployed app URL and confirm it loads.
 - Verify critical flows: import, planner, run view.
+
+## What changed / Why
+
+- Refreshed the deployment runbook metadata to keep ops docs current with the release prompt.
 
 ## Escalation
 

@@ -4,7 +4,7 @@ Operational checks and troubleshooting steps for day-to-day app usage.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-24
 - **Type**: How-to
 - **Scope**: operational health checks and common issues
 - **Non-goals**: deep debugging or code-level fixes
@@ -24,14 +24,16 @@ Operational checks and troubleshooting steps for day-to-day app usage.
 ### Health check
 
 1. Open the Home page.
-2. Confirm **Imported** timestamp is reasonable.
-3. Run **Backup (CSV)** before making changes.
+2. Confirm **Imported**/**Restored** timestamps are reasonable.
+3. Confirm the correct **Tax year** is selected.
+4. Run **Backup CSV** before making changes.
 
 ### Data mismatch
 
-1. Confirm the correct schedule is selected in the Planner.
-2. Check that the run selector is on **Current (live)** if editing is expected.
-3. If a recent import was done, remember it replaces live data.
+1. Confirm the correct route is selected in Planner (under **Routes**).
+2. If you need to edit live stops, make sure you are not viewing **Past runs** or **All receipts**.
+3. If a recent import or restore was done, remember it replaces live data.
+4. If totals look wrong, confirm the selected tax year and re-export a backup.
 
 ### App out of date
 
@@ -46,6 +48,10 @@ Operational checks and troubleshooting steps for day-to-day app usage.
 
 - Planner shows the expected routes/stops.
 - Run page flows work for at least one stop.
+
+## What changed / Why
+
+- Updated the health and mismatch checks to match the current Planner and tax-year UI.
 
 ## Escalation
 

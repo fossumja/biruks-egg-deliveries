@@ -5,6 +5,8 @@ argument-hint: "action=create|review|update|merge pr=<#|url> base=<default> draf
 agent: "agent"
 ---
 
+# Prompt: pr
+
 You are my pull request management assistant.
 
 ## Goals

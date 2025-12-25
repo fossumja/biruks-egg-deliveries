@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -32,6 +32,7 @@ Use this workflow to set up and run the app locally during active development.
 - When a plan has already been reviewed multiple times, explicitly mark the revised plan as approved and proceed unless a decision is blocking.
 - Avoid adding new tooling without approval.
 - Prefer prompts for repeatable tasks; create a prompt if one is missing.
+- Use the docs prompt and documentation style guide for any doc updates.
 - Use short-lived feature branches off `main`; delete them after merge.
 - Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
@@ -60,7 +61,7 @@ Use this workflow to set up and run the app locally during active development.
    - Run at least one base check (default: `npm run build`) for each issue-sized change.
    - If `public/build-info.json` changes, restore it before committing.
 9. Update docs when behavior changes:
-   - Apply `doc: guide <file>` to edited docs as needed.
+   - Use `/docs` with `doc: guide <file>` or `doc: align <file>` to keep docs consistent with the style guide.
 10. Retrospective (regular):
    - After each feature or significant change, capture what worked, what hurt, and the next improvement.
    - Update prompts/workflows when you find friction or missing steps.
@@ -89,10 +90,13 @@ Use this workflow to set up and run the app locally during active development.
 
 - Added issue and plan review steps to validate feasibility before implementation.
 - Added guidance for plan updates, issue comments, and explicit self-approval to reduce review loops.
+- Added explicit docs prompt guidance so documentation updates stay aligned with the style guide.
 
 ## Related docs
 
 - `.github/prompts/branch.prompt.md`
+- `.github/prompts/docs.prompt.md`
 - `README.md`
+- `docs/dev/best-practices/documentation-style-guide.md`
 - `docs/dev/workflows/docs.md`
 - `docs/dev/workflows/quality.md`

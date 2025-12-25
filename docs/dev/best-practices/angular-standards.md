@@ -4,7 +4,7 @@ Guidance for building this app with modern Angular features and repo-specific co
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: Reference
 - **Scope**: Angular-specific standards for components, templates, routing, and DI
 - **Non-goals**: TypeScript, testing, and accessibility standards (see related docs)
@@ -18,7 +18,7 @@ When a project preference conflicts with Angular best practices, **follow Angula
 
 ## Version alignment
 
-This standard targets Angular v20+. The current app dependencies in `package.json` are Angular 19.x. If the repo remains on v19, document any temporary exceptions in the PR and track the upgrade work. Remove those exceptions once v20+ is adopted.
+This standard targets Angular v20+. The current app dependencies in `package.json` are Angular 19.x. If the repo remains on v19, document any temporary exceptions in the PR and track the upgrade work. Remove those exceptions once v20+ is adopted. One explicit exception: keep `standalone: true` in component decorators while on v19 (remove after upgrading to v20+).
 
 ## Non-goals
 
@@ -28,8 +28,7 @@ This standard targets Angular v20+. The current app dependencies in `package.jso
 
 ## Repo defaults (already adopted)
 
-- Standalone components only
-- Do not set `standalone: true` in decorators (standalone is the default in Angular v20+)
+- Standalone components only; while on Angular 19, keep `standalone: true` in decorators (remove after v20 upgrade)
 - Signals for state
 - No `@HostBinding`/`@HostListener`; use the `host` object in decorators
 - Use `input()` and `output()` functions instead of `@Input()`/`@Output()`
@@ -371,6 +370,7 @@ Update this document when any of the following change materially:
 ## 6) What changed / Why
 
 - Added a version alignment note to flag the Angular 19 dependency mismatch.
+- Documented the Angular 19 `standalone: true` exception until the v20 upgrade.
 
 ## 7) Related docs
 

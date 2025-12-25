@@ -4,7 +4,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: creating and updating documentation in this repo
 - **Non-goals**: modifying application code or external tooling
@@ -30,6 +30,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 - Use lower-case, kebab-case naming per `docs/dev/best-practices/file-naming.md`.
 - When a best practice changes, confirm the new standard first, then update the relevant best-practices doc before applying it elsewhere.
 - Prefer using the docs prompt (`/docs`). If a workflow lacks a prompt, create one and link it here.
+- Prompts and instructions must include a single H1 after front matter per the style guide.
 
 ## Steps
 
@@ -69,6 +70,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 ## What changed / Why
 
 - Added a reminder to include "What changed / Why" notes when updating standards or workflows.
+- Added an explicit H1 requirement for prompt and instruction files to match the style guide.
 
 ## Related docs
 

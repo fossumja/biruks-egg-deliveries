@@ -4,7 +4,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-24
 - **Type**: Reference
 - **Scope**: unit, integration, component, and scenario testing practices
 - **Non-goals**: detailed test cases or framework selection changes
@@ -25,7 +25,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 1. Data and service tests
 2. Component tests
-3. Scenario tests (manual now, automated over time)
+3. Scenario tests (manual checks plus data-level automation)
 4. Optional end-to-end tests
 
 ### Data and service tests
@@ -46,6 +46,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 - Follow `docs/testing/usage-scenario-tests.md` and `docs/testing/regression-tests.md`.
 - Keep manual scenarios up to date as features change.
 - Automate scenarios when they stabilize, starting with data-level runners.
+- Use the scenario runner helpers in `src/testing/scenario-runner.ts` for data-level coverage.
 
 ### Optional end-to-end tests
 
@@ -101,6 +102,7 @@ Update this doc when any of the following change:
 
 - Clarified the current runner baseline and added a watchlist for tooling shifts.
 - Added guidance on stable selectors and common pitfalls to reduce flaky tests.
+- Noted the current data-level scenario automation entry points.
 
 ## Related docs
 

@@ -4,86 +4,99 @@ Reference for the stable data entities and core types used in the app.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-23
 - **Type**: Reference
-- **Scope**: TypeScript model interfaces used in storage and UI
+- **Scope**: TypeScript model interfaces used in storage, CSV import/export, and UI
 - **Non-goals**: database migration details or service method behavior
 - **Applies to**: `src/app/models/*.ts`
 
-## Scope
+## Summary
 
-This document lists the canonical model interfaces and their intent. For field-level behavior, refer to the source model file.
+This document lists the canonical model interfaces and their intent. For field-level behavior and defaults, refer to the source model files and related services.
 
-## Core types
+## Contract
+
+### Core types
 
 Defined in `src/app/models/delivery.model.ts`:
 
-- `DeliveryStatus`: `'' | 'changed' | 'delivered' | 'skipped'`
-- `DonationStatus`: `'NotRecorded' | 'Donated' | 'NoDonation'`
-- `DonationMethod`: `'cash' | 'venmo' | 'ach' | 'paypal' | 'other'`
+- `DeliveryStatus`: `'' | 'changed' | 'delivered' | 'skipped'` (`''` is pending, `changed` means the stop was edited from baseline).
+- `DonationStatus`: `'NotRecorded' | 'Donated' | 'NoDonation'`.
+- `DonationMethod`: `'cash' | 'venmo' | 'ach' | 'paypal' | 'other'`.
 
-## Entities
+### Entities
 
-### Delivery
+#### Delivery
 
 Represents a single stop in the current live route.
 
 Key fields:
 
 - `id`: unique delivery id.
-- `baseRowId`: stable per-customer id from CSV.
-- `routeDate`: schedule/date group for the delivery.
-- `dozens`, `deliveredDozens`, `originalDozens`: planned vs delivered quantities.
-- `status`: delivery status for the current run.
-- `donation`, `originalDonation`: donation info for the run.
-- `oneOffDonations`, `oneOffDeliveries`: receipts outside the normal run.
-- `deliveryOrder`, `sortIndex`: ordering for route planning.
-- Timestamps: `deliveredAt`, `skippedAt`, `createdAt`, `updatedAt`.
+- `runId`: live route id (defaults to `routeDate` on import).
+- `baseRowId`: stable per-customer id from CSV (`BaseRowId` or generated `ROW_{index}`).
+- `routeDate`: schedule/date label from the CSV.
+- `week`: normalized schedule id (routeDate with whitespace removed).
+- `name`, `address`, `city`, `state`, `zip`: customer details.
+- `dozens`, `originalDozens`, `deliveredDozens`: planned, imported baseline, and delivered quantities.
+- `deliveryOrder`, `sortIndex`: per-route ordering used in Planner/Run views (normalized on import).
+- `subscribed`: whether the customer is active; `false` marks an unsubscribed stop.
+- `status`: delivery status for the live run (`''`, `changed`, `delivered`, `skipped`).
+- `donation`, `originalDonation`: current and baseline donation data.
+- `oneOffDonations`: donation-only receipts (`DonationInfo[]` with `date`).
+- `oneOffDeliveries`: extra delivery receipts with `deliveredDozens`, `donation`, `date`.
+- `notes`, `skippedReason`: freeform text.
+- Timestamps: `createdAt`, `updatedAt`, `deliveredAt`, `skippedAt`.
+- `synced`: optional flag used for sync state.
 
 Source: `src/app/models/delivery.model.ts`.
 
-### DonationInfo
+#### DonationInfo
 
 Embedded donation data for deliveries and one-offs.
 
 Key fields:
 
 - `status`, `method`, `amount`.
-- `suggestedAmount`: baseline amount at time of event.
-- `taxableAmount`: amount above suggested.
-- `date`, `note`.
+- `suggestedAmount`: baseline amount at time of the event.
+- `taxableAmount`: amount above suggested (deductible contribution).
+- `date`: event timestamp (used for one-off receipts).
+- `note`: freeform note.
 
 Source: `src/app/models/delivery.model.ts`.
 
-### Route
+#### Route
 
 Summary row for a route group.
 
 Key fields:
 
 - `routeDate`: route/schedule identifier.
+- `name`: optional display label.
 - `totalStops`, `deliveredCount`, `skippedCount`.
 - `currentIndex`: last active stop index.
 - `completed`: whether all stops are resolved.
+- `createdAt`, `lastUpdatedAt`: timestamps.
 
 Source: `src/app/models/route.model.ts`.
 
-### DeliveryRun
+#### DeliveryRun
 
 Snapshot metadata for a completed or ended-early run.
 
 Key fields:
 
-- `id`: run identifier.
+- `id`: run identifier in the format `{routeDate}_{isoTimestamp}`.
 - `date`: completion timestamp.
 - `weekType`: normalized schedule id.
-- `label`: human-readable run label.
+- `label`: human-readable run label (route date plus completion date).
 - `status`: `completed` or `endedEarly`.
 - `routeDate`: original route date/schedule.
+- `note`: optional run note.
 
 Source: `src/app/models/delivery-run.model.ts`.
 
-### RunSnapshotEntry
+#### RunSnapshotEntry
 
 Per-stop snapshot row for a completed run or one-off history event.
 
@@ -91,7 +104,7 @@ Key fields:
 
 - `runId`: parent run id.
 - `baseRowId`: stable per-customer id.
-- `status`: `delivered` | `skipped` | `donation`.
+- `status`: `delivered` | `skipped` | `donation` (`donation` represents one-off receipts).
 - `dozens`, `deliveryOrder`.
 - `donationStatus`, `donationMethod`, `donationAmount`, `taxableAmount`.
 - `eventDate`: run date or one-off event date.
@@ -99,7 +112,7 @@ Key fields:
 
 Source: `src/app/models/run-snapshot-entry.model.ts`.
 
-### BaseStop
+#### BaseStop
 
 Baseline person/stop data derived from the CSV import.
 
@@ -112,15 +125,15 @@ Key fields:
 
 Source: `src/app/models/base-stop.model.ts`.
 
-### CsvImportState
+#### CsvImportState
 
 Snapshot of the imported CSV headers and rows.
 
 Key fields:
 
-- `headers`: original CSV header list.
+- `headers`: original CSV header list (order preserved).
 - `rowsByBaseRowId`: raw row data keyed by `baseRowId`.
-- `mode`: `baseline` or `restored`.
+- `mode`: `baseline` for route imports, `restored` for backup restores.
 
 Source: `src/app/models/csv-import-state.model.ts`.
 

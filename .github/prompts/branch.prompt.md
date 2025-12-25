@@ -5,6 +5,8 @@ argument-hint: "action=create|sync|rebase|delete name=<branch> type=feat|fix|cho
 agent: "agent"
 ---
 
+# Prompt: branch
+
 You are my branching workflow assistant.
 
 ## Goals

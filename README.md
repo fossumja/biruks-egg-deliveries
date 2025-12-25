@@ -4,7 +4,7 @@ Offline-first Angular PWA for planning and recording egg deliveries. Designed fo
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-23
 - **Type**: Reference
 - **Scope**: project overview, key commands, and documentation entry points
 - **Non-goals**: detailed architecture decisions or UX specifications
@@ -13,19 +13,19 @@ Offline-first Angular PWA for planning and recording egg deliveries. Designed fo
 ## Key flows
 
 - Import a CSV of customers and routes from Excel.
-- Plan and reorder stops on the **Planner** page.
-- Run a live delivery route on the **Run** page (deliver / skip, quantities, donations).
-- Complete a run to archive it and reset the route; browse past runs from the Planner.
+- Plan and reorder stops on the **Planner** page, then search or add deliveries as needed.
+- Run a live delivery route on the **Run** page (deliver/skip, quantities, donations).
+- Complete a run to archive it and reset the route; review past runs or receipts in the Planner.
 - Record one-off deliveries and donations from the Planner hidden menu.
-- Export an updated CSV for record-keeping and taxes (lifetime totals across baseline + runs + one-offs).
-- Restore from a backup CSV to rebuild deliveries, run history, and one-off activity.
+- Choose a tax year on Home so totals and the export filename match the year.
+- Backup a CSV for record-keeping and taxes; restore from a backup CSV when needed.
 
 ## Getting started (development)
 
 Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 Start the dev server:
@@ -42,14 +42,14 @@ The app reloads automatically when you change source files.
 Production build:
 
 ```bash
-npx ng build --configuration production
+npm run build -- --configuration production
 ```
 
 For GitHub Pages deployment (as used today):
 
 ```bash
 # Build with GitHub Pages base href
-npx ng build --configuration production --base-href="/biruks-egg-deliveries/"
+npm run build -- --configuration production --base-href="/biruks-egg-deliveries/"
 
 # Publish the built app from the browser subfolder to gh-pages
 npx angular-cli-ghpages --dir=dist/egg-delivery-app/browser --branch=gh-pages
@@ -78,4 +78,5 @@ Test plans and coverage goals are documented in:
 
 ## Documentation
 
-Documentation structure and entry points live in `index.md`.
+Documentation structure and entry points live in `index.md` and
+`docs/reference/documentation-inventory.md`.
