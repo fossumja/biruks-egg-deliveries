@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -29,6 +29,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Use the development workflow to validate each issue plan before implementation.
 - Keep child issues and the parent checklist updated as work completes.
 - If child issues are missing, use `/issues action=breakdown` to create them.
+- Use the docs prompt and documentation style guide when updating docs.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
 - If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 - Confirm branch protection and rulesets for `main` before merging so required checks match available CI.
@@ -57,6 +58,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
    - Complete acceptance criteria, update docs, and close the issue.
+   - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
    - Run at least one base check (default: `npm run build`) and note results.
    - If `public/build-info.json` changes, restore it before committing.
    - Update the parent checklist safely; if tooling is missing, leave a progress comment instead of editing the body.
@@ -97,11 +99,14 @@ Use this once per repo to keep `main` safe without blocking work.
 
 - Added explicit development workflow plan checks to keep issue plans feasible before coding.
 - Recorded plan review as a checklist item so it is tracked alongside delivery steps.
+- Added docs prompt guidance to keep documentation updates consistent with the style guide.
 
 ## Related docs
 
 - `.github/prompts/feature.prompt.md`
 - `.github/prompts/issues.prompt.md`
 - `.github/prompts/branch.prompt.md`
+- `.github/prompts/docs.prompt.md`
 - `.github/prompts/pr.prompt.md`
+- `docs/dev/best-practices/documentation-style-guide.md`
 - `docs/dev/workflows/quality.md`

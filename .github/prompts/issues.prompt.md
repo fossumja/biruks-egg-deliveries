@@ -5,6 +5,8 @@ argument-hint: "action=create|breakdown|triage|close issue=<#|url> title=<title>
 agent: "agent"
 ---
 
+# Prompt: issues
+
 You are my issues & planning assistant.
 
 ## Goals

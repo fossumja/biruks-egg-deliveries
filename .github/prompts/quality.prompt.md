@@ -5,6 +5,8 @@ argument-hint: "action=check|fix scope=angular|ts|css (shorthand: quality check|
 agent: "agent"
 ---
 
+# Prompt: quality
+
 You are my code-quality assistant.
 
 ## Goal

@@ -4,7 +4,7 @@ This plan refreshes and validates repo documentation so standards stay current, 
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: documentation refresh, validation, and pruning across the repo
 - **Non-goals**: application code changes unrelated to documentation
@@ -30,6 +30,7 @@ Bring docs up to date with current code and standards while keeping the document
 - Prefer existing docs over new files; reduce duplication instead of expanding it.
 - If updated drafts conflict with current docs, trust the current docs and only adopt improvements.
 - Validate claims against code and config; call out anything that cannot be verified.
+- Track the inventory and deprecation list in `docs/reference/documentation-inventory.md`.
 
 ## Milestones
 
@@ -39,7 +40,7 @@ Bring docs up to date with current code and standards while keeping the document
 
 ## Work breakdown
 
-1. Inventory docs and map each to a single purpose; flag duplicates and candidates for deprecation.
+1. Inventory docs in `docs/reference/documentation-inventory.md` and map each to a single purpose; flag duplicates and candidates for deprecation.
 2. Merge improvements from the updated draft docs into current best-practices standards.
 3. Align README, architecture, UX, user guide, and testing docs using `doc: align`.
 4. Audit workflows and prompts for alignment with updated standards.

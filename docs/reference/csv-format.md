@@ -21,14 +21,18 @@ Baseline imports read delivery rows only. Backup restores read all row types and
 
 Backup exports include all history rows, while totals columns are scoped to the tax year selected at export time.
 
-## Column conventions
+## Contract
+
+### Column conventions
 
 - CSVs must include a header row.
 - Header matching is case-insensitive for known columns and supports common aliases.
 - UTF-8 BOM is accepted on the first header (for example `\ufeffSchedule` from Excel).
+- Column order is preserved from the original import headers; exports prepend required columns and append missing history/totals columns.
+- Backup exports always add a leading `RowType` column. If the imported header already contains `RowType`, exports will include two `RowType` columns (the first column is authoritative on restore).
 - Extra columns are preserved in `importState` and re-exported on `Delivery` rows.
 
-## Baseline delivery columns
+### Baseline delivery columns
 
 These columns are read when importing a route CSV.
 
@@ -36,36 +40,36 @@ These columns are read when importing a route CSV.
 | --- | --- | --- | --- |
 | `Schedule` or `Date` | Yes | string | Route label/date. Used for `routeDate` and `week` grouping. |
 | `BaseRowId` | No (recommended) | string | Stable per-customer id. Missing values fall back to `ROW_{index}`. |
-| `Delivery Order` | No | number | Row order override. Defaults to row position. |
+| `Delivery Order` or `Order` | No | number | Accepted, but ordering is normalized to row position within each schedule on import. |
 | `Name` | No (recommended) | string | Customer name. |
 | `Address` | No (recommended) | string | Street address. |
 | `City` | No | string | City. |
 | `State` | No | string | State or province. |
 | `ZIP` | No | string | Postal code. |
 | `Dozens` or `Qty` | No (recommended) | number | Parsed with `Number()`. Non-numeric values fail import. Missing values default to `0`. |
-| `Subscribed` | No | boolean | Blank defaults to `true`. `true/yes/1` map to `true`. |
+| `Subscribed` | No | boolean | Blank defaults to `true`. `true/yes/1` map to `true`; other non-empty values map to `false`. |
 | `Notes` | No | string | Freeform notes. |
 | `DonationStatus` | No | enum | `NotRecorded`, `Donated`, `NoDonation`. |
 | `DonationMethod` | No | enum | `cash`, `venmo`, `ach`, `paypal`, `other`. |
 | `DonationAmount` | No | number | Donation amount for the row (optional). |
 | `RowType` | No | string | If present, only `Delivery` rows are imported. |
 
-### RowType values
+### RowType values (baseline import)
 
 When `RowType` is present, the import parser only accepts rows where the value is empty or `Delivery` (case-insensitive). Other row types are ignored unless this file is used as a backup restore.
 
-## Backup export and restore format
+### Backup export and restore format
 
 Backups include baseline columns plus history columns. They always include a `RowType` column.
 
-### RowType values (backup)
+#### RowType values (backup)
 
 - `Delivery`: baseline rows from the original import.
 - `RunEntry`: historical run snapshot rows.
 - `OneOffDonation`: donation-only events not tied to a run.
 - `OneOffDelivery`: delivery events not tied to a run.
 
-### History columns (run and one-off rows)
+#### History columns (run and one-off rows)
 
 These columns are appended on export and used during restore.
 
@@ -73,18 +77,18 @@ These columns are appended on export and used during restore.
 | --- | --- | --- |
 | `RunId` | string | Required for `RunEntry` rows. |
 | `RouteDate` | string | Route date label for the run. |
-| `ScheduleId` | string | Normalized schedule id for the run. |
-| `RunStatus` | string | `completed` or `endedEarly`. |
+| `ScheduleId` | string | Normalized schedule id for the run (route date with whitespace removed). |
+| `RunStatus` | string | `completed` or `endedEarly` (case-insensitive; `endedearly` and `ended_early` also map to `endedEarly`). |
 | `RunBaseRowId` | string | Base row id for the row; required for history rows. |
 | `RunDeliveryOrder` | number | Delivery order within the run. |
-| `RunEntryStatus` | string | `delivered` or `skipped` (other values are treated as delivered on restore). |
+| `RunEntryStatus` | string | `delivered` or `skipped` (any non-`skipped` value restores as `delivered`). |
 | `RunDozens` | number | Dozens delivered for the event. |
 | `RunDonationStatus` | string | `NotRecorded`, `Donated`, `NoDonation`. |
 | `RunDonationMethod` | string | `cash`, `venmo`, `ach`, `paypal`, `other`. |
 | `RunDonationAmount` | number | Donation amount for the event. |
-| `RunTaxableAmount` | number | Deductible portion of the donation. |
+| `RunTaxableAmount` | number | Deductible contribution for the event (amount above the suggested baseline). |
 | `RunCompletedAt` | string | ISO timestamp of run completion. |
-| `EventDate` | string | ISO timestamp for the event; date-only inputs are normalized to ISO at local midday to avoid timezone drift. One-off events saved without changing the default date capture the current timestamp. |
+| `EventDate` | string | ISO timestamp for the event; date-only inputs are normalized to ISO at local midday to avoid timezone drift. |
 | `SuggestedAmount` | number | Baseline amount used at the time of the event. |
 
 #### EventDate parsing and fallbacks
@@ -100,7 +104,7 @@ If `EventDate` is missing or invalid, restore falls back to:
 - `RunEntry`: `RunCompletedAt`, then `RouteDate` for the run; if both are missing, the restore timestamp is used.
 - `OneOffDonation`/`OneOffDelivery`: the delivery `RouteDate` (Schedule/Date) for the matched base row; if missing, the date remains blank.
 
-### Totals columns
+#### Totals columns
 
 Totals are computed and exported as:
 
@@ -108,11 +112,13 @@ Totals are computed and exported as:
 - `TotalDozens`
 - `TotalDeductibleContribution`
 
-Totals reflect the tax year selected on Home at export time. Backup filenames include a `-tax-year-YYYY` suffix to show the year used for totals.
+Totals reflect the tax year selected on Home at export time and are only populated on `Delivery` rows.
+
+Totals seeded from imported CSVs are only included for the original import year (based on `lastImportAt`); restored backups recompute totals from receipts only.
 
 Exports without an import state use `TotalTaxableDonation` instead of `TotalDeductibleContribution`.
 
-## Legacy export (no import state)
+### Legacy export (no import state)
 
 If the app has no saved import state, exports are a flat delivery list with these columns:
 
@@ -137,6 +143,19 @@ If the app has no saved import state, exports are a flat delivery list with thes
 - `TotalTaxableDonation`
 
 `Status` uses the delivery status values defined in `docs/reference/data-model.md`.
+
+### Compatibility and versioning rules
+
+- There is no explicit schema version column; compatibility is handled by optional columns and defaults.
+- Unknown `RowType` values are ignored on restore; unknown columns are preserved on `Delivery` rows.
+- `RowType` values are case-insensitive on import and restore.
+- The restore parser accepts `RunTaxableAmount` or `TaxableAmount` when rebuilding receipts.
+- Backup exports preserve the original header order and append missing columns, so column order can vary between files.
+
+## Examples
+
+- `docs/data/BiruksEggDeliveries-2025-12-17.csv`
+- `docs/data/BiruksEggDeliveries-2025-12-22.csv`
 
 ## Related docs
 

@@ -4,7 +4,7 @@ Use this workflow to discover, choose, and run prompts consistently. It includes
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-23
 - **Type**: How-to
 - **Scope**: prompt discovery and usage
 - **Non-goals**: writing new prompts or changing workflows without review
@@ -38,6 +38,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 - Keep shorthand inputs consistent with each prompt definition.
 - Update this catalog and `index.md` when prompts are added or behavior changes.
+- Follow the prompt/instruction structure in `docs/dev/best-practices/documentation-style-guide.md`, including a single H1 after front matter.
 
 ## Steps
 
@@ -96,10 +97,12 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 - Documented the feature prompt's plan-validation step so the catalog matches current behavior.
 - Reaffirmed catalog maintenance when prompt behavior shifts.
+- Added the prompt structure requirement so new prompts align with the style guide.
 
 ## Related docs
 
 - `.github/prompts/prompts.prompt.md`
+- `docs/dev/best-practices/documentation-style-guide.md`
 - `docs/dev/workflows/feature-delivery.md`
 - `docs/dev/workflows/development.md`
 - `docs/dev/workflows/docs.md`

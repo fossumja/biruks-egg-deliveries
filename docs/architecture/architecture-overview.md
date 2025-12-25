@@ -47,6 +47,7 @@ This document describes the current architecture of the Biruk's Egg Deliveries P
 
 - **CSV parsing**: Imports use PapaParse in `home.component.ts`.
 - **Baseline imports**: Read delivery rows into the local database.
+- **Sample data**: On a fresh install with no routes, the app loads `public/sample-deliveries.csv` to seed demo data.
 - **Backups**: `BackupService` exports CSV using Web Share when available, or a local file download. Totals are scoped to the selected tax year and the filename includes a tax-year suffix.
 - **Restore**: Backup CSV restores replace deliveries, routes, run history, and import state in one operation.
 - **Formats**: See `docs/reference/csv-format.md` for column rules and `RowType` handling.

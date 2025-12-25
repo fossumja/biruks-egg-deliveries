@@ -4,7 +4,7 @@ This plan defines modular regression packs for the entire app so testing is reli
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-24
 - **Type**: How-to
 - **Scope**: end-to-end regression coverage across all app features
 - **Non-goals**: performance/load testing, backend API testing
@@ -33,10 +33,11 @@ Not covered:
 - Prioritize data and service tests, then component tests, then manual scenarios.
 - Run full regression packs before releases or high-risk changes.
 - Treat device and PWA checks as manual until automated coverage exists.
+- Use `npm test` (Karma + Jasmine) for automated specs, and `ng test --include` for scoped runs.
 
 ## Environments
 
-- Local: `ng test` and manual browser checks.
+- Local: `npm test` / `ng test` and manual browser checks.
 - CI: headless test runs when configured.
 - Device: iOS/Android PWA checks for gesture and wake lock behavior.
 
@@ -163,7 +164,7 @@ Manual checks:
 Scope:
 
 - Hidden menu donation and delivery flows.
-- Date validation and current-year constraint.
+- Date validation and allowed year range (earliest data year through next year).
 - Donation type selection and amount handling.
 - Totals and receipts inclusion.
 
@@ -297,6 +298,11 @@ If changes span more than three packs or touch storage + backup, run a full regr
 
 - Record test packs run and results in the PR or release notes.
 - Update this plan when new features or tests are added.
+
+## What changed / Why
+
+- Updated the runner guidance to reflect current `npm test` usage.
+- Clarified the one-off date range rules to match the Planner validation behavior.
 
 ## Related docs
 
