@@ -12,7 +12,8 @@ import { DeliveryRun } from '../models/delivery-run.model';
 import { BaseStop } from '../models/base-stop.model';
 import { CsvImportState } from '../models/csv-import-state.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
-import { normalizeEventDate } from '../utils/date-utils';
+import { ReceiptHistoryEntry } from '../models/receipt-history-entry.model';
+import { normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
 
 const SUGGESTED_KEY = 'suggestedDonationRate';
 
@@ -218,6 +219,107 @@ export class StorageService {
 
   getAllRunEntries(): Promise<RunSnapshotEntry[]> {
     return this.db.runEntries.toArray();
+  }
+
+  async getReceiptHistoryByBaseRowId(
+    baseRowId: string
+  ): Promise<ReceiptHistoryEntry[]> {
+    if (!baseRowId) return [];
+    const [runEntries, deliveries] = await Promise.all([
+      this.db.runEntries.where('baseRowId').equals(baseRowId).toArray(),
+      this.db.deliveries.where('baseRowId').equals(baseRowId).toArray()
+    ]);
+
+    if (!runEntries.length && !deliveries.length) return [];
+
+    const runIds = Array.from(new Set(runEntries.map((entry) => entry.runId)));
+    const runs = runIds.length
+      ? await this.db.runs.where('id').anyOf(runIds).toArray()
+      : [];
+    const runDateById = new Map<string, string>();
+    runs.forEach((run) => {
+      if (run.id && run.date) {
+        runDateById.set(run.id, run.date);
+      }
+    });
+
+    const receipts: ReceiptHistoryEntry[] = [];
+
+    runEntries.forEach((entry) => {
+      const date =
+        normalizeEventDate(entry.eventDate ?? runDateById.get(entry.runId)) ?? '';
+      receipts.push({
+        kind: 'run',
+        date,
+        status: entry.status,
+        dozens: entry.dozens,
+        donationStatus: entry.donationStatus,
+        donationMethod: entry.donationMethod,
+        donationAmount: entry.donationAmount,
+        taxableAmount: entry.taxableAmount
+      });
+    });
+
+    deliveries.forEach((delivery) => {
+      (delivery.oneOffDonations ?? []).forEach((donation) => {
+        const date = normalizeEventDate(donation.date) ?? '';
+        const amount =
+          donation.status === 'Donated'
+            ? Number(donation.amount ?? donation.suggestedAmount ?? 0)
+            : 0;
+        const taxable =
+          donation.taxableAmount ??
+          computeOneOffDonationTaxableAmount(donation);
+        receipts.push({
+          kind: 'oneOffDonation',
+          date,
+          status: 'donation',
+          dozens: 0,
+          donationStatus: donation.status,
+          donationMethod: donation.method,
+          donationAmount: amount,
+          taxableAmount: taxable
+        });
+      });
+
+      (delivery.oneOffDeliveries ?? []).forEach((entry) => {
+        const date = normalizeEventDate(entry.date) ?? '';
+        const deliveredDozens = Number(entry.deliveredDozens ?? 0);
+        const donation = entry.donation;
+        const amount =
+          donation?.status === 'Donated'
+            ? Number(donation.amount ?? donation.suggestedAmount ?? 0)
+            : 0;
+        const taxable =
+          donation?.taxableAmount ??
+          (donation ? computeTaxableAmount(donation) : 0);
+        receipts.push({
+          kind: 'oneOffDelivery',
+          date,
+          status: 'delivered',
+          dozens: deliveredDozens,
+          donationStatus: (donation?.status ?? 'NotRecorded') as DonationStatus,
+          donationMethod: donation?.method,
+          donationAmount: amount,
+          taxableAmount: taxable
+        });
+      });
+    });
+
+    const sorted = receipts
+      .map((receipt, index) => ({
+        receipt,
+        sortKey: toSortableTimestamp(receipt.date),
+        order: index
+      }))
+      .sort((a, b) => {
+        const delta = b.sortKey - a.sortKey;
+        if (delta !== 0) return delta;
+        return a.order - b.order;
+      })
+      .map((item) => item.receipt);
+
+    return sorted;
   }
 
   async updateRunEntry(

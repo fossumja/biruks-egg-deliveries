@@ -4,7 +4,7 @@ How to use the app day‑to‑day: importing routes, planning, running deliverie
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2025-12-26
 - **Type**: How-to
 - **Scope**: end‑to‑end app usage for delivery weeks
 - **Non-goals**: developer setup or architectural detail
@@ -194,6 +194,7 @@ From the Planner hidden menu:
   - Record an extra delivery outside of the normal schedule.
   - Allows you to specify dozens and donation for that one‑off event.
   - Choose an **event date** (defaults to today). Dates must be within the range shown in the picker (earliest data year through next year).
+  - The modal shows a compact history list of prior receipts (deliveries, donations, skips) for that person.
 
 These one‑offs:
 

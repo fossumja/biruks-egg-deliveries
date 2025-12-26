@@ -76,6 +76,55 @@
   </div>
 </div>
 
+<ng-template #receiptHistoryList>
+  <div class="receipt-history card">
+    <div class="receipt-history-header">Previous receipts</div>
+    @if (receiptHistoryLoading) {
+      <div class="receipt-history-empty text-muted">Loading receipts...</div>
+    } @else {
+      @if (receiptHistory.length) {
+        <ul class="receipt-history-list" role="list">
+          @for (entry of receiptHistory; track $index) {
+            <li class="receipt-history-item">
+              <span class="receipt-history-date">
+                @if (entry.date) {
+                  {{ entry.date | date : 'shortDate' : undefined : 'en-US' }}
+                } @else {
+                  <span class="receipt-history-date-missing">No date</span>
+                }
+              </span>
+              <span class="receipt-history-sep" aria-hidden="true">•</span>
+              <span
+                class="receipt-history-status"
+                [class.is-delivered]="entry.status === 'delivered'"
+                [class.is-skipped]="entry.status === 'skipped'"
+                [class.is-donation]="entry.status === 'donation'"
+              >
+                {{ formatReceiptStatus(entry.status) }}
+              </span>
+              @if (entry.status === 'delivered') {
+                <span class="receipt-history-sep" aria-hidden="true">•</span>
+                <span class="receipt-history-dozens">
+                  {{ formatReceiptDozens(entry) }}
+                </span>
+              }
+              @if (entry.donationStatus === 'Donated') {
+                <span class="receipt-history-sep" aria-hidden="true">•</span>
+                <span class="receipt-history-donation">
+                  {{ formatReceiptDonationMethod(entry.donationMethod) }}
+                  ${{ entry.donationAmount | number : '1.2-2' }}
+                </span>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="receipt-history-empty text-muted">No previous receipts yet.</div>
+      }
+    }
+  </div>
+</ng-template>
+
 <div *ngIf="loading" class="status text-muted">Loading…</div>
 <div *ngIf="errorMessage" class="status error">{{ errorMessage }}</div>
 
@@ -393,6 +442,7 @@
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
           </div>
+          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           <div class="donation-actions">
             <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
             <button
@@ -471,6 +521,7 @@
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
           </div>
+          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           <div class="donation-actions">
             <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
             <button
