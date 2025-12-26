@@ -28,7 +28,7 @@ export async function snapshotCurrentState(
   const totals = (ctx.backup as any).computeTotalsByBase(
     deliveries
   ) as Map<string, { donation: number; dozens: number }>;
-  const csv = (ctx.backup as any).toCsv(deliveries) as string;
+  const csv = (ctx.backup as any).toCsv(deliveries, totals) as string;
   const rows = parseCsvRows(csv);
   return { label, totals, csvRows: rows };
 }
@@ -105,4 +105,3 @@ export async function runMultiRunScenario(ctx: ScenarioContext): Promise<Scenari
 
   return snapshots;
 }
-

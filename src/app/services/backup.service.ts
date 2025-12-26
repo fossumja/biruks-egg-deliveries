@@ -52,7 +52,12 @@ export class BackupService {
     deliveries: Delivery[],
     totalsMap: Map<string, { donation: number; dozens: number; taxable: number }>
   ): string {
-    const rows = deliveries.map((d) => ({
+    const rows = deliveries.map((d) => {
+      const totals = totalsMap.get(d.baseRowId ?? '');
+      const donationTotal = totals?.donation ?? 0;
+      const dozensTotal = totals?.dozens ?? 0;
+      const taxableTotal = totals?.taxable ?? 0;
+      return ({
       Date: d.routeDate,
       'Delivery Order': d.deliveryOrder,
       Name: d.name,
@@ -69,10 +74,11 @@ export class BackupService {
       DonationStatus: d.donation?.status ?? 'NotRecorded',
       DonationMethod: d.donation?.method ?? '',
       DonationAmount: d.donation?.amount ?? '',
-      TotalDonation: totalsMap.get(d.baseRowId)?.donation.toFixed(2) ?? '0.00',
-      TotalDozens: totalsMap.get(d.baseRowId)?.dozens ?? 0,
-      TotalTaxableDonation: totalsMap.get(d.baseRowId)?.taxable.toFixed(2) ?? '0.00'
-    }));
+      TotalDonation: donationTotal.toFixed(2),
+      TotalDozens: dozensTotal,
+      TotalTaxableDonation: taxableTotal.toFixed(2)
+    });
+    });
     return Papa.unparse(rows);
   }
 
@@ -614,9 +620,13 @@ export class BackupService {
     }
 
     // 4) Combine baseline totals (if any) with contributions from receipts.
+    const deliveryBaseRowIds = deliveries
+      .map((d) => d.baseRowId)
+      .filter((baseRowId): baseRowId is string => !!baseRowId);
     const allBaseRowIds = new Set<string>([
       ...baselineTotals.keys(),
-      ...receiptsMap.keys()
+      ...receiptsMap.keys(),
+      ...deliveryBaseRowIds
     ]);
 
     allBaseRowIds.forEach((baseRowId) => {
