@@ -67,7 +67,11 @@ describe('Usage scenario totals (data-level)', () => {
       { donation: number; dozens: number; taxable: number }
     >;
 
-    const c2Totals = totals.get('c2');
+    const c2BaseRowId =
+      deliveries.find((d) => d.id === 'c2-r1')?.baseRowId ??
+      deliveries.find((d) => d.id === 'c2-r1')?.id;
+    expect(c2BaseRowId).toBeDefined();
+    const c2Totals = totals.get(c2BaseRowId as string);
     expect(c2Totals).toBeDefined();
     // Donation is just the two one-offs
     expect(c2Totals!.donation).toBeCloseTo(5 + 7.5, 5);
@@ -236,7 +240,10 @@ describe('Usage scenario totals (data-level)', () => {
     await storage.appendOneOffDelivery('c1-r1', 3, oneOffDeliveryDonation);
 
     const deliveries = await storage.getAllDeliveries();
-    const csv = (backup as any).toCsv(deliveries) as string;
+    const totals = (backup as any).computeTotalsByBase(
+      deliveries
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const csv = (backup as any).toCsv(deliveries, totals) as string;
 
     const parsed = Papa.parse(csv, { header: true });
     const rows = parsed.data as any[];

@@ -4,7 +4,7 @@ Inventory of current screens, shared UI components, and styling touchpoints to k
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2025-12-29
 - **Type**: Reference
 - **Scope**: UI surfaces, shared components, and styling references
 - **Non-goals**: detailed visual specs (see style guide)
@@ -34,6 +34,7 @@ This document captures the current UI so we can keep the experience consistent w
   - Swipe rows use explicit front/back card layers; open state disables front‑card clicks so back actions are reliable.
   - Inline edit panel for updating details, schedule, order‑in‑route, and unsubscribe state.
   - Inline donation and off‑schedule delivery panels, plus a shared amount picker overlay.
+  - One-off panels include a compact receipt history list under the card.
 
 - **Delivery Run (`delivery-run.component`)**
   - Current stop card with name, address, note, quantity, and donation controls.

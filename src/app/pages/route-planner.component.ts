@@ -21,6 +21,7 @@ import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
+import { ReceiptHistoryEntry } from '../models/receipt-history-entry.model';
 import { BackupService } from '../services/backup.service';
 import { getEventYear, normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
 
@@ -103,6 +104,9 @@ export class RoutePlannerComponent {
   viewingAllReceipts = false;
   runEntries: RunSnapshotEntry[] = [];
   filteredRunEntries: RunSnapshotEntry[] = [];
+  receiptHistory: ReceiptHistoryEntry[] = [];
+  receiptHistoryLoading = false;
+  private receiptHistoryBaseRowId: string | null = null;
   allRuns: DeliveryRun[] = [];
   selectedRouteOrRun: string | null = null;
   editingRunEntry: RunSnapshotEntry | null = null;
@@ -408,6 +412,7 @@ export class RoutePlannerComponent {
     // sensible values immediately; full global totals will be
     // refreshed after save.
     this.donationTotals = this.computeOneOffTotals(stop);
+    void this.loadReceiptHistory(stop);
   }
 
   closeOffSchedule(showToast = false): void {
@@ -424,6 +429,7 @@ export class RoutePlannerComponent {
     this.pickerMode = null;
     this.resetOneOffDeliveryDate();
     this.resetOneOffDeliveryTypeError();
+    this.clearReceiptHistory();
   }
 
   setOffDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
@@ -954,6 +960,7 @@ export class RoutePlannerComponent {
     // sensible values immediately; full global totals will be
     // refreshed after save.
     this.donationTotals = this.computeOneOffTotals(stop);
+    void this.loadReceiptHistory(stop);
   }
 
   closeDonationModal(showToast = false): void {
@@ -970,6 +977,7 @@ export class RoutePlannerComponent {
     this.pickerMode = null;
     this.resetOneOffDonationDate();
     this.resetOneOffDonationTypeError();
+    this.clearReceiptHistory();
   }
 
   onDonationQtyChange(qty: number): void {
@@ -1016,6 +1024,69 @@ export class RoutePlannerComponent {
       void this.refreshDonationTotals(this.donationModalStop);
     }
     this.closeDonationModal();
+  }
+
+  private async loadReceiptHistory(stop: Delivery): Promise<void> {
+    const baseRowId = stop.baseRowId;
+    this.receiptHistoryBaseRowId = baseRowId;
+    this.receiptHistoryLoading = true;
+    this.receiptHistory = [];
+    try {
+      const entries = await this.storage.getReceiptHistoryByBaseRowId(baseRowId);
+      if (this.receiptHistoryBaseRowId === baseRowId) {
+        this.receiptHistory = entries;
+      }
+    } catch (err) {
+      console.error('Failed to load receipt history', err);
+      if (this.receiptHistoryBaseRowId === baseRowId) {
+        this.receiptHistory = [];
+      }
+    } finally {
+      if (this.receiptHistoryBaseRowId === baseRowId) {
+        this.receiptHistoryLoading = false;
+      }
+    }
+  }
+
+  private clearReceiptHistory(): void {
+    this.receiptHistoryBaseRowId = null;
+    this.receiptHistoryLoading = false;
+    this.receiptHistory = [];
+  }
+
+  formatReceiptStatus(status: ReceiptHistoryEntry['status']): string {
+    switch (status) {
+      case 'delivered':
+        return 'Delivered';
+      case 'skipped':
+        return 'Skipped';
+      case 'donation':
+        return 'Donation';
+      default:
+        return 'Receipt';
+    }
+  }
+
+  formatReceiptDozens(entry: ReceiptHistoryEntry): string {
+    const dozens = Math.max(0, Number(entry.dozens) || 0);
+    return `${dozens} dozen${dozens === 1 ? '' : 's'}`;
+  }
+
+  formatReceiptDonationMethod(method?: DonationMethod): string {
+    switch (method) {
+      case 'cash':
+        return 'Cash';
+      case 'venmo':
+        return 'Venmo';
+      case 'ach':
+        return 'ACH';
+      case 'paypal':
+        return 'PayPal';
+      case 'other':
+        return 'Other';
+      default:
+        return 'Donated';
+    }
   }
 
   setDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {

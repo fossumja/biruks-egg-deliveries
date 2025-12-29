@@ -4,7 +4,7 @@ This plan defines modular regression packs for the entire app so testing is reli
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-24
+- **Last updated**: 2025-12-29
 - **Type**: How-to
 - **Scope**: end-to-end regression coverage across all app features
 - **Non-goals**: performance/load testing, backend API testing
@@ -177,6 +177,7 @@ Manual checks:
 
 - One-off saves do not change live run status.
 - Totals include one-off donations and deliveries.
+- One-off modals show a compact receipt history list (including skips) for the selected person.
 
 ### TP-07 Run flow and donation controls
 
