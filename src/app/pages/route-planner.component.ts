@@ -115,6 +115,8 @@ export class RoutePlannerComponent {
     donationAmount: number;
     suggestedAmount?: number;
   } | null = null;
+  runEntryDate = '';
+  runEntryDateError = '';
   newDelivery = {
     deliveryOrder: 0,
     routeDate: '',
@@ -150,6 +152,14 @@ export class RoutePlannerComponent {
 
   private getTodayDateInput(): string {
     return this.formatDateInput(new Date());
+  }
+
+  private formatEventDateForInput(value?: string): string {
+    if (!value) return '';
+    const normalized = normalizeEventDate(value);
+    if (!normalized) return '';
+    const parsed = new Date(normalized);
+    return Number.isNaN(parsed.getTime()) ? '' : this.formatDateInput(parsed);
   }
 
   private validateOneOffDate(value: string): string {
@@ -265,6 +275,11 @@ export class RoutePlannerComponent {
     }
   }
 
+  private setRunEntryDate(value: string): void {
+    this.runEntryDate = value;
+    this.runEntryDateError = this.validateOneOffDate(value);
+  }
+
   private resetOneOffDonationDate(): void {
     this.oneOffDonationDate = '';
     this.oneOffDonationDateError = '';
@@ -275,6 +290,11 @@ export class RoutePlannerComponent {
     this.oneOffDeliveryDate = '';
     this.oneOffDeliveryDateError = '';
     this.oneOffDeliveryDateTouched = false;
+  }
+
+  private resetRunEntryDate(): void {
+    this.runEntryDate = '';
+    this.runEntryDateError = '';
   }
 
   private resetOneOffDonationTypeError(): void {
@@ -339,6 +359,12 @@ export class RoutePlannerComponent {
     return !error;
   }
 
+  private ensureRunEntryDate(): boolean {
+    const error = this.validateOneOffDate(this.runEntryDate);
+    this.runEntryDateError = error;
+    return !error;
+  }
+
   onOneOffDonationDateChange(value: string): void {
     this.oneOffDonationDateTouched = true;
     this.setOneOffDonationDate(value);
@@ -347,6 +373,10 @@ export class RoutePlannerComponent {
   onOneOffDeliveryDateChange(value: string): void {
     this.oneOffDeliveryDateTouched = true;
     this.setOneOffDeliveryDate(value);
+  }
+
+  onRunEntryDateChange(value: string): void {
+    this.setRunEntryDate(value);
   }
 
   startSwipe(event: PointerEvent, stop: Delivery): void {
@@ -1110,7 +1140,10 @@ export class RoutePlannerComponent {
       donationMethod: entry.donationMethod ?? '',
       donationAmount: entry.donationAmount,
     };
+    this.resetRunEntryDate();
     if (entry.runId === 'oneoff' && entry.deliveryId && entry.oneOffIndex != null) {
+      const dateValue = this.formatEventDateForInput(entry.eventDate);
+      this.setRunEntryDate(dateValue);
       void this.loadOneOffSuggested(entry);
     }
   }
@@ -1141,6 +1174,7 @@ export class RoutePlannerComponent {
     this.selectedRouteOrRun = key;
     this.editingRunEntry = null;
     this.runEntryDraft = null;
+    this.resetRunEntryDate();
 
     if (!key) {
       this.routeDate = undefined;
@@ -1214,6 +1248,7 @@ export class RoutePlannerComponent {
   cancelRunEntryEdit(): void {
     this.editingRunEntry = null;
     this.runEntryDraft = null;
+    this.resetRunEntryDate();
   }
 
   private computeRunEntryTaxable(
@@ -1416,6 +1451,9 @@ export class RoutePlannerComponent {
     if (original.runId === 'oneoff') {
       // Editing a one-off receipt: update the underlying one-off record on the delivery,
       // then reload the All receipts view so the change is reflected everywhere.
+      if (!this.ensureRunEntryDate()) {
+        return;
+      }
       const suggested =
         this.runEntryDraft.suggestedAmount != null
           ? Number(this.runEntryDraft.suggestedAmount) || 0
@@ -1425,7 +1463,8 @@ export class RoutePlannerComponent {
           donationStatus: draft.donationStatus,
           donationMethod: draft.donationMethod || undefined,
           donationAmount: newAmount,
-          suggestedAmount: suggested
+          suggestedAmount: suggested,
+          date: this.runEntryDate
         });
       } else if (original.oneOffKind === 'delivery' && original.deliveryId != null && original.oneOffIndex != null) {
         await this.storage.updateOneOffDeliveryByIndex(original.deliveryId, original.oneOffIndex, {
@@ -1433,7 +1472,8 @@ export class RoutePlannerComponent {
           donationStatus: draft.donationStatus,
           donationMethod: draft.donationMethod || undefined,
           donationAmount: newAmount,
-          suggestedAmount: suggested
+          suggestedAmount: suggested,
+          date: this.runEntryDate
         });
       }
       await this.loadAllReceipts();
@@ -1508,6 +1548,7 @@ export class RoutePlannerComponent {
 
     this.editingRunEntry = null;
     this.runEntryDraft = null;
+    this.resetRunEntryDate();
   }
 
   private getScheduleId(routeDate: string): string {
@@ -1533,8 +1574,9 @@ export class RoutePlannerComponent {
     if (runId === 'live') {
       this.viewingRun = false;
       this.runEntries = [];
-       this.editingRunEntry = null;
-       this.runEntryDraft = null;
+      this.editingRunEntry = null;
+      this.runEntryDraft = null;
+      this.resetRunEntryDate();
       return;
     }
     this.viewingRun = true;
@@ -1547,6 +1589,7 @@ export class RoutePlannerComponent {
       );
     this.editingRunEntry = null;
     this.runEntryDraft = null;
+    this.resetRunEntryDate();
   }
 
   async saveEdit(): Promise<void> {
