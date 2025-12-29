@@ -350,6 +350,7 @@ export class StorageService {
       donationMethod?: DonationMethod;
       donationAmount: number;
       suggestedAmount?: number;
+      date?: string;
     }
   ): Promise<void> {
     const now = new Date().toISOString();
@@ -374,6 +375,9 @@ export class StorageService {
     if (patch.suggestedAmount != null) {
       next.suggestedAmount = patch.suggestedAmount;
     }
+    if (patch.date != null) {
+      next.date = normalizeEventDate(patch.date) ?? existing.date ?? now;
+    }
     next.taxableAmount = computeOneOffDonationTaxableAmount(next);
     list[index] = next;
     await this.db.deliveries.update(deliveryId, {
@@ -392,6 +396,7 @@ export class StorageService {
       donationMethod?: DonationMethod;
       donationAmount: number;
       suggestedAmount?: number;
+      date?: string;
     }
   ): Promise<void> {
     const now = new Date().toISOString();
@@ -430,11 +435,16 @@ export class StorageService {
       donation.taxableAmount = computeTaxableAmount(donation);
     }
 
+    const normalizedDate =
+      patch.date != null ? normalizeEventDate(patch.date) ?? existing.date ?? now : existing.date ?? now;
+    if (donation) {
+      donation.date = normalizedDate;
+    }
     list[index] = {
       ...existing,
       deliveredDozens: dozens,
       donation,
-      date: existing.date ?? now
+      date: normalizedDate
     };
 
     await this.db.deliveries.update(deliveryId, {

@@ -1,10 +1,10 @@
-# Biruk's Egg Project Deliveries - Style Guide
+# Biruk's Egg Deliveries - Style Guide
 
-This style guide defines an iOS-inspired visual system for the Biruk's Egg Project Deliveries PWA. It focuses on clarity, touch-friendly layouts, and offline-first practicality for daily field use.
+This style guide defines an iOS-inspired visual system for the Biruk's Egg Deliveries PWA. It focuses on clarity, touch-friendly layouts, and offline-first practicality for daily field use.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-23
 - **Type**: Reference
 - **Scope**: visual system, UI components, and interaction patterns
 - **Non-goals**: implementation details for specific Angular components
@@ -143,22 +143,25 @@ If you add dark mode later, invert the background and surface tokens and adjust 
 
 ### App shell and header
 
-- **Header style**: Use a simple top bar with title and optional logo. Keep it minimal so content stays dominant.
-- **Large title on Home**: Use a large title (32px to 34px) on the Home screen to match iOS large-title patterns [2].
+- **Header style**: Use the `app-header` top bar with logo, progress summary, and Home/Planner/Run navigation.
 - **Header height and safe area**: Minimum 44px plus top inset, with 16px horizontal padding.
-- **Content alignment**: Left-align title and logo.
-- **Translucency (optional)**: A subtle blur can mimic iOS navigation bars but is optional.
-- **Back button**: If present, use a chevron icon and ensure a 44px tap target.
-- **Week toggle**: Prefer a segmented control with two options (Week A, Week B).
+- **Content alignment**: Left-align the logo and progress summary.
+- **Progress**: Show delivered/skipped/total counts and a slim progress bar when route data is available.
+- **Navigation**: Keep the Home/Planner/Run tabs visible for quick switching.
 
 Example header markup:
 
 ```html
-<header class="app-header">
-  <div class="header-content">
-    <span class="logo-badge" aria-hidden="true"></span>
-    <h1 class="app-title">Deliveries</h1>
+<header class="top-bar card safe-top">
+  <div class="brand-row">
+    <div class="brand logo">...</div>
+    <div class="progress-inline">...</div>
   </div>
+  <nav class="nav">
+    <a>Home</a>
+    <a>Planner</a>
+    <a>Run</a>
+  </nav>
 </header>
 ```
 
@@ -172,7 +175,7 @@ Example header markup:
   - **Quantity**: Prominent "X dozen" line.
   - **Notes**: Optional, muted, and separated from primary info.
   - **Status**: If a stop is already delivered or skipped, use a subtle badge or text label.
-- **List rows**: For the route planner, use list rows with white surfaces and light separation rather than heavy card stacking (see Lists section).
+- **Planner rows**: Use swipe cards with front/back layers and a drag handle (see Planner cards section).
 - **Summary cards**: Use small summary cards for totals or status counts when needed.
 
 ### Buttons
@@ -185,8 +188,8 @@ Example header markup:
     - Active: `--color-primary-dark` plus a subtle press effect.
     - Disabled: gray background and muted text.
 - **Secondary buttons**:
-  - **Style**: Outline or tonal button with amber text.
-  - **States**: Light fill or border on press; disabled uses gray border and text.
+  - **Style**: Surface background with default text color and a subtle border.
+  - **States**: Active state emphasizes the border; disabled uses muted text and border.
 - **Tertiary buttons**:
   - **Style**: Text-only, minimal emphasis. Use amber for normal actions or red for destructive ones.
   - **Touch**: Wrap in a 44px tap target even if it looks like a link.
@@ -215,13 +218,14 @@ Example header markup:
   }
 
   .btn-secondary {
-    background: #fff;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
   }
 
   .btn-secondary:active {
-    background: rgba(245, 158, 11, 0.1);
+    transform: scale(0.98);
+    border-color: var(--color-primary);
   }
 
   .btn-text {
@@ -240,7 +244,7 @@ Example header markup:
 
 ### Form controls
 
-- **Selects**: Use native `select` for Week A / Week B. Style height to 44px, add padding, and keep typography consistent.
+- **Selects**: Use native `select` for route, run, and tax-year selectors. Style height to 44px, add padding, and keep typography consistent.
 - **Text inputs**: Use a 1px border, 8px radius, 8px padding, and muted placeholders.
 - **Labels**: Use 14px medium, muted color, and place labels above fields.
 - **File inputs**: Hide the raw `input` and trigger it from a styled button. Keep the label clear.
@@ -266,60 +270,21 @@ textarea {
 }
 ```
 
-### Lists (route planner)
+### Planner cards (route planner)
 
-- **List container**: Use a simple list container with vertical spacing.
-- **Row style**: Full-width white row, 8px radius, 12px vertical padding, 16px horizontal padding.
-- **Layout**: Left-aligned name and city; right-aligned quantity and optional status.
-- **Interaction**: Light gray active state on tap.
+- **Structure**: Use a swipe row with distinct front/back cards so hidden actions stay reliable.
+- **Front card**: Order number + status pill on top, address + quantity stepper on the bottom.
+- **Back card**: Reset, edit, skip/unskip/resubscribe, donation, and delivery actions.
+- **Reorder**: Drag handle should be visible only when reorder is enabled.
+- **Interaction**: Avoid mixing swipe and drag at the same time; keep tap targets 44px+.
 
 Example markup:
 
 ```html
-<div class="route-item">
-  <div class="stop-info">
-    <div class="stop-name">Alice's Diner</div>
-    <div class="stop-city text-muted">Sioux Falls, SD</div>
-  </div>
-  <div class="stop-meta">
-    <span class="stop-count">5 dz</span>
-    <span class="drag-handle" aria-hidden="true">::</span>
-  </div>
+<div class="planner-swipe-row">
+  <div class="back-card">...</div>
+  <div class="front-card route-item">...</div>
 </div>
-```
-
-Example styles:
-
-```css
-.route-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-}
-
-.stop-name {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.stop-city {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.stop-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.route-item:active {
-  background: #f3f4f6;
-}
 ```
 
 ### Bottom action bar
@@ -552,126 +517,54 @@ If you use Tailwind, map these tokens into the theme so the same values power ut
 
 ## Example layouts for key screens
 
-### Home / dashboard screen
+### Home screen
 
-- **Purpose**: Entry point to import data, select week, review summary stats, and start the route.
+- **Purpose**: Import/backup/restore data, choose a tax year, and manage settings.
 - **Layout**:
-  - Large title (32px) near the top with 16px side padding.
-  - Week segmented control below the title.
-  - Summary card for total stops and progress.
-  - Secondary actions (Import CSV, Backup) below the summary.
-  - Primary "Start Route" button near the bottom.
-- **Measurements**:
-  - Title margin-top: safe area + 16px.
-  - Week toggle height: 36px to 44px.
-  - Summary card padding: 12px to 16px.
-  - Primary button height: 52px.
+  - Card with import/backup/restore actions and timestamps.
+  - Tax year selector card with multi-year warning when needed.
+  - Settings cards for dark mode, wake lock, suggested donation, and help.
+  - Build info card at the bottom.
 
 Example markup:
 
 ```html
-<main class="home-screen">
-  <h1 class="page-title">Deliveries</h1>
-
-  <div class="week-toggle">
-    <button class="segmented active">Week A</button>
-    <button class="segmented">Week B</button>
+<section class="card hero">
+  <div class="actions">
+    <button class="btn btn-secondary">Import CSV</button>
+    <button class="btn btn-secondary">Backup CSV</button>
+    <button class="btn btn-secondary">Restore CSV</button>
   </div>
+</section>
 
-  <div class="route-summary card">
-    <p>Total stops: 12</p>
-    <p>Delivered: 0 &bull; Skipped: 0</p>
-  </div>
-
-  <button class="btn-primary start-route">Start Route</button>
-
-  <div class="backup-row">
-    <span class="text-muted">Last backup: 3 days ago</span>
-    <button class="btn-text backup-btn">Backup now</button>
-  </div>
-</main>
-```
-
-Example styles:
-
-```css
-.page-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 60px 16px 16px;
-}
-
-.week-toggle {
-  display: flex;
-  margin: 0 16px 16px;
-  background: #e5e7eb;
-  border-radius: 999px;
-}
-
-.week-toggle .segmented {
-  flex: 1;
-  padding: 8px;
-  font-size: 14px;
-  border: none;
-  border-radius: 999px;
-}
-
-.week-toggle .active {
-  background: #f59e0b;
-  color: #fff;
-}
-
-.route-summary {
-  margin: 0 16px 16px;
-  padding: 12px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.start-route {
-  margin: 8px 16px 16px;
-}
-
-.backup-row {
-  margin: 8px 16px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+<section class="card settings-card tax-year-card">
+  <label class="settings-title" for="tax-year-select">Tax year</label>
+  <select id="tax-year-select" class="form-control compact">...</select>
+</section>
 ```
 
 ### Route planner screen
 
-- **Purpose**: View and reorder stops before starting the delivery run.
+- **Purpose**: Select routes or past runs, reorder stops, and manage delivery details.
 - **Layout**:
-  - Standard header with back button and title.
-  - Optional sort control near the top.
-  - Scrollable list of route items.
-- **Measurements**:
-  - Header height: 56px plus safe area.
-  - Row height: ~60px for two-line content.
+  - Header row with route selector and action buttons (reorder, add, search).
+  - Swipe cards for each stop, with front/back layers.
+  - Inline panels for edit, donation, and one-off delivery.
 
 Example markup:
 
 ```html
-<header class="app-header">
-  <button class="back-btn" type="button">Back</button>
-  <h2 class="header-title">Route Planner</h2>
-</header>
+<div class="page-header">
+  <select class="form-control route-select">...</select>
+  <button class="btn btn-secondary icon-btn">⇅</button>
+  <button class="btn btn-secondary icon-btn">+</button>
+  <button class="btn btn-secondary icon-btn">🔍</button>
+</div>
 
-<main class="route-planner-screen">
-  <div class="route-item">
-    <div class="stop-info">
-      <div class="stop-name">Alice's Diner</div>
-      <div class="stop-city text-muted">Sioux Falls, SD</div>
-    </div>
-    <div class="stop-meta">
-      <span class="stop-count">5 dz</span>
-      <span class="drag-handle" aria-hidden="true">::</span>
-    </div>
-  </div>
-</main>
+<div class="planner-swipe-row">
+  <div class="back-card">...</div>
+  <div class="front-card route-item">...</div>
+</div>
 ```
 
 Example styles:
@@ -702,35 +595,28 @@ Example styles:
 
 - **Purpose**: Focus on a single stop with Deliver and Skip actions.
 - **Layout**:
-  - Minimal header with back control (optional).
-  - Progress label and progress bar.
+  - The shared top bar sits above the run screen.
   - Delivery card with stop name, address, quantity, and notes.
+  - “Next up” card for the upcoming stop.
   - Bottom action bar with Deliver and Skip.
 - **Measurements**:
-  - Progress bar height: 4px.
   - Bottom bar height: 56px plus safe area.
 
 Example markup:
 
 ```html
-<header class="run-header">
-  <button class="back-btn" type="button">Back</button>
-  <div class="route-label text-muted">Week A Route</div>
-</header>
-
 <main class="delivery-run-screen">
-  <div class="progress-section">
-    <span class="stop-count-label">Stop 3 of 10</span>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" style="width: 30%"></div>
-    </div>
-  </div>
-
   <div class="delivery-card card">
     <h2 class="stop-name">Bob's Grocery</h2>
     <p class="stop-address">123 Elm St, Springfield, SD 57055</p>
     <p class="stop-quantity"><strong>4</strong> dozen</p>
     <p class="stop-notes text-muted">Note: Leave at front desk if no answer.</p>
+  </div>
+
+  <div class="next-up card">
+    <div class="section-title">Next up</div>
+    <div class="next-name">Sue's Market</div>
+    <div class="text-muted">456 Pine St, Springfield, SD 57055</div>
   </div>
 </main>
 
@@ -740,67 +626,14 @@ Example markup:
 </div>
 ```
 
-Example styles:
-
-```css
-.stop-count-label {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 8px 0;
-  display: block;
-  text-align: center;
-}
-
-.progress-bar-bg {
-  background: #e5e7eb;
-  border-radius: 4px;
-  height: 4px;
-  width: 100%;
-}
-
-.progress-bar-fill {
-  background: #10b981;
-  height: 4px;
-  width: 30%;
-  border-radius: 4px;
-}
-
-.delivery-card {
-  margin: 16px;
-}
-
-.delivery-card .stop-name {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.delivery-card .stop-address {
-  font-size: 16px;
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.delivery-card .stop-quantity {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.delivery-card .stop-notes {
-  font-size: 14px;
-  color: #6b7280;
-}
-```
-
 ## iOS native feel considerations
 
 - Use the system font and iOS-like sizing so text feels familiar [2].
 - Respect safe area insets for headers, footers, and floating elements [1].
-- Prefer large titles on the home screen and standard titles on deeper screens [2].
+- Prefer the shared top bar with logo and navigation instead of per-screen titles.
 - Use subtle translucency for top or bottom bars if you want an iOS-style blur.
 - Avoid Material ripple effects. Use a simple press highlight instead.
-- Keep gestures consistent. Provide a back button since PWA swipe-back is not guaranteed.
+- Keep gestures consistent. Use the Home/Planner/Run navigation instead of relying on swipe-back.
 - Keep scroll behavior simple (avoid nested scroll containers).
 
 ## Implementation notes (CSS and Angular integration)

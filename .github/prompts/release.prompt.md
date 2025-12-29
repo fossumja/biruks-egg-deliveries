@@ -5,6 +5,8 @@ argument-hint: "Try: status, ship it, send it, or roll it back (shorthand: relea
 agent: "agent"
 ---
 
+# Prompt: release
+
 You are my release assistant for the repo "biruks-egg-deliveries".
 
 Context:

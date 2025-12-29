@@ -5,6 +5,8 @@ argument-hint: "action=list|create|add|draft issue=<#|url> project=<number|title
 agent: "agent"
 ---
 
+# Prompt: project
+
 You are my GitHub Projects (v2) assistant.
 
 ## Key notes

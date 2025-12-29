@@ -4,7 +4,7 @@ Inventory of current screens, shared UI components, and styling touchpoints to k
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-26
+- **Last updated**: 2025-12-29
 - **Type**: Reference
 - **Scope**: UI surfaces, shared components, and styling references
 - **Non-goals**: detailed visual specs (see style guide)
@@ -17,24 +17,24 @@ This document captures the current UI so we can keep the experience consistent w
 ### Screens
 
 - **Home (`home.component`)**
-  - Import/export CSV.
-  - Restore backup (CSV) action with a strong confirmation flow.
-  - Route list and selection.
+  - Import CSV, backup CSV, and restore CSV (restore prompts for backup first).
+  - Tax year selector with a multi-year warning for export accuracy.
   - “Suggested donation per dozen” setting.
   - “Keep screen awake” and dark‑mode toggles.
+  - Help overlay with the in-app guide.
   - Build info / last updated footer.
 
 - **Route Planner (`route-planner.component`)**
-  - Route selector (including “All Schedules”).
-  - Run selector for a single schedule (Current live vs archived runs), plus “Add delivery” and search actions, frozen at top.
+  - Route selector (including “All Schedules”) and past runs, plus “All receipts”.
+  - Add delivery, search, and reorder actions in the header for live routes.
   - Cards for each person: name, address, status pill, quantity controls.
-  - Archived run view is read‑only (no hidden menu, no drag handles).
+  - Past run/receipt views support inline edits for status, dozens, and donation fields.
   - Drag‑and‑drop reordering via a dedicated handle.
-  - Hidden menu per card (swipe/tap): **Reset**, **Edit**, **Skip**, **Donation**, **Delivery**.
+  - Hidden menu per card (swipe/tap): **Reset**, **Edit**, **Skip/Unskip/Resubscribe**, **Donation**, **Delivery**.
   - Swipe rows use explicit front/back card layers; open state disables front‑card clicks so back actions are reliable.
-  - Inline edit panel for updating details, schedule, and order‑in‑route.
-  - Donation and off‑schedule delivery modals (using shared donation/delivery components).
-  - One-off modals include a compact receipt history list under the card.
+  - Inline edit panel for updating details, schedule, order‑in‑route, and unsubscribe state.
+  - Inline donation and off‑schedule delivery panels, plus a shared amount picker overlay.
+  - One-off panels include a compact receipt history list under the card.
 
 - **Delivery Run (`delivery-run.component`)**
   - Current stop card with name, address, note, quantity, and donation controls.
@@ -42,7 +42,7 @@ This document captures the current UI so we can keep the experience consistent w
   - “Deliver” / “Skip” actions and next‑stop navigation.
   - “Open Map” and “Copy” address actions.
   - Compact “Next up” summary for the upcoming stop.
-  - Finished state with “Backup now”, “Complete run” (archives history + resets), and “Done”.
+  - Finished state with “Backup now” and “Complete run” (archives history + resets and returns Home).
 
 ### Shared / Supporting
 
@@ -50,9 +50,11 @@ This document captures the current UI so we can keep the experience consistent w
   - `StorageService` (Dexie‑backed local DB, suggested rate, wake lock state, etc.).
   - `BackupService` (CSV import/export, route/donation totals).
 - **Components**
-  - `DonationAmountPickerComponent` (legacy, now largely folded into `DonationControlsComponent`).
-  - `DonationControlsComponent` (donation type + amount picker used on run card and one‑off donation UI).
+  - `AppHeaderComponent` (logo, progress bar, and Home/Planner/Run navigation).
+  - `DonationAmountPickerComponent` (shared amount selector used on Run and Planner).
+  - `DonationControlsComponent` (donation status, method, and amount controls).
   - `StopDeliveryCardComponent` (shared layout/logic for delivery cards on Run and off‑schedule flows).
+  - `ToastComponent` (global feedback toasts).
 - **Assets / Manifest**
   - PWA manifest and icons in `public/manifest.webmanifest` and `public/icons/`.
 

@@ -25,16 +25,17 @@ For each delivery week:
    - Deliver or skip each stop.
    - Adjust quantity and record donations as you go.
 4. When you finish a run:
-   - Optionally **Backup (CSV)** from the Home screen.
+   - Optionally **Backup CSV** from the Home screen.
    - Tap **Complete run** on the Run page to archive that run and reset the route for next time.
 5. At any time:
-   - Export a CSV from Home. The export always contains:
+   - Backup a CSV from Home. The export always contains:
      - All the original columns from your file.
      - All completed runs the app knows about.
      - All one‑off deliveries and donations.
      - Running totals for dozens, donations, and the deductible charitable contribution per person for the selected tax year.
 
 Set the tax year on Home before exporting so the totals and filename match the year you need.
+Use the Planner’s **Past runs** or **All receipts** views to review and edit past receipts.
 
 Deductible totals use a global formula: total donations minus the baseline value of delivered dozens at the time of each delivery (never below zero).
 
@@ -46,17 +47,18 @@ You can run many times per year on the same schedule. The app keeps all of that 
 
 The Home page has four main sections:
 
-- **Import / Backup / Help**
-  - **Import CSV**: load a route file from your device.
-    - If you already have real data in the app, you’ll see a warning and the app will offer to back up before replacing it.
-  - **Backup (CSV)**: export everything the app currently knows to a CSV file.
+- **Import / Backup / Restore / Help**
+  - **Import CSV**: load a route file from your device and replace the current deliveries and routes.
+    - Back up first if you need to keep the current dataset.
+  - **Backup CSV**: export everything the app currently knows to a CSV file.
     - Safe to press as often as you like.
-  - **Restore backup (CSV)**: replace in‑app data with a full backup file.
+  - **Restore CSV**: replace in‑app data with a full backup file.
+    - Prompts you to export a backup first, then asks you to tap **Restore CSV** again to pick a file.
     - Restores deliveries, run history, and one‑offs; settings stay the same.
   - **Help**: opens this guide inside the app.
   - The page also shows:
-    - **Last backup** timestamp (only when the last backup matches the current data).
-    - **Imported** timestamp for when the current dataset was loaded.
+    - **Last backup** timestamp when available.
+    - **Imported** and **Restored** timestamps for the current dataset.
 
 - **Tax year**
   - **Tax year selector**: choose the year used for totals and exports.
@@ -64,7 +66,6 @@ The Home page has four main sections:
 
 - **Settings**
   - **Dark mode**: toggle between light and dark themes.
-  - **Drag to reorder on Planner**: when ON, you can drag people on the Planner to change their order; when OFF, drag is disabled to avoid accidental moves.
   - **Keep screen awake**: attempts to keep your screen on while using the app (depending on device support).
   - **Suggested donation/dozen**: the per‑dozen donation amount used when suggesting donation amounts on the Planner and Run pages.
 
@@ -89,11 +90,10 @@ Use the **Import CSV** button on Home.
 - Importing **replaces** the current in‑app data:
   - All current deliveries and route info are cleared.
   - All run history entries are kept, but they’re no longer tied to the new live data if you change `BaseRowId`s.
+- If the CSV includes `RowType` rows, import uses only `Delivery` rows. Use **Restore CSV** for full history.
 - Use **Restore backup** only when you need a full rebuild:
   - It clears deliveries, routes, and run history and restores them from the backup file.
-- If the app sees that you already have real data, it will:
-  1. Ask if you want to back up.
-  2. Run a backup before letting you pick a new file (two taps on Import: one to back up, one to choose).
+- Back up before importing if you need the current dataset.
 
 ---
 
@@ -101,11 +101,11 @@ Use the **Import CSV** button on Home.
 
 ### 4.1. Schedule & Run Selector
 
-- Top dropdown: choose which **schedule** to view (e.g., `Week A`, `Week B`, or `All Schedules`).
-- When a single schedule is selected and you have completed runs:
-  - A **Run selector** appears:
-    - `Current (live)` – shows the editable route for the next run.
-    - `Run – YYYY‑MM‑DD` entries – show past runs for that schedule in a read‑only view.
+- Top dropdown: choose a **route** or a **past run**.
+  - **Routes**: `All Schedules` or a specific schedule (e.g., `Week A`, `Week B`).
+  - **Past runs**: completed runs for a schedule, plus **All receipts** to review everything at once.
+- Selecting a past run or **All receipts** switches the Planner into receipt history view.
+- Use **Search** to filter by name or address while staying on the current view.
 
 ### 4.2. Current (Live) View
 
@@ -121,9 +121,10 @@ When viewing `Current (live)`:
 - Hidden menu (swipe left on a card or tap to open):
   - **Reset**: clear this person’s delivered/skipped state and planned changes, returning them to Pending with original dozens and baseline donation.
   - **Edit**: change name, address, schedule, order in route, dozens, and notes.
+    - Use **Unsubscribe** in the edit panel to move someone to the bottom and exclude them from future runs.
   - **Skip** / **Unskip** / **Resubscribe**:
     - Skip for this run or undo a skip.
-    - Unsubscribe moves someone to the bottom of the list and marks them as “Unsubscribed” for future runs.
+    - If a stop is unsubscribed, the same button switches to **Resubscribe**.
   - **Donation** (one‑off):
     - Record a one‑off donation (not tied to a specific run state).
   - **Delivery** (one‑off):
@@ -132,14 +133,20 @@ When viewing `Current (live)`:
 ### 4.3. Reordering
 
 - Reordering is controlled by:
-  - The **Drag to reorder on Planner** setting on Home (default behavior), and
-  - The **Reorder** button in the Planner header (per‑session toggle).
+  - The **Reorder** button in the Planner header (toggle).
 - When reordering is enabled:
   - The left handle shows the grab icon and order number.
   - You can drag by the handle to change order.
 - When reordering is disabled:
   - The handle shows only the order number (no grab icon).
   - Dragging is disabled to avoid accidental movement while scrolling.
+- Reordering is disabled automatically for **All Schedules** and while search is active.
+
+### 4.4. Past Runs and Receipts
+
+- **Past runs** show archived delivery entries for a specific run.
+- **All receipts** aggregates receipts across runs and one‑offs.
+- Each entry shows status, dozens, donation, and date; use **Edit** to adjust receipts.
 
 ---
 
@@ -175,7 +182,6 @@ When all stops are delivered or skipped (or after you end the run early), the pa
     - Saves one row per person (delivered/skipped status, dozens, donation, taxable amount) into run history.
   - Resets the live route so all stops go back to Pending with baseline dozens and donation.
   - After this, the run appears in the Planner’s run selector.
-- **Done**:
   - Returns to the Home page.
 
 You can run the same schedule again later. Each completed run adds another entry to the history; totals accumulate across them.
@@ -215,16 +221,15 @@ These one‑offs:
   - Use **Complete run** on the Run page instead of resetting the route manually.
   - This archives the run to history and automatically resets the route.
 
-- **Import protection**:
-  - If the app detects that real data is already loaded and you press Import:
-    - It asks you to export a backup first.
-    - Only after that can you pick a new CSV.
+- **Restore protection**:
+  - Restoring a backup always prompts for confirmation.
+  - If data is already loaded, the app offers to export a backup before restore.
 
 ---
 
 ## 8. Exporting for Taxes and Records
 
-The **Backup (CSV)** export is your master snapshot. Totals are scoped to the tax year selected on Home, and the filename includes that tax year.
+The **Backup CSV** export is your master snapshot. Totals are scoped to the tax year selected on Home, and the filename includes that tax year.
 
 Per person, it includes:
 
@@ -235,7 +240,7 @@ Per person, it includes:
     - Imported totals from your original file (if present),
     - All runs completed in the app,
     - All one‑off deliveries,
-    - Any in‑progress run that hasn’t yet been completed.
+    - Delivered stops in the current (not yet completed) run.
   - `TotalDonation` – total donation amount across all of the above.
   - `TotalDeductibleContribution` – donation above the suggested amount across all of the above.
 
@@ -258,7 +263,7 @@ For each run:
    - Tap **Complete run**.
 5. At year‑end:
    - Set the tax year on Home.
-   - Export a final CSV.
+   - Backup a final CSV.
    - Use it to build donor and tax statements.
 
 The app keeps all of the history in between. You can safely run many deliveries before exporting again, as long as you don’t import a new CSV in the meantime.

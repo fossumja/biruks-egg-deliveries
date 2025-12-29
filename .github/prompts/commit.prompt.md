@@ -5,6 +5,8 @@ argument-hint: "style=conventional scope=<scope> issue=<#> kind=feat|fix|chore|d
 agent: "agent"
 ---
 
+# Prompt: commit
+
 You are my commit-message assistant.
 
 ## Goals

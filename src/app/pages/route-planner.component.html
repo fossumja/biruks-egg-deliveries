@@ -624,6 +624,28 @@
         <div class="inline-donation-body">
           <div class="card">
             <div class="new-form">
+              @if (editingRunEntry?.runId === 'oneoff') {
+                <label class="date-field">
+                  {{ editingRunEntry?.oneOffKind === 'donation' ? 'Donation date' : 'Delivery date' }}
+                  <input
+                    class="form-control"
+                    type="date"
+                    [min]="oneOffDateMin"
+                    [max]="oneOffDateMax"
+                    [ngModel]="runEntryDate"
+                    (ngModelChange)="onRunEntryDateChange($event)"
+                    name="runEntryDate"
+                    required
+                    [attr.aria-invalid]="runEntryDateError ? 'true' : null"
+                    [attr.aria-describedby]="runEntryDateError ? 'run-entry-date-error' : null"
+                  />
+                </label>
+                @if (runEntryDateError) {
+                  <p class="error-text" id="run-entry-date-error">
+                    {{ runEntryDateError }}
+                  </p>
+                }
+              }
               <label *ngIf="editingRunEntry?.runId !== 'oneoff'">
                 Status
                 <select
@@ -730,6 +752,7 @@
               <button
                 class="btn btn-primary"
                 type="button"
+                [disabled]="editingRunEntry?.runId === 'oneoff' && !!runEntryDateError"
                 (click)="saveRunEntryEdit()"
               >
                 Save
