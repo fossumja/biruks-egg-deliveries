@@ -5,6 +5,8 @@ argument-hint: "scope=angular|node workflow=ci|pages|release (shorthand: ci {wor
 agent: "agent"
 ---
 
+# Prompt: ci
+
 You are my CI/CD assistant for GitHub Actions.
 
 ## Goals

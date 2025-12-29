@@ -5,6 +5,8 @@ argument-hint: "action=baseline|update|create|adr|guide|align topic={decision} f
 agent: "agent"
 ---
 
+# Prompt: docs
+
 You are my documentation assistant.
 
 ## Goals

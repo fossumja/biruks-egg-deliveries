@@ -4,7 +4,7 @@ Runbook for backing up data and restoring from a backup CSV.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2025-12-24
 - **Type**: How-to
 - **Scope**: data backup and restore workflows
 - **Non-goals**: changing CSV formats or implementing new storage features
@@ -27,18 +27,17 @@ Runbook for backing up data and restoring from a backup CSV.
 
 1. Go to Home.
 2. Confirm the correct **Tax year** is selected (totals and filename follow it).
-3. Use **Backup (CSV)** to export.
-4. Save the file in a safe location.
+3. Tap **Backup CSV** and save the file (share sheet or download fallback).
+4. Confirm the filename includes the selected tax year when applicable.
 
 ### Restore (CSV)
 
-If the app has a **Restore backup (CSV)** action:
+1. Tap **Restore CSV** and accept the prompt to back up first.
+2. After the backup finishes, tap **Restore CSV** again to choose the file.
+3. Confirm the destructive warning to replace current data.
+4. Verify the app reloads routes and history as expected.
 
-1. Confirm you are ready to replace in-app data.
-2. Select the backup CSV file.
-3. Verify the app reloads routes and history as expected.
-
-If **Restore backup** is not present, restoration is not supported yet. Do not attempt to import a backup CSV as a normal import unless you accept losing in-app history.
+Do not use **Import CSV** for backup files unless you accept losing run history and one-offs.
 
 ## Rollback
 
@@ -50,6 +49,11 @@ If **Restore backup** is not present, restoration is not supported yet. Do not a
 - Planner shows expected routes and stops.
 - Run history (if present) matches the backup.
 - Totals and one-offs appear consistent.
+
+## What changed / Why
+
+- Updated the restore flow to match the current two-step backup-first behavior.
+- Added backup filename and tax-year verification notes.
 
 ## Related docs
 

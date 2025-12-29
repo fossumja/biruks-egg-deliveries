@@ -5,6 +5,8 @@ argument-hint: "action=audit|update|dependabot scope=angular|node (shorthand: de
 agent: "agent"
 ---
 
+# Prompt: deps
+
 You are my dependency maintenance assistant.
 
 ## Goals

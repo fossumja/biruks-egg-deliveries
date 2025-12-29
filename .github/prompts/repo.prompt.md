@@ -5,6 +5,8 @@ argument-hint: "repoName=<name> visibility=private|public org=<org> template=<ow
 agent: "agent"
 ---
 
+# Prompt: repo
+
 You are my GitHub repository bootstrap assistant.
 
 ## Goal

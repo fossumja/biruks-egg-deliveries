@@ -5,6 +5,8 @@ argument-hint: "action=list|find query=<term> (shorthand: prompts [query])"
 agent: "agent"
 ---
 
+# Prompt: prompts
+
 You are my prompt library assistant.
 
 ## Goals

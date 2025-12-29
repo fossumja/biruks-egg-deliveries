@@ -5,6 +5,8 @@ argument-hint: "query=is:open is:issue owner=@me project=<number> (shorthand: tr
 agent: "agent"
 ---
 
+# Prompt: triage
+
 You are my triage assistant for GitHub issues and PRs.
 
 ## Goals
