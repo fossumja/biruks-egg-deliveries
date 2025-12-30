@@ -55,6 +55,13 @@ const createDelivery = (overrides: Partial<Delivery> = {}): Delivery => ({
 const buildAddress = (delivery: Delivery): string =>
   `${delivery.address}, ${delivery.city}, ${delivery.state} ${delivery.zip ?? ''}`.trim();
 
+const createPointerEvent = (clientX: number, clientY: number): PointerEvent =>
+  ({
+    clientX,
+    clientY,
+    preventDefault: jasmine.createSpy('preventDefault'),
+  } as unknown as PointerEvent);
+
 const stubClipboard = (
   clipboard: { writeText: (text: string) => Promise<void> } | undefined
 ): (() => void) => {
@@ -460,6 +467,53 @@ describe('RoutePlannerComponent', () => {
     expect(component.deliveries[0].id).toBe('delivery-2');
     expect(component.deliveries[0].sortIndex).toBe(0);
     expect(saveSpy).toHaveBeenCalled();
+  });
+
+  it('opens a row when swiped left past the threshold', () => {
+    const stop = createDelivery();
+    const startEvent = createPointerEvent(100, 100);
+    const moveEvent = createPointerEvent(50, 100);
+    const endEvent = createPointerEvent(40, 100);
+
+    component.startSwipe(startEvent, stop);
+    component.moveSwipe(moveEvent, stop);
+    component.endSwipe(endEvent, stop);
+
+    expect(moveEvent.preventDefault).toHaveBeenCalled();
+    expect(component.openRowId).toBe(stop.id);
+    expect(component.isSwiping).toBeFalse();
+  });
+
+  it('closes an open row when swiped right past the threshold', () => {
+    const stop = createDelivery();
+    component.openRowId = stop.id;
+    const startEvent = createPointerEvent(100, 100);
+    const moveEvent = createPointerEvent(160, 100);
+    const endEvent = createPointerEvent(180, 100);
+
+    component.startSwipe(startEvent, stop);
+    component.moveSwipe(moveEvent, stop);
+    component.endSwipe(endEvent, stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('ignores toggleRow while a swipe gesture is active', () => {
+    const stop = createDelivery();
+    component.isSwiping = true;
+
+    component.toggleRow(stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('closes the open row when drag starts', () => {
+    const stop = createDelivery();
+    component.openRowId = stop.id;
+
+    component.handleDragStart();
+
+    expect(component.openRowId).toBeNull();
   });
 
   it('validates new delivery fields', () => {

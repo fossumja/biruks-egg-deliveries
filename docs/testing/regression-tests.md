@@ -140,7 +140,7 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, add/edit).
+- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, swipe open/close, add/edit).
 
 Manual checks:
 
@@ -177,7 +177,7 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/route-planner.component.spec.ts` (one-off validation and receipts edits).
+- `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipts edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
 Manual checks:
@@ -342,6 +342,7 @@ If changes span more than three packs or touch storage + backup, run a full regr
 - Expanded the change-impact map for app shell services.
 - Documented the device/PWA matrix and manual checklist for TP-11.
 - Noted automated coverage for share/maps/clipboard to keep TP-11 status current.
+- Noted automated coverage for Planner swipe/hidden menu interactions.
 
 ## Related docs
 
