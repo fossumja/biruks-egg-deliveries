@@ -37,6 +37,7 @@ Use this workflow to set up and run the app locally during active development.
 - Use short-lived feature branches off `main`; delete them after merge.
 - Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
+- In sandboxed environments, base checks and Karma may require escalated permissions; rerun with approval if blocked.
 
 ## Steps
 
@@ -96,6 +97,7 @@ Use this workflow to set up and run the app locally during active development.
 - Added guidance for plan updates, issue comments, and explicit self-approval to reduce review loops.
 - Added explicit docs prompt guidance so documentation updates stay aligned with the style guide.
 - Added testing workflow integration so behavior changes drive regression packs and test updates.
+- Added a sandbox note for base checks and Karma requiring escalated permissions.
 
 ## Related docs
 

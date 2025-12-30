@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { RoutePlannerComponent } from './route-planner.component';
 import { StorageService } from '../services/storage.service';
 import { BackupService } from '../services/backup.service';
+import { ToastService } from '../services/toast.service';
 import { ReceiptHistoryEntry } from '../models/receipt-history-entry.model';
 import { Delivery, DonationInfo } from '../models/delivery.model';
 import { Route } from '../models/route.model';
@@ -50,6 +51,42 @@ const createDelivery = (overrides: Partial<Delivery> = {}): Delivery => ({
   updatedAt: '2025-01-01T00:00:00.000Z',
   ...overrides,
 });
+
+const buildAddress = (delivery: Delivery): string =>
+  `${delivery.address}, ${delivery.city}, ${delivery.state} ${delivery.zip ?? ''}`.trim();
+
+const createPointerEvent = (clientX: number, clientY: number): PointerEvent =>
+  ({
+    clientX,
+    clientY,
+    preventDefault: jasmine.createSpy('preventDefault'),
+  } as unknown as PointerEvent);
+
+const stubClipboard = (
+  clipboard: { writeText: (text: string) => Promise<void> } | undefined
+): (() => void) => {
+  const navigatorClipboard = navigator as unknown as {
+    clipboard?: { writeText: (text: string) => Promise<void> };
+  };
+  const hadClipboard = 'clipboard' in navigator;
+  const originalClipboard = navigatorClipboard.clipboard;
+
+  Object.defineProperty(navigator, 'clipboard', {
+    value: clipboard,
+    configurable: true
+  });
+
+  return () => {
+    if (hadClipboard) {
+      Object.defineProperty(navigator, 'clipboard', {
+        value: originalClipboard,
+        configurable: true
+      });
+    } else {
+      delete navigatorClipboard.clipboard;
+    }
+  };
+};
 
 const createRunEntry = (overrides: Partial<RunSnapshotEntry> = {}): RunSnapshotEntry => ({
   id: 'entry-1',
@@ -292,6 +329,7 @@ describe('RoutePlannerComponent', () => {
   let component: RoutePlannerComponent;
   let fixture: ComponentFixture<RoutePlannerComponent>;
   let storage: StorageServiceStub;
+  let toast: ToastService;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -335,6 +373,7 @@ describe('RoutePlannerComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
+    toast = TestBed.inject(ToastService);
   });
 
   it('should create', () => {
@@ -428,6 +467,53 @@ describe('RoutePlannerComponent', () => {
     expect(component.deliveries[0].id).toBe('delivery-2');
     expect(component.deliveries[0].sortIndex).toBe(0);
     expect(saveSpy).toHaveBeenCalled();
+  });
+
+  it('opens a row when swiped left past the threshold', () => {
+    const stop = createDelivery();
+    const startEvent = createPointerEvent(100, 100);
+    const moveEvent = createPointerEvent(50, 100);
+    const endEvent = createPointerEvent(40, 100);
+
+    component.startSwipe(startEvent, stop);
+    component.moveSwipe(moveEvent, stop);
+    component.endSwipe(endEvent, stop);
+
+    expect(moveEvent.preventDefault).toHaveBeenCalled();
+    expect(component.openRowId).toBe(stop.id);
+    expect(component.isSwiping).toBeFalse();
+  });
+
+  it('closes an open row when swiped right past the threshold', () => {
+    const stop = createDelivery();
+    component.openRowId = stop.id;
+    const startEvent = createPointerEvent(100, 100);
+    const moveEvent = createPointerEvent(160, 100);
+    const endEvent = createPointerEvent(180, 100);
+
+    component.startSwipe(startEvent, stop);
+    component.moveSwipe(moveEvent, stop);
+    component.endSwipe(endEvent, stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('ignores toggleRow while a swipe gesture is active', () => {
+    const stop = createDelivery();
+    component.isSwiping = true;
+
+    component.toggleRow(stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('closes the open row when drag starts', () => {
+    const stop = createDelivery();
+    component.openRowId = stop.id;
+
+    component.handleDragStart();
+
+    expect(component.openRowId).toBeNull();
   });
 
   it('validates new delivery fields', () => {
@@ -763,5 +849,86 @@ describe('RoutePlannerComponent', () => {
     const update = updateSpy.calls.mostRecent().args[1];
     expect(updateSpy).toHaveBeenCalled();
     expect('eventDate' in update).toBeFalse();
+  });
+
+  it('opens iOS maps deep link when user agent is iOS', () => {
+    const stop = createDelivery();
+    const assignSpy = spyOn(
+      component as unknown as { navigateToUrl: (url: string) => void },
+      'navigateToUrl'
+    );
+    spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('iPhone');
+
+    component.openMaps(stop);
+
+    expect(assignSpy).toHaveBeenCalledWith(
+      `maps://?q=${encodeURIComponent(buildAddress(stop))}`
+    );
+  });
+
+  it('opens Android maps deep link when user agent is Android', () => {
+    const stop = createDelivery();
+    const assignSpy = spyOn(
+      component as unknown as { navigateToUrl: (url: string) => void },
+      'navigateToUrl'
+    );
+    spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('Android');
+
+    component.openMaps(stop);
+
+    expect(assignSpy).toHaveBeenCalledWith(
+      `geo:0,0?q=${encodeURIComponent(buildAddress(stop))}`
+    );
+  });
+
+  it('falls back to web maps when user agent is not mobile', () => {
+    const stop = createDelivery();
+    const assignSpy = spyOn(
+      component as unknown as { navigateToUrl: (url: string) => void },
+      'navigateToUrl'
+    );
+    spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('Chrome');
+
+    component.openMaps(stop);
+
+    expect(assignSpy).toHaveBeenCalledWith(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(buildAddress(stop))}`
+    );
+  });
+
+  it('copies address using the clipboard API and shows a toast', async () => {
+    const stop = createDelivery();
+    const clipboardSpy = jasmine
+      .createSpy('writeText')
+      .and.callFake(() => Promise.resolve());
+    const toastSpy = spyOn(toast, 'show');
+    const restoreClipboard = stubClipboard({ writeText: clipboardSpy });
+
+    try {
+      await component.copyAddress(stop);
+    } finally {
+      restoreClipboard();
+    }
+
+    expect(clipboardSpy).toHaveBeenCalledWith(buildAddress(stop));
+    expect(toastSpy).toHaveBeenCalledWith('Address copied');
+  });
+
+  it('shows an error toast when clipboard copy fails', async () => {
+    const stop = createDelivery();
+    const clipboardSpy = jasmine
+      .createSpy('writeText')
+      .and.callFake(() => Promise.reject(new Error('copy failed')));
+    const toastSpy = spyOn(toast, 'show');
+    const restoreClipboard = stubClipboard({ writeText: clipboardSpy });
+
+    try {
+      await component.copyAddress(stop);
+    } finally {
+      restoreClipboard();
+    }
+
+    expect(clipboardSpy).toHaveBeenCalledWith(buildAddress(stop));
+    expect(toastSpy).toHaveBeenCalledWith('Copy failed', 'error');
   });
 });

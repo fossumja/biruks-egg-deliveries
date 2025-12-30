@@ -54,7 +54,7 @@ You are my testing workflow assistant.
 ## action=report
 
 1. Summarize packs run (with TP-xx IDs), commands used, and outcomes.
-2. Update docs when test coverage or packs changed.
+2. Update docs when test coverage or packs changed, including automation notes in `docs/testing/regression-tests.md`.
 3. Suggest follow-up issues for any failures.
 
 ## Output

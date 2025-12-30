@@ -4,7 +4,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: creating and updating documentation in this repo
 - **Non-goals**: modifying application code or external tooling
@@ -60,6 +60,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 - References in `README.md`, `AGENTS.md`, and `index.md` are correct.
 - No new markdownlint warnings for headings or lists.
 - "What changed / Why" notes added for standards and workflow updates.
+- Prompt/instruction updates include a single H1 after front matter.
 
 ## Outputs
 
@@ -71,6 +72,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 
 - Added a reminder to include "What changed / Why" notes when updating standards or workflows.
 - Added an explicit H1 requirement for prompt and instruction files to match the style guide.
+- Added a checklist item to verify prompt/instruction H1s during doc updates.
 
 ## Related docs
 

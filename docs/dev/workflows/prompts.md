@@ -53,19 +53,19 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Planning and tracking
 
-- `issues` — create, break down, and triage issues. Shorthand: `issues breakdown 1`. Workflow: `docs/dev/workflows/triage.md`.
+ - `issues` — create, break down, and triage issues, including test-failure rerun guidance. Shorthand: `issues breakdown 1`. Workflow: `docs/dev/workflows/triage.md`.
 - `project` — manage GitHub Projects. Shorthand: `project add 1 2`. Workflow: `docs/dev/workflows/triage.md`.
 - `triage` — bulk triage issues and PRs. Shorthand: `triage "is:open label:type:bug"`. Workflow: `docs/dev/workflows/triage.md`.
 - `labels` — manage label taxonomy. Shorthand: `labels sync`. Workflow: `docs/dev/workflows/triage.md`.
 
 ### Delivery flow
 
-- `feature` — deliver a parent feature with child issues, including plan validation and testing workflow selection for behavior changes. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
+ - `feature` — deliver a parent feature with child issues, including plan validation, retrospective follow-ups, and testing workflow selection for behavior changes. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
 - `quality` — run quality gates. Shorthand: `quality check`. Workflow: `docs/dev/workflows/quality.md`.
-- `testing` — select and run modular regression packs (TP-xx). Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
+ - `testing` — select and run modular regression packs (TP-xx), updating automation notes when coverage changes. Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
 
 ### Documentation and knowledge
 
@@ -76,7 +76,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 - `ci` — create or update CI workflows. Shorthand: `ci ci angular`. Workflow: `docs/dev/workflows/development.md`.
 - `deps` — dependency maintenance. Shorthand: `deps audit`. Workflow: `docs/dev/workflows/quality.md`.
-- `release` — ship releases. Shorthand: `release status`. Workflow: `docs/dev/workflows/release.md`.
+ - `release` — ship releases with a TP-11 device checklist callout in release notes. Shorthand: `release status`. Workflow: `docs/dev/workflows/release.md`.
 
 ### Repo setup
 
@@ -100,6 +100,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Added the prompt structure requirement so new prompts align with the style guide.
 - Updated the testing prompt catalog entry to reflect pack ID reporting.
 - Noted the feature prompt's testing workflow integration for behavior changes.
+- Updated prompt entries for retrospective follow-ups and device checklist callouts.
 
 ## Related docs
 
