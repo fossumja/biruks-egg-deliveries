@@ -66,13 +66,16 @@ Use this once per repo to keep `main` safe without blocking work.
 3. Retrospective (per feature):
    - Capture what worked, what hurt, and the next improvement in the parent issue or PR.
    - Update prompts/workflows and the prompt catalog when you discover gaps or hazards.
-4. Keep the branch current:
+4. Apply retrospective learnings:
+   - Review retrospective comments on the parent issue and recent feature parents.
+   - Address low-effort fixes immediately; create follow-up issues for larger work.
+5. Keep the branch current:
    - Use `/branch action=sync` as needed.
-5. Finish the feature:
+6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Open a PR linked to the parent issue.
    - Confirm branch protection/rulesets won’t block the merge and note any skipped checks in the PR.
-6. Cleanup after merge:
+7. Cleanup after merge:
    - Ensure the feature branch is deleted (auto-delete or `/branch action=delete name={branch}`).
    - Prune refs with `git fetch --prune` and switch back to `main`.
 
@@ -88,6 +91,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Testing workflow used for behavior changes, with pack IDs recorded.
 - Feature branch is deleted and local refs are pruned.
 - Retrospective notes and prompt/workflow updates are recorded when new lessons are learned.
+- Retrospective follow-ups are applied or tracked in new issues.
 - Base checks run for each child issue; full quality run before PR.
 
 ## Outputs
@@ -103,6 +107,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Recorded plan review as a checklist item so it is tracked alongside delivery steps.
 - Added docs prompt guidance to keep documentation updates consistent with the style guide.
 - Added testing workflow integration so behavior changes include pack selection and test updates.
+- Added a retrospective follow-up step so learnings are applied or tracked.
 
 ## Related docs
 

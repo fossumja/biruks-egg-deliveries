@@ -76,11 +76,12 @@ You are my feature delivery assistant.
 1. Confirm all child issues are closed and the parent checklist is complete.
 2. Run the quality workflow if applicable (this is the full check for the feature).
 3. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
-4. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-5. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-6. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-7. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-8. Suggest release workflow if requested.
+4. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
+5. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+6. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+7. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+8. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+9. Suggest release workflow if requested.
 
 ## Output
 

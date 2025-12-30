@@ -43,7 +43,7 @@ Supported commands I will say to you:
    - Produce a release prep preview:
      - Proposed commit message
      - Proposed next tag (`vYYYY.M.P`) with reasoning
-     - Draft release notes (Summary / Changes / Notes)
+     - Draft release notes (Summary / Changes / Notes / Device checklist for TP-11)
    - Ask: "Update docs before release? (yes/no)"
      - If yes, pause and invoke the docs workflow (`/docs action=update`) then re-check status.
    - Do NOT run git/build/deploy commands.

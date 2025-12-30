@@ -75,6 +75,7 @@ npm test -- --watch=false --browsers=ChromeHeadless --include src/app/services/s
   - Commands executed.
   - Manual checks completed (or deferred).
   - Failures and follow-up issues.
+  - Base check results if automated tests are skipped.
 
 ## Outcomes
 
@@ -87,6 +88,14 @@ npm test -- --watch=false --browsers=ChromeHeadless --include src/app/services/s
 - If tests are flaky, clear IndexedDB and rerun the spec.
 - If tests are slow, run only the impacted spec files.
 - If a pack is missing, update `docs/testing/regression-tests.md` first.
+- If Karma cannot bind to a local port in a sandboxed environment, rerun with escalated permissions.
+- If tests cannot be executed, document the gap and open a follow-up issue.
+- If Karma cannot run at all, run `npm run build` as a base check and note the deferral.
+
+## What changed / Why
+
+- Added sandbox troubleshooting guidance for Karma port binding failures.
+- Added base-check guidance when automated tests are deferred.
 
 ## Related docs
 

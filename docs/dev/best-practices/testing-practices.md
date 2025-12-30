@@ -45,6 +45,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 - Follow `docs/testing/usage-scenario-tests.md` and `docs/testing/regression-tests.md`.
 - Keep manual scenarios up to date as features change.
+- Keep manual scenario docs short; link to automated specs as they land.
 - Keep each scenario linked to the relevant regression packs.
 - Automate scenarios when they stabilize, starting with data-level runners.
 - Use the scenario runner helpers in `src/testing/scenario-runner.ts` for data-level coverage.
@@ -112,6 +113,7 @@ Update this doc when any of the following change:
 - Added guidance on stable selectors and common pitfalls to reduce flaky tests.
 - Noted the current data-level scenario automation entry points.
 - Added regression pack governance so IDs and impact maps stay consistent.
+- Added guidance to keep manual scenario docs concise and linked to automated coverage.
 
 ## Related docs
 
