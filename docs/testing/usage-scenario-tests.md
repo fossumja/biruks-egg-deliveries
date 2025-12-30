@@ -31,6 +31,7 @@ Use these scenarios to validate behavior that spans import, Planner actions, Run
 - Import a real route CSV via **Import CSV** (or use the sample data if you are only smoke testing).
 - Set the suggested donation rate on Home.
 - Pick a single route in Planner (avoid All Schedules for these scenarios).
+- If running on device or PWA, also run TP-11 from `docs/testing/regression-tests.md`.
 
 ## Automation coverage (current)
 
@@ -181,6 +182,7 @@ Expected:
 
 - Rewrote the scenario plan to match the current data-level automation and trim long-form instructions.
 - Added explicit manual checklists aligned with the current Planner/Run flows.
+- Linked each scenario to regression pack IDs for reporting.
 
 ## Related docs
 

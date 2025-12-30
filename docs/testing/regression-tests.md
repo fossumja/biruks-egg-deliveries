@@ -39,7 +39,7 @@ Not covered:
 
 - Local: `npm test` / `ng test` and manual browser checks.
 - CI: headless test runs when configured.
-- Device: iOS/Android PWA checks for gesture and wake lock behavior.
+- Device: iOS/Android browser + PWA checks using the TP-11 device matrix.
 
 ## Test pack catalog
 
@@ -271,15 +271,35 @@ Scope:
 - Share API fallback to download.
 - Maps deep links and clipboard copy.
 - PWA manifest and service worker caching.
+- Backup and restore flows on device.
 
 Automated coverage:
 
 - Manual only until device automation is added.
 
+Device matrix (minimum regression target):
+
+| Platform | Mode | Minimum OS | Minimum browser |
+| --- | --- | --- | --- |
+| iOS | Safari (browser) | iOS 16 | Safari 16 |
+| iOS | PWA (Add to Home Screen) | iOS 16 | Safari 16 |
+| Android | Chrome (browser) | Android 12 | Chrome 120 |
+| Android | PWA (installed) | Android 12 | Chrome 120 |
+
+Notes:
+
+- Update these minimums when support policy changes or the device fleet shifts.
+- Wake lock is expected to be unsupported on iOS; confirm the fallback message.
+
 Manual checks:
 
-- iOS and Android PWA behaviors match expectations.
-- App icon and splash screen assets are correct.
+- Wake lock: toggle on/off and confirm the UI state and localStorage value update.
+- Share/download: run Backup CSV and confirm the share sheet or download fallback.
+- Restore: follow the two-step backup-then-restore flow; confirm routes and history reload.
+- Maps: open a stop and confirm the deep link opens a maps app.
+- Clipboard: copy a stop address and paste into a notes app.
+- Gestures: swipe to reveal the Planner hidden menu; drag reorder works only when enabled.
+- PWA assets: app icon and splash screen assets render correctly.
 
 ## Change-impact map
 
@@ -319,6 +339,7 @@ If changes span more than three packs or touch storage + backup, run a full regr
 - Added pack ID governance so reports stay consistent over time.
 - Updated automation coverage notes to reflect current component and service specs.
 - Expanded the change-impact map for app shell services.
+- Documented the device/PWA matrix and manual checklist for TP-11.
 
 ## Related docs
 
