@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -58,6 +58,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
    - Complete acceptance criteria, update docs, and close the issue.
+   - If behavior changes, run `testing scope` to select regression packs, execute automated/manual checks, record TP-xx IDs, and update/add tests (or log a follow-up issue).
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
    - Run at least one base check (default: `npm run build`) and note results.
    - If `public/build-info.json` changes, restore it before committing.
@@ -84,6 +85,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - PR includes `Fixes #{parent}` in the description.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
+- Testing workflow used for behavior changes, with pack IDs recorded.
 - Feature branch is deleted and local refs are pruned.
 - Retrospective notes and prompt/workflow updates are recorded when new lessons are learned.
 - Base checks run for each child issue; full quality run before PR.
@@ -100,6 +102,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added explicit development workflow plan checks to keep issue plans feasible before coding.
 - Recorded plan review as a checklist item so it is tracked alongside delivery steps.
 - Added docs prompt guidance to keep documentation updates consistent with the style guide.
+- Added testing workflow integration so behavior changes include pack selection and test updates.
 
 ## Related docs
 
@@ -108,5 +111,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - `.github/prompts/branch.prompt.md`
 - `.github/prompts/docs.prompt.md`
 - `.github/prompts/pr.prompt.md`
+- `.github/prompts/testing.prompt.md`
 - `docs/dev/best-practices/documentation-style-guide.md`
+- `docs/dev/workflows/testing.md`
 - `docs/dev/workflows/quality.md`

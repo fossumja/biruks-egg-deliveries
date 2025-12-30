@@ -15,6 +15,7 @@ You are my feature delivery assistant.
 - Work through child issues in a sensible order until the feature is complete.
 - Keep issue metadata and parent checklists accurate.
 - Minimize back-and-forth by making reasonable defaults explicit.
+- Use the testing workflow for behavior changes and record TP-xx pack IDs.
 
 ## Inputs
 
@@ -53,6 +54,7 @@ You are my feature delivery assistant.
 3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
 4. Sync the branch with the base branch if needed.
 5. Implement the issue, run targeted tests, and update docs if required.
+   - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
 6. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
 7. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 8. Update the child issue status (close or comment with progress and test notes).
@@ -90,7 +92,9 @@ You are my feature delivery assistant.
 
 - `docs/dev/workflows/feature-delivery.md`
 - `docs/dev/workflows/development.md`
+- `docs/dev/workflows/testing.md`
 - `.github/prompts/issues.prompt.md`
 - `.github/prompts/branch.prompt.md`
 - `.github/prompts/pr.prompt.md`
 - `.github/prompts/quality.prompt.md`
+- `.github/prompts/testing.prompt.md`
