@@ -4,7 +4,7 @@ Use this workflow to log, reproduce, and prioritize issues consistently.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: issue and PR triage for this repo
 - **Non-goals**: long-term product planning
@@ -25,6 +25,7 @@ Use this workflow to log, reproduce, and prioritize issues consistently.
 
 - Follow `.github/prompts/triage.prompt.md` for CLI-based triage.
 - Use `.github/prompts/issues.prompt.md` for issue creation standards.
+- Prefer `gh issue create --body-file` for multi-line issue bodies.
 - Prefer running triage via the `/triage` prompt when possible.
 
 ## Steps
@@ -48,6 +49,10 @@ Use this workflow to log, reproduce, and prioritize issues consistently.
 
 - A triaged issue/PR with consistent metadata.
 - Follow-up tasks or clarifying questions.
+
+## What changed / Why
+
+- Added guidance to use `--body-file` for multi-line issue bodies to avoid quoting issues.
 
 ## Related docs
 

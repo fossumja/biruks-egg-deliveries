@@ -47,6 +47,7 @@ You are my issues & planning assistant.
 
 - Create issues with `gh issue create`
 - List/search with `gh issue list` (use `--search`, `--label`, `--assignee`)
+- Prefer `--body-file` for multi-line issue bodies to avoid shell quoting issues
 - When planning in Projects (v2), ensure `project` scope: `gh auth refresh -s project`
 - If requested, create a linked development branch: `gh issue develop <issue>`
 - Before creating issues, ensure the label scheme exists:
