@@ -6,9 +6,8 @@ import { Delivery } from '../app/models/delivery.model';
 // Helper to create a fresh StorageService and seed it with a mini route.
 export async function createStorageWithMiniRoute(): Promise<StorageService> {
   const storage = TestBed.inject(StorageService);
-  // ImportDeliveries clears existing deliveries/routes before adding new ones.
+  await storage.clearAll();
   const deliveries: Delivery[] = miniRouteFixture();
   await storage.importDeliveries(deliveries);
   return storage;
 }
-

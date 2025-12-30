@@ -4,7 +4,10 @@ import { BackupService } from './backup.service';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
 import {
   ScenarioContext,
-  runMultiRunScenario
+  addOneOffDelivery,
+  addOneOffDonation,
+  deliverStop,
+  snapshotCurrentState
 } from '../../testing/scenario-runner';
 
 /**
@@ -19,6 +22,95 @@ describe('Usage scenarios (scenario runner)', () => {
   let backup: BackupService;
   let ctx: ScenarioContext;
 
+  const runScenario = async (): Promise<Awaited<ReturnType<typeof snapshotCurrentState>>[]> => {
+    const rate = storage.getSuggestedRate();
+
+    await deliverStop(ctx, 'c1-r1', {
+      dozens: 2,
+      donation: {
+        status: 'Donated',
+        method: 'cash',
+        amount: 2 * rate,
+        suggestedAmount: 2 * rate
+      },
+      eventDate: '2025-01-01T08:00:00.000Z'
+    });
+    await deliverStop(ctx, 'c2-r1', {
+      dozens: 1,
+      donation: {
+        status: 'Donated',
+        method: 'cash',
+        amount: 1 * rate,
+        suggestedAmount: 1 * rate
+      },
+      eventDate: '2025-01-01T08:15:00.000Z'
+    });
+
+    const run1 = await snapshotCurrentState(ctx, 'run1-baseline');
+
+    await addOneOffDonation(
+      ctx,
+      'c1-r1',
+      {
+        status: 'Donated',
+        method: 'venmo',
+        amount: 5,
+        suggestedAmount: 5
+      },
+      '2025-01-03T12:00:00.000Z'
+    );
+    await addOneOffDelivery(
+      ctx,
+      'c1-r1',
+      1,
+      {
+        status: 'Donated',
+        method: 'other',
+        amount: 3,
+        suggestedAmount: 3
+      },
+      '2025-01-04T12:00:00.000Z'
+    );
+    await addOneOffDonation(
+      ctx,
+      'c2-r1',
+      {
+        status: 'Donated',
+        method: 'ach',
+        amount: 4,
+        suggestedAmount: 4
+      },
+      '2025-01-05T12:00:00.000Z'
+    );
+
+    const between = await snapshotCurrentState(ctx, 'between-run1-and-run2');
+
+    await deliverStop(ctx, 'c1-r2', {
+      dozens: 3,
+      donation: {
+        status: 'Donated',
+        method: 'ach',
+        amount: 3 * rate,
+        suggestedAmount: 3 * rate
+      },
+      eventDate: '2025-01-08T08:00:00.000Z'
+    });
+    await deliverStop(ctx, 'c2-r2', {
+      dozens: 2,
+      donation: {
+        status: 'Donated',
+        method: 'paypal',
+        amount: 2 * rate,
+        suggestedAmount: 2 * rate
+      },
+      eventDate: '2025-01-08T08:15:00.000Z'
+    });
+
+    const afterRun2 = await snapshotCurrentState(ctx, 'after-run2');
+
+    return [run1, between, afterRun2];
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [StorageService, BackupService]
@@ -31,7 +123,7 @@ describe('Usage scenarios (scenario runner)', () => {
 
   it('Multi-run scenario matches expected cumulative totals (Scenario 7 core)', async () => {
     const rate = storage.getSuggestedRate();
-    const snapshots = await runMultiRunScenario(ctx);
+    const snapshots = await runScenario();
 
     const [run1, between, afterRun2] = snapshots;
 
@@ -72,7 +164,7 @@ describe('Usage scenarios (scenario runner)', () => {
   });
 
   it('debug: logs multi-run snapshots and CSV rows', async () => {
-    const snapshots = await runMultiRunScenario(ctx);
+    const snapshots = await runScenario();
 
     snapshots.forEach((snap) => {
       // Log label and totals per baseRowId

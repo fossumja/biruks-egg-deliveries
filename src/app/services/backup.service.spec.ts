@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { BackupService } from './backup.service';
 import { StorageService } from './storage.service';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
+import Papa from 'papaparse';
 
 // NOTE: These are initial data-level tests focused on totals.
 // They simulate a very small subset of the usage scenarios,
@@ -10,6 +11,21 @@ import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
 describe('BackupService totals with mini route', () => {
   let backup: BackupService;
   let storage: StorageService;
+
+  const buildImportState = (deliveries: { baseRowId: string; name: string }[]) => {
+    const headers = ['BaseRowId', 'Name'];
+    const rowsByBaseRowId: Record<string, string[]> = {};
+    deliveries.forEach((delivery) => {
+      if (!rowsByBaseRowId[delivery.baseRowId]) {
+        rowsByBaseRowId[delivery.baseRowId] = [delivery.baseRowId, delivery.name];
+      }
+    });
+    return {
+      headers,
+      rowsByBaseRowId,
+      mode: 'baseline' as const
+    };
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -220,5 +236,102 @@ describe('BackupService totals with mini route', () => {
     expect(c1Totals2025?.donation ?? 0).toBe(0);
     expect(c1Totals2025?.dozens ?? 0).toBe(0);
     expect(c1Totals2025?.taxable ?? 0).toBe(0);
+  });
+
+  it('exports history CSV with RowType and run metadata columns', async () => {
+    const rate = storage.getSuggestedRate();
+    await storage.markDelivered('c1-r1', 2);
+    await storage.updateDonation('c1-r1', {
+      status: 'Donated',
+      method: 'cash',
+      amount: 2 * rate,
+      suggestedAmount: 2 * rate
+    });
+    await storage.markSkipped('c2-r1', 'Not home');
+    await storage.completeRun('2025-01-01', false);
+
+    const deliveries = await storage.getAllDeliveries();
+    const importState = buildImportState(deliveries);
+    const runEntries = await storage.getAllRunEntries();
+    const runs = await storage.getAllRuns();
+    const totals = (backup as any).computeTotalsByBase(
+      deliveries,
+      runEntries,
+      importState
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const csv = (backup as any).toCsvWithImportStateAndHistory(
+      deliveries,
+      importState,
+      totals,
+      runs,
+      runEntries
+    ) as string;
+
+    const parsed = Papa.parse(csv, { header: true });
+    const headers = parsed.meta.fields ?? [];
+    expect(headers).toContain('RowType');
+    expect(headers).toContain('RunId');
+    expect(headers).toContain('RunBaseRowId');
+    expect(headers).toContain('RunEntryStatus');
+    expect(headers).toContain('EventDate');
+    expect(headers).toContain('SuggestedAmount');
+  });
+
+  it('exports totals that include runs and one-offs', async () => {
+    const rate = storage.getSuggestedRate();
+    await storage.markDelivered('c1-r1', 2);
+    await storage.updateDonation('c1-r1', {
+      status: 'Donated',
+      method: 'cash',
+      amount: 2 * rate,
+      suggestedAmount: 2 * rate
+    });
+    await storage.markSkipped('c2-r1', 'Not home');
+    await storage.completeRun('2025-01-01', false);
+
+    await storage.appendOneOffDonation('c1-r1', {
+      status: 'Donated',
+      method: 'venmo',
+      amount: 5,
+      suggestedAmount: 5
+    });
+    await storage.appendOneOffDelivery('c1-r1', 1, {
+      status: 'Donated',
+      method: 'ach',
+      amount: rate,
+      suggestedAmount: rate
+    });
+
+    const deliveries = await storage.getAllDeliveries();
+    const importState = buildImportState(deliveries);
+    const runEntries = await storage.getAllRunEntries();
+    const runs = await storage.getAllRuns();
+    const totals = (backup as any).computeTotalsByBase(
+      deliveries,
+      runEntries,
+      importState
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const csv = (backup as any).toCsvWithImportStateAndHistory(
+      deliveries,
+      importState,
+      totals,
+      runs,
+      runEntries
+    ) as string;
+
+    const parsed = Papa.parse(csv, { header: true });
+    const rows = parsed.data as Record<string, string>[];
+    const c1Row = rows.find(
+      (row) => row['RowType'] === 'Delivery' && row['BaseRowId'] === 'c1'
+    );
+    const expectedDonation = 2 * rate + 5 + rate;
+    const expectedDozens = 3;
+    const expectedDeductible = 5;
+
+    expect(c1Row?.['TotalDonation']).toBe(expectedDonation.toFixed(2));
+    expect(c1Row?.['TotalDozens']).toBe(expectedDozens.toString());
+    expect(c1Row?.['TotalDeductibleContribution']).toBe(
+      expectedDeductible.toFixed(2)
+    );
   });
 });

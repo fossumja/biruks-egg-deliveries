@@ -4,7 +4,7 @@ Use this workflow to discover, choose, and run prompts consistently. It includes
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: prompt discovery and usage
 - **Non-goals**: writing new prompts or changing workflows without review
@@ -60,12 +60,12 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Delivery flow
 
-- `feature` — deliver a parent feature with child issues, including plan validation via the development workflow. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
+- `feature` — deliver a parent feature with child issues, including plan validation and testing workflow selection for behavior changes. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
 - `quality` — run quality gates. Shorthand: `quality check`. Workflow: `docs/dev/workflows/quality.md`.
-- `testing` — select and run modular regression packs. Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
+- `testing` — select and run modular regression packs (TP-xx). Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
 
 ### Documentation and knowledge
 
@@ -98,6 +98,8 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Documented the feature prompt's plan-validation step so the catalog matches current behavior.
 - Reaffirmed catalog maintenance when prompt behavior shifts.
 - Added the prompt structure requirement so new prompts align with the style guide.
+- Updated the testing prompt catalog entry to reflect pack ID reporting.
+- Noted the feature prompt's testing workflow integration for behavior changes.
 
 ## Related docs
 

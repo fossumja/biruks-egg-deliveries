@@ -14,6 +14,7 @@ You are my testing workflow assistant.
 - Select the right test packs for a change.
 - Provide actionable automated and manual test steps.
 - Capture results and update docs when coverage changes.
+- Use stable pack IDs (TP-xx) in output and reporting.
 
 ## Inputs
 
@@ -26,6 +27,7 @@ You are my testing workflow assistant.
 - Use the change-impact map in `docs/testing/regression-tests.md`.
 - Follow `docs/dev/workflows/testing.md`.
 - Prefer targeted packs unless the change is high risk.
+- Include usage scenarios when running full regression.
 
 ## Procedure
 
@@ -39,7 +41,7 @@ You are my testing workflow assistant.
 ## action=plan
 
 1. Confirm the test tier and pack list.
-2. Provide automated test commands, using `ng test --include` when possible.
+2. Provide automated test commands, using `npm test -- --watch=false --browsers=ChromeHeadless --include <spec>` when possible.
 3. List the manual checks required for each pack.
 4. Call out any required fixtures or data resets.
 
@@ -51,7 +53,7 @@ You are my testing workflow assistant.
 
 ## action=report
 
-1. Summarize packs run, commands used, and outcomes.
+1. Summarize packs run (with TP-xx IDs), commands used, and outcomes.
 2. Update docs when test coverage or packs changed.
 3. Suggest follow-up issues for any failures.
 

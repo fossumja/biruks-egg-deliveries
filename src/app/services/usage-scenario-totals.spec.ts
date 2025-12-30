@@ -407,4 +407,60 @@ describe('Usage scenario totals (data-level)', () => {
     expect(donationRow?.['EventDate']).toBe(expectedDonationDate);
     expect(deliveryRow?.['EventDate']).toBe(expectedDeliveryDate);
   });
+
+  it('filters updated one-off dates by tax year', async () => {
+    const rate = storage.getSuggestedRate();
+    await storage.appendOneOffDonation('c1-r1', {
+      status: 'Donated' as const,
+      method: 'cash' as const,
+      amount: 5,
+      suggestedAmount: 5,
+      date: '2024-06-10'
+    });
+    await storage.appendOneOffDelivery('c1-r1', 1, {
+      status: 'Donated' as const,
+      method: 'ach' as const,
+      amount: rate,
+      suggestedAmount: rate,
+      date: '2024-06-11'
+    });
+
+    await storage.updateOneOffDonationByIndex('c1-r1', 0, {
+      donationStatus: 'Donated' as const,
+      donationMethod: 'cash' as const,
+      donationAmount: 5,
+      suggestedAmount: 5,
+      date: '2025-06-10'
+    });
+    await storage.updateOneOffDeliveryByIndex('c1-r1', 0, {
+      dozens: 1,
+      donationStatus: 'Donated' as const,
+      donationMethod: 'ach' as const,
+      donationAmount: rate,
+      suggestedAmount: rate,
+      date: '2025-06-11'
+    });
+
+    const deliveries = await storage.getAllDeliveries();
+    const totals2024 = (backup as any).computeTotalsByBase(
+      deliveries,
+      [],
+      undefined,
+      2024
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const totals2025 = (backup as any).computeTotalsByBase(
+      deliveries,
+      [],
+      undefined,
+      2025
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+
+    expect(totals2024.get('c1')?.donation ?? 0).toBeCloseTo(0, 5);
+    expect(totals2024.get('c1')?.dozens ?? 0).toBe(0);
+    expect(totals2025.get('c1')?.donation ?? 0).toBeCloseTo(
+      5 + rate,
+      5
+    );
+    expect(totals2025.get('c1')?.dozens ?? 0).toBe(1);
+  });
 });

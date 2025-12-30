@@ -4,7 +4,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-24
+- **Last updated**: 2025-12-30
 - **Type**: Reference
 - **Scope**: unit, integration, component, and scenario testing practices
 - **Non-goals**: detailed test cases or framework selection changes
@@ -18,7 +18,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 ## Current baseline
 
-- Default runner: `ng test` with Karma + Jasmine.
+- Default runner: `npm test` (Karma + Jasmine via Angular CLI).
 - If test tooling changes, update this doc and `docs/dev/workflows/quality.md` before migrating.
 
 ## Test layers (priority order)
@@ -45,6 +45,7 @@ This document defines how we test the app and what coverage we prioritize. Use i
 
 - Follow `docs/testing/usage-scenario-tests.md` and `docs/testing/regression-tests.md`.
 - Keep manual scenarios up to date as features change.
+- Keep each scenario linked to the relevant regression packs.
 - Automate scenarios when they stabilize, starting with data-level runners.
 - Use the scenario runner helpers in `src/testing/scenario-runner.ts` for data-level coverage.
 
@@ -75,6 +76,13 @@ This document defines how we test the app and what coverage we prioritize. Use i
 - Prefer explicit assertions over snapshot-style checks.
 - If a bug fix ships, add a regression test that fails without the fix.
 
+## Regression pack governance
+
+- Pack definitions live in `docs/testing/regression-tests.md` (single source of truth).
+- Pack IDs (TP-xx) are stable; do not renumber or reuse them.
+- Update the change-impact map when new features or files change the pack scope.
+- Report test results using pack IDs so coverage is easy to audit.
+
 ## Do / Don't
 
 - **Do** test the highest-risk logic where a bug would lose data or block deliveries.
@@ -103,6 +111,7 @@ Update this doc when any of the following change:
 - Clarified the current runner baseline and added a watchlist for tooling shifts.
 - Added guidance on stable selectors and common pitfalls to reduce flaky tests.
 - Noted the current data-level scenario automation entry points.
+- Added regression pack governance so IDs and impact maps stay consistent.
 
 ## Related docs
 
