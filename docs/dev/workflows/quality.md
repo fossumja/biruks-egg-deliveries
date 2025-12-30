@@ -4,7 +4,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-22
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: code quality checks for this repo
 - **Non-goals**: introducing new tooling without explicit approval
@@ -36,6 +36,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
    - Lint.
    - Typecheck (if separate).
    - Tests.
+     - Prefer `npm run test:ci` when you need artifacts. It writes `test-results/junit.xml` and `coverage/` (`coverage/index.html`, `coverage/lcov.info`). Use `npm test` for interactive runs.
 3. If running fixes:
    - Apply fixes in the same order (format → lint → types → tests).
 4. Re-run checks to confirm green.
@@ -50,7 +51,12 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 ## Outputs
 
 - A short summary of what was run and the results.
+- Artifact locations when `npm run test:ci` is used (JUnit and coverage).
 - Follow-up tasks if any gate cannot be made green.
+
+## What changed / Why
+
+- Documented the CI test command and artifact paths for test reporting.
 
 ## Related docs
 

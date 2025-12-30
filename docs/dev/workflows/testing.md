@@ -67,6 +67,14 @@ For targeted specs, use Angular's include filter:
 npm test -- --watch=false --browsers=ChromeHeadless --include src/app/services/storage.service.spec.ts
 ```
 
+For CI-friendly artifacts, run:
+
+```bash
+npm run test:ci
+```
+
+This writes a JUnit report to `test-results/junit.xml` and coverage outputs to `coverage/` (`coverage/index.html` and `coverage/lcov.info`). Open `coverage/index.html` to view the HTML report; use the JUnit file in CI.
+
 5. Run the manual checks listed in each selected pack.
 6. If required, execute the usage scenarios in `docs/testing/usage-scenario-tests.md`.
 7. Record results and update docs when coverage changes. Include:
@@ -96,6 +104,7 @@ npm test -- --watch=false --browsers=ChromeHeadless --include src/app/services/s
 
 - Added sandbox troubleshooting guidance for Karma port binding failures.
 - Added base-check guidance when automated tests are deferred.
+- Documented the CI test command and artifact paths for JUnit and coverage outputs.
 
 ## Related docs
 

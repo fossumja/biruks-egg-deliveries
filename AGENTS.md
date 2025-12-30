@@ -5,7 +5,7 @@ Follow them alongside system and developer instructions.
 
 - **Status**: Stable
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-19
+- **Last updated**: 2025-12-30
 - **Type**: Reference
 - **Scope**: agent behavior and repo-specific standards
 - **Non-goals**: replace system/developer instructions or code-level standards
@@ -22,6 +22,13 @@ Follow them alongside system and developer instructions.
 - Reusable workflow prompts live under `.github/prompts`.
 - When asked to perform any workflow (for example, "status", "ship it", "log issue"), agents should consult the corresponding prompt file and follow its guidance as closely as the current environment allows.
 
+## Command best practices
+
+- Prefer `--body-file` for multi-line `gh issue create` bodies to avoid shell quoting/pipeline issues.
+- Avoid `cat <<EOF | gh issue create` pipes in favor of temp files or `--body-file`.
+- When adding new operational guidance, update the relevant prompt/workflow doc and note it here.
+- Canonical guidance for issue creation lives in `.github/prompts/issues.prompt.md` and `docs/dev/workflows/triage.md`.
+
 ## Documentation index
 
 - The repository index lives in `index.md`.
@@ -34,3 +41,7 @@ Follow them alongside system and developer instructions.
 
 - This `AGENTS.md` at the repository root defines the default behavior for all files in the repo.
 - If additional `AGENTS.md` files are added in subfolders later, their instructions take precedence for files in those folders.
+
+## What changed / Why
+
+- Added command-formatting guidance so agents avoid brittle shell pipelines for issue creation.
