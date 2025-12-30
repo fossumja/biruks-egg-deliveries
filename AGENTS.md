@@ -29,6 +29,10 @@ Follow them alongside system and developer instructions.
 - When adding new operational guidance, update the relevant prompt/workflow doc and note it here.
 - Canonical guidance for issue creation lives in `.github/prompts/issues.prompt.md` and `docs/dev/workflows/triage.md`.
 
+## Agent terminal practices
+
+- Guidance on terminal command selection and alignment with editor settings lives in `docs/dev/best-practices/agent-terminal-practices.md`.
+
 ## Documentation index
 
 - The repository index lives in `index.md`.
@@ -45,3 +49,4 @@ Follow them alongside system and developer instructions.
 ## What changed / Why
 
 - Added command-formatting guidance so agents avoid brittle shell pipelines for issue creation.
+- Linked the new agent terminal practices doc for settings-aligned command usage.
