@@ -4,7 +4,7 @@ This plan defines modular regression packs for the entire app so testing is reli
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-29
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: end-to-end regression coverage across all app features
 - **Non-goals**: performance/load testing, backend API testing
@@ -33,7 +33,7 @@ Not covered:
 - Prioritize data and service tests, then component tests, then manual scenarios.
 - Run full regression packs before releases or high-risk changes.
 - Treat device and PWA checks as manual until automated coverage exists.
-- Use `npm test` (Karma + Jasmine) for automated specs, and `ng test --include` for scoped runs.
+- Use `npm test` (Karma + Jasmine) for automated specs, and `npm test -- --watch=false --browsers=ChromeHeadless --include <spec>` for scoped runs.
 
 ## Environments
 
@@ -48,14 +48,21 @@ Not covered:
 | TP-01 | Home and app shell | Navigation, settings, help overlay, route resume | `src/app/pages/home.component.*`, `src/app/components/app-header.component.*` | Partial |
 | TP-02 | CSV import and baseline data | Import, validation, sample data, routes list | `src/app/pages/home.component.*`, `src/app/services/storage.service.ts` | Partial |
 | TP-03 | Backup, export, restore | Export formats, totals, restore parsing | `src/app/services/backup.service.ts`, `src/app/pages/home.component.*` | Partial |
-| TP-04 | Planner core | Route selection, search, reorder, add/edit | `src/app/pages/route-planner.component.*` | Minimal |
+| TP-04 | Planner core | Route selection, search, reorder, add/edit | `src/app/pages/route-planner.component.*` | Partial |
 | TP-05 | Planner status actions | Skip/unskip, unsubscribe, reset, status pills | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Minimal |
 | TP-06 | One-off donations and deliveries | Planner hidden menu, date validation, totals | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Partial |
-| TP-07 | Run flow and donation controls | Deliver/skip, donations, qty changes | `src/app/pages/delivery-run.component.*`, `src/app/components/stop-delivery-card.component.*` | Minimal |
-| TP-08 | Run completion and receipts | Complete run, run history, receipts edits | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Minimal |
+| TP-07 | Run flow and donation controls | Deliver/skip, donations, qty changes | `src/app/pages/delivery-run.component.*`, `src/app/components/stop-delivery-card.component.*` | Partial |
+| TP-08 | Run completion and receipts | Complete run, run history, receipts edits | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Partial |
 | TP-09 | Shared UI components | Donation controls, amount picker, toast | `src/app/components/**`, `src/app/services/toast.service.ts` | Minimal |
 | TP-10 | Data and utilities | Storage, date utils, import state | `src/app/services/storage.service.ts`, `src/app/utils/**` | Partial |
 | TP-11 | Device and PWA | Wake lock, share, maps, clipboard, manifest | `public/**`, `ngsw-config.json`, device APIs | Manual |
+
+## Pack ID rules
+
+- Pack IDs are stable. Do not renumber or reuse IDs.
+- Add new packs by appending the next ID (for example, TP-12).
+- If a pack is retired, mark it Deprecated but keep the ID for historical reports.
+- Use pack IDs in PRs, issues, and test reports.
 
 ## Test pack details
 
@@ -71,8 +78,8 @@ Scope:
 
 Automated coverage:
 
-- Expand `src/app/pages/home.component.spec.ts` beyond create.
-- Add app header progress tests in `src/app/components/app-header.component.spec.ts`.
+- `src/app/pages/home.component.spec.ts` (import/export/restore triggers, settings toggles, tax year persistence, multi-year warning).
+- `src/app/components/app-header.component.spec.ts` (progress summary calculations).
 
 Manual checks:
 
@@ -91,8 +98,8 @@ Scope:
 
 Automated coverage:
 
-- Add storage import tests in `src/app/services/storage.service.spec.ts`.
-- Add CSV parsing tests in `src/app/pages/home.component.spec.ts` if needed.
+- `src/app/services/storage.service.spec.ts` (import normalization and baseline state).
+- `src/app/pages/home.component.spec.ts` (import trigger and timestamp updates).
 
 Manual checks:
 
@@ -113,6 +120,7 @@ Automated coverage:
 - `src/app/services/backup.service.spec.ts`
 - `src/app/services/usage-scenario-totals.spec.ts`
 - `src/app/services/usage-scenario-runner.spec.ts`
+- `src/app/pages/home.component.spec.ts` (export/restore triggers and timestamps).
 
 Manual checks:
 
@@ -132,7 +140,7 @@ Scope:
 
 Automated coverage:
 
-- Expand `src/app/pages/route-planner.component.spec.ts` with mocked storage.
+- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, add/edit).
 
 Manual checks:
 
@@ -151,8 +159,7 @@ Scope:
 
 Automated coverage:
 
-- Add storage reset tests in `src/app/services/storage.service.spec.ts`.
-- Component tests for status pill rendering in `src/app/components/stop-delivery-card.component.spec.ts`.
+- `src/app/services/storage.service.spec.ts` (reset route/stop and unsubscribed preservation).
 
 Manual checks:
 
@@ -170,8 +177,8 @@ Scope:
 
 Automated coverage:
 
-- Extend scenario runner tests for one-offs.
-- Add planner component tests for modal state and validation.
+- `src/app/pages/route-planner.component.spec.ts` (one-off validation and receipts edits).
+- `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
 Manual checks:
 
@@ -190,8 +197,9 @@ Scope:
 
 Automated coverage:
 
-- Expand `src/app/pages/delivery-run.component.spec.ts`.
-- Add unit tests for `computeChangeStatus` in storage.
+- `src/app/pages/delivery-run.component.spec.ts` (deliver/skip/end early, donation updates).
+- `src/app/components/stop-delivery-card.component.spec.ts` (stop card event wiring).
+- `src/app/services/storage.service.spec.ts` (change status logic).
 
 Manual checks:
 
@@ -209,8 +217,8 @@ Scope:
 
 Automated coverage:
 
-- Add tests for `StorageService.completeRun` and run entry ordering.
-- Add planner receipts view tests using mocked run entries.
+- `src/app/services/storage.service.spec.ts` (run completion and resets).
+- `src/app/pages/route-planner.component.spec.ts` (receipts sorting and edits).
 
 Manual checks:
 
@@ -228,7 +236,7 @@ Scope:
 
 Automated coverage:
 
-- Add component tests in `src/app/components/*.spec.ts`.
+- `src/app/components/stop-delivery-card.component.spec.ts` (event emissions).
 
 Manual checks:
 
@@ -245,7 +253,10 @@ Scope:
 
 Automated coverage:
 
-- Add `src/app/services/storage.service.spec.ts` and `src/app/utils/date-utils.spec.ts`.
+- `src/app/services/storage.service.spec.ts`
+- `src/app/services/backup.service.spec.ts`
+- `src/app/services/usage-scenario-totals.spec.ts`
+- `src/app/services/usage-scenario-runner.spec.ts`
 
 Manual checks:
 
@@ -277,10 +288,13 @@ Use this table to choose packs based on changed files.
 | Change area | Required packs | Notes |
 | --- | --- | --- |
 | `src/app/pages/home.component.*` | TP-01, TP-02, TP-03, TP-11 | Home owns import/export/restore and settings. |
+| `src/app/components/app-header.component.*` | TP-01 | Header progress and navigation. |
 | `src/app/pages/route-planner.component.*` | TP-04, TP-05, TP-06, TP-08 | Planner owns editing, one-offs, and receipts. |
 | `src/app/pages/delivery-run.component.*` | TP-07, TP-08 | Run flow and completion logic. |
+| `src/app/services/build-info.service.ts` | TP-01 | Build info display. |
 | `src/app/services/storage.service.ts` | TP-02, TP-03, TP-04, TP-05, TP-06, TP-07, TP-08, TP-10 | Storage touches most workflows. |
 | `src/app/services/backup.service.ts` | TP-03, TP-08, TP-10 | Export, totals, and history. |
+| `src/app/services/toast.service.ts` | TP-01, TP-09 | Toast behaviors used across screens. |
 | `src/app/components/donation-controls.component.*` | TP-06, TP-07, TP-09 | Used in Planner and Run. |
 | `src/app/components/stop-delivery-card.component.*` | TP-07, TP-09 | Run card behaviors. |
 | `src/app/components/donation-amount-picker.component.*` | TP-06, TP-07, TP-09 | Used in one-offs and run. |
@@ -302,8 +316,9 @@ If changes span more than three packs or touch storage + backup, run a full regr
 
 ## What changed / Why
 
-- Updated the runner guidance to reflect current `npm test` usage.
-- Clarified the one-off date range rules to match the Planner validation behavior.
+- Added pack ID governance so reports stay consistent over time.
+- Updated automation coverage notes to reflect current component and service specs.
+- Expanded the change-impact map for app shell services.
 
 ## Related docs
 

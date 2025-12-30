@@ -4,7 +4,7 @@ Manual, usage-focused scenarios that validate Planner, Run, and export behavior 
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-24
+- **Last updated**: 2025-12-30
 - **Type**: How-to
 - **Scope**: manual usage scenarios and data-level automation coverage
 - **Non-goals**: full end-to-end automation or UI test harness design
@@ -45,8 +45,11 @@ These tests focus on `StorageService` and `BackupService`. Planner and Run UI fl
 ## Manual scenarios
 
 Use the checklist below and export a CSV after each scenario so you can compare totals and ordering.
+Each scenario lists related regression packs (TP-xx) for reporting.
 
 ### Scenario 1: Baseline full run (no one-offs)
+
+Related packs: TP-03, TP-07, TP-08.
 
 Steps:
 
@@ -63,6 +66,8 @@ Expected:
 
 ### Scenario 2: Mixed donations and quantity changes
 
+Related packs: TP-03, TP-07, TP-09.
+
 Steps:
 
 1. During the run, increase and decrease quantities for a few stops.
@@ -76,6 +81,8 @@ Expected:
 - Stops that were edited resolve to Delivered (not Pending/Changed).
 
 ### Scenario 3: One-off donations (no run)
+
+Related packs: TP-03, TP-06.
 
 Steps:
 
@@ -91,6 +98,8 @@ Expected:
 
 ### Scenario 4: One-off deliveries (no run)
 
+Related packs: TP-03, TP-06.
+
 Steps:
 
 1. Use the hidden menu to add one-off deliveries with quantities and donations.
@@ -103,6 +112,8 @@ Expected:
 - Run status remains pending.
 
 ### Scenario 5: Unsubscribe and resubscribe
+
+Related packs: TP-03, TP-05, TP-06, TP-07.
 
 Steps:
 
@@ -120,6 +131,8 @@ Expected:
 
 ### Scenario 6: Ordering and reorder
 
+Related packs: TP-03, TP-04.
+
 Steps:
 
 1. Edit "Order in route" for a few stops.
@@ -132,6 +145,8 @@ Expected:
 - No gaps or duplicates in the order sequence.
 
 ### Scenario 7: Multi-run with interleaved one-offs
+
+Related packs: TP-03, TP-06, TP-07, TP-08.
 
 Steps:
 
