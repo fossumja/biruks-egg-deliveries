@@ -548,20 +548,24 @@ export class RoutePlannerComponent {
       const ua = navigator.userAgent || '';
       // iOS: use maps:// so the system picks the Maps app.
       if (/iPad|iPhone|iPod/.test(ua)) {
-        window.location.assign(`maps://?q=${encoded}`);
+        this.navigateToUrl(`maps://?q=${encoded}`);
         return;
       }
       // Android: use geo: so the system chooser/default app handles it.
       if (/Android/i.test(ua)) {
-        window.location.assign(`geo:0,0?q=${encoded}`);
+        this.navigateToUrl(`geo:0,0?q=${encoded}`);
         return;
       }
     }
 
     // Fallback for desktop/unknown: open web Maps.
-    window.location.assign(
+    this.navigateToUrl(
       `https://www.google.com/maps/search/?api=1&query=${encoded}`
     );
+  }
+
+  private navigateToUrl(url: string): void {
+    window.location.assign(url);
   }
 
   moveSwipe(event: PointerEvent, stop: Delivery): void {

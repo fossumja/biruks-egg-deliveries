@@ -7,6 +7,10 @@ import Papa from 'papaparse';
 // NOTE: These are initial data-level tests focused on totals.
 // They simulate a very small subset of the usage scenarios,
 // and assert that TotalDonation and TotalDozens are computed correctly.
+type NavigatorShare = Navigator & {
+  share?: (data: ShareData) => Promise<void>;
+  canShare?: (data: ShareData) => boolean;
+};
 
 describe('BackupService totals with mini route', () => {
   let backup: BackupService;
@@ -38,6 +42,7 @@ describe('BackupService totals with mini route', () => {
 
   afterEach(() => {
     localStorage.removeItem('lastImportAt');
+    localStorage.removeItem('lastBackupAt');
   });
 
   it('computes zero totals when nothing has been delivered or donated', async () => {
@@ -333,5 +338,114 @@ describe('BackupService totals with mini route', () => {
     expect(c1Row?.['TotalDeductibleContribution']).toBe(
       expectedDeductible.toFixed(2)
     );
+  });
+
+  it('prefers navigator.share when supported and canShare returns true', async () => {
+    const navigatorShare = navigator as unknown as NavigatorShare;
+    const hadShare = 'share' in navigator;
+    const hadCanShare = 'canShare' in navigator;
+    const originalShare = navigatorShare.share;
+    const originalCanShare = navigatorShare.canShare;
+
+    const shareSpy = jasmine
+      .createSpy('share')
+      .and.callFake(() => Promise.resolve());
+    const canShareSpy = jasmine.createSpy('canShare').and.returnValue(true);
+
+    Object.defineProperty(navigator, 'share', {
+      value: shareSpy,
+      configurable: true
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      value: canShareSpy,
+      configurable: true
+    });
+
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:backup');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+
+    try {
+      await backup.exportAll();
+    } finally {
+      if (hadShare) {
+        Object.defineProperty(navigator, 'share', {
+          value: originalShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['share'];
+      }
+      if (hadCanShare) {
+        Object.defineProperty(navigator, 'canShare', {
+          value: originalCanShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['canShare'];
+      }
+    }
+
+    const shareArgs = shareSpy.calls.mostRecent().args[0] as ShareData;
+    expect(canShareSpy).toHaveBeenCalled();
+    expect(shareSpy).toHaveBeenCalled();
+    expect(shareArgs.files?.length ?? 0).toBe(1);
+    expect(shareArgs.title).toBe("Biruk's Egg Deliveries");
+    expect(createObjectUrlSpy).not.toHaveBeenCalled();
+    expect(revokeSpy).not.toHaveBeenCalled();
+  });
+
+  it('falls back to download when share is unavailable', async () => {
+    const navigatorShare = navigator as unknown as NavigatorShare;
+    const hadShare = 'share' in navigator;
+    const hadCanShare = 'canShare' in navigator;
+    const originalShare = navigatorShare.share;
+    const originalCanShare = navigatorShare.canShare;
+    const originalCreateElement = document.createElement.bind(document);
+
+    Object.defineProperty(navigator, 'share', {
+      value: undefined,
+      configurable: true
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      value: undefined,
+      configurable: true
+    });
+
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:backup');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+    const anchor = document.createElement('a');
+    const clickSpy = spyOn(anchor, 'click');
+    const createSpy = spyOn(document, 'createElement').and.callFake((tagName: string) => {
+      if (tagName === 'a') {
+        return anchor;
+      }
+      return originalCreateElement(tagName);
+    });
+
+    try {
+      await backup.exportAll();
+    } finally {
+      if (hadShare) {
+        Object.defineProperty(navigator, 'share', {
+          value: originalShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['share'];
+      }
+      if (hadCanShare) {
+        Object.defineProperty(navigator, 'canShare', {
+          value: originalCanShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['canShare'];
+      }
+    }
+
+    expect(createObjectUrlSpy).toHaveBeenCalled();
+    expect(createSpy).toHaveBeenCalledWith('a');
+    expect(clickSpy).toHaveBeenCalled();
+    expect(revokeSpy).toHaveBeenCalledWith('blob:backup');
   });
 });

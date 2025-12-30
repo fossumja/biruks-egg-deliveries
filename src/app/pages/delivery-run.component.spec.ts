@@ -32,6 +32,9 @@ const createStop = (overrides: Partial<Delivery> = {}): Delivery => ({
   ...overrides,
 });
 
+const buildAddress = (stop: Delivery): string =>
+  `${stop.address}, ${stop.city}, ${stop.state} ${stop.zip ?? ''}`.trim();
+
 class StorageServiceStub {
   deliveries: Delivery[] = [];
   updatedDonations: DonationUpdate[] = [];
@@ -111,6 +114,7 @@ describe('DeliveryRunComponent', () => {
   let component: DeliveryRunComponent;
   let fixture: ComponentFixture<DeliveryRunComponent>;
   let storage: StorageServiceStub;
+  let toast: ToastServiceStub;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -136,6 +140,7 @@ describe('DeliveryRunComponent', () => {
     fixture = TestBed.createComponent(DeliveryRunComponent);
     component = fixture.componentInstance;
     storage = TestBed.inject(StorageService) as unknown as StorageServiceStub;
+    toast = TestBed.inject(ToastService) as unknown as ToastServiceStub;
   });
 
   it('loads stops, sets counts, and selects the current stop', async () => {
@@ -249,5 +254,51 @@ describe('DeliveryRunComponent', () => {
     expect(updateSpy).toHaveBeenCalled();
     expect(component.currentStop?.donation?.status).toBe('Donated');
     expect(component.currentStop?.donation?.method).toBeUndefined();
+  });
+
+  it('falls back to web maps when user agent is not mobile', () => {
+    const stop = createStop();
+    component.currentStop = stop;
+    const assignSpy = spyOn(
+      component as unknown as { navigateToUrl: (url: string) => void },
+      'navigateToUrl'
+    );
+    spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('Chrome');
+
+    component.openMaps();
+
+    expect(assignSpy).toHaveBeenCalledWith(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(buildAddress(stop))}`
+    );
+  });
+
+  it('copies address using the fallback when clipboard is unavailable', async () => {
+    const stop = createStop();
+    component.currentStop = stop;
+    const navigatorClipboard = navigator as unknown as { clipboard?: unknown };
+    const hadClipboard = 'clipboard' in navigator;
+    const originalClipboard = navigatorClipboard.clipboard;
+    const execSpy = spyOn(document, 'execCommand').and.returnValue(true);
+
+    Object.defineProperty(navigator, 'clipboard', {
+      value: undefined,
+      configurable: true
+    });
+
+    try {
+      await component.copyAddress();
+    } finally {
+      if (hadClipboard) {
+        Object.defineProperty(navigator, 'clipboard', {
+          value: originalClipboard,
+          configurable: true
+        });
+      } else {
+        delete navigatorClipboard.clipboard;
+      }
+    }
+
+    expect(execSpy).toHaveBeenCalledWith('copy');
+    expect(toast.messages).toContain('Address copied');
   });
 });

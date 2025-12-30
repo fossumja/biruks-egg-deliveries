@@ -263,18 +263,22 @@ export class DeliveryRunComponent {
     if (typeof navigator !== 'undefined') {
       const ua = navigator.userAgent || '';
       if (/iPad|iPhone|iPod/.test(ua)) {
-        window.location.assign(`maps://?q=${encoded}`);
+        this.navigateToUrl(`maps://?q=${encoded}`);
         return;
       }
       if (/Android/i.test(ua)) {
-        window.location.assign(`geo:0,0?q=${encoded}`);
+        this.navigateToUrl(`geo:0,0?q=${encoded}`);
         return;
       }
     }
 
-    window.location.assign(
+    this.navigateToUrl(
       `https://www.google.com/maps/search/?api=1&query=${encoded}`
     );
+  }
+
+  private navigateToUrl(url: string): void {
+    window.location.assign(url);
   }
 
   async copyAddress(): Promise<void> {

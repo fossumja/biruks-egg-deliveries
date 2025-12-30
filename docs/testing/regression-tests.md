@@ -55,7 +55,7 @@ Not covered:
 | TP-08 | Run completion and receipts | Complete run, run history, receipts edits | `src/app/pages/route-planner.component.*`, `src/app/services/storage.service.ts` | Partial |
 | TP-09 | Shared UI components | Donation controls, amount picker, toast | `src/app/components/**`, `src/app/services/toast.service.ts` | Minimal |
 | TP-10 | Data and utilities | Storage, date utils, import state | `src/app/services/storage.service.ts`, `src/app/utils/**` | Partial |
-| TP-11 | Device and PWA | Wake lock, share, maps, clipboard, manifest | `public/**`, `ngsw-config.json`, device APIs | Manual |
+| TP-11 | Device and PWA | Wake lock, share, maps, clipboard, manifest | `public/**`, `ngsw-config.json`, device APIs | Partial |
 
 ## Pack ID rules
 
@@ -275,7 +275,8 @@ Scope:
 
 Automated coverage:
 
-- Manual only until device automation is added.
+- Unit tests cover share/download fallback, maps links, and clipboard flows.
+- Device and PWA checks remain manual.
 
 Device matrix (minimum regression target):
 
@@ -340,6 +341,7 @@ If changes span more than three packs or touch storage + backup, run a full regr
 - Updated automation coverage notes to reflect current component and service specs.
 - Expanded the change-impact map for app shell services.
 - Documented the device/PWA matrix and manual checklist for TP-11.
+- Noted automated coverage for share/maps/clipboard to keep TP-11 status current.
 
 ## Related docs
 
