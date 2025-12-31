@@ -11,6 +11,12 @@ import { Delivery } from '../models/delivery.model';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { Route } from '../models/route.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
+import {
+  addOneOffDelivery,
+  addOneOffDonation,
+  deliverStop
+} from '../../testing/scenario-runner';
+import { miniRouteFixture } from '../../testing/fixtures/mini-route.fixture';
 
 const buildCsvFile = (
   headers: string[],
@@ -50,6 +56,41 @@ const createDelivery = (overrides: Partial<Delivery> = {}): Delivery => ({
   updatedAt: '2025-01-01T00:00:00.000Z',
   ...overrides,
 });
+
+const buildImportState = (deliveries: Delivery[]) => {
+  const headers = [
+    'Schedule',
+    'BaseRowId',
+    'Name',
+    'Address',
+    'City',
+    'State',
+    'ZIP',
+    'Dozens',
+    'Delivery Order'
+  ];
+  const rowsByBaseRowId: Record<string, string[]> = {};
+  deliveries.forEach((delivery) => {
+    if (!rowsByBaseRowId[delivery.baseRowId]) {
+      rowsByBaseRowId[delivery.baseRowId] = [
+        delivery.routeDate,
+        delivery.baseRowId,
+        delivery.name,
+        delivery.address,
+        delivery.city,
+        delivery.state,
+        delivery.zip ?? '',
+        String(delivery.dozens ?? ''),
+        String(delivery.deliveryOrder ?? '')
+      ];
+    }
+  });
+  return {
+    headers,
+    rowsByBaseRowId,
+    mode: 'baseline' as const
+  };
+};
 
 class StorageServiceStub {
   routes: Route[] = [createRoute('Week A')];
@@ -114,6 +155,7 @@ describe('HomeComponent restore', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let storage: StorageService;
+  let backup: BackupService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -124,6 +166,7 @@ describe('HomeComponent restore', () => {
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
     storage = TestBed.inject(StorageService);
+    backup = TestBed.inject(BackupService);
     await storage.clearAll();
   });
 
@@ -303,6 +346,202 @@ describe('HomeComponent restore', () => {
     const expectedRunDate = normalizeEventDate('2025-01-02');
     expect(expectedRunDate).toBeTruthy();
     expect(runEntries[0].eventDate).toBe(expectedRunDate);
+  });
+
+  it('recomputes totals from restored receipts', async () => {
+    const headers = [
+      'RowType',
+      'BaseRowId',
+      'RunBaseRowId',
+      'Schedule',
+      'Name',
+      'Address',
+      'City',
+      'State',
+      'ZIP',
+      'Dozens',
+      'Delivery Order',
+      'RunId',
+      'RouteDate',
+      'ScheduleId',
+      'RunStatus',
+      'RunEntryStatus',
+      'RunDozens',
+      'RunDonationStatus',
+      'RunDonationMethod',
+      'RunDonationAmount',
+      'RunTaxableAmount',
+      'RunCompletedAt',
+      'SuggestedAmount',
+      'EventDate'
+    ];
+    const rows: Record<string, string>[] = [
+      {
+        RowType: 'Delivery',
+        BaseRowId: 'c1',
+        Schedule: '2025-01-01',
+        Name: 'Alice',
+        Address: '123 Main St',
+        City: 'Testville',
+        State: 'TS',
+        ZIP: '12345',
+        Dozens: '2',
+        'Delivery Order': '0'
+      },
+      {
+        RowType: 'RunEntry',
+        RunId: '2025-01-01_2025-01-02T00:00:00.000Z',
+        RunBaseRowId: 'c1',
+        RouteDate: '2025-01-01',
+        ScheduleId: 'ScheduleA',
+        RunStatus: 'completed',
+        RunEntryStatus: 'delivered',
+        RunDozens: '2',
+        RunDonationStatus: 'Donated',
+        RunDonationMethod: 'cash',
+        RunDonationAmount: '8',
+        RunTaxableAmount: '0',
+        RunCompletedAt: '2025-01-02',
+        Name: 'Alice',
+        Address: '123 Main St',
+        City: 'Testville',
+        State: 'TS',
+        ZIP: '12345',
+        EventDate: '2025-01-02'
+      },
+      {
+        RowType: 'OneOffDonation',
+        RunBaseRowId: 'c1',
+        RunDonationStatus: 'Donated',
+        RunDonationMethod: 'cash',
+        RunDonationAmount: '5',
+        SuggestedAmount: '5',
+        EventDate: '2025-02-01'
+      },
+      {
+        RowType: 'OneOffDelivery',
+        RunBaseRowId: 'c1',
+        RunDozens: '1',
+        RunDonationStatus: 'Donated',
+        RunDonationMethod: 'venmo',
+        RunDonationAmount: '4',
+        SuggestedAmount: '4',
+        EventDate: '2025-03-01'
+      }
+    ];
+    const file = buildCsvFile(headers, rows);
+
+    await (component as any).restoreFromBackupFile(file);
+
+    const deliveries = await storage.getAllDeliveries();
+    const runEntries = await storage.getAllRunEntries();
+    const totals = (backup as any).computeTotalsByBase(
+      deliveries,
+      runEntries
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+
+    const c1Totals = totals.get('c1');
+    expect(c1Totals).toBeDefined();
+    expect(c1Totals?.donation ?? 0).toBeCloseTo(17, 5);
+    expect(c1Totals?.dozens ?? 0).toBe(3);
+    expect(c1Totals?.taxable ?? 0).toBeCloseTo(5, 5);
+  });
+
+  it('round-trips totals across backup export and restore', async () => {
+    const ctx = { storage, backup };
+    const rate = storage.getSuggestedRate();
+
+    await storage.importDeliveries(miniRouteFixture());
+
+    await deliverStop(ctx, 'c1-r1', {
+      dozens: 2,
+      donation: {
+        status: 'Donated',
+        method: 'cash',
+        amount: 2 * rate,
+        suggestedAmount: 2 * rate
+      },
+      eventDate: '2025-01-01T08:00:00.000Z'
+    });
+    await deliverStop(ctx, 'c2-r1', {
+      dozens: 1,
+      donation: {
+        status: 'Donated',
+        method: 'cash',
+        amount: 1 * rate,
+        suggestedAmount: 1 * rate
+      },
+      eventDate: '2025-01-01T08:15:00.000Z'
+    });
+    await addOneOffDonation(
+      ctx,
+      'c1-r1',
+      {
+        status: 'Donated',
+        method: 'venmo',
+        amount: 5,
+        suggestedAmount: 5
+      },
+      '2025-01-03T12:00:00.000Z'
+    );
+    await addOneOffDelivery(
+      ctx,
+      'c1-r1',
+      1,
+      {
+        status: 'Donated',
+        method: 'other',
+        amount: 3,
+        suggestedAmount: 3
+      },
+      '2025-01-04T12:00:00.000Z'
+    );
+
+    await storage.completeRun('2025-01-01', false);
+
+    const deliveriesBefore = await storage.getAllDeliveries();
+    const runEntriesBefore = await storage.getAllRunEntries();
+    const runsBefore = await storage.getAllRuns();
+    const importState = buildImportState(deliveriesBefore);
+    const backupAccess = backup as any;
+    const totalsBefore = backupAccess.computeTotalsByBase(
+      deliveriesBefore,
+      runEntriesBefore,
+      importState
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+    const csv = backupAccess.toCsvWithImportStateAndHistory(
+      deliveriesBefore,
+      importState,
+      totalsBefore,
+      runsBefore,
+      runEntriesBefore
+    );
+
+    const file = new File([csv], 'backup.csv', { type: 'text/csv' });
+    await (component as any).restoreFromBackupFile(file);
+
+    const deliveriesAfter = await storage.getAllDeliveries();
+    const runEntriesAfter = await storage.getAllRunEntries();
+    const totalsAfter = backupAccess.computeTotalsByBase(
+      deliveriesAfter,
+      runEntriesAfter
+    ) as Map<string, { donation: number; dozens: number; taxable: number }>;
+
+    const baseRowId =
+      deliveriesBefore.find((delivery) => delivery.id === 'c1-r1')?.baseRowId ??
+      deliveriesBefore.find((delivery) => delivery.id === 'c1-r1')?.id;
+    expect(baseRowId).toBeDefined();
+
+    const beforeC1 = totalsBefore.get(baseRowId as string);
+    const afterBaseRowId =
+      deliveriesAfter.find((delivery) => delivery.baseRowId === baseRowId)
+        ?.baseRowId ?? baseRowId;
+    const afterC1 = totalsAfter.get(afterBaseRowId as string);
+    expect(beforeC1).toBeDefined();
+    expect(afterC1).toBeDefined();
+    expect(afterC1!.donation).toBeCloseTo(beforeC1!.donation, 5);
+    expect(afterC1!.dozens).toBe(beforeC1!.dozens);
+    expect(afterC1!.taxable).toBeCloseTo(beforeC1!.taxable, 5);
   });
 });
 
