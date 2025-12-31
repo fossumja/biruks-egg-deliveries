@@ -964,6 +964,7 @@ export class RoutePlannerComponent {
     // sensible values immediately; full global totals will be
     // refreshed after save.
     this.donationTotals = this.computeOneOffTotals(stop);
+    void this.refreshDonationTotals(stop);
     void this.loadReceiptHistory(stop);
   }
 

@@ -1,0 +1,583 @@
+RowType,Schedule,BaseRowId,Delivery Order,Name,Address,City,State,ZIP,Dozens,Subscribed,Notes,Newsletter,RunId,RouteDate,ScheduleId,RunStatus,RunBaseRowId,RunDeliveryOrder,RunEntryStatus,RunDozens,RunDonationStatus,RunDonationMethod,RunDonationAmount,RunTaxableAmount,RunCompletedAt,EventDate,SuggestedAmount,TotalDonation,TotalDozens,TotalDeductibleContribution
+Delivery,Week B,CUST001,001,Kaylee Schroder,110 Oak St.,Fairview,SD,,1,TRUE,front door,1,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week B,CUST002,002,Tanya Van De Stroet,1520 290th St.,Inwood,IA,51240,1,TRUE,outside walk-in door to garage,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST003,003,Oak Street Station,,Inwood,IA,51240,15,TRUE,cashier's counter. Needs invoice.,1,,,,,,,,,,,,,,,,0.00,90,0.00
+Delivery,Week B,CUST004,004,Inwood Hatchery,,Inwood,IA,51240,30,TRUE,fridge in back room,,,,,,,,,,,,,,,,,379.00,90,56.00
+Delivery,Week B,CUST005,005,Manna Market,,Inwood,IA,51240,45,TRUE,"delivery in flats. Garage fridge, back door. Garage code 5124",,,,,,,,,,,,,,,,,0.00,135,0.00
+Delivery,Week B,CUST006,006,Sunshine Foods,,Canton,SD,57013,30,TRUE,"Take remaining eggs from last week and write down difference. West door delivery, bar coded eggs.",,,,,,,,,,,,,,,,,0.00,118,0.00
+Delivery,Week A,CUST007,007,Anna Behning,48390 281st St.,,,,2,TRUE,"Deliver with Melissa's ",1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST008,008,Melissa Schutte,48390 281st St.,,,,1,TRUE,inside container in front of house,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST009,007,Dan Anderson,28037 483rd Ave.,Canton,SD,57013,1,TRUE,just inside south walk-in door to garage,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST010,008,Cindy Petri,48290 N. Hiawatha Pl.,Canton,SD,57013,1,TRUE,"on shelf inside garage, to your right. Garage code 4829.",,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST011,011,Julie Langerock,48288 N. Hiawatha Pl.,,,,1,TRUE,fridge inside garage door,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST012,012,Tonia Braun,48225 N. Hiawatha Pl.,,,,2,TRUE,cooler outside house,1,,,,,,,,,,,,,,,,8.00,4,0.00
+Delivery,Week A,CUST013,013,Deb Jansen,Canton-Inwood Hospital,,,,2,TRUE,Take to cafeteria fridge,1,,,,,,,,,,,,,,,,200.00,4,184.00
+Delivery,Week A,CUST014,014,Leah Peterson,Canton-Inwood Hospital,,,,1,TRUE,Fridge in kitchen of physical therapy dept.,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST015,015,Laurie Cole,Canton-Inwood Hospital,,,,1,TRUE,Take to cafeteria fridge,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST016,016,Scott Larson,Canton-Inwood Hospital,,,,1,TRUE,Take to cafeteria fridge,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST017,017,Becky Berenschot,Canton-Inwood Hospital,,,,1,TRUE,Fridge in kitchen of physical therapy dept.,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST018,018,Andrea Flyger,Canton-Inwood Hospital,,,,2,TRUE,Fridge in kitchen of physical therapy dept.,0,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST019,019,June Fossum,814 E. 5th,Canton,SD,57013,1,TRUE,"number varies, doesn't get them every time. Take to back door.",0,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST020,020,Sarah Woods,"Methodist Church - 621 E. 4th ",,,,2,TRUE,secretary's office or church fridge,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST021,021,Carla Reding,104 N. Milwaukee,,,,2,TRUE,in cooler by garage,1,,,,,,,,,,,,,,,,100.00,4,84.00
+Delivery,Week A,CUST022,022,Irene Ness,224 N. Milwaukee,,,,1,TRUE,delivery is to daughter's house. Put inside back door.,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST023,023,Di Smith,724 E. Walnut,,,,2,TRUE,cooler on front porch,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST024,024,Amy Buitenbos,Catholic Church,,,,2,TRUE,Fridge in kitchen,0,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST025,025,Fr. Desmond,Catholic Church,,,,1,TRUE,Fridge in kitchen,0,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST026,014,Nancy Richmond,705 N. Sanborn,Canton,SD,57013,2,TRUE,cooler outside garage,,,,,,,,,,,,,,,,,50.00,8,18.00
+Delivery,Week A,CUST027,027,Leanne Lohan,912 Angel Lane,,,,1,TRUE,Coooler by front door,1,,,,,,,,,,,,,,,,5.00,3,0.00
+Delivery,Week B,CUST028,015,Trina Kuper,1008 Angel Lane,Canton,SD,57013,2,TRUE,cooler on front porch,,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week A,CUST029,029,Elaine Suter,1700 Holiday Dr.,,,,6,TRUE,put by front door and ring bell,1,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST030,018,Kellie Steinmetz,1501 Holiday Dr.,Canton,SD,57013,2,TRUE,cooler near front door,,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week B,CUST031,019,Kristin Goodroad,1409 Holiday Dr.,Canton,SD,57013,2,TRUE,cooler near front door,,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week A,CUST032,032,Abby Homandberg Bowyer,1400 Holiday Dr.,,,,2,TRUE,cooler by garage,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST033,020,Gabe Devitt,901 Candy Ct.,Canton,SD,57013,1,TRUE,on porch near front door,,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week A,CUST034,034,Lamar Nance,1000 N. College,,,,2,TRUE,cooler by front door,1,,,,,,,,,,,,,,,,30.00,4,14.00
+Delivery,Week A,CUST035,035,Rachel Gackle,1003 N. College,,,,1,TRUE,by front door,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST036,036,Josh Otkin,1020 N. College,,,,2,TRUE,soft cooler by front door,1,,,,,,,,,,,,,,,,15.00,4,0.00
+Delivery,Week A,CUST037,037,Deb Esche,1030 N. College,,,,4,TRUE,cooler by front door,1,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week A,CUST038,038,Kathy Gardner,,,,,2,TRUE,cooler by front door,0,,,,,,,,,,,,,,,,7.00,2,0.00
+Delivery,Week B,CUST039,022,Sarah Gustad,1027 N Kidder,Canton,SD,57013,1,TRUE,leave on porch bench,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST040,040,Michelle Sehr,805 E. Elmwood,,,,2,TRUE,cooler by front door,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST041,023,Dana Van Middendorp,1200 N. Grant,Canton,SD,57013,3,TRUE,near front door,,,,,,,,,,,,,,,,,0.00,12,0.00
+Delivery,Week B,CUST042,025,Bill Kortermeyer,406 E. Poplar,Canton,SD,57013,2,TRUE,cooler near garage door,,,,,,,,,,,,,,,,,30.00,6,6.00
+Delivery,Week B,CUST043,024,Sherry Anderson,1001 N. Grant,Canton,SD,57013,2,TRUE,cooler near garage door,,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week A,CUST044,044,Amy Coad,423 N. Grant,,,,2,TRUE,in cooler on porch,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST045,045,Kari Elling,620 E. 2nd,,,,3,TRUE,Put in soft cooler inside back porch door.,1,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST046,030,Jen Dibert,621 E. 2nd,Canton,SD,57013,1,TRUE,"by front door, knock",,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST047,031,Laura Vosika,701 E. 2nd,Canton,SD,57013,1,TRUE,"front porch. Usually home, ring bell.",,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST048,048,Autumn Gebers,"725 E. 2nd ",,,,3,TRUE,front door,1,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week A,CUST049,049,Rosalinda Kilmer,620 E. 1st St.,,,,3,TRUE,by back door,1,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST050,035,Amber Van Dam,424 N. Broadway,Canton,SD,57013,5,TRUE,by front door,,,,,,,,,,,,,,,,,0.00,14,0.00
+Delivery,Week A,CUST051,051,Nicole Nelson,503 N. Broadway,,,,2,TRUE,"cooler on porch - if not there, ring bell",1,,,,,,,,,,,,,,,,8.00,4,0.00
+Delivery,Week A,CUST052,052,Sally Ebright,Canton High School - 800 N. Main,,,,2,TRUE,"503 N. Liincoln during summer, CHS during school year",0,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST053,053,Carla Warejcka,Canton High School - 800 N. Main,,,,2,TRUE,"summer address: ",2,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST054,054,Sandra Hoeffaker,Canton High School - 800 N. Main,,,,2,TRUE,front office (give to Carla),1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST055,037,Sarah Pearson,high school office,Canton,SD,57013,1,TRUE,leave with Carla Warejcka,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST056,056,Jennifer Skiles,600,,,,5,TRUE,cooler by front door,0,,,,,,,,,,,,,,,,0.00,10,0.00
+Delivery,Week A,CUST057,057,Deb Kleinschmidt,505 N. Cedar,,,,2,TRUE,in garage fridge,1,,,,,,,,,,,,,,,,55.00,3,43.00
+Delivery,Week A,CUST058,058,Sara Henderson,505 N. Cedar,,,,1,TRUE,in garage fridge,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST059,047,Kim Sogn,"Garden Shed - ",Canton,SD,57013,2,TRUE,number varies. Stop in to see how many she wants,,,,,,,,,,,,,,,,,10.00,2,2.00
+Delivery,Week B,CUST060,045,Karissa Laubach,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,1,TRUE,front desk,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST061,044,Sarah Carlson,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,3,TRUE,front desk,,,,,,,,,,,,,,,,,0.00,12,0.00
+Delivery,Week A,CUST062,062,Nancy Bitterman,First Bank & Trust,,,,2,TRUE,Nancy's office,1,,,,,,,,,,,,,,,,750.00,2,742.00
+Delivery,Week A,CUST063,063,Mary Eliason,First Bank & Trust,,,,2,TRUE,teller desk,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST064,064,Sonya Constance,First Bank & Trust,,,,2,TRUE,Sonya's office,0,,,,,,,,,,,,,,,,24.00,4,8.00
+Delivery,Week A,CUST065,065,Susie Kurtz,Define Hair Design - 112 S. Broadway,,,,1,TRUE,front desk,1,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST066,066,Sterling Heath,Canton Farm and Home - 215 S. Broadway,,,,2,TRUE,office,1,,,,,,,,,,,,,,,,20.00,4,4.00
+Delivery,Week A,CUST067,067,Chad Rozeboom,803 S. Bartlett,,,,2,TRUE,front porch - ring bell,1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST068,067,Charlene Hawe,626 S. Bartlett,Canton,SD,57013,5,TRUE,sliding door on south.,,,,,,,,,,,,,,,,,36.00,10,0.00
+Delivery,Week A,CUST069,069,Bekka Koller,520 S. Johnson,,,,3,TRUE,cooler front porch,1,,,,,,,,,,,,,,,,35.00,6,11.00
+Delivery,Week A,CUST070,070,Rachel Scott,526 N. Blair Circle,,,,2,TRUE,by front door,0,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST071,071,Roxy Wallenburg,526 N. Blair Circle,,,,1,TRUE,by front door,0,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week A,CUST072,072,Linda Solem,526 N. Blair Circle,,,,1,TRUE,by front door,3,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST073,051,Suzanne Anderson,303 N. Bridge St.,Canton,SD,57013,2,TRUE,cooler on front porch,,,,,,,,,,,,,,,,,0.00,10,0.00
+Delivery,Week A,CUST074,074,Jon Peters,121 N. Blair,,,,2,TRUE,"garage side of house, patio",1,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST075,053,Connie Walker,808 W. 5th St.,Canton,SD,57013,2,TRUE,small lime green house. Cooler back door. 605-228-8635,,,,,,,,,,,,,,,,,40.00,8,8.00
+Delivery,Week A,CUST076,076,Mark Larson,47973 W. 5th St.,,,,3,TRUE,Fridge inside the Gubbels' garage,1,,,,,,,,,,,,,,,,0.00,3,0.00
+Delivery,Week A,CUST077,077,Jenny Gubbels,47973 W. 5th St.,,,,4,TRUE,Fridge inside the Gubbels' garage,1,,,,,,,,,,,,,,,,0.00,7,0.00
+Delivery,Week A,CUST078,078,Margaret Preston,47973 W. 5th St.,,,,1,TRUE,Fridge inside the Gubbels' garage,1,,,,,,,,,,,,,,,,0.00,1,0.00
+Delivery,Week A,CUST079,079,Kari Winquist,Bethany Church - 702 W. 7th,,,,2,TRUE,,0,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST080,080,Julie Swier,Bethany Church - 702 W. 7th,,,,2,TRUE,,0,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST081,081,Shelly Swift,Bethany Church - 702 W. 7th,,,,1,TRUE,white fridge in kitchen,1,,,,,,,,,,,,,,,,100.00,2,92.00
+Delivery,Week B,CUST082,061,Melanie Van De Stroet,Bethany Church - 702 W. 7th,Canton,SD,57013,1,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week A,CUST083,083,Canton Food Pantry,Canton Lutheran Church,,,,,TRUE,Give in flats.,0,,,,,,,,,,,,,,,,,,
+Delivery,Week A,CUST085,085,Sara Harris,27118 477th Ave. Harrisburg,,,,10,TRUE,,0,,,,,,,,,,,,,,,,0.00,40,0.00
+Delivery,Week A,CUST086,086,Van Hofwegen,"Van Hofwegen Dental ",,,,10,TRUE,,0,,,,,,,,,,,,,,,,0.00,25,0.00
+Delivery,Week A,CUST087,087,HyVee,57th and Cliff,,,,30,TRUE,"back door. May have to pull open garage door. Take invoice in to office, eggs to dairy fridge way at back.",0,,,,,,,,,,,,,,,,84.00,38,0.00
+Delivery,Week B,CUST088,076,Jana Norby,4100 E. Brookline Dr.,Sioux Falls,SD,,10,TRUE,cooler by front door,,,,,,,,,,,,,,,,,0.00,40,0.00
+Delivery,Week A,CUST089,089,Cassie Emerson,4704 S. Briarwood Ave.,,,,23,TRUE,,0,,,,,,,,,,,,,,,,0.00,48,0.00
+Delivery,Week A,CUST090,090,Jim Bernard,1916 E. Edgewood Rd.,,,,35,TRUE,,0,,,,,,,,,,,,,,,,234.00,36,90.00
+Delivery,Week B,CUST091,080,Rhonda Pierce,6004 W. 58th St.,Sioux Falls,SD,,60,TRUE,in garage fridge. Fill 'er up. Code 0582.,,,,,,,,,,,,,,,,,904.00,174,208.00
+Delivery,Week B,CUST092,079,CJ Carmody,"3204 E. Marson Dr. ",Sioux Falls,SD,,25,TRUE,on 3 week rotation; check if right week. Usually home.,,,,,,,,,,,,,,,,,0.00,49,0.00
+Delivery,Week B,CUST093,078,Ivan Rutebuka,3104 E. Marson Dr.,Sioux Falls,SD,,10,TRUE,does not always get eggs,,,,,,,,,,,,,,,,,0.00,20,0.00
+Delivery,Week B,CUST094,009,Tara Espland,904 E. 5th,Canton,SD,57013,3,TRUE,on chair inside door of therapist clinic,,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST095,010,June Fossum,814 E. 5th,Canton,SD,57013,2,TRUE,"number varies, walk-in door on east side of house (use sidewalk)",,,,,,,,,,,,,,,,,0.00,5,0.00
+Delivery,Week B,CUST096,011,Melissa Swier,714 E. Elder,Canton,SD,57013,2,TRUE,cooler just inside porch,,,,,,,,,,,,,,,,,0.00,19,0.00
+Delivery,Week B,CUST097,012,Lynn White,720 E. Elder,Canton,SD,57013,2,TRUE,outside front door,,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST098,013,Lynda Johnson,806 E. Elder,Canton,SD,57013,2,TRUE,outside east door,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST099,016,Kara Quall,1621 Holiday Dr.,Canton,SD,57013,1,TRUE,cooler near front door,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST100,017,Ben and Kari Quall,1621 Holiday Dr.,Canton,SD,57013,2,TRUE,cooler near front door,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST101,021,Brenda Van Zee,724 Park Lane S.,Canton,SD,57013,2,TRUE,outside front door,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST102,026,Laura Trumm,500 E. Lynn,Canton,SD,57013,2,TRUE,"near front door, knock",,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST103,027,Amy Buitenbox,Catholic Church,Canton,SD,57013,2,TRUE,fridge in kitchen,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST104,028,Father Desmond,Catholic Church,Canton,SD,57013,1,TRUE,fridge in kitchen,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST105,029,Meghan Meister,724 N. Kidder,Canton,SD,57013,4,TRUE,"by front door, ring bell",,,,,,,,,,,,,,,,,0.00,8,0.00
+Delivery,Week B,CUST106,032,Rollie Steck,323 N. Lawler,Canton,SD,57013,1,TRUE,by front door,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST107,033,Don Taylor,716 E. 3rd St.,Canton,SD,57013,1,TRUE,in cooler by front door,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST108,034,Christi Tieszen,Tieszen Chiropractic - 128 N. Dakota,Canton,SD,57013,1,TRUE,by back door under car port,,,,,,,,,,,,,,,,,0.00,3,0.00
+Delivery,Week B,CUST109,036,Suzy Lewison,504 N. Broadway,Canton,SD,57013,1,TRUE,"by front door, ring bell",,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST110,038,Chad Brown,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,1,TRUE,"leave with Carrie Draeger, office just inside or in break room fridge",,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST111,039,Steve Swenson,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,1,TRUE,"leave with Carrie Draeger, office just inside or in break room fridge",,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST112,040,Carrie Draeger,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,2,TRUE,"leave with Carrie Draeger, office just inside or in break room fridge",,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST113,041,Jenny Hamran,Lincoln County Courthouse District Attorney's Office,Canton,SD,57013,2,TRUE,just inside office,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST114,042,Dave Dixon,Lincoln County Courthouse Geomapping Office,Canton,SD,57013,3,TRUE,leave on high desk inside geomapping door,,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST115,043,Brenda Ask,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,1,TRUE,front desk,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST116,046,Kristi Carpenter,Insurance building - 201 E. 5th St.,Canton,SD,57013,2,TRUE,her office - ask at front desk,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST117,048,Arnie Anderson,Haisch Pharmacy - 303 E. 5th St.,Canton,SD,57013,1,TRUE,pharmacy counter,,,,,,,,,,,,,,,,,20.00,2,12.00
+Delivery,Week B,CUST118,049,Kim Wentz,303 W. 4th St.,Canton,SD,57013,3,TRUE,near back porch door,,,,,,,,,,,,,,,,,490.00,6,466.00
+Delivery,Week B,CUST119,050,Monica Jones,818 W. 3rd St.,Canton,SD,57013,1,TRUE,cooler outside garage,,,,,,,,,,,,,,,,,25.00,2,17.00
+Delivery,Week B,CUST120,052,Elizabeth Young,200 N. Bridge St.,Canton,SD,57013,4,TRUE,"front door, ring bell. She's home.",,,,,,,,,,,,,,,,,0.00,9,0.00
+Delivery,Week B,CUST121,054,Dustin Schouten,Hoogendorn Construction - corner of Hwys 11 and 18,Canton,SD,57013,3,TRUE,inside main door at desk,,,,,,,,,,,,,,,,,0.00,6,0.00
+Delivery,Week B,CUST122,055,Laurie Wiebe,Hoogendorn Construction - corner of Hwys 11 and 18,Canton,SD,57013,2,TRUE,front seat of white vehicle. LAURIE on license plate. Front desk if too cold.,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST123,056,Vanessa Baldwin,510 S. West,Canton,SD,57013,2,TRUE,cooler outside garage or up on front porch. Dog is loud.,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST124,057,Pat Van Roekel,304 S. Blair,Canton,SD,57013,2,TRUE,door under breezeway roof. She will answer the door.,,,,,,,,,,,,,,,,,20.00,4,4.00
+Delivery,Week B,CUST125,058,Jill Devitt,Bethany Church - 702 W. 7th,Canton,SD,57013,2,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST126,059,Laura Dozark,Bethany Church - 702 W. 7th,Canton,SD,57013,2,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST127,060,Kim Kreber,Bethany Church - 702 W. 7th,Canton,SD,57013,6,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,50.00,12,2.00
+Delivery,Week B,CUST128,062,Bob and Joan Lier,Bethany Church - 702 W. 7th,Canton,SD,57013,3,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,20.00,6,0.00
+Delivery,Week B,CUST129,063,Questa Kaps,Bethany Church - 702 W. 7th,Canton,SD,57013,2,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,30.00,4,14.00
+Delivery,Week B,CUST130,064,Julie Swier,Bethany Church - 702 W. 7th,Canton,SD,57013,2,TRUE,white fridge in kitchen,,,,,,,,,,,,,,,,,0.00,4,0.00
+Delivery,Week B,CUST131,065,Alyssa Johns,506 S. Pleasant,Canton,SD,57013,1,TRUE,"knock on door. Usually home, otherwise leave on porch.",,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST132,066,Gerri Day,702 S. Pleasant,Canton,SD,57013,2,TRUE,usually not home. Cooler outside or on chair outside garage.,,,,,,,,,,,,,,,,,20.00,5,0.00
+Delivery,Week B,CUST133,068,Janet Crawford,Farmers State Bank - 220 E. 5th,Canton,SD,57013,2,TRUE,various desks/offices - just ask,,,,,,,,,,,,,,,,,45.00,4,29.00
+Delivery,Week B,CUST134,069,Tanya Iverson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,2,TRUE,various desks/offices - just ask,,,,,,,,,,,,,,,,,0.00,3,0.00
+Delivery,Week B,CUST135,070,Brian Launderville,Farmers State Bank - 220 E. 5th,Canton,SD,57013,2,TRUE,various desks/offices - just ask,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST136,071,Jeannie Jacobsen,Farmers State Bank - 220 E. 5th,Canton,SD,57013,2,TRUE,various desks/offices - just ask,,,,,,,,,,,,,,,,,15.00,4,2.00
+Delivery,Week B,CUST137,072,Carol Nelson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,1,TRUE,various desks/offices - just ask,,,,,,,,,,,,,,,,,,,
+Delivery,Week B,CUST138,073,Val Anderson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,1,TRUE,various desks/offices - just ask,,,,,,,,,,,,,,,,,0.00,2,0.00
+Delivery,Week B,CUST139,074,Canton Food Pantry,Canton Lutheran Church,Canton,SD,57013,0,TRUE,number varies; can deliver whatever is left,,,,,,,,,,,,,,,,,,,
+Delivery,Week B,CUST140,075,Danny Harris,3809 E. 68th St.,Sioux Falls,SD,,10,TRUE,outside front door,,,,,,,,,,,,,,,,,0.00,10,0.00
+Delivery,Week B,CUST141,077,Lynette Hardy,1600 E. 77th St.,Sioux Falls,SD,,30,TRUE,number varies. Call 605-360-8740 and she will meet at door.,,,,,,,,,,,,,,,,,196.00,39,40.00
+Delivery,Week B,CUST142,081,Sysouda Teso,1000 N. Van Eps Ave.,Sioux Falls,Sd,,10,TRUE,cooler outside door,,,,,,,,,,,,,,,,,0.00,10,0.00
+Delivery,Oddballs,CUST143,,Caleb and Denise Van De Stroet,,,,,0,,pick-up,,,,,,,,,,,,,,,,,0.00,5,0.00
+Delivery,Oddballs,CUST144,,Gil and Sharon Van De Stroet,,,,,0,,pick-up,,,,,,,,,,,,,,,,,400.00,0,400.00
+Delivery,Oddballs,CUST145,,Freedom's Gate Church,,,,,30,,pick-up,,,,,,,,,,,,,,,,,0.00,30,0.00
+Delivery,Oddballs,CUST146,,Midwest Livestock,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST147,,Ruth Wiersma,,,,,0,,pick-up,,,,,,,,,,,,,,,,,50.00,4,34.00
+Delivery,Oddballs,CUST148,,Myron and Denise Blankenspoor,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST149,,Alan Reinpold,,,,,0,,pick-up,,,,,,,,,,,,,,,,,12.00,4,0.00
+Delivery,Oddballs,CUST150,,Scott Montgomery,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST151,,Byron Koenen,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST152,,Jeff Roti,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST153,,Lorna Haverhals,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST154,,Teresa Anderson,,,,,0,,SF delivery,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST155,,Randy VandeStouwe,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST156,,Gretchen McKee,,,,,0,,Jim Bernard's delivery,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST157,,Troy Weiland,,,,,0,,Jim Bernard's delivery,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST158,,Melissa Baker,,,,,0,,Jim Bernard's delivery,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST159,,Troy Weiland,,,,,0,,Jim Bernard's delivery,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST160,,Crystal Klarenbeek,,,,,0,,pick-up,,,,,,,,,,,,,,,,,,,
+Delivery,Oddballs,CUST161,,Margo Leveranz,,,,,0,,Rhonda's delivery,,,,,,,,,,,,,,,,,,,
+RunEntry,,,,Christi Tieszen,Tieszen Chiropractic - 128 N. Dakota,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST108,33,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Rachel Gackle,1003 N. College,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST035,36,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Dave Dixon,Lincoln County Courthouse Geomapping Office,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST114,43,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Cindy Petri,48290 N. Hiawatha Pl.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST010,7,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Hy-Vee,57th and Cliff,,,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,NEW_ebad2185-1b67-4442-bec0-2211e71a96df,80,delivered,43,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Charlene Hawe,626 S. Bartlett,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST068,69,delivered,5,Donated,cash,21,1,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Tanya Van De Stroet,1524 290th St.,Inwood,IA,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST002,1,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Alan Reinpold,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST149,6,delivered,2,Donated,cash,6,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Melissa Schutte,48390 281st St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST008,7,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kari Winquist,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST079,77,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jill Devitt,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST125,59,delivered,2,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sherry Anderson,1001 N. Grant,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST043,44,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sarah Woods,Methodist Church - 621 E. 4th,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST020,20,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Andrea Flyger,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST018,13,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,CJ Carmody,3204 E. Marson Dr.,Sioux Falls,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST092,79,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Suzy Lewison,504 N. Broadway,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST109,36,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Van Hofwegen,Van Hofwegen Dental,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST086,87,delivered,15,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Dolan and Sarah Van De Stroet,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,NEW_daf6177a-9410-4d5a-bd97-1f97770c15bb,9,delivered,2,Donated,cash,10,2,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Dana Van Middendorp,1200 N. Grant,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST041,42,delivered,3,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Kim Sogn,Garden Shed -,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST059,48,skipped,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Gabe Devitt,901 Candy Ct.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST033,19,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Deb Jansen,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST013,14,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Arnie Anderson,Haisch Pharmacy - 303 E. 5th St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST117,49,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Michelle Sehr,805 E. Elmwood,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST040,41,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Father Desmond,Catholic Church,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST104,27,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kristi Carpenter,Insurance building - 201 E. 5th St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST116,47,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Scott Montgomery,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST150,7,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Kara Quall,1621 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST099,15,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Jim Bernard,1916 E. Edgewood Rd.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST090,91,delivered,16,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kellie Steinmetz,1501 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST030,17,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Trina Kuper,1008 Angel Lane,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST028,14,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Nancy Richmond,705 N. Sanborn,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST026,13,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Myron and Denise Blankenspoor,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST148,5,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Tara Espland,904 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST094,8,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Julie Swier,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST130,65,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Lynette Hardy,1600 E. 77th St.,Sioux Falls,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST141,77,delivered,15,Donated,cash,80,20,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Gretchen McKee,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST156,15,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Trina Kuper,1008 Angel Lane,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST028,29,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Josh Otkin,1020 N. College,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST036,37,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jim Bernard,1916 E. Edgewood Rd.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST090,90,delivered,20,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Suzanne Anderson,303 N. Bridge St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST073,52,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Trina Kuper,1008 Angel Lane,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST028,29,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Cindy Petri,48290 N. Hiawatha Pl.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST010,9,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Julie Swier,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST080,82,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Randy VandeStouwe,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST155,14,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Bekka Koller,520 S. Johnson,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST069,70,delivered,3,Donated,cash,20,8,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Canton Food Pantry,Canton Lutheran Church,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST083,85,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Dustin Schouten,Hoogendorn Construction - corner of Hwys 11 and 18,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST121,55,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sarah Pearson,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST055,56,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Kim Sogn,Garden Shed 203 E. 5th St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST059,60,delivered,2,Donated,cash,10,2,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,HyVee,57th and Cliff,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST087,92,delivered,15,Donated,cash,84,24,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Manna Market,,Inwood,IA,51240,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST005,1,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Rosalinda Kilmer,620 E. 1st St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST049,50,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Amber Van Dam,424 N. Broadway,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST050,34,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Oak Street Station,,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST003,2,delivered,15,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Nancy Richmond,705 N. Sanborn,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST026,13,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Gil and Sharon Van De Stroet,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST144,1,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Hy-Vee,57th and Cliff,,,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,NEW_ebad2185-1b67-4442-bec0-2211e71a96df,80,delivered,40,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Tanya Iverson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST134,70,delivered,2,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Dana Van Middendorp,1200 N. Grant,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST041,22,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sunshine Foods,,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST006,5,delivered,34,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Jen Dibert,621 E. 2nd,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST046,29,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Suzanne Anderson,303 N. Bridge St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST073,74,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Ivan Rutebuka,,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST093,94,skipped,0,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Christi Tieszen,Tieszen Chiropractic - 128 N. Dakota,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST108,33,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Cassie Emerson,4704 S. Briarwood Ave.,Sioux Falls,SD,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST089,92,delivered,24,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Monica Jones,818 W. 3rd St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST119,51,delivered,1,Donated,cash,25,21,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Val Anderson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST138,74,delivered,1,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sunshine,5th St.,Canton,SD,57013,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST006,19,delivered,32,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Tanya Van De Stroet,1520 290th St.,Inwood,IA,51240,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST002,4,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Shelly Swift,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST081,83,delivered,1,Donated,cash,100,96,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Andrea Flyger,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST018,14,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Sarah Gustad,1027 N Kidder,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST039,40,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Rachel Scott,526 N. Blair Circle,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST070,71,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,June Fossum,814 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST095,9,delivered,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Caleb and Denise Van De Stroet,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST143,0,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Canton Food Pantry,,,,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,NEW_b719bdc7-12e5-4054-8258-ee02ca87b09c,35,delivered,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Leanne Lohan,912 Angel Lane,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST027,28,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Julie Langerock,48288 N. Hiawatha Pl.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST011,9,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Trina Kuper,1008 Angel Lane,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST028,14,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Roxy Wallenburg,526 N. Blair Circle,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST071,72,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Pat Van Roekel,304 S. Blair,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST124,58,delivered,2,Donated,cash,20,12,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kim Wentz,303 W. 4th St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST118,50,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Abby Homandberg Bowyer,1400 Holiday Dr.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST032,33,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Manna Market,316 S. Main,Inwood,IA,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST005,4,delivered,45,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Carla Warejcka,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST053,54,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Connie Walker,808 W. 5th St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST075,77,delivered,2,Donated,cash,8,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sterling Heath,Canton Farm and Home - 215 S. Broadway,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST066,67,delivered,2,Donated,cash,10,2,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Chad Brown,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST110,39,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Jen Dibert,621 E. 2nd,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST046,47,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Melanie Van De Stroet,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST082,80,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,HyVee,57th and Cliff,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST087,93,delivered,23,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Charlene Hawe,626 S. Bartlett,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST068,68,delivered,1,Donated,cash,3,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Rachel Scott,526 N. Blair Circle,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST070,71,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Linda Solem,526 N. Blair Circle,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST072,73,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kristin Goodroad,1409 Holiday Dr.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST031,32,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sarah Carlson,"Frieberg, Ask, and Nelson - 206 E. 5th",,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST061,62,delivered,3,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Melissa Swier,714 E. Elder,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST096,10,delivered,17,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Melanie Van De Stroet,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST082,84,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Alan Reinpold,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST149,6,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Bill Kortermeyer,406 E. Poplar,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST042,43,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Margo Leveranz,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST161,19,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Sandra Hoeffaker,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST054,55,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Ivan Rutebuka,3104 E. Marson Dr.,Sioux Falls,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST093,78,skipped,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Questa Kaps,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST129,64,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Deb Esche,1030 N. College,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST037,38,delivered,4,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Canton Food Pantry,Canton Lutheran Church,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST139,84,skipped,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sara Henderson,505 N. Cedar,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST058,59,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Lyle VerHoeven,,Inwood,IA,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,NEW_fe0ac044-0c14-407e-a9c3-6a8b51d192cb,11,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Monica Jones,818 W. 3rd St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST119,51,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sherry Anderson,1001 N. Grant,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST043,44,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Steve Swenson,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST111,40,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Margaret Preston,47973 W. 5th St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST078,84,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jon Peters,121 N. Blair,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST074,75,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Bob and Joan Lier,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST128,63,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Rhonda Pierce,6004 W. 58th St.,Sioux Falls,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST091,81,delivered,35,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Dustin Schouten,Hoogendorn Construction - corner of Hwys 11 and 18,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST121,55,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Manna Market,316 S. Main,Inwood,IA,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST005,3,delivered,45,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Connie Walker,808 W. 5th St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST075,54,delivered,2,Donated,cash,8,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Amy Coad,423 N. Grant,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST044,45,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Freedom's Gate Church,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST145,2,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Tanya Van De Stroet,1524 290th St.,Inwood,IA,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST002,2,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Sherry Anderson,1001 N. Grant,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST043,23,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Dana Van Middendorp,1200 N. Grant,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST041,42,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Roxy Wallenburg,526 N. Blair Circle,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST071,72,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Laurie Wiebe,Hoogendorn Construction - corner of Hwys 11 and 18,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST122,56,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Nicole Nelson,503 N. Broadway,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST051,52,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Sandra Hoeffaker,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST054,55,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Teresa Anderson,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST154,12,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Rollie Steck,323 N. Lawler,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST106,31,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Laura Vosika,701 E. 2nd,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST047,30,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Lamar Nance,1000 N. College,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST034,35,delivered,2,Donated,cash,20,12,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Laurie Cole,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST015,16,delivered,1,NoDonation,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Rhonda Pierce,6004 W. 58th St.,Sioux Falls,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST091,81,delivered,52,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sarah Pearson,high school office,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST055,37,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Tara Espland,904 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST094,8,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Di Smith,724 E. Walnut,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST023,24,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Amy Buitenbox,Catholic Church,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST103,26,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Kari Winquist,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST079,81,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Stacy Parsons,622 N. Cedar,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,NEW_55bd6fd7-871b-4526-9c63-4ed0e074ed86,38,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sunshine,5th St.,Canton,SD,57013,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST006,18,delivered,7,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Laurie Wiebe,Hoogendorn Construction - corner of Hwys 11 and 18,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST122,56,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Jeff Roti,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST152,10,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Karissa Laubach,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST060,46,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Nancy Bitterman,First Bank & Trust,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST062,63,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Carol Van De Stroet,,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,NEW_b1e54e65-ec4d-4e4c-877b-26d5953bae24,0,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Lorna Haverhals,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST153,11,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Sarah Carlson,"Frieberg, Ask, and Nelson - 206 E. 5th",,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST061,62,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Margaret Preston,47973 W. 5th St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST078,80,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sara Harris,27118 477th Ave. Harrisburg,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST085,86,delivered,20,NoDonation,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Dolan and Sarah Van De Stroet,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,NEW_daf6177a-9410-4d5a-bd97-1f97770c15bb,9,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Kellie Steinmetz,1501 Holiday Dr.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST030,31,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Oak Street Station,,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST003,3,delivered,15,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Midwest Livestock,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST146,3,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Sarah Pearson,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST055,56,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Inwood Hatchery,,Inwood,IA,51240,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST004,2,delivered,15,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Fr. Desmond,Catholic Church,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST025,25,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sonya Constance,First Bank & Trust,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST064,65,delivered,2,Donated,cash,16,8,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Kim Wentz,303 W. 4th St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST118,50,delivered,3,Donated,cash,260,248,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Deb Kleinschmidt,505 N. Cedar,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST057,58,delivered,2,Donated,cash,55,47,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kaylee Schroder,110 Oak St.,Fairview,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST001,3,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,June Fossum,814 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST095,9,delivered,5,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Inwood Hatchery,210 S. Main,Inwood,IA,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST004,4,delivered,30,Donated,cash,236,116,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Amber Van Dam,424 N. Broadway,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST050,34,delivered,5,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Susie Kurtz,Define Hair Design - 112 S. Broadway,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST065,66,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jenny Gubbels,47973 W. 5th St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST077,83,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,CJ Carmody,,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST092,89,delivered,24,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jenny Hamran,Lincoln County Courthouse District Attorney's Office,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST113,42,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Ruth Wiersma,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST147,4,delivered,4,Donated,cash,50,34,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Laura Trumm,500 E. Lynn,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST102,25,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Kim Sogn,Garden Shed 203 E. 5th St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST059,60,delivered,0,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Irene Ness,224 N. Milwaukee,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST022,22,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Gabe Devitt,901 Candy Ct.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST033,34,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Laura Vosika,701 E. 2nd,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST047,30,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Autumn Gebers,725 E. 2nd,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST048,49,delivered,5,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Mark Larson,47973 W. 5th St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST076,82,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Feeding South Dakota,,,,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,NEW_9c6642d7-64f6-412e-aedf-1f2f8260d9ff,83,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kristin Goodroad,1409 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST031,18,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Pat Van Roekel,304 S. Blair,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST124,58,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Bill Kortermeyer,406 E. Poplar,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST042,43,delivered,2,Donated,cash,30,22,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jen Dibert,621 E. 2nd,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST046,29,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,St Francis House,,Sioux Falls,SD,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,NEW_5f803672-ed85-43d6-a6b5-b683489e9966,22,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Meghan Meister,724 N. Kidder,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST105,28,delivered,4,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Melanie Van De Stroet,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST082,62,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kristi Carpenter,Insurance building - 201 E. 5th St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST116,47,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sally Ebright,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST052,53,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Lands Lutheran Church,,Hudson,SD,57034,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,NEW_1d033517-ab9a-475e-8eee-6b32f2f6e31a,23,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Karissa Laubach,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST060,46,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Laurie Cole,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST015,15,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sysouda Teso,1000 N. Van Eps Ave.,Sioux Falls,Sd,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST142,82,delivered,10,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Ben and Kari Quall,1621 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST100,16,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Carol Nelson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST137,73,delivered,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Carla Reding,104 N. Milwaukee,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST021,21,delivered,2,Donated,cash,100,92,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Deb Kleinschmidt,505 N. Cedar,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST057,58,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Anna Behning,48390 281st St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST007,5,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Fr. Desmond,Catholic Church,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST025,26,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Carla Reding,104 N. Milwaukee,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST021,22,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Amy Coad,423 N. Grant,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST044,45,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Suzy Lewison,504 N. Broadway,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST109,36,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Karissa Laubach,"Frieberg, Ask, and Nelson - 206 E. 5th",,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST060,61,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Abby Homandberg Bowyer,1400 Holiday Dr.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST032,33,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kellie Steinmetz,1501 Holiday Dr.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST030,31,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Troy Weiland,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST157,15,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Margo Leveranz,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST161,20,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Janet Crawford,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST133,69,delivered,2,Donated,cash,20,12,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Rachel Gackle,1003 N. College,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST035,36,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Laura Vosika,701 E. 2nd,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST047,48,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Suzanne Anderson,303 N. Bridge St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST073,52,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kari Elling,620 E. 2nd,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST045,46,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Canton Food Pantry,Canton Lutheran Church,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST139,84,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Brenda Ask,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST115,44,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Michelle Sehr,805 E. Elmwood,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST040,41,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Ruth Wiersma,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST147,4,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Bill Kortermeyer,406 E. Poplar,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST042,24,skipped,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sarah Carlson,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST061,45,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Jen Dibert,621 E. 2nd,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST046,47,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Cindy Petri,48290 N. Hiawatha Pl.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST010,7,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Caleb and Denise Van De Stroet,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST143,0,delivered,5,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Jeff Roti,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST152,10,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Gabe Devitt,901 Candy Ct.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST033,34,delivered,3,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Oak Street Station,,Inwood,IA,51240,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST003,0,delivered,30,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Dana Van Middendorp,1200 N. Grant,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST041,22,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Karissa Laubach,"Frieberg, Ask, and Nelson - 206 E. 5th",,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST060,61,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jam Preschool (Shelly Swift),,Canton,SD,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,NEW_ec9b8d53-e64c-4f7f-8058-c7d3f5f52188,21,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Scott Larson,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST016,16,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jenny Hamran,Lincoln County Courthouse District Attorney's Office,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST113,42,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Don Taylor,716 E. 3rd St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST107,32,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sarah Pearson,high school office,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST055,37,delivered,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kim Kreber,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST127,61,delivered,6,Donated,cash,50,26,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Feeding South Dakota,,,,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,NEW_9c6642d7-64f6-412e-aedf-1f2f8260d9ff,83,delivered,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Suzanne Anderson,303 N. Bridge St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST073,74,delivered,3,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Leanne Lohan,912 Angel Lane,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST027,28,delivered,2,Donated,cash,5,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Bill Kortermeyer,406 E. Poplar,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST042,24,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Rhonda Pierce,,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST091,91,delivered,30,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jennifer Skiles,600,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST056,57,delivered,5,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Melissa Swier,714 E. Elder,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST096,10,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Becky Berenschot,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST017,12,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Mary Eliason,First Bank & Trust,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST063,64,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jennifer Skiles,600,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST056,57,delivered,5,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Manna Market,,Inwood,IA,51240,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST005,1,delivered,45,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Midwest Livestock,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST146,3,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Jaqueline Bogue,1030 N. Sanborn,Canton,SD,57013,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,NEW_3937f656-4b5c-4b42-a794-1511254fd9bd,27,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jana Norby,4100 E. Brookline Dr.,Sioux Falls,SD,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST088,88,delivered,10,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Lamar Nance,1000 N. College,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST034,35,delivered,2,Donated,cash,10,2,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Amy Buitenbox,Catholic Church,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST103,26,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kathy Gardner,,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST038,39,skipped,0,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Oak Street Station,,Inwood,IA,51240,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST003,0,delivered,30,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Deb Jansen,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST013,15,delivered,2,Donated,cash,200,192,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Gabe Devitt,901 Candy Ct.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST033,19,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Jon Peters,121 N. Blair,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST074,75,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Van Hofwegen,Van Hofwegen Dental,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST086,87,delivered,10,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Connie Walker,808 W. 5th St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST075,54,delivered,2,Donated,cash,16,8,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Carrie Draeger,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST112,41,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Laura Dozark,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST126,60,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Josh Otkin,1020 N. College,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST036,37,delivered,2,Donated,cash,15,7,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Kaylee Schroder,110 Oak St.,Fairview,SD,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST001,1,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Tara Espland,,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,NEW_0a87af26-63c7-496d-9a52-dde38d0c7140,17,delivered,3,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Deb Esche,1030 N. College,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST037,38,delivered,4,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Cassie Emerson,4704 S. Briarwood Ave.,Sioux Falls,SD,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST089,89,delivered,24,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Tara Espland,,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,NEW_0a87af26-63c7-496d-9a52-dde38d0c7140,18,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Melissa Baker,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST158,17,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Connie Walker,808 W. 5th St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST075,81,delivered,2,Donated,cash,8,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kari Elling,620 E. 2nd,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST045,46,delivered,3,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Mary Eliason,First Bank & Trust,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST063,64,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Freedom's Gate Church,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST145,2,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Rosalinda Kilmer,620 E. 1st St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST049,50,delivered,3,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Meghan Meister,724 N. Kidder,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST105,28,delivered,4,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Kristin Goodroad,1409 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST031,18,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Jeannie Jacobsen,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST136,72,delivered,2,Donated,cash,10,2,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,June Fossum,814 E. 5th,Canton,SD,57013,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST019,20,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jeannie Jacobsen,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST136,72,delivered,2,Donated,cash,5,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Linda Solem,526 N. Blair Circle,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST072,73,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Kim Kreber,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST127,61,delivered,6,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Ben and Kari Quall,1621 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST100,16,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Shelly Swift,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST081,78,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Anna Behning,48390 281st St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST007,6,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Autumn Gebers,725 E. 2nd,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST048,49,delivered,3,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,CJ Carmody,3204 E. Marson Dr.,Sioux Falls,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST092,79,delivered,25,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Kim Sogn,Garden Shed -,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST059,48,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Stacy Parsons,622 N. Cedar,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,NEW_55bd6fd7-871b-4526-9c63-4ed0e074ed86,38,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Inwood Hatchery,,Inwood,IA,51240,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST004,2,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kara Quall,1621 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST099,15,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Troy Weiland,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST159,18,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Jenny Gubbels,47973 W. 5th St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST077,79,delivered,4,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jaqueline Bogue,1030 N. Sanborn,Canton,SD,57013,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,NEW_3937f656-4b5c-4b42-a794-1511254fd9bd,95,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Danny Harris,3809 E. 68th St.,Sioux Falls,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST140,75,delivered,10,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Gerri Day,702 S. Pleasant,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST132,67,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Rollie Steck,323 N. Lawler,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST106,31,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Crystal Klarenbeek,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST160,19,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Sarah Woods,Methodist Church - 621 E. 4th,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST020,21,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Lynn White,720 E. Elder,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST097,11,delivered,4,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sarah Gustad,1027 N Kidder,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST039,21,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Nancy Bitterman,First Bank & Trust,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST062,63,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Scott Montgomery,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST150,7,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Amber Van Dam,424 N. Broadway,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST050,51,delivered,4,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Lynda Johnson,806 E. Elder,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST098,12,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Troy Weiland,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST159,17,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Bob and Joan Lier,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST128,63,delivered,3,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Bekka Koller,520 S. Johnson,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST069,70,delivered,3,Donated,cash,15,3,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Janet Crawford,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST133,69,delivered,2,Donated,cash,25,17,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Kellie Steinmetz,1501 Holiday Dr.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST030,17,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Kathy Gardner,1037 N. Kidder,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST038,39,delivered,2,Donated,cash,7,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Ivan Rutebuka,3104 E. Marson Dr.,Sioux Falls,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST093,78,skipped,0,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sarah Carlson,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST061,45,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Brenda Ask,"Frieberg, Ask, and Nelson - 206 E. 5th",Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST115,44,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Lorna Haverhals,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST153,12,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Julie Langerock,48288 N. Hiawatha Pl.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST011,10,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Arnie Anderson,Haisch Pharmacy - 303 E. 5th St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST117,49,delivered,1,Donated,cash,10,6,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sterling Heath,Canton Farm and Home - 215 S. Broadway,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST066,67,delivered,2,Donated,cash,10,2,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jana Norby,4100 E. Brookline Dr.,Sioux Falls,SD,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST088,88,delivered,10,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sarah Gustad,1027 N Kidder,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST039,40,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,CJ Carmody,,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST092,93,skipped,0,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Tanya Iverson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST134,70,delivered,1,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Rhonda Pierce,6004 W. 58th St.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST091,94,delivered,57,Donated,cash,904,676,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Ivan Rutebuka,,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST093,90,delivered,20,NoDonation,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Melanie Van De Stroet,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST082,62,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Kaylee Schroder,110 Oak St.,Fairview,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST001,3,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Amber Van Dam,424 N. Broadway,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST050,51,delivered,5,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Dan Anderson,28037 483rd Ave.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST009,6,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Inwood Hatchery,210 S. Main,Inwood,IA,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST004,5,delivered,45,Donated,cash,143,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Carol Nelson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST137,73,delivered,0,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sally Ebright,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST052,53,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Cindy Petri,48290 N. Hiawatha Pl.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST010,8,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Charlene Hawe,626 S. Bartlett,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST068,69,delivered,3,Donated,cash,12,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Canton Food Pantry,,,,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,NEW_b719bdc7-12e5-4054-8258-ee02ca87b09c,35,delivered,30,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Questa Kaps,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST129,64,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sarah Gustad,1027 N Kidder,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST039,21,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Lynette Hardy,1600 E. 77th St.,Sioux Falls,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST141,77,delivered,24,Donated,cash,116,20,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Alyssa Johns,506 S. Pleasant,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST131,66,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Danny Harris,3809 E. 68th St.,Sioux Falls,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST140,75,skipped,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Tanya Van De Stroet,1520 290th St.,Inwood,IA,51240,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST002,4,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sherry Anderson,1001 N. Grant,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST043,23,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Tonia Braun,48225 N. Hiawatha Pl.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST012,11,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Jana Norby,4100 E. Brookline Dr.,Sioux Falls,SD,,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST088,76,delivered,10,NoDonation,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Gil and Sharon Van De Stroet,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST144,1,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Don Taylor,716 E. 3rd St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST107,32,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Elaine Suter,1700 Holiday Dr.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST029,30,skipped,0,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Nancy Richmond,705 N. Sanborn,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST026,26,delivered,2,Donated,cash,50,42,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Jill Devitt,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST125,59,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Melissa Baker,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST158,16,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Dan Anderson,28037 483rd Ave.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST009,8,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kristin Goodroad,1409 Holiday Dr.,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST031,32,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Steve Swenson,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST111,40,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Sysouda Teso,1000 N. Van Eps Ave.,Sioux Falls,Sd,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST142,82,skipped,0,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Crystal Klarenbeek,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST160,18,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Amy Buitenbos,Catholic Church,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST024,24,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Laura Trumm,500 E. Lynn,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST102,25,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Julie Swier,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST130,65,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Chad Brown,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST110,39,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Laura Vosika,701 E. 2nd,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST047,48,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Molly Larsgaard,114 N. Howard,Canton,SD,57013,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,NEW_8f7ea418-b095-4259-ab40-a9a476ca8e6f,76,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Irene Ness,224 N. Milwaukee,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST022,23,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Nancy Richmond,705 N. Sanborn,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST026,27,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Brian Launderville,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST135,71,delivered,0,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Mark Larson,47973 W. 5th St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST076,78,delivered,3,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Elizabeth Young,200 N. Bridge St.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST120,53,delivered,5,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Byron Koenen,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST151,8,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Sara Harris,27118 477th Ave. Harrisburg,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST085,86,delivered,20,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Lynda Johnson,806 E. Elder,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST098,12,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Canton Food Pantry,Canton Lutheran Church,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST083,85,delivered,0,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Vanessa Baldwin,510 S. West,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST123,57,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Melissa Schutte,48390 281st St.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST008,6,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Carla Warejcka,Canton High School - 800 N. Main,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST053,54,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Teresa Anderson,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST154,13,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Gerri Day,702 S. Pleasant,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST132,67,delivered,3,Donated,cash,20,8,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Tonia Braun,48225 N. Hiawatha Pl.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST012,10,delivered,2,Donated,cash,8,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Nicole Nelson,503 N. Broadway,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST051,52,delivered,2,Donated,cash,8,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Elaine Suter,1700 Holiday Dr.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST029,30,delivered,6,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Brian Launderville,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST135,71,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Brenda Van Zee,724 Park Lane S.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST101,20,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Elizabeth Young,200 N. Bridge St.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST120,53,delivered,4,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Chad Rozeboom,803 S. Bartlett,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST067,68,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Carrie Draeger,Lincoln County Courthouse Sheriff's Dept.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST112,41,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Randy VandeStouwe,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST155,13,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Becky Berenschot,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST017,13,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Lynn White,720 E. Elder,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST097,11,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,June Fossum,814 E. 5th,Canton,SD,57013,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST019,19,skipped,0,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Sara Henderson,505 N. Cedar,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST058,59,delivered,1,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Vanessa Baldwin,510 S. West,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST123,57,delivered,2,Donated,cash,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Val Anderson,Farmers State Bank - 220 E. 5th,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST138,74,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Jana Norby,4100 E. Brookline Dr.,Sioux Falls,SD,,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST088,76,delivered,10,NoDonation,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Amy Buitenbos,Catholic Church,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST024,25,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Myron and Denise Blankenspoor,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST148,5,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Leah Peterson,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST014,12,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Sonya Constance,First Bank & Trust,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST064,65,delivered,2,Donated,cash,8,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Scott Larson,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST016,17,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Dan Anderson,28037 483rd Ave.,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST009,7,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Susie Kurtz,Define Hair Design - 112 S. Broadway,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST065,66,delivered,1,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Di Smith,724 E. Walnut,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST023,23,delivered,2,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Julie Swier,Bethany Church - 702 W. 7th,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST080,79,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Laura Dozark,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST126,60,delivered,2,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Troy Weiland,,,,,,,,,Oddballs_2025-12-21T22:43:04.722Z,Oddballs,Oddballs,endedEarly,CUST157,16,skipped,0,NotRecorded,,0,0,2025-12-21T22:43:04.722Z,2025-12-21T22:43:04.722Z,,,,
+RunEntry,,,,Gretchen McKee,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST156,14,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Molly Larsgaard,114 N. Howard,Canton,SD,57013,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,NEW_8f7ea418-b095-4259-ab40-a9a476ca8e6f,76,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Leah Peterson,Canton-Inwood Hospital,,,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST014,11,delivered,1,NotRecorded,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Byron Koenen,,,,,,,,,Oddballs_2025-12-17T12:00:14.935Z,Oddballs,Oddballs,completed,CUST151,8,skipped,0,NotRecorded,,0,0,2025-12-17T12:00:14.935Z,2025-12-17T12:00:14.935Z,,,,
+RunEntry,,,,Dave Dixon,Lincoln County Courthouse Geomapping Office,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST114,43,delivered,3,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Alyssa Johns,506 S. Pleasant,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST131,66,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Father Desmond,Catholic Church,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST104,27,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Charlene Hawe,626 S. Bartlett,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST068,68,delivered,1,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Brenda Van Zee,724 Park Lane S.,Canton,SD,57013,,,,,Week B_2025-12-23T18:36:04.659Z,Week B,WeekB,completed,CUST101,20,delivered,2,NotRecorded,,0,0,2025-12-23T18:36:04.659Z,2025-12-23T18:36:04.659Z,,,,
+RunEntry,,,,Chad Rozeboom,803 S. Bartlett,,,,,,,,Week A_2025-12-30T19:46:59.124Z,Week A,WeekA,completed,CUST067,68,delivered,2,NotRecorded,,0,0,2025-12-30T19:46:59.124Z,2025-12-30T19:46:59.124Z,,,,
+RunEntry,,,,Kaylee Schroder,110 Oak St.,Fairview,SD,,,,,,Week A_2025-12-18T19:26:51.392Z,Week A,WeekA,completed,CUST001,0,delivered,2,NoDonation,,0,0,2025-12-18T19:26:51.392Z,2025-12-18T19:26:51.392Z,,,,
+RunEntry,,,,Dan Anderson,28037 483rd Ave.,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST009,6,delivered,1,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+RunEntry,,,,Sunshine Foods,,Canton,SD,57013,,,,,Week B_2025-12-13T02:12:20.271Z,Week B,WeekB,completed,CUST006,5,delivered,45,NotRecorded,,0,0,2025-12-13T02:12:20.271Z,2025-12-13T02:12:20.271Z,,,,
+OneOffDonation,,,,Jim Bernard,1916 E. Edgewood Rd.,,,,,,,,,,,,CUST090,,,0,Donated,cash,234.00,94.00,,2025-12-21T22:33:15.873Z,140.00,,,
+OneOffDonation,,,,Jam Preschool (Shelly Swift),,Canton,SD,,,,,,,,,,NEW_ec9b8d53-e64c-4f7f-8058-c7d3f5f52188,,,0,Donated,cash,100.00,96.00,,2025-12-21T22:36:01.350Z,4.00,,,
+OneOffDonation,,,,Kim Wentz,303 W. 4th St.,Canton,SD,57013,,,,,,,,,CUST118,,,0,Donated,cash,230.00,218.00,,2025-12-23T14:56:54.251Z,12.00,,,
+OneOffDonation,,,,Nancy Bitterman,First Bank & Trust,,,,,,,,,,,,CUST062,,,0,Donated,cash,750.00,742.00,,2025-12-21T22:32:34.170Z,8.00,,,
+OneOffDonation,,,,Alan Reinpold,,,,,,,,,,,,,CUST149,,,0,NotRecorded,,0.00,0.00,,2025-12-21T22:54:56.531Z,,,,
+OneOffDelivery,,,,Alan Reinpold,,,,,,,,,,,,,CUST149,,,2,Donated,cash,6.00,0.00,,2025-12-21T22:54:34.003Z,8.00,,,
+OneOffDonation,,,,Bob and Joan Lier,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,,,,,CUST128,,,0,Donated,cash,20.00,8.00,,2025-12-21T22:37:19.853Z,12.00,,,
+OneOffDonation,,,,Bethany Reformed Church,702 W. 7th St.,Canton,SD,57013,,,,,,,,,NEW_1cc9b0cd-6f93-4a74-812f-73a05a8848a4,,,0,Donated,cash,828.53,828.53,,2025-12-30T17:33:54.570Z,,,,
+OneOffDelivery,,,,St Francis House,,Sioux Falls,SD,,,,,,,,,,NEW_5f803672-ed85-43d6-a6b5-b683489e9966,,,20,Donated,cash,0.00,0.00,,2025-12-21T22:39:21.270Z,80.00,,,
+OneOffDonation,,,,Lyle VerHoeven,,Inwood,IA,,,,,,,,,,NEW_fe0ac044-0c14-407e-a9c3-6a8b51d192cb,,,0,NotRecorded,,20.00,0.00,,2025-12-21T22:42:29.115Z,20.00,,,
+OneOffDelivery,,,,Lyle VerHoeven,,Inwood,IA,,,,,,,,,,NEW_fe0ac044-0c14-407e-a9c3-6a8b51d192cb,,,1,NotRecorded,,4.00,0.00,,2025-12-21T22:43:24.211Z,4.00,,,
+OneOffDonation,,,,Lands Lutheran Church,,Hudson,SD,57034,,,,,,,,,NEW_1d033517-ab9a-475e-8eee-6b32f2f6e31a,,,0,Donated,cash,750.00,750.00,,2025-12-21T22:40:08.501Z,,,,
+OneOffDonation,,,,Arnie Anderson,Haisch Pharmacy - 303 E. 5th St.,Canton,SD,57013,,,,,,,,,CUST117,,,0,Donated,cash,10.00,6.00,,2025-12-21T22:32:55.502Z,4.00,,,
+OneOffDelivery,,,,Banquet,,Sioux Falls,,,,,,,,,,,NEW_aed7e55b-8e42-42b3-8248-9be6adb78b15,,,432,Donated,cash,0.00,0.00,,2025-12-23T18:54:43.416Z,1728.00,,,
+OneOffDelivery,,,,Banquet,,Sioux Falls,,,,,,,,,,,NEW_aed7e55b-8e42-42b3-8248-9be6adb78b15,,,432,NotRecorded,,1728.00,0.00,,2025-12-23T18:55:04.557Z,1728.00,,,
+OneOffDonation,,,,Questa Kaps,Bethany Church - 702 W. 7th,Canton,SD,57013,,,,,,,,,CUST129,,,0,Donated,cash,30.00,22.00,,2025-12-21T22:36:43.944Z,8.00,,,
+OneOffDonation,,,,Caleb and Denise Van De Stroet,,,,,,,,,,,,,CUST143,,,0,NotRecorded,,0.00,0.00,,2025-12-21T22:41:03.783Z,8.00,,,
