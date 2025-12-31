@@ -510,6 +510,15 @@
   padding: var(--spacing-3);
 }
 
+.one-off-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .inline-donation-body {
   display: grid;
   gap: var(--spacing-1);
@@ -747,6 +756,14 @@
   margin-top: var(--spacing-1);
   display: grid;
   gap: 4px;
+}
+
+.receipt-history-divider {
+  height: 1px;
+  background: var(--color-border);
+  width: 100%;
+  margin-top: var(--spacing-1);
+  margin-bottom: var(--spacing-1);
 }
 
 .receipt-history-header {

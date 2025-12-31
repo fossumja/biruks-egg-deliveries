@@ -78,6 +78,7 @@
 
 <ng-template #receiptHistoryList>
   <div class="receipt-history">
+    <div class="receipt-history-divider" aria-hidden="true"></div>
     <div class="receipt-history-header">Previous receipts</div>
     @if (receiptHistoryLoading) {
       <div class="receipt-history-empty text-muted">Loading receipts...</div>
@@ -399,7 +400,7 @@
 
       <!-- Inline donation card beneath this stop -->
       <div class="inline-donation card" *ngIf="donationModalStop?.id === stop.id">
-        <h3>Donation for {{ donationModalStop?.name }}</h3>
+        <h3 class="one-off-title">One-Time Donation</h3>
         <div class="inline-donation-body">
           <div class="card donation-card">
             <app-donation-controls
@@ -471,7 +472,7 @@
 
       <!-- Inline off-schedule delivery card beneath this stop -->
       <div class="inline-donation card" *ngIf="offScheduleStop?.id === stop.id">
-        <h3>Delivery for {{ offScheduleStop?.name }}</h3>
+        <h3 class="one-off-title">One-Time Delivery</h3>
         <div class="inline-donation-body">
           <div class="delivery-card card">
             <app-stop-delivery-card
