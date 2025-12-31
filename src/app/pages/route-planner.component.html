@@ -401,7 +401,7 @@
       <div class="inline-donation card" *ngIf="donationModalStop?.id === stop.id">
         <h3>Donation for {{ donationModalStop?.name }}</h3>
         <div class="inline-donation-body">
-          <div class="card">
+          <div class="card donation-card">
             <label class="date-field">
               Donation date
               <input
@@ -422,8 +422,6 @@
                 {{ oneOffDonationDateError }}
               </p>
             }
-          </div>
-          <div class="card">
             <app-donation-controls
               [donation]="donationDraft?.donation || null"
               [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
@@ -475,7 +473,7 @@
       <div class="inline-donation card" *ngIf="offScheduleStop?.id === stop.id">
         <h3>Delivery for {{ offScheduleStop?.name }}</h3>
         <div class="inline-donation-body">
-          <div class="card">
+          <div class="delivery-card card">
             <label class="date-field">
               Delivery date
               <input
@@ -496,8 +494,6 @@
                 {{ oneOffDeliveryDateError }}
               </p>
             }
-          </div>
-          <div class="delivery-card card">
             <app-stop-delivery-card
               [stop]="offScheduleStop"
               [deliveredQty]="offDeliveredQty"
