@@ -194,9 +194,11 @@ export class RoutePlannerComponent {
   private async refreshOneOffDateRange(): Promise<void> {
     const now = new Date();
     const currentYear = now.getFullYear();
+    const selectedYear = this.syncSelectedTaxYear();
     const dataYears = new Set<number>();
     const baselineYear = this.resolveBaselineYear(currentYear);
     dataYears.add(baselineYear);
+    dataYears.add(selectedYear);
 
     const [deliveries, runEntries, runs] = await Promise.all([
       this.storage.getAllDeliveries(),
@@ -234,8 +236,7 @@ export class RoutePlannerComponent {
       dataYears.size > 0 ? Math.min(...dataYears) : currentYear;
     const latestYear =
       dataYears.size > 0 ? Math.max(...dataYears) : currentYear;
-    const maxYear = Math.max(latestYear, currentYear) + 1;
-    this.setOneOffDateRange(earliestYear, maxYear);
+    this.setOneOffDateRange(earliestYear, latestYear);
   }
 
   private setOneOffDateRange(minYear: number, maxYear: number): void {

@@ -855,6 +855,24 @@ describe('RoutePlannerComponent', () => {
     expect(component.offDonationDraft.amount).toBe(0);
   });
 
+  it('ties one-off date range to the selected tax year', async () => {
+    localStorage.setItem('selectedTaxYear', '2030');
+    localStorage.setItem('lastImportAt', '2024-01-05T00:00:00.000Z');
+    storage.runs = [{
+      id: 'run-1',
+      date: '2023-02-01',
+      weekType: 'Week A',
+      label: 'Week A - 2023-02-01',
+      routeDate: 'Week A'
+    }];
+
+    await (component as any).refreshOneOffDateRange();
+
+    expect(component.oneOffDateMin).toBe('2023-01-01');
+    expect(component.oneOffDateMax).toBe('2030-12-31');
+    expect(component.oneOffYearRangeLabel).toBe('2023 and 2030');
+  });
+
   it('sorts all receipts by event date descending', async () => {
     const run = {
       id: 'run-1',
