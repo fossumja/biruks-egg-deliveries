@@ -86,34 +86,48 @@
         <ul class="receipt-history-list" role="list">
           @for (entry of receiptHistory; track $index) {
             <li class="receipt-history-item">
-              <span class="receipt-history-date">
-                @if (entry.date) {
-                  {{ entry.date | date : 'shortDate' : undefined : 'en-US' }}
-                } @else {
-                  <span class="receipt-history-date-missing">No date</span>
+              <div class="receipt-history-details">
+                <span class="receipt-history-date">
+                  @if (entry.date) {
+                    {{ entry.date | date : 'shortDate' : undefined : 'en-US' }}
+                  } @else {
+                    <span class="receipt-history-date-missing">No date</span>
+                  }
+                </span>
+                <span class="receipt-history-sep" aria-hidden="true">•</span>
+                <span
+                  class="receipt-history-status"
+                  [class.is-delivered]="entry.status === 'delivered'"
+                  [class.is-skipped]="entry.status === 'skipped'"
+                  [class.is-donation]="entry.status === 'donation'"
+                >
+                  {{ formatReceiptStatus(entry.status) }}
+                </span>
+                @if (entry.status === 'delivered') {
+                  <span class="receipt-history-sep" aria-hidden="true">•</span>
+                  <span class="receipt-history-dozens">
+                    {{ formatReceiptDozens(entry) }}
+                  </span>
                 }
-              </span>
-              <span class="receipt-history-sep" aria-hidden="true">•</span>
-              <span
-                class="receipt-history-status"
-                [class.is-delivered]="entry.status === 'delivered'"
-                [class.is-skipped]="entry.status === 'skipped'"
-                [class.is-donation]="entry.status === 'donation'"
-              >
-                {{ formatReceiptStatus(entry.status) }}
-              </span>
-              @if (entry.status === 'delivered') {
-                <span class="receipt-history-sep" aria-hidden="true">•</span>
-                <span class="receipt-history-dozens">
-                  {{ formatReceiptDozens(entry) }}
-                </span>
-              }
-              @if (entry.donationStatus === 'Donated') {
-                <span class="receipt-history-sep" aria-hidden="true">•</span>
-                <span class="receipt-history-donation">
-                  {{ formatReceiptDonationMethod(entry.donationMethod) }}
-                  ${{ entry.donationAmount | number : '1.2-2' }}
-                </span>
+                @if (entry.donationStatus === 'Donated') {
+                  <span class="receipt-history-sep" aria-hidden="true">•</span>
+                  <span class="receipt-history-donation">
+                    {{ formatReceiptDonationMethod(entry.donationMethod) }}
+                    ${{ entry.donationAmount | number : '1.2-2' }}
+                  </span>
+                }
+              </div>
+              @if (canDeleteReceiptHistoryEntry(entry)) {
+                <div class="receipt-history-action">
+                  <button
+                    type="button"
+                    class="btn btn-text warn receipt-delete-btn"
+                    (click)="confirmDeleteReceiptHistory(entry)"
+                    [attr.aria-label]="getReceiptHistoryDeleteLabel(entry)"
+                  >
+                    Delete
+                  </button>
+                </div>
               }
             </li>
           }
@@ -607,6 +621,16 @@
               >
                 Edit
               </button>
+              @if (canDeleteRunEntry(entry)) {
+                <button
+                  type="button"
+                  class="btn btn-text btn-inline warn"
+                  (click)="confirmDeleteRunEntry(entry)"
+                  [attr.aria-label]="getRunEntryDeleteLabel(entry)"
+                >
+                  Delete
+                </button>
+              }
             </div>
           </div>
           <ng-template #noDate>

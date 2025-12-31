@@ -1094,6 +1094,179 @@ export class RoutePlannerComponent {
     }
   }
 
+  canDeleteReceiptHistoryEntry(entry: ReceiptHistoryEntry): boolean {
+    if (entry.kind === 'run') {
+      return !!entry.runEntryId;
+    }
+    if (
+      entry.kind === 'oneOffDonation' ||
+      entry.kind === 'oneOffDelivery'
+    ) {
+      return !!entry.deliveryId && entry.oneOffIndex != null;
+    }
+    return false;
+  }
+
+  getReceiptHistoryDeleteLabel(entry: ReceiptHistoryEntry): string {
+    const date = this.formatReceiptDateLabel(entry.date);
+    const status = this.formatReceiptStatus(entry.status).toLowerCase();
+    return `Delete ${status} receipt from ${date}`;
+  }
+
+  async confirmDeleteReceiptHistory(
+    entry: ReceiptHistoryEntry
+  ): Promise<void> {
+    if (!this.canDeleteReceiptHistoryEntry(entry)) return;
+    const label = this.getReceiptHistoryDeleteLabel(entry);
+    const confirmed = window.confirm(
+      `${label}?\n\nThis cannot be undone.`
+    );
+    if (!confirmed) return;
+    try {
+      await this.deleteReceiptHistoryEntry(entry);
+      this.toast.show('Receipt deleted');
+      const stop = this.getReceiptHistoryStop();
+      if (stop) {
+        await this.loadReceiptHistory(stop);
+        await this.refreshDonationTotals(stop);
+      }
+    } catch (err) {
+      console.error('Failed to delete receipt', err);
+      this.toast.show('Failed to delete receipt', 'error');
+    }
+  }
+
+  canDeleteRunEntry(entry: RunSnapshotEntry): boolean {
+    if (entry.runId === 'oneoff') {
+      return (
+        !!entry.deliveryId &&
+        entry.oneOffIndex != null &&
+        !!entry.oneOffKind
+      );
+    }
+    return !!entry.id;
+  }
+
+  getRunEntryDeleteLabel(entry: RunSnapshotEntry): string {
+    const date = this.formatReceiptDateLabel(entry.eventDate ?? '');
+    const status = this.formatReceiptStatus(entry.status).toLowerCase();
+    const name = entry.name?.trim() ? ` for ${entry.name}` : '';
+    return `Delete ${status} receipt${name} from ${date}`;
+  }
+
+  async confirmDeleteRunEntry(entry: RunSnapshotEntry): Promise<void> {
+    if (!this.canDeleteRunEntry(entry)) return;
+    const label = this.getRunEntryDeleteLabel(entry);
+    const confirmed = window.confirm(
+      `${label}?\n\nThis cannot be undone.`
+    );
+    if (!confirmed) return;
+    try {
+      await this.deleteRunEntry(entry);
+      this.toast.show('Receipt deleted');
+      if (this.editingRunEntry?.id === entry.id) {
+        this.cancelRunEntryEdit();
+      }
+      await this.reloadRunEntriesView();
+      this.applyFilter(false);
+    } catch (err) {
+      console.error('Failed to delete receipt', err);
+      this.toast.show('Failed to delete receipt', 'error');
+    }
+  }
+
+  private formatReceiptDateLabel(date?: string): string {
+    if (!date) return 'No date';
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.valueOf())) return 'No date';
+    return parsed.toLocaleDateString('en-US');
+  }
+
+  private getReceiptHistoryStop(): Delivery | null {
+    return this.donationModalStop ?? this.offScheduleStop ?? null;
+  }
+
+  private async deleteReceiptHistoryEntry(
+    entry: ReceiptHistoryEntry
+  ): Promise<void> {
+    if (entry.kind === 'run' && entry.runEntryId) {
+      await this.storage.deleteRunEntry(entry.runEntryId);
+      return;
+    }
+    if (
+      entry.kind === 'oneOffDonation' &&
+      entry.deliveryId &&
+      entry.oneOffIndex != null
+    ) {
+      await this.storage.deleteOneOffDonationByIndex(
+        entry.deliveryId,
+        entry.oneOffIndex
+      );
+      return;
+    }
+    if (
+      entry.kind === 'oneOffDelivery' &&
+      entry.deliveryId &&
+      entry.oneOffIndex != null
+    ) {
+      await this.storage.deleteOneOffDeliveryByIndex(
+        entry.deliveryId,
+        entry.oneOffIndex
+      );
+    }
+  }
+
+  private async deleteRunEntry(entry: RunSnapshotEntry): Promise<void> {
+    if (entry.runId === 'oneoff') {
+      if (
+        entry.oneOffKind === 'donation' &&
+        entry.deliveryId &&
+        entry.oneOffIndex != null
+      ) {
+        await this.storage.deleteOneOffDonationByIndex(
+          entry.deliveryId,
+          entry.oneOffIndex
+        );
+      } else if (
+        entry.oneOffKind === 'delivery' &&
+        entry.deliveryId &&
+        entry.oneOffIndex != null
+      ) {
+        await this.storage.deleteOneOffDeliveryByIndex(
+          entry.deliveryId,
+          entry.oneOffIndex
+        );
+      }
+      return;
+    }
+    if (entry.id) {
+      await this.storage.deleteRunEntry(entry.id);
+    }
+  }
+
+  private async reloadRunEntriesView(): Promise<void> {
+    if (this.viewingAllReceipts) {
+      await this.loadAllReceipts();
+      this.filteredRunEntries = [...this.runEntries];
+      return;
+    }
+    if (!this.selectedRunId) return;
+    const run =
+      this.allRuns.find((r) => r.id === this.selectedRunId) ?? null;
+    const entries = await this.storage.getRunEntries(this.selectedRunId);
+    this.runEntries = entries
+      .slice()
+      .sort(
+        (a, b) =>
+          (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
+      )
+      .map((e) => ({
+        ...e,
+        eventDate: e.eventDate ?? run?.date
+      }));
+    this.filteredRunEntries = [...this.runEntries];
+  }
+
   setDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
     if (!this.donationDraft) return;
     const rate = this.storage.getSuggestedRate();

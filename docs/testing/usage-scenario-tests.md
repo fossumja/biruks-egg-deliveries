@@ -160,6 +160,7 @@ Expected:
 - Totals accumulate across runs and one-offs.
 - All receipts view shows runs and one-offs in date order.
 - Export totals match the Planner totals for the selected tax year.
+- Delete a receipt from **All receipts** and confirm the list and totals update.
 
 ## Outcomes
 

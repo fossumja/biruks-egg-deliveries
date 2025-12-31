@@ -299,6 +299,58 @@ describe('StorageService regression tests', () => {
     expect(reloaded?.oneOffDeliveries?.[0]?.date).toBe(expectedDeliveryDate);
   });
 
+  it('deletes one-off receipts by index', async () => {
+    await createStorageWithMiniRoute();
+
+    await storage.appendOneOffDonation('c1-r1', {
+      status: 'Donated',
+      method: 'cash',
+      amount: 8,
+      suggestedAmount: 8,
+      date: '2025-06-15'
+    });
+
+    await storage.appendOneOffDelivery('c1-r1', 2, {
+      status: 'Donated',
+      method: 'ach',
+      amount: 12,
+      suggestedAmount: 12,
+      date: '2025-11-20'
+    });
+
+    await storage.deleteOneOffDonationByIndex('c1-r1', 0);
+    await storage.deleteOneOffDeliveryByIndex('c1-r1', 0);
+
+    const updated = await storage.getDeliveryById('c1-r1');
+    expect(updated?.oneOffDonations?.length ?? 0).toBe(0);
+    expect(updated?.oneOffDeliveries?.length ?? 0).toBe(0);
+    expect(updated?.synced).toBeFalse();
+  });
+
+  it('deletes run entries and reindexes order', async () => {
+    await createStorageWithMiniRoute();
+
+    await storage.markDelivered('c1-r1', 2);
+    await storage.updateDonation('c1-r1', {
+      status: 'Donated',
+      method: 'cash',
+      amount: 8,
+      suggestedAmount: 8
+    });
+    await storage.markSkipped('c2-r1', 'Not home');
+    await storage.completeRun('2025-01-01', false);
+
+    const entries = await storage.getAllRunEntries();
+    expect(entries.length).toBe(2);
+    const target = entries[0];
+
+    await storage.deleteRunEntry(target.id);
+
+    const remaining = await storage.getAllRunEntries();
+    expect(remaining.length).toBe(1);
+    expect(remaining[0].deliveryOrder).toBe(0);
+  });
+
   it('completeRun writes run entries and resets live data', async () => {
     await createStorageWithMiniRoute();
 

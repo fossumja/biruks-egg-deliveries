@@ -352,6 +352,12 @@
   margin-top: var(--spacing-1);
 }
 
+.run-entry-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
 .entry-date {
   font-size: var(--font-size-xs);
 }
@@ -362,8 +368,8 @@
 }
 
 .run-entry-actions .btn-inline {
-  min-height: 32px;
-  padding: 4px 10px;
+  min-height: 44px;
+  padding: 8px 12px;
   font-size: var(--font-size-sm);
 }
 
@@ -738,11 +744,31 @@
 
 .receipt-history-item {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
   line-height: 1.3;
   color: var(--color-text-muted);
+}
+
+.receipt-history-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.receipt-history-action {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.receipt-delete-btn {
+  min-height: 44px;
+  padding: 8px 12px;
 }
 
 .receipt-history-status {
