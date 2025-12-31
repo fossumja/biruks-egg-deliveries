@@ -298,6 +298,35 @@ class StorageServiceStub {
     return Promise.resolve();
   }
 
+  deleteRunEntry(id: string): Promise<void> {
+    this.runEntries = this.runEntries.filter((entry) => entry.id !== id);
+    return Promise.resolve();
+  }
+
+  deleteOneOffDonationByIndex(id: string, index: number): Promise<void> {
+    const delivery = this.deliveries.find((item) => item.id === id);
+    if (!delivery || !Array.isArray(delivery.oneOffDonations)) {
+      return Promise.resolve();
+    }
+    const list = [...delivery.oneOffDonations];
+    if (index < 0 || index >= list.length) return Promise.resolve();
+    list.splice(index, 1);
+    delivery.oneOffDonations = list;
+    return Promise.resolve();
+  }
+
+  deleteOneOffDeliveryByIndex(id: string, index: number): Promise<void> {
+    const delivery = this.deliveries.find((item) => item.id === id);
+    if (!delivery || !Array.isArray(delivery.oneOffDeliveries)) {
+      return Promise.resolve();
+    }
+    const list = [...delivery.oneOffDeliveries];
+    if (index < 0 || index >= list.length) return Promise.resolve();
+    list.splice(index, 1);
+    delivery.oneOffDeliveries = list;
+    return Promise.resolve();
+  }
+
   updateDeliveryFields(id: string, updates: Partial<Delivery>): Promise<void> {
     const delivery = this.deliveries.find((item) => item.id === id);
     if (delivery) {
@@ -356,6 +385,8 @@ describe('RoutePlannerComponent', () => {
           donationMethod: 'cash',
           donationAmount: 8,
           taxableAmount: 0,
+          runEntryId: 'run-entry-1',
+          runId: 'run-1',
         },
         {
           kind: 'run',
@@ -365,6 +396,8 @@ describe('RoutePlannerComponent', () => {
           donationStatus: 'NotRecorded',
           donationAmount: 0,
           taxableAmount: 0,
+          runEntryId: 'run-entry-2',
+          runId: 'run-1',
         }
       ]
     };
@@ -401,6 +434,85 @@ describe('RoutePlannerComponent', () => {
     expect(items.length).toBe(2);
     expect(items[0]?.textContent ?? '').toContain('Delivered');
     expect(items[1]?.textContent ?? '').toContain('Skipped');
+  });
+
+  it('shows delete action in receipt history list when identifiers exist', async () => {
+    const stop = createDelivery({
+      id: 'delivery-1',
+      baseRowId: 'base-1',
+      name: 'Customer 1',
+    });
+    storage.receiptHistoryByBase = {
+      'base-1': [
+        {
+          kind: 'run',
+          date: '2025-12-20T12:00:00.000Z',
+          status: 'delivered',
+          dozens: 2,
+          donationStatus: 'Donated',
+          donationMethod: 'cash',
+          donationAmount: 8,
+          taxableAmount: 0,
+          runEntryId: 'run-entry-1',
+          runId: 'run-1',
+        }
+      ]
+    };
+
+    component.deliveries = [stop];
+    component.filteredDeliveries = [stop];
+    fixture.detectChanges();
+
+    component.openDonationDetails(stop);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const deleteButtons = fixture.nativeElement.querySelectorAll(
+      '.receipt-history-action .receipt-delete-btn'
+    );
+    expect(deleteButtons.length).toBe(1);
+  });
+
+  it('deletes a receipt history entry via storage', async () => {
+    const stop = createDelivery({
+      id: 'delivery-1',
+      baseRowId: 'base-1',
+      name: 'Customer 1',
+      oneOffDonations: [
+        {
+          status: 'Donated',
+          method: 'cash',
+          amount: 8,
+          suggestedAmount: 8,
+          date: '2025-12-20'
+        }
+      ]
+    });
+    component.donationModalStop = stop;
+    storage.deliveries = [stop];
+    const entry: ReceiptHistoryEntry = {
+      kind: 'oneOffDonation',
+      date: '2025-12-20',
+      status: 'donation',
+      dozens: 0,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 8,
+      taxableAmount: 0,
+      deliveryId: 'delivery-1',
+      oneOffKind: 'donation',
+      oneOffIndex: 0
+    };
+
+    spyOn(window, 'confirm').and.returnValue(true);
+    const deleteSpy = spyOn(storage, 'deleteOneOffDonationByIndex').and.callThrough();
+    const toastSpy = spyOn(toast, 'show');
+
+    await component.confirmDeleteReceiptHistory(entry);
+
+    expect(deleteSpy).toHaveBeenCalledWith('delivery-1', 0);
+    expect(toastSpy).toHaveBeenCalledWith('Receipt deleted');
   });
 
   it('selects a route and loads deliveries', async () => {
@@ -638,6 +750,26 @@ describe('RoutePlannerComponent', () => {
     expect(appendSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps one-off donation status as NoDonation when amount is zero', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.donationModalStop = stop;
+    component.donationDraft = {
+      ...stop,
+      donation: {
+        status: 'NoDonation',
+        amount: 0,
+        suggestedAmount: 8,
+        date: '2025-06-15'
+      }
+    };
+    component.oneOffDonationDate = '2025-06-15';
+
+    component.onDonationAmountChange(0);
+
+    expect(component.donationDraft?.donation?.status).toBe('NoDonation');
+    expect(component.donationDraft?.donation?.amount).toBe(0);
+  });
+
   it('blocks one-off delivery save when date is missing', async () => {
     const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
     component.offScheduleStop = stop;
@@ -680,6 +812,46 @@ describe('RoutePlannerComponent', () => {
     expect(appendSpy).not.toHaveBeenCalled();
   });
 
+  it('allows one-off delivery save when donation status is NotRecorded', async () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.routeDate = 'Week A';
+    storage.deliveries = [stop];
+    component.offScheduleStop = stop;
+    component.oneOffDateMin = '2025-01-01';
+    component.oneOffDateMax = '2026-12-31';
+    component.oneOffYearRangeLabel = '2025 and 2026';
+    component.oneOffDeliveryDate = '2025-06-15';
+    component.offDonationDraft = {
+      status: 'NotRecorded',
+      suggestedAmount: 8,
+      date: '2025-06-15'
+    };
+
+    const appendSpy = spyOn(storage, 'appendOneOffDelivery').and.callThrough();
+
+    await component.saveOffSchedule();
+
+    expect(component.oneOffDeliveryTypeError).toBe('');
+    expect(appendSpy).toHaveBeenCalled();
+  });
+
+  it('keeps one-off delivery status as NoDonation when amount is zero', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.offScheduleStop = stop;
+    component.oneOffDeliveryDate = '2025-06-15';
+    component.offDonationDraft = {
+      status: 'NoDonation',
+      amount: 0,
+      suggestedAmount: 8,
+      date: '2025-06-15'
+    };
+
+    component.onOffAmountChange(0);
+
+    expect(component.offDonationDraft.status).toBe('NoDonation');
+    expect(component.offDonationDraft.amount).toBe(0);
+  });
+
   it('sorts all receipts by event date descending', async () => {
     const run = {
       id: 'run-1',
@@ -719,6 +891,54 @@ describe('RoutePlannerComponent', () => {
     const sorted = [...timestamps].sort((a, b) => b - a);
 
     expect(timestamps).toEqual(sorted);
+  });
+
+  it('shows delete action in run history action row', () => {
+    const entry = createRunEntry({
+      id: 'entry-1',
+      runId: 'run-1'
+    });
+    component.viewingRun = true;
+    component.runEntries = [entry];
+    component.filteredRunEntries = [entry];
+
+    fixture.detectChanges();
+
+    const deleteButtons = fixture.nativeElement.querySelectorAll(
+      '.run-entry-actions .warn'
+    );
+    expect(deleteButtons.length).toBe(1);
+  });
+
+  it('deletes a run entry and refreshes the run list', async () => {
+    const entry = createRunEntry({
+      id: 'entry-1',
+      runId: 'run-1'
+    });
+    storage.runEntries = [entry];
+    storage.runs = [
+      {
+        id: 'run-1',
+        date: '2025-01-05',
+        weekType: 'WeekA',
+        label: 'Week A - 2025-01-05',
+        routeDate: 'Week A',
+      }
+    ];
+    component.allRuns = storage.runs;
+    component.viewingRun = true;
+    component.viewingAllReceipts = false;
+    component.selectedRunId = 'run-1';
+    component.runEntries = [entry];
+    component.filteredRunEntries = [entry];
+
+    spyOn(window, 'confirm').and.returnValue(true);
+    const deleteSpy = spyOn(storage, 'deleteRunEntry').and.callThrough();
+
+    await component.confirmDeleteRunEntry(entry);
+
+    expect(deleteSpy).toHaveBeenCalledWith('entry-1');
+    expect(component.runEntries.length).toBe(0);
   });
 
   it('updates a one-off receipt date and refreshes ordering', async () => {

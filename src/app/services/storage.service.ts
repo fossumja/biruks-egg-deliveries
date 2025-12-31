@@ -256,12 +256,14 @@ export class StorageService {
         donationStatus: entry.donationStatus,
         donationMethod: entry.donationMethod,
         donationAmount: entry.donationAmount,
-        taxableAmount: entry.taxableAmount
+        taxableAmount: entry.taxableAmount,
+        runEntryId: entry.id,
+        runId: entry.runId
       });
     });
 
     deliveries.forEach((delivery) => {
-      (delivery.oneOffDonations ?? []).forEach((donation) => {
+      (delivery.oneOffDonations ?? []).forEach((donation, index) => {
         const date = normalizeEventDate(donation.date) ?? '';
         const amount =
           donation.status === 'Donated'
@@ -278,11 +280,14 @@ export class StorageService {
           donationStatus: donation.status,
           donationMethod: donation.method,
           donationAmount: amount,
-          taxableAmount: taxable
+          taxableAmount: taxable,
+          deliveryId: delivery.id,
+          oneOffKind: 'donation',
+          oneOffIndex: index
         });
       });
 
-      (delivery.oneOffDeliveries ?? []).forEach((entry) => {
+      (delivery.oneOffDeliveries ?? []).forEach((entry, index) => {
         const date = normalizeEventDate(entry.date) ?? '';
         const deliveredDozens = Number(entry.deliveredDozens ?? 0);
         const donation = entry.donation;
@@ -301,7 +306,10 @@ export class StorageService {
           donationStatus: (donation?.status ?? 'NotRecorded') as DonationStatus,
           donationMethod: donation?.method,
           donationAmount: amount,
-          taxableAmount: taxable
+          taxableAmount: taxable,
+          deliveryId: delivery.id,
+          oneOffKind: 'delivery',
+          oneOffIndex: index
         });
       });
     });
@@ -339,6 +347,67 @@ export class StorageService {
         (a, b) =>
           (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
       );
+    await this.db.runEntries.bulkPut(ordered);
+  }
+
+  async deleteRunEntry(id: string): Promise<void> {
+    if (!id) return;
+    const entry = await this.db.runEntries.get(id);
+    if (!entry) return;
+    await this.db.runEntries.delete(id);
+    if (!entry.runId) return;
+    await this.reindexRunEntries(entry.runId);
+  }
+
+  async deleteOneOffDonationByIndex(
+    deliveryId: string,
+    index: number
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const delivery = await this.db.deliveries.get(deliveryId);
+    if (!delivery || !Array.isArray((delivery as Delivery).oneOffDonations)) return;
+    const list = [...((delivery as Delivery).oneOffDonations ?? [])];
+    if (index < 0 || index >= list.length) return;
+    list.splice(index, 1);
+    await this.db.deliveries.update(deliveryId, {
+      oneOffDonations: list,
+      updatedAt: now,
+      synced: false
+    });
+  }
+
+  async deleteOneOffDeliveryByIndex(
+    deliveryId: string,
+    index: number
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const delivery = await this.db.deliveries.get(deliveryId);
+    if (!delivery || !Array.isArray((delivery as Delivery).oneOffDeliveries)) return;
+    const list = [...((delivery as Delivery).oneOffDeliveries ?? [])];
+    if (index < 0 || index >= list.length) return;
+    list.splice(index, 1);
+    await this.db.deliveries.update(deliveryId, {
+      oneOffDeliveries: list,
+      updatedAt: now,
+      synced: false
+    });
+  }
+
+  private async reindexRunEntries(runId: string): Promise<void> {
+    const entries = await this.db.runEntries
+      .where('runId')
+      .equals(runId)
+      .toArray();
+    if (!entries.length) return;
+    const ordered = entries
+      .slice()
+      .sort(
+        (a, b) =>
+          (a.deliveryOrder ?? 0) - (b.deliveryOrder ?? 0)
+      );
+    ordered.forEach((entry, index) => {
+      entry.deliveryOrder = index;
+    });
     await this.db.runEntries.bulkPut(ordered);
   }
 

@@ -224,6 +224,8 @@ Manual checks:
 
 - Completing a run resets the route for the next run.
 - All receipts view shows both run entries and one-offs.
+- Delete a receipt from **Past runs** / **All receipts** and confirm it disappears and totals refresh.
+- Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
 
 ### TP-09 Shared UI components
 

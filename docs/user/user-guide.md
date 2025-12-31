@@ -147,6 +147,10 @@ When viewing `Current (live)`:
 - **Past runs** show archived delivery entries for a specific run.
 - **All receipts** aggregates receipts across runs and one‑offs.
 - Each entry shows status, dozens, donation, and date; use **Edit** to adjust receipts.
+- To remove a mistaken receipt:
+  - Use **Delete** in the run history action row for **Past runs** or **All receipts**.
+  - In one‑off donation/delivery modals, use **Delete** next to the receipt history row.
+  - Deletion requires confirmation and immediately updates totals and exports.
 
 ---
 

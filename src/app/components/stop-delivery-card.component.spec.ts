@@ -35,10 +35,10 @@ describe('StopDeliveryCardComponent', () => {
 
     fixture = TestBed.createComponent(StopDeliveryCardComponent);
     component = fixture.componentInstance;
-    component.stop = createStop();
-    component.deliveredQty = 2;
-    component.donation = { status: 'NotRecorded', suggestedAmount: 8 };
-    component.suggestedAmount = 8;
+    fixture.componentRef.setInput('stop', createStop());
+    fixture.componentRef.setInput('deliveredQty', 2);
+    fixture.componentRef.setInput('donation', { status: 'NotRecorded', suggestedAmount: 8 });
+    fixture.componentRef.setInput('suggestedAmount', 8);
     fixture.detectChanges();
   });
 
@@ -90,5 +90,30 @@ describe('StopDeliveryCardComponent', () => {
     expect(statusEmitted).toEqual(['NoDonation']);
     expect(methodEmitted).toEqual(['cash']);
     expect(amountEmitted).toEqual([12]);
+  });
+
+  it('hides header and address text while keeping address actions', () => {
+    fixture.componentRef.setInput('showHeaderInfo', false);
+    fixture.componentRef.setInput('showStatusPill', false);
+    fixture.componentRef.setInput('showAddressText', false);
+    fixture.componentRef.setInput('showAddressActions', true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.stop-name')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.status-pill')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.stop-address')).toBeNull();
+
+    const buttons = Array.from(
+      fixture.nativeElement.querySelectorAll('button')
+    ) as HTMLButtonElement[];
+    const copyButton = buttons.find((btn) =>
+      (btn.textContent ?? '').trim() === 'Copy'
+    );
+    const mapButton = buttons.find((btn) =>
+      (btn.textContent ?? '').trim() === 'Open Map'
+    );
+
+    expect(copyButton).toBeTruthy();
+    expect(mapButton).toBeTruthy();
   });
 });

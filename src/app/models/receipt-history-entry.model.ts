@@ -11,4 +11,9 @@ export interface ReceiptHistoryEntry {
   donationMethod?: DonationMethod;
   donationAmount: number;
   taxableAmount: number;
+  runEntryId?: string;
+  runId?: string;
+  deliveryId?: string;
+  oneOffKind?: 'donation' | 'delivery';
+  oneOffIndex?: number;
 }

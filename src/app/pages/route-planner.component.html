@@ -77,7 +77,8 @@
 </div>
 
 <ng-template #receiptHistoryList>
-  <div class="receipt-history card">
+  <div class="receipt-history">
+    <div class="receipt-history-divider" aria-hidden="true"></div>
     <div class="receipt-history-header">Previous receipts</div>
     @if (receiptHistoryLoading) {
       <div class="receipt-history-empty text-muted">Loading receipts...</div>
@@ -86,34 +87,48 @@
         <ul class="receipt-history-list" role="list">
           @for (entry of receiptHistory; track $index) {
             <li class="receipt-history-item">
-              <span class="receipt-history-date">
-                @if (entry.date) {
-                  {{ entry.date | date : 'shortDate' : undefined : 'en-US' }}
-                } @else {
-                  <span class="receipt-history-date-missing">No date</span>
+              <div class="receipt-history-details">
+                <span class="receipt-history-date">
+                  @if (entry.date) {
+                    {{ entry.date | date : 'shortDate' : undefined : 'en-US' }}
+                  } @else {
+                    <span class="receipt-history-date-missing">No date</span>
+                  }
+                </span>
+                <span class="receipt-history-sep" aria-hidden="true">•</span>
+                <span
+                  class="receipt-history-status"
+                  [class.is-delivered]="entry.status === 'delivered'"
+                  [class.is-skipped]="entry.status === 'skipped'"
+                  [class.is-donation]="entry.status === 'donation'"
+                >
+                  {{ formatReceiptStatus(entry.status) }}
+                </span>
+                @if (entry.status === 'delivered') {
+                  <span class="receipt-history-sep" aria-hidden="true">•</span>
+                  <span class="receipt-history-dozens">
+                    {{ formatReceiptDozens(entry) }}
+                  </span>
                 }
-              </span>
-              <span class="receipt-history-sep" aria-hidden="true">•</span>
-              <span
-                class="receipt-history-status"
-                [class.is-delivered]="entry.status === 'delivered'"
-                [class.is-skipped]="entry.status === 'skipped'"
-                [class.is-donation]="entry.status === 'donation'"
-              >
-                {{ formatReceiptStatus(entry.status) }}
-              </span>
-              @if (entry.status === 'delivered') {
-                <span class="receipt-history-sep" aria-hidden="true">•</span>
-                <span class="receipt-history-dozens">
-                  {{ formatReceiptDozens(entry) }}
-                </span>
-              }
-              @if (entry.donationStatus === 'Donated') {
-                <span class="receipt-history-sep" aria-hidden="true">•</span>
-                <span class="receipt-history-donation">
-                  {{ formatReceiptDonationMethod(entry.donationMethod) }}
-                  ${{ entry.donationAmount | number : '1.2-2' }}
-                </span>
+                @if (entry.donationStatus === 'Donated') {
+                  <span class="receipt-history-sep" aria-hidden="true">•</span>
+                  <span class="receipt-history-donation">
+                    {{ formatReceiptDonationMethod(entry.donationMethod) }}
+                    ${{ entry.donationAmount | number : '1.2-2' }}
+                  </span>
+                }
+              </div>
+              @if (canDeleteReceiptHistoryEntry(entry)) {
+                <div class="receipt-history-action">
+                  <button
+                    type="button"
+                    class="btn btn-text warn receipt-delete-btn"
+                    (click)="confirmDeleteReceiptHistory(entry)"
+                    [attr.aria-label]="getReceiptHistoryDeleteLabel(entry)"
+                  >
+                    Delete
+                  </button>
+                </div>
               }
             </li>
           }
@@ -385,9 +400,19 @@
 
       <!-- Inline donation card beneath this stop -->
       <div class="inline-donation card" *ngIf="donationModalStop?.id === stop.id">
-        <h3>Donation for {{ donationModalStop?.name }}</h3>
+        <h3 class="one-off-title">One-Time Donation</h3>
         <div class="inline-donation-body">
-          <div class="card">
+          <div class="card donation-card">
+            <app-donation-controls
+              [donation]="donationDraft?.donation || null"
+              [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
+              [showNoDonation]="true"
+              [allowReselect]="true"
+              [showQty]="false"
+              (donationStatusChange)="setDonationStatus($event)"
+              (donationMethodChange)="setDonationMethod($event)"
+              (amountChange)="onDonationAmountChange($event)"
+            />
             <label class="date-field">
               Donation date
               <input
@@ -409,21 +434,20 @@
               </p>
             }
           </div>
-          <div class="card">
-            <app-donation-controls
-              [donation]="donationDraft?.donation || null"
-              [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
-              [showNoDonation]="true"
-              [allowReselect]="true"
-              [showQty]="false"
-              (donationStatusChange)="setDonationStatus($event)"
-              (donationMethodChange)="setDonationMethod($event)"
-              (amountChange)="onDonationAmountChange($event)"
-            />
-          </div>
           @if (oneOffDonationTypeError) {
             <p class="error-text">{{ oneOffDonationTypeError }}</p>
           }
+          <div class="donation-actions">
+            <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!!oneOffDonationDateError || !!oneOffDonationTypeError"
+              (click)="saveDonation()"
+            >
+              Save
+            </button>
+          </div>
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
@@ -441,27 +465,34 @@
               <span>Deductible charitable contribution</span>
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
-          </div>
-          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
-          <div class="donation-actions">
-            <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!!oneOffDonationDateError || !!oneOffDonationTypeError"
-              (click)="saveDonation()"
-            >
-              Save
-            </button>
+            <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           </div>
         </div>
       </div>
 
       <!-- Inline off-schedule delivery card beneath this stop -->
       <div class="inline-donation card" *ngIf="offScheduleStop?.id === stop.id">
-        <h3>Delivery for {{ offScheduleStop?.name }}</h3>
+        <h3 class="one-off-title">One-Time Delivery</h3>
         <div class="inline-donation-body">
-          <div class="card">
+          <div class="delivery-card card">
+            <app-stop-delivery-card
+              [stop]="offScheduleStop"
+              [deliveredQty]="offDeliveredQty"
+              [donation]="offDonationDraft"
+              [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
+              [showNoDonation]="true"
+              [allowDonationReselect]="false"
+              [showNotes]="false"
+              [showHeaderInfo]="false"
+              [showStatusPill]="false"
+              [showAddressText]="false"
+              (adjustQty)="adjustOffDelivered($event)"
+              (donationStatusChange)="setOffDonationStatus($event)"
+              (donationMethodChange)="setOffDonationMethod($event)"
+              (amountChange)="onOffAmountChange($event)"
+              (copyAddress)="copyAddress(offScheduleStop)"
+              (openMap)="openMaps(offScheduleStop)"
+            />
             <label class="date-field">
               Delivery date
               <input
@@ -483,26 +514,20 @@
               </p>
             }
           </div>
-          <div class="delivery-card card">
-            <app-stop-delivery-card
-              [stop]="offScheduleStop"
-              [deliveredQty]="offDeliveredQty"
-              [donation]="offDonationDraft"
-              [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
-              [showNoDonation]="true"
-              [allowDonationReselect]="false"
-              [showNotes]="false"
-              (adjustQty)="adjustOffDelivered($event)"
-              (donationStatusChange)="setOffDonationStatus($event)"
-              (donationMethodChange)="setOffDonationMethod($event)"
-              (amountChange)="onOffAmountChange($event)"
-              (copyAddress)="copyAddress(offScheduleStop)"
-              (openMap)="openMaps(offScheduleStop)"
-            />
-          </div>
           @if (oneOffDeliveryTypeError) {
             <p class="error-text">{{ oneOffDeliveryTypeError }}</p>
           }
+          <div class="donation-actions">
+            <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!!oneOffDeliveryDateError || !!oneOffDeliveryTypeError"
+              (click)="saveOffSchedule()"
+            >
+              Save
+            </button>
+          </div>
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
@@ -520,18 +545,7 @@
               <span>Deductible charitable contribution</span>
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
-          </div>
-          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
-          <div class="donation-actions">
-            <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!!oneOffDeliveryDateError || !!oneOffDeliveryTypeError"
-              (click)="saveOffSchedule()"
-            >
-              Save
-            </button>
+            <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           </div>
         </div>
       </div>
@@ -607,6 +621,16 @@
               >
                 Edit
               </button>
+              @if (canDeleteRunEntry(entry)) {
+                <button
+                  type="button"
+                  class="btn btn-text btn-inline warn"
+                  (click)="confirmDeleteRunEntry(entry)"
+                  [attr.aria-label]="getRunEntryDeleteLabel(entry)"
+                >
+                  Delete
+                </button>
+              }
             </div>
           </div>
           <ng-template #noDate>

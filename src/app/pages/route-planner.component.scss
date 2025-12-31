@@ -352,6 +352,12 @@
   margin-top: var(--spacing-1);
 }
 
+.run-entry-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
 .entry-date {
   font-size: var(--font-size-xs);
 }
@@ -362,8 +368,8 @@
 }
 
 .run-entry-actions .btn-inline {
-  min-height: 32px;
-  padding: 4px 10px;
+  min-height: 44px;
+  padding: 8px 12px;
   font-size: var(--font-size-sm);
 }
 
@@ -501,11 +507,30 @@
 .inline-donation.card {
   margin-top: var(--spacing-2);
   width: 100%;
+  padding: var(--spacing-3);
+}
+
+.one-off-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .inline-donation-body {
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1);
+}
+
+.inline-donation-body > .card {
+  padding: var(--spacing-3);
+}
+
+.donation-card .date-field,
+.delivery-card .date-field {
+  margin-top: var(--spacing-2);
 }
 
 .sr-only {
@@ -677,6 +702,13 @@
   gap: var(--spacing-2);
   justify-content: space-between;
   align-items: center;
+  margin: var(--spacing-1) 0;
+}
+
+.donation-actions .btn {
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
 }
 
 .donation-actions .ghost {
@@ -710,16 +742,28 @@
 }
 
 .totals-card {
-  margin-top: var(--spacing-2);
+  margin-top: var(--spacing-1);
   display: grid;
   gap: var(--spacing-1);
   padding: var(--spacing-2);
 }
 
+.donation-actions + .totals-card {
+  margin-top: 0;
+}
+
 .receipt-history {
-  margin-top: var(--spacing-2);
+  margin-top: var(--spacing-1);
   display: grid;
-  gap: 6px;
+  gap: 4px;
+}
+
+.receipt-history-divider {
+  height: 1px;
+  background: var(--color-border);
+  width: 100%;
+  margin-top: var(--spacing-1);
+  margin-bottom: var(--spacing-1);
 }
 
 .receipt-history-header {
@@ -733,16 +777,37 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
 
 .receipt-history-item {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 4px;
   font-size: 13px;
-  line-height: 1.3;
+  line-height: 1.2;
   color: var(--color-text-muted);
+}
+
+.receipt-history-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.receipt-history-action {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.receipt-delete-btn {
+  min-height: 28px;
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
 .receipt-history-status {
