@@ -13,7 +13,7 @@ import { BaseStop } from '../models/base-stop.model';
 import { CsvImportState } from '../models/csv-import-state.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { ReceiptHistoryEntry } from '../models/receipt-history-entry.model';
-import { normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
+import { getEventYear, normalizeEventDate, toSortableTimestamp } from '../utils/date-utils';
 
 const SUGGESTED_KEY = 'suggestedDonationRate';
 
@@ -222,7 +222,8 @@ export class StorageService {
   }
 
   async getReceiptHistoryByBaseRowId(
-    baseRowId: string
+    baseRowId: string,
+    taxYear?: number
   ): Promise<ReceiptHistoryEntry[]> {
     if (!baseRowId) return [];
     const [runEntries, deliveries] = await Promise.all([
@@ -314,7 +315,13 @@ export class StorageService {
       });
     });
 
-    const sorted = receipts
+    const now = new Date();
+    const targetYear = Number.isFinite(taxYear) ? Math.trunc(taxYear as number) : undefined;
+    const filtered = targetYear == null
+      ? receipts
+      : receipts.filter((receipt) => getEventYear(receipt.date, now) === targetYear);
+
+    const sorted = filtered
       .map((receipt, index) => ({
         receipt,
         sortKey: toSortableTimestamp(receipt.date),

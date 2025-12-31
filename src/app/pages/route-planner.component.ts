@@ -67,6 +67,7 @@ export class RoutePlannerComponent {
   oneOffDateMin = `${this.oneOffMinYear}-01-01`;
   oneOffDateMax = `${this.oneOffMaxYear}-12-31`;
   oneOffYearRangeLabel = `${this.oneOffMinYear} and ${this.oneOffMaxYear}`;
+  selectedTaxYearLabel = new Date().getFullYear();
   oneOffDonationDate = '';
   oneOffDonationDateError = '';
   private oneOffDonationDateTouched = false;
@@ -164,6 +165,21 @@ export class RoutePlannerComponent {
     if (!normalized) return '';
     const parsed = new Date(normalized);
     return Number.isNaN(parsed.getTime()) ? '' : this.formatDateInput(parsed);
+  }
+
+  private readSelectedTaxYear(): number | undefined {
+    if (typeof localStorage === 'undefined') return undefined;
+    const raw = localStorage.getItem('selectedTaxYear');
+    if (!raw) return undefined;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? Math.trunc(parsed) : undefined;
+  }
+
+  private syncSelectedTaxYear(): number {
+    const resolved = this.readSelectedTaxYear();
+    const nextYear = resolved ?? new Date().getFullYear();
+    this.selectedTaxYearLabel = nextYear;
+    return nextYear;
   }
 
   private validateOneOffDate(value: string): string {
@@ -419,7 +435,7 @@ export class RoutePlannerComponent {
     // Seed totals based on the current stop so the overlay has
     // sensible values immediately; full global totals will be
     // refreshed after save.
-    this.donationTotals = this.computeOneOffTotals(stop);
+    this.donationTotals = this.computeOneOffTotals(stop, this.syncSelectedTaxYear());
     void this.loadReceiptHistory(stop);
   }
 
@@ -730,6 +746,7 @@ export class RoutePlannerComponent {
   }
 
   async ngOnInit(): Promise<void> {
+    this.syncSelectedTaxYear();
     this.routes = await this.storage.getRoutes();
     this.allRuns = await this.storage.getAllRuns();
     this.routeDate = this.route.snapshot.paramMap.get('routeDate') || undefined;
@@ -974,7 +991,7 @@ export class RoutePlannerComponent {
     // Seed totals based on the current stop so the overlay has
     // sensible values immediately; full global totals will be
     // refreshed after save.
-    this.donationTotals = this.computeOneOffTotals(stop);
+    this.donationTotals = this.computeOneOffTotals(stop, this.syncSelectedTaxYear());
     void this.refreshDonationTotals(stop);
     void this.loadReceiptHistory(stop);
   }
@@ -1044,11 +1061,12 @@ export class RoutePlannerComponent {
 
   private async loadReceiptHistory(stop: Delivery): Promise<void> {
     const baseRowId = stop.baseRowId;
+    const taxYear = this.syncSelectedTaxYear();
     this.receiptHistoryBaseRowId = baseRowId;
     this.receiptHistoryLoading = true;
     this.receiptHistory = [];
     try {
-      const entries = await this.storage.getReceiptHistoryByBaseRowId(baseRowId);
+      const entries = await this.storage.getReceiptHistoryByBaseRowId(baseRowId, taxYear);
       if (this.receiptHistoryBaseRowId === baseRowId) {
         this.receiptHistory = entries;
       }
@@ -1527,6 +1545,8 @@ export class RoutePlannerComponent {
   }
 
   private async loadAllReceipts(): Promise<void> {
+    const now = new Date();
+    const taxYear = this.syncSelectedTaxYear();
     const [runs, entries, deliveries] = await Promise.all([
       this.storage.getAllRuns(),
       this.storage.getAllRunEntries(),
@@ -1660,13 +1680,20 @@ export class RoutePlannerComponent {
       });
     });
 
+    const targetYear = Number.isFinite(taxYear) ? Math.trunc(taxYear) : undefined;
+    const filteredReceipts = targetYear == null
+      ? receipts
+      : receipts.filter(
+          (receipt) => getEventYear(receipt.date, now) === targetYear
+        );
+
     // Sort newest-first by date.
-    receipts.sort(
+    filteredReceipts.sort(
       (a, b) => toSortableTimestamp(b.date) - toSortableTimestamp(a.date)
     );
 
     // Project into RunSnapshotEntry-shaped view list.
-    const viewEntries: RunSnapshotEntry[] = receipts.map((r, index) => {
+    const viewEntries: RunSnapshotEntry[] = filteredReceipts.map((r, index) => {
       const generatedId =
         typeof crypto !== 'undefined' && crypto.randomUUID
           ? crypto.randomUUID()
@@ -2033,50 +2060,65 @@ export class RoutePlannerComponent {
   }
 
   private computeOneOffTotals(
-    stop: Delivery
+    stop: Delivery,
+    taxYear?: number
   ): {
     donationTotal: number;
     dozensTotal: number;
     taxableTotal: number;
     baselineTotal: number;
   } {
+    const now = new Date();
+    const targetYear = Number.isFinite(taxYear) ? Math.trunc(taxYear as number) : undefined;
+    const includeEvent = (raw?: string | number | null): boolean => {
+      if (targetYear == null) return true;
+      return getEventYear(raw, now) === targetYear;
+    };
     const rate = this.storage.getSuggestedRate();
     const suggestedMain = (stop.dozens ?? 0) * rate;
+    const includeMain = stop.status === 'delivered' && includeEvent(stop.deliveredAt);
     const mainDonation =
-      stop.donation?.status === 'Donated'
+      includeMain && stop.donation?.status === 'Donated'
         ? Number(stop.donation.amount ?? stop.donation.suggestedAmount ?? suggestedMain)
         : 0;
     const mainTaxable =
-      stop.donation?.status === 'Donated'
+      includeMain && stop.donation?.status === 'Donated'
         ? Number(
             stop.donation.taxableAmount ??
               Math.max(0, mainDonation - Number(stop.donation.suggestedAmount ?? suggestedMain))
           )
         : 0;
     const mainDozens =
-      stop.deliveredDozens != null
+      includeMain && stop.deliveredDozens != null
         ? Number(stop.deliveredDozens)
-        : stop.status === 'delivered'
+        : includeMain
           ? Number(stop.dozens ?? 0)
           : 0;
 
+    const oneOffDonations = (stop.oneOffDonations ?? []).filter((donation) =>
+      includeEvent(donation.date)
+    );
+    const oneOffDeliveries = (stop.oneOffDeliveries ?? []).filter((entry) =>
+      includeEvent(entry.date)
+    );
+
     const oneOffDonationTotal =
-      (stop.oneOffDonations ?? []).reduce(
+      oneOffDonations.reduce(
         (sum, d) => sum + Number(d.amount ?? d.suggestedAmount ?? 0),
         0
       ) +
-      (stop.oneOffDeliveries ?? []).reduce(
+      oneOffDeliveries.reduce(
         (sum, d) => sum + Number(d.donation?.amount ?? d.donation?.suggestedAmount ?? 0),
         0
       );
 
     const oneOffTaxableTotal =
-      (stop.oneOffDonations ?? []).reduce((sum, d) => {
+      oneOffDonations.reduce((sum, d) => {
         const amount = Number(d.amount ?? d.suggestedAmount ?? 0);
         const taxable = amount > 0 ? amount : 0;
         return sum + taxable;
       }, 0) +
-      (stop.oneOffDeliveries ?? []).reduce((sum, d) => {
+      oneOffDeliveries.reduce((sum, d) => {
         const suggested = Number(d.donation?.suggestedAmount ?? 0);
         const amount = Number(d.donation?.amount ?? suggested);
         const taxable =
@@ -2084,16 +2126,16 @@ export class RoutePlannerComponent {
         return sum + taxable;
       }, 0);
 
-    const oneOffDozensTotal = (stop.oneOffDeliveries ?? []).reduce(
+    const oneOffDozensTotal = oneOffDeliveries.reduce(
       (sum, d) => sum + Number(d.deliveredDozens ?? 0),
       0
     );
 
     const baselineMain =
-      mainDozens > 0
+      includeMain && mainDozens > 0
         ? Number(stop.donation?.suggestedAmount ?? mainDozens * rate)
         : 0;
-    const baselineOneOff = (stop.oneOffDeliveries ?? []).reduce((sum, d) => {
+    const baselineOneOff = oneOffDeliveries.reduce((sum, d) => {
       const dozens = Number(d.deliveredDozens ?? 0);
       if (!dozens) return sum;
       const suggested = Number(
@@ -2118,6 +2160,7 @@ export class RoutePlannerComponent {
    * donation modal matches CSV/backup totals.
    */
   private async refreshDonationTotals(stop: Delivery): Promise<void> {
+    const taxYear = this.syncSelectedTaxYear();
     try {
       const [allDeliveries, allRunEntries, importState] = await Promise.all([
         this.storage.getAllDeliveries(),
@@ -2128,7 +2171,8 @@ export class RoutePlannerComponent {
       const totalsMap = (this.backup as any).computeTotalsByBase(
         allDeliveries,
         allRunEntries,
-        importState ?? undefined
+        importState ?? undefined,
+        taxYear
       ) as Map<string, { donation: number; dozens: number; taxable: number }>;
 
       const totals = totalsMap.get(stop.baseRowId);

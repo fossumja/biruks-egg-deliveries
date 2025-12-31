@@ -124,7 +124,10 @@ class StorageServiceStub {
     return '';
   }
 
-  getReceiptHistoryByBaseRowId(baseRowId: string): Promise<ReceiptHistoryEntry[]> {
+  getReceiptHistoryByBaseRowId(
+    baseRowId: string,
+    _taxYear?: number
+  ): Promise<ReceiptHistoryEntry[]> {
     return Promise.resolve(this.receiptHistoryByBase[baseRowId] ?? []);
   }
 

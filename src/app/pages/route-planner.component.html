@@ -16,7 +16,7 @@
       </optgroup>
       <optgroup *ngIf="allRuns.length" label="Past runs">
         <option [ngValue]="'receipts:all'">
-          All receipts
+          All receipts ({{ selectedTaxYearLabel }})
         </option>
         <option *ngFor="let run of allRuns" [ngValue]="'run:' + run.id">
           {{ run.routeDate }} — {{ run.date | date : 'shortDate' }}
@@ -79,7 +79,9 @@
 <ng-template #receiptHistoryList>
   <div class="receipt-history">
     <div class="receipt-history-divider" aria-hidden="true"></div>
-    <div class="receipt-history-header">Previous receipts</div>
+    <div class="receipt-history-header">
+      Previous receipts · Tax year {{ selectedTaxYearLabel }}
+    </div>
     @if (receiptHistoryLoading) {
       <div class="receipt-history-empty text-muted">Loading receipts...</div>
     } @else {
@@ -554,6 +556,9 @@
 </div>
 
 <div *ngIf="!loading && !errorMessage && viewingRun">
+  <div class="run-history-header text-muted" *ngIf="viewingAllReceipts">
+    All receipts · Tax year {{ selectedTaxYearLabel }}
+  </div>
   <div class="drop-list">
     <div
       class="planner-swipe-row"

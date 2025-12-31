@@ -136,6 +136,12 @@
   column-gap: var(--spacing-2);
 }
 
+.run-history-header {
+  margin: 0 var(--spacing-3) var(--spacing-1);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+}
+
 .planner-swipe-row {
   position: relative;
   background: transparent;
