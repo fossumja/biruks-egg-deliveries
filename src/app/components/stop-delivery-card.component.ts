@@ -1,38 +1,50 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Delivery, DonationInfo, DonationMethod, DonationStatus } from '../models/delivery.model';
 import { DonationControlsComponent } from './donation-controls.component';
 
 @Component({
   selector: 'app-stop-delivery-card',
-  standalone: true,
   imports: [CommonModule, FormsModule, DonationControlsComponent],
   templateUrl: './stop-delivery-card.component.html',
-  styleUrl: './stop-delivery-card.component.scss'
+  styleUrl: './stop-delivery-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StopDeliveryCardComponent implements OnChanges {
-  @Input() stop: Delivery | null = null;
-  @Input() deliveredQty = 0;
-  @Input() donation: DonationInfo | null = null;
-  @Input() suggestedAmount = 0;
-  @Input() showNoDonation = true;
-  @Input() showNotes = true;
-  @Input() allowDonationReselect = false;
+export class StopDeliveryCardComponent {
+  readonly stop = input<Delivery | null>(null);
+  readonly deliveredQty = input(0);
+  readonly donation = input<DonationInfo | null>(null);
+  readonly suggestedAmount = input(0);
+  readonly showNoDonation = input(true);
+  readonly showNotes = input(true);
+  readonly allowDonationReselect = input(false);
+  readonly showHeaderInfo = input(true);
+  readonly showStatusPill = input(true);
+  readonly showAddressText = input(true);
+  readonly showAddressActions = input(true);
 
-  @Output() adjustQty = new EventEmitter<number>(); // delta
-  @Output() donationStatusChange = new EventEmitter<DonationStatus>();
-  @Output() donationMethodChange = new EventEmitter<DonationMethod>();
-  @Output() amountChange = new EventEmitter<number>();
-  @Output() copyAddress = new EventEmitter<void>();
-  @Output() openMap = new EventEmitter<void>();
+  readonly adjustQty = output<number>(); // delta
+  readonly donationStatusChange = output<DonationStatus>();
+  readonly donationMethodChange = output<DonationMethod>();
+  readonly amountChange = output<number>();
+  readonly copyAddress = output<void>();
+  readonly openMap = output<void>();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // Ensure status defaults to Donated when a method is chosen and no status set
-    if (('donation' in changes || 'suggestedAmount' in changes) && this.donation?.method && !this.donation.status) {
-      this.donation.status = 'Donated';
+  readonly isUnsubscribed = computed(() => {
+    const stop = this.stop();
+    return !!stop
+      && stop.status === 'skipped'
+      && (stop.skippedReason?.toLowerCase?.() ?? '').includes('unsubscribed');
+  });
+
+  private readonly syncDonationStatus = effect(() => {
+    const donation = this.donation();
+    this.suggestedAmount();
+    if (donation?.method && !donation.status) {
+      donation.status = 'Donated';
     }
-  }
+  });
 
   onAdjustQty(delta: number): void {
     this.adjustQty.emit(delta);

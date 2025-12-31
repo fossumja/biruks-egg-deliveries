@@ -1,68 +1,72 @@
-<ng-container *ngIf="stop as s">
+@if (stop(); as s) {
   <div class="stop-card">
-  <div class="card-top">
-    <div class="name-row">
-      <div class="stop-name">{{ s.name }}</div>
-      <span
-        class="status-pill"
-        [ngClass]="{
-          pending: !s.status,
-          delivered: s.status === 'delivered',
-          skipped: s.status === 'skipped',
-          changed: s.status === 'changed',
-          unsubscribed: s.status === 'skipped' && (s.skippedReason?.toLowerCase?.() ?? '').includes('unsubscribed')
-        }"
-      >
-        {{
-          s.status === 'skipped' && (s.skippedReason?.toLowerCase?.() ?? '').includes('unsubscribed')
-            ? 'Unsubscribed'
-            : (s.status ? (s.status | titlecase) : 'Pending')
-        }}
-      </span>
-      </div>
-      <div class="address-row">
-        <div class="stop-address text-muted">
-          {{ s.address }}<br />
-          {{ s.city }}, {{ s.state }} {{ s.zip }}
+    <div class="card-top">
+      @if (showHeaderInfo() || showStatusPill()) {
+        <div class="name-row">
+          @if (showHeaderInfo()) {
+            <div class="stop-name">{{ s.name }}</div>
+          }
+          @if (showStatusPill()) {
+            <span
+              class="status-pill"
+              [class.pending]="!s.status"
+              [class.delivered]="s.status === 'delivered'"
+              [class.skipped]="s.status === 'skipped'"
+              [class.changed]="s.status === 'changed'"
+              [class.unsubscribed]="isUnsubscribed()"
+            >
+              @if (isUnsubscribed()) {
+                Unsubscribed
+              } @else {
+                {{ s.status ? (s.status | titlecase) : 'Pending' }}
+              }
+            </span>
+          }
         </div>
-        <div class="address-actions">
-          <button class="btn btn-text" type="button" (click)="onCopyAddress()">
-            Copy
-          </button>
-          <button class="btn btn-secondary" type="button" (click)="onOpenMap()">
-            Open Map
-          </button>
-      </div>
+      }
+      @if (showAddressText() || showAddressActions()) {
+        <div class="address-row" [class.compact]="!showAddressText()">
+          @if (showAddressText()) {
+            <div class="stop-address text-muted">
+              {{ s.address }}<br />
+              {{ s.city }}, {{ s.state }} {{ s.zip }}
+            </div>
+          }
+          @if (showAddressActions()) {
+            <div class="address-actions">
+              <button class="btn btn-text" type="button" (click)="onCopyAddress()">
+                Copy
+              </button>
+              <button class="btn btn-secondary" type="button" (click)="onOpenMap()">
+                Open Map
+              </button>
+            </div>
+          }
+        </div>
+      }
     </div>
-  </div>
 
-  <div class="stop-note text-muted" *ngIf="showNotes && s.notes">
-    Note: {{ s.notes }}
-  </div>
+    @if (showNotes() && s.notes) {
+      <div class="stop-note text-muted">Note: {{ s.notes }}</div>
+    }
 
-  <div class="stop-qty">
-    <div class="qty-label text-muted">Quantity (dozen)</div>
-    <div class="qty-input">
-      <button type="button" class="qty-btn" (click)="onAdjustQty(-1)">
-        −
-        </button>
-        <span class="qty-display" aria-label="Delivered dozen">{{
-          deliveredQty
-        }}</span>
-        <button type="button" class="qty-btn" (click)="onAdjustQty(1)">
-          +
-        </button>
+    <div class="stop-qty">
+      <div class="qty-label text-muted">Quantity (dozen)</div>
+      <div class="qty-input">
+        <button type="button" class="qty-btn" (click)="onAdjustQty(-1)">−</button>
+        <span class="qty-display" aria-label="Delivered dozen">{{ deliveredQty() }}</span>
+        <button type="button" class="qty-btn" (click)="onAdjustQty(1)">+</button>
       </div>
     </div>
 
     <app-donation-controls
-      [donation]="donation"
-      [suggestedAmount]="suggestedAmount"
-      [showNoDonation]="showNoDonation"
-      [allowReselect]="allowDonationReselect"
+      [donation]="donation()"
+      [suggestedAmount]="suggestedAmount()"
+      [showNoDonation]="showNoDonation()"
+      [allowReselect]="allowDonationReselect()"
       (donationStatusChange)="onDonationStatus($event)"
       (donationMethodChange)="onDonationMethod($event)"
       (amountChange)="onAmountPicked($event)"
     />
   </div>
-</ng-container>
+}

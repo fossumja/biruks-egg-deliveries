@@ -28,6 +28,15 @@
   justify-items: start;
 }
 
+.address-row.compact {
+  grid-template-columns: auto;
+  justify-items: end;
+}
+
+.address-row.compact .address-actions {
+  justify-content: flex-end;
+}
+
 .address-actions {
   display: flex;
   gap: var(--spacing-1);
