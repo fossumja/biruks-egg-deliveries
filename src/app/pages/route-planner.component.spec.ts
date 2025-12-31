@@ -792,6 +792,29 @@ describe('RoutePlannerComponent', () => {
     expect(appendSpy).not.toHaveBeenCalled();
   });
 
+  it('allows one-off delivery save when donation status is NotRecorded', async () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.routeDate = 'Week A';
+    storage.deliveries = [stop];
+    component.offScheduleStop = stop;
+    component.oneOffDateMin = '2025-01-01';
+    component.oneOffDateMax = '2026-12-31';
+    component.oneOffYearRangeLabel = '2025 and 2026';
+    component.oneOffDeliveryDate = '2025-06-15';
+    component.offDonationDraft = {
+      status: 'NotRecorded',
+      suggestedAmount: 8,
+      date: '2025-06-15'
+    };
+
+    const appendSpy = spyOn(storage, 'appendOneOffDelivery').and.callThrough();
+
+    await component.saveOffSchedule();
+
+    expect(component.oneOffDeliveryTypeError).toBe('');
+    expect(appendSpy).toHaveBeenCalled();
+  });
+
   it('sorts all receipts by event date descending', async () => {
     const run = {
       id: 'run-1',

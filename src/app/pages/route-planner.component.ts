@@ -252,10 +252,15 @@ export class RoutePlannerComponent {
   }
 
   private validateDonationSelection(
-    donation: DonationInfo | null | undefined
+    donation: DonationInfo | null | undefined,
+    options?: { allowNotRecorded?: boolean }
   ): string {
-    if (!donation || donation.status === 'NotRecorded') {
-      return 'Select a donation type before saving.';
+    const allowNotRecorded = options?.allowNotRecorded ?? false;
+    if (!donation) {
+      return allowNotRecorded ? '' : 'Select a donation type before saving.';
+    }
+    if (donation.status === 'NotRecorded') {
+      return allowNotRecorded ? '' : 'Select a donation type before saving.';
     }
     if (donation.status === 'Donated' && !donation.method) {
       return 'Select a donation method before saving.';
@@ -316,7 +321,9 @@ export class RoutePlannerComponent {
   }
 
   private ensureOneOffDeliveryType(): boolean {
-    const error = this.validateDonationSelection(this.offDonationDraft);
+    const error = this.validateDonationSelection(this.offDonationDraft, {
+      allowNotRecorded: true
+    });
     this.oneOffDeliveryTypeError = error;
     return !error;
   }
@@ -332,7 +339,8 @@ export class RoutePlannerComponent {
   private refreshOneOffDeliveryTypeError(): void {
     if (this.oneOffDeliveryTypeError) {
       this.oneOffDeliveryTypeError = this.validateDonationSelection(
-        this.offDonationDraft
+        this.offDonationDraft,
+        { allowNotRecorded: true }
       );
     }
   }
