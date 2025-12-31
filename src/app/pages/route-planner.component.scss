@@ -693,7 +693,7 @@
   gap: var(--spacing-2);
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-1);
+  margin: var(--spacing-1) 0;
 }
 
 .donation-actions .btn {
@@ -733,10 +733,14 @@
 }
 
 .totals-card {
-  margin-top: var(--spacing-2);
+  margin-top: var(--spacing-1);
   display: grid;
   gap: var(--spacing-1);
   padding: var(--spacing-2);
+}
+
+.donation-actions + .totals-card {
+  margin-top: 0;
 }
 
 .receipt-history {

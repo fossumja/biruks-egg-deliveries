@@ -77,7 +77,7 @@
 </div>
 
 <ng-template #receiptHistoryList>
-  <div class="receipt-history card">
+  <div class="receipt-history">
     <div class="receipt-history-header">Previous receipts</div>
     @if (receiptHistoryLoading) {
       <div class="receipt-history-empty text-muted">Loading receipts...</div>
@@ -436,6 +436,17 @@
           @if (oneOffDonationTypeError) {
             <p class="error-text">{{ oneOffDonationTypeError }}</p>
           }
+          <div class="donation-actions">
+            <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!!oneOffDonationDateError || !!oneOffDonationTypeError"
+              (click)="saveDonation()"
+            >
+              Save
+            </button>
+          </div>
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
@@ -453,19 +464,8 @@
               <span>Deductible charitable contribution</span>
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
+            <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           </div>
-          <div class="donation-actions">
-            <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!!oneOffDonationDateError || !!oneOffDonationTypeError"
-              (click)="saveDonation()"
-            >
-              Save
-            </button>
-          </div>
-          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
         </div>
       </div>
 
@@ -513,6 +513,17 @@
           @if (oneOffDeliveryTypeError) {
             <p class="error-text">{{ oneOffDeliveryTypeError }}</p>
           }
+          <div class="donation-actions">
+            <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!!oneOffDeliveryDateError || !!oneOffDeliveryTypeError"
+              (click)="saveOffSchedule()"
+            >
+              Save
+            </button>
+          </div>
           <div class="card totals-card">
             <div class="totals-row">
               <span>Total Donations</span>
@@ -530,19 +541,8 @@
               <span>Deductible charitable contribution</span>
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
+            <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           </div>
-          <div class="donation-actions">
-            <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!!oneOffDeliveryDateError || !!oneOffDeliveryTypeError"
-              (click)="saveOffSchedule()"
-            >
-              Save
-            </button>
-          </div>
-          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
         </div>
       </div>
     </div>
