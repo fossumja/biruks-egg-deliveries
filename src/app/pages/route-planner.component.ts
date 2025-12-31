@@ -513,8 +513,11 @@ export class RoutePlannerComponent {
 
   onOffAmountChange(amount: number): void {
     if (!this.offDonationDraft) return;
-    this.offDonationDraft.status = 'Donated';
-    this.offDonationDraft.amount = amount;
+    const nextAmount = Math.max(0, Number(amount) || 0);
+    if (nextAmount > 0 || this.offDonationDraft.status === 'Donated') {
+      this.offDonationDraft.status = 'Donated';
+    }
+    this.offDonationDraft.amount = nextAmount;
     this.offDonationDraft.date =
       this.oneOffDeliveryDate || this.offDonationDraft.date;
     this.offDonationDraft.suggestedAmount =
@@ -1355,8 +1358,11 @@ export class RoutePlannerComponent {
   onDonationAmountChange(amount: number): void {
     if (!this.donationDraft?.donation) return;
     const donation = this.donationDraft.donation;
-    donation.status = 'Donated';
-    donation.amount = amount;
+    const nextAmount = Math.max(0, Number(amount) || 0);
+    if (nextAmount > 0 || donation.status === 'Donated') {
+      donation.status = 'Donated';
+    }
+    donation.amount = nextAmount;
     donation.date = this.oneOffDonationDate || donation.date;
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * 4;
     this.donationDraft.donation = donation;

@@ -750,6 +750,26 @@ describe('RoutePlannerComponent', () => {
     expect(appendSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps one-off donation status as NoDonation when amount is zero', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.donationModalStop = stop;
+    component.donationDraft = {
+      ...stop,
+      donation: {
+        status: 'NoDonation',
+        amount: 0,
+        suggestedAmount: 8,
+        date: '2025-06-15'
+      }
+    };
+    component.oneOffDonationDate = '2025-06-15';
+
+    component.onDonationAmountChange(0);
+
+    expect(component.donationDraft?.donation?.status).toBe('NoDonation');
+    expect(component.donationDraft?.donation?.amount).toBe(0);
+  });
+
   it('blocks one-off delivery save when date is missing', async () => {
     const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
     component.offScheduleStop = stop;
@@ -813,6 +833,23 @@ describe('RoutePlannerComponent', () => {
 
     expect(component.oneOffDeliveryTypeError).toBe('');
     expect(appendSpy).toHaveBeenCalled();
+  });
+
+  it('keeps one-off delivery status as NoDonation when amount is zero', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.offScheduleStop = stop;
+    component.oneOffDeliveryDate = '2025-06-15';
+    component.offDonationDraft = {
+      status: 'NoDonation',
+      amount: 0,
+      suggestedAmount: 8,
+      date: '2025-06-15'
+    };
+
+    component.onOffAmountChange(0);
+
+    expect(component.offDonationDraft.status).toBe('NoDonation');
+    expect(component.offDonationDraft.amount).toBe(0);
   });
 
   it('sorts all receipts by event date descending', async () => {
