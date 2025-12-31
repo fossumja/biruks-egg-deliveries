@@ -402,6 +402,16 @@
         <h3>Donation for {{ donationModalStop?.name }}</h3>
         <div class="inline-donation-body">
           <div class="card donation-card">
+            <app-donation-controls
+              [donation]="donationDraft?.donation || null"
+              [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
+              [showNoDonation]="true"
+              [allowReselect]="true"
+              [showQty]="false"
+              (donationStatusChange)="setDonationStatus($event)"
+              (donationMethodChange)="setDonationMethod($event)"
+              (amountChange)="onDonationAmountChange($event)"
+            />
             <label class="date-field">
               Donation date
               <input
@@ -422,16 +432,6 @@
                 {{ oneOffDonationDateError }}
               </p>
             }
-            <app-donation-controls
-              [donation]="donationDraft?.donation || null"
-              [suggestedAmount]="donationDraft?.donation?.suggestedAmount || (donationModalStop?.dozens ?? 0) * getSuggestedRate()"
-              [showNoDonation]="true"
-              [allowReselect]="true"
-              [showQty]="false"
-              (donationStatusChange)="setDonationStatus($event)"
-              (donationMethodChange)="setDonationMethod($event)"
-              (amountChange)="onDonationAmountChange($event)"
-            />
           </div>
           @if (oneOffDonationTypeError) {
             <p class="error-text">{{ oneOffDonationTypeError }}</p>
@@ -454,7 +454,6 @@
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
           </div>
-          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           <div class="donation-actions">
             <button type="button" class="btn btn-text" (click)="closeDonationModal(true)">Cancel</button>
             <button
@@ -466,6 +465,7 @@
               Save
             </button>
           </div>
+          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
         </div>
       </div>
 
@@ -474,6 +474,21 @@
         <h3>Delivery for {{ offScheduleStop?.name }}</h3>
         <div class="inline-donation-body">
           <div class="delivery-card card">
+            <app-stop-delivery-card
+              [stop]="offScheduleStop"
+              [deliveredQty]="offDeliveredQty"
+              [donation]="offDonationDraft"
+              [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
+              [showNoDonation]="true"
+              [allowDonationReselect]="false"
+              [showNotes]="false"
+              (adjustQty)="adjustOffDelivered($event)"
+              (donationStatusChange)="setOffDonationStatus($event)"
+              (donationMethodChange)="setOffDonationMethod($event)"
+              (amountChange)="onOffAmountChange($event)"
+              (copyAddress)="copyAddress(offScheduleStop)"
+              (openMap)="openMaps(offScheduleStop)"
+            />
             <label class="date-field">
               Delivery date
               <input
@@ -494,21 +509,6 @@
                 {{ oneOffDeliveryDateError }}
               </p>
             }
-            <app-stop-delivery-card
-              [stop]="offScheduleStop"
-              [deliveredQty]="offDeliveredQty"
-              [donation]="offDonationDraft"
-              [suggestedAmount]="offDonationDraft?.suggestedAmount ?? offDeliveredQty * 4"
-              [showNoDonation]="true"
-              [allowDonationReselect]="false"
-              [showNotes]="false"
-              (adjustQty)="adjustOffDelivered($event)"
-              (donationStatusChange)="setOffDonationStatus($event)"
-              (donationMethodChange)="setOffDonationMethod($event)"
-              (amountChange)="onOffAmountChange($event)"
-              (copyAddress)="copyAddress(offScheduleStop)"
-              (openMap)="openMaps(offScheduleStop)"
-            />
           </div>
           @if (oneOffDeliveryTypeError) {
             <p class="error-text">{{ oneOffDeliveryTypeError }}</p>
@@ -531,7 +531,6 @@
               <span>${{ donationTotals.taxableTotal | number : '1.2-2' }}</span>
             </div>
           </div>
-          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
           <div class="donation-actions">
             <button type="button" class="btn btn-text" (click)="closeOffSchedule(true)">Cancel</button>
             <button
@@ -543,6 +542,7 @@
               Save
             </button>
           </div>
+          <ng-container [ngTemplateOutlet]="receiptHistoryList"></ng-container>
         </div>
       </div>
     </div>

@@ -507,11 +507,21 @@
 .inline-donation.card {
   margin-top: var(--spacing-2);
   width: 100%;
+  padding: var(--spacing-3);
 }
 
 .inline-donation-body {
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1);
+}
+
+.inline-donation-body > .card {
+  padding: var(--spacing-3);
+}
+
+.donation-card .date-field,
+.delivery-card .date-field {
+  margin-top: var(--spacing-2);
 }
 
 .sr-only {
@@ -683,6 +693,13 @@
   gap: var(--spacing-2);
   justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--spacing-1);
+}
+
+.donation-actions .btn {
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
 }
 
 .donation-actions .ghost {
@@ -723,9 +740,9 @@
 }
 
 .receipt-history {
-  margin-top: var(--spacing-2);
+  margin-top: var(--spacing-1);
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .receipt-history-header {
@@ -739,15 +756,15 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
 
 .receipt-history-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   font-size: 13px;
-  line-height: 1.3;
+  line-height: 1.2;
   color: var(--color-text-muted);
 }
 
