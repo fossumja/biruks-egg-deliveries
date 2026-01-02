@@ -235,6 +235,25 @@ describe('DeliveryRunComponent', () => {
     expect(component.currentStop?.donation?.method).toBeUndefined();
   });
 
+  it('accepts decimal donation amounts over 100 from the amount picker', async () => {
+    storage.deliveries = [
+      createStop({
+        id: 'stop-1',
+        donation: { status: 'NotRecorded', suggestedAmount: 8 },
+      })
+    ];
+    const updateSpy = spyOn(storage, 'updateDonation').and.callThrough();
+
+    await component.ngOnInit();
+    updateSpy.calls.reset();
+
+    await component.confirmAmountFromPicker(125.75);
+
+    expect(updateSpy).toHaveBeenCalled();
+    expect(component.currentStop?.donation?.status).toBe('Donated');
+    expect(component.currentStop?.donation?.amount).toBeCloseTo(125.75, 2);
+  });
+
   it('falls back to web maps when user agent is not mobile', () => {
     const stop = createStop();
     component.currentStop = stop;

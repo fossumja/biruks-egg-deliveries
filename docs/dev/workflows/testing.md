@@ -4,7 +4,7 @@ Use this workflow to run reliable, scoped testing with modular test packs.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-02
 - **Type**: How-to
 - **Scope**: selecting and executing regression packs for this app
 - **Non-goals**: changing test tooling or adding new frameworks
@@ -44,6 +44,7 @@ This workflow helps you select the right test packs for a change, run automated 
 - Do not introduce new tooling unless explicitly requested.
 - Use pack IDs (TP-xx) in all reporting.
 - Record what you ran and the results.
+- When behavior changes or new UI flows are added, review whether regression packs or usage scenarios need updates; update `docs/testing/regression-tests.md` and `docs/testing/usage-scenario-tests.md` as needed.
 
 ## Steps
 
@@ -90,6 +91,7 @@ This writes a JUnit report to `test-results/junit.xml` and coverage outputs to `
 - Selected packs executed with recorded results.
 - Any failures documented with follow-up issues.
 - Regression plan updated when coverage changes.
+- Regression pack updates are considered for every behavior change (or explicitly deferred with a follow-up issue).
 
 ## Troubleshooting
 

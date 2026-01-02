@@ -989,6 +989,72 @@ describe('RoutePlannerComponent', () => {
     expect(saveButton.disabled).toBeTrue();
   });
 
+  it('renders a numeric donation amount input for receipt edits', () => {
+    const entry = createRunEntry({
+      id: 'entry-amount',
+      runId: 'run-1'
+    });
+    component.loading = false;
+    component.viewingRun = true;
+    component.viewingAllReceipts = true;
+    component.runEntries = [entry];
+    component.filteredRunEntries = [entry];
+    component.editingRunEntry = entry;
+    component.runEntryDraft = {
+      status: 'delivered',
+      dozens: 1,
+      deliveryOrder: 1,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 4,
+    };
+
+    fixture.detectChanges();
+
+    const amountInput = fixture.nativeElement.querySelector(
+      'input[name="runEntryDonationAmount"]'
+    ) as HTMLInputElement;
+    const amountSelect = fixture.nativeElement.querySelector(
+      'select[name="runEntryDonationAmount"]'
+    ) as HTMLSelectElement | null;
+
+    expect(amountInput).toBeTruthy();
+    expect(amountInput.type).toBe('number');
+    expect(amountSelect).toBeNull();
+  });
+
+  it('accepts decimal donation amounts over 100 in receipt edits', () => {
+    const entry = createRunEntry({
+      id: 'entry-decimal',
+      runId: 'run-1'
+    });
+    component.loading = false;
+    component.viewingRun = true;
+    component.viewingAllReceipts = true;
+    component.runEntries = [entry];
+    component.filteredRunEntries = [entry];
+    component.editingRunEntry = entry;
+    component.runEntryDraft = {
+      status: 'delivered',
+      dozens: 1,
+      deliveryOrder: 1,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 4,
+    };
+
+    component.onRunEntryDonationAmountChange('125.75');
+    fixture.detectChanges();
+
+    expect(component.runEntryDraft?.donationAmount).toBeCloseTo(125.75, 2);
+    expect(component.runEntryAmountError).toBe('');
+
+    const saveButton = fixture.nativeElement.querySelector(
+      '.inline-donation .btn.btn-primary'
+    ) as HTMLButtonElement;
+    expect(saveButton.disabled).toBeFalse();
+  });
+
   it('updates run entry without changing date fields', async () => {
     const entry = createRunEntry({
       id: 'entry-1',

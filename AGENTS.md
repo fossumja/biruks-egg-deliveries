@@ -32,7 +32,9 @@ Follow them alongside system and developer instructions.
 ## Worktree safety checks
 
 - Before starting new work, switching branches, or running a workflow, check for uncommitted changes.
-- If the working tree is not clean, **stop and ask the user how to proceed** (commit, stash, discard, or keep working on current changes).
+- If the working tree is not clean, determine whether the changes belong to the active child issue:
+  - If they do, finish the child work and commit before moving on.
+  - If they do not, **stop and ask the user how to proceed** (commit, stash, discard, or keep working on current changes).
 
 ## Safety for high-risk actions
 

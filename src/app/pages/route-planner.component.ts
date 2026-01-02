@@ -77,12 +77,8 @@ export class RoutePlannerComponent {
   private oneOffDeliveryDateTouched = false;
   oneOffDeliveryTypeError = '';
   showAmountPicker = false;
-  amountOptions: number[] = [];
   selectedAmount = 0;
-   readonly receiptAmountOptions: number[] = Array.from(
-    { length: 101 },
-    (_, i) => i
-  );
+  private readonly donationAmountMax = 9999;
   offScheduleStop: Delivery | null = null;
   offDonationDraft: DonationInfo | null = null;
   offDeliveredQty = 0;
@@ -117,11 +113,13 @@ export class RoutePlannerComponent {
     deliveryOrder: number;
     donationStatus: DonationStatus;
     donationMethod: DonationMethod | '';
-    donationAmount: number;
-    suggestedAmount?: number;
+    donationAmount: number | null;
+    suggestedAmount?: number | null;
   } | null = null;
   runEntryDate = '';
   runEntryDateError = '';
+  runEntryAmountError = '';
+  runEntrySuggestedError = '';
   newDelivery = {
     deliveryOrder: 0,
     routeDate: '',
@@ -285,6 +283,74 @@ export class RoutePlannerComponent {
     return '';
   }
 
+  private parseAmountInput(value: unknown): number | null {
+    if (value === '' || value === null || value === undefined) return null;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : null;
+  }
+
+  private clampAmount(value: number): number {
+    return Math.min(this.donationAmountMax, Math.max(0, value));
+  }
+
+  private validateRunEntryAmount(
+    value: number | null,
+    status: DonationStatus
+  ): string {
+    if (status !== 'Donated') return '';
+    if (value == null) {
+      return 'Donation amount is required when status is Donated.';
+    }
+    if (value < 0 || value > this.donationAmountMax) {
+      return `Donation amount must be between $0 and $${this.donationAmountMax}.`;
+    }
+    return '';
+  }
+
+  private validateRunEntrySuggestedAmount(
+    value: number | null,
+    status: DonationStatus
+  ): string {
+    if (status !== 'Donated') return '';
+    if (value == null) return '';
+    if (value < 0 || value > this.donationAmountMax) {
+      return `Suggested amount must be between $0 and $${this.donationAmountMax}.`;
+    }
+    return '';
+  }
+
+  private refreshRunEntryAmountError(): void {
+    if (!this.runEntryDraft) {
+      this.runEntryAmountError = '';
+      return;
+    }
+    this.runEntryAmountError = this.validateRunEntryAmount(
+      this.runEntryDraft.donationAmount,
+      this.runEntryDraft.donationStatus
+    );
+  }
+
+  private refreshRunEntrySuggestedError(): void {
+    if (!this.runEntryDraft || this.editingRunEntry?.runId !== 'oneoff') {
+      this.runEntrySuggestedError = '';
+      return;
+    }
+    this.runEntrySuggestedError = this.validateRunEntrySuggestedAmount(
+      this.runEntryDraft.suggestedAmount ?? null,
+      this.runEntryDraft.donationStatus
+    );
+  }
+
+  private ensureRunEntryAmount(): boolean {
+    this.refreshRunEntryAmountError();
+    return !this.runEntryAmountError;
+  }
+
+  private ensureRunEntrySuggestedAmount(): boolean {
+    this.refreshRunEntrySuggestedError();
+    return !this.runEntrySuggestedError;
+  }
+
   private setOneOffDonationDate(value: string): void {
     this.oneOffDonationDate = value;
     this.oneOffDonationDateError = this.validateOneOffDate(value);
@@ -406,6 +472,30 @@ export class RoutePlannerComponent {
 
   onRunEntryDateChange(value: string): void {
     this.setRunEntryDate(value);
+  }
+
+  onRunEntryDonationStatusChange(status: DonationStatus): void {
+    if (!this.runEntryDraft) return;
+    this.runEntryDraft.donationStatus = status;
+    if (status !== 'Donated') {
+      this.runEntryAmountError = '';
+    }
+    this.refreshRunEntryAmountError();
+    this.refreshRunEntrySuggestedError();
+  }
+
+  onRunEntryDonationAmountChange(value: unknown): void {
+    if (!this.runEntryDraft) return;
+    const parsed = this.parseAmountInput(value);
+    this.runEntryDraft.donationAmount = parsed;
+    this.refreshRunEntryAmountError();
+  }
+
+  onRunEntrySuggestedAmountChange(value: unknown): void {
+    if (!this.runEntryDraft) return;
+    const parsed = this.parseAmountInput(value);
+    this.runEntryDraft.suggestedAmount = parsed;
+    this.refreshRunEntrySuggestedError();
   }
 
   startSwipe(event: PointerEvent, stop: Delivery): void {
@@ -1337,7 +1427,6 @@ export class RoutePlannerComponent {
   openAmountPicker(): void {
     if (!this.donationDraft) return;
     this.pickerMode = 'main';
-    this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
     this.selectedAmount =
       this.donationDraft.donation?.amount ??
       this.donationDraft.donation?.suggestedAmount ??
@@ -1423,6 +1512,8 @@ export class RoutePlannerComponent {
       donationAmount: entry.donationAmount,
     };
     this.resetRunEntryDate();
+    this.refreshRunEntryAmountError();
+    this.refreshRunEntrySuggestedError();
     if (entry.runId === 'oneoff' && entry.deliveryId && entry.oneOffIndex != null) {
       const dateValue = this.formatEventDateForInput(entry.eventDate);
       this.setRunEntryDate(dateValue);
@@ -1449,6 +1540,7 @@ export class RoutePlannerComponent {
         ...this.runEntryDraft,
         suggestedAmount: suggested
       };
+      this.refreshRunEntrySuggestedError();
     }
   }
 
@@ -1457,6 +1549,7 @@ export class RoutePlannerComponent {
     this.editingRunEntry = null;
     this.runEntryDraft = null;
     this.resetRunEntryDate();
+    this.resetRunEntryErrors();
 
     if (!key) {
       this.routeDate = undefined;
@@ -1531,6 +1624,12 @@ export class RoutePlannerComponent {
     this.editingRunEntry = null;
     this.runEntryDraft = null;
     this.resetRunEntryDate();
+    this.resetRunEntryErrors();
+  }
+
+  private resetRunEntryErrors(): void {
+    this.runEntryAmountError = '';
+    this.runEntrySuggestedError = '';
   }
 
   private computeRunEntryTaxable(
@@ -1731,8 +1830,16 @@ export class RoutePlannerComponent {
     const original = this.editingRunEntry;
     const draft = this.runEntryDraft;
 
+    if (!this.ensureRunEntryAmount()) {
+      return;
+    }
+    if (!this.ensureRunEntrySuggestedAmount()) {
+      return;
+    }
+
     const newDozens = Math.max(0, Number(draft.dozens) || 0);
-    const newAmount = Math.max(0, Number(draft.donationAmount) || 0);
+    const parsedAmount = this.parseAmountInput(draft.donationAmount);
+    const newAmount = this.clampAmount(parsedAmount ?? 0);
     const taxable = this.computeRunEntryTaxable(
       newDozens,
       draft.donationStatus,
@@ -1745,10 +1852,11 @@ export class RoutePlannerComponent {
       if (!this.ensureRunEntryDate()) {
         return;
       }
+      const parsedSuggested = this.parseAmountInput(
+        this.runEntryDraft.suggestedAmount
+      );
       const suggested =
-        this.runEntryDraft.suggestedAmount != null
-          ? Number(this.runEntryDraft.suggestedAmount) || 0
-          : undefined;
+        parsedSuggested != null ? this.clampAmount(parsedSuggested) : undefined;
       if (original.oneOffKind === 'donation' && original.deliveryId != null && original.oneOffIndex != null) {
         await this.storage.updateOneOffDonationByIndex(original.deliveryId, original.oneOffIndex, {
           donationStatus: draft.donationStatus,
@@ -1840,6 +1948,8 @@ export class RoutePlannerComponent {
     this.editingRunEntry = null;
     this.runEntryDraft = null;
     this.resetRunEntryDate();
+    this.resetRunEntryErrors();
+    this.resetRunEntryErrors();
   }
 
   private getScheduleId(routeDate: string): string {
@@ -1868,6 +1978,7 @@ export class RoutePlannerComponent {
       this.editingRunEntry = null;
       this.runEntryDraft = null;
       this.resetRunEntryDate();
+      this.resetRunEntryErrors();
       return;
     }
     this.viewingRun = true;
@@ -1881,6 +1992,7 @@ export class RoutePlannerComponent {
     this.editingRunEntry = null;
     this.runEntryDraft = null;
     this.resetRunEntryDate();
+    this.resetRunEntryErrors();
   }
 
   async saveEdit(): Promise<void> {

@@ -55,15 +55,16 @@ You are my feature delivery assistant.
 4. Sync the branch with the base branch if needed.
 5. Implement the issue, run targeted tests, and update docs if required.
    - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
-6. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
+6. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
 7. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
-8. Update the child issue status (close or comment with progress and test notes).
-9. Update the parent issue checklist to reflect completion:
+8. Commit the child issue work so the branch is clean before moving to the next child issue.
+9. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
+10. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-10. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-11. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+11. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+12. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
@@ -74,14 +75,16 @@ You are my feature delivery assistant.
 ## action=finish
 
 1. Confirm all child issues are closed and the parent checklist is complete.
-2. Run the quality workflow if applicable (this is the full check for the feature).
-3. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
-4. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-5. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-6. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-7. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-8. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-9. Suggest release workflow if requested.
+2. Cross-check parent acceptance criteria and child issue outcomes; mark parent checklist items complete if the evidence supports them.
+3. Run the required regression packs per `docs/testing/regression-tests.md`, record TP-xx IDs, and update regression docs if new behavior was introduced.
+4. Run the quality workflow if applicable (this is the full check for the feature).
+5. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
+6. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
+7. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+8. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+9. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+10. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+11. Suggest release workflow if requested.
 
 ## Output
 

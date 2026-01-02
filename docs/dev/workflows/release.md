@@ -4,7 +4,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-02
 - **Type**: How-to
 - **Scope**: release and deployment for biruks-egg-deliveries
 - **Non-goals**: changing deployment tooling or hosting strategy
@@ -26,6 +26,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 - Do not change deployment tooling without approval.
 - Confirm the version tag before releasing.
 - Prefer running the release flow via the `/release` prompt.
+- Run full regression packs (TP-01 through TP-11) and usage scenarios before tagging or deploying to GitHub Pages.
 
 ## Steps
 
@@ -33,13 +34,17 @@ Use this workflow to ship a release to GitHub Pages for this app.
    - Ensure `git status -sb` is clean.
 2. Run tests if required:
    - Use `npm test` or the documented test command.
-3. Record device checklist status:
+3. Run full regression packs and usage scenarios:
+   - Execute TP-01 through TP-11 per `docs/testing/regression-tests.md`.
+   - Execute `docs/testing/usage-scenario-tests.md`.
+   - Record results (or explicitly document any skipped packs).
+4. Record device checklist status:
    - Note TP-11 device/PWA checks in release notes or a shared test log.
-4. Build the production bundle:
+5. Build the production bundle:
    - `npx ng build --configuration production --base-href="/biruks-egg-deliveries/"`
-5. Deploy to GitHub Pages:
+6. Deploy to GitHub Pages:
    - `npx angular-cli-ghpages --dir=dist/egg-delivery-app/browser --branch=gh-pages`
-6. Tag the release:
+7. Tag the release:
    - Use `vYYYY.M.P` format.
 
 ## Checks
@@ -48,6 +53,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 - `gh-pages` branch updated.
 - Release tag created and pushed.
 - TP-11 device checklist status recorded.
+- Full regression packs and usage scenarios completed (or explicitly deferred with approval).
 
 ## Outputs
 
@@ -57,6 +63,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 ## What changed / Why
 
 - Added a TP-11 device checklist note so manual device coverage is tracked per release.
+- Required full regression packs and usage scenarios before release tags and GH Pages deploys.
 
 ## Related docs
 
