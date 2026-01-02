@@ -710,6 +710,35 @@ describe('RoutePlannerComponent', () => {
     expect(appendSpy).not.toHaveBeenCalled();
   });
 
+  it('applies one-off date bounds to the donation date input', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.deliveries = [stop];
+    component.filteredDeliveries = [stop];
+    component.donationModalStop = stop;
+    component.donationDraft = {
+      ...stop,
+      donation: {
+        status: 'Donated',
+        method: 'cash',
+        amount: 8,
+        suggestedAmount: 8,
+        date: '2025-06-15'
+      }
+    };
+    component.oneOffDateMin = '2025-01-01';
+    component.oneOffDateMax = '2026-12-31';
+    component.oneOffDonationDate = '2025-06-15';
+
+    fixture.detectChanges();
+
+    const dateInput = fixture.nativeElement.querySelector(
+      'input[name="oneOffDonationDate"]'
+    ) as HTMLInputElement;
+    expect(dateInput).toBeTruthy();
+    expect(dateInput.min).toBe('2025-01-01');
+    expect(dateInput.max).toBe('2026-12-31');
+  });
+
   it('keeps one-off donation status as NoDonation when amount is zero', () => {
     const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
     component.donationModalStop = stop;
@@ -770,6 +799,32 @@ describe('RoutePlannerComponent', () => {
     expect(component.oneOffDeliveryTypeError)
       .toBe('Select a donation method before saving.');
     expect(appendSpy).not.toHaveBeenCalled();
+  });
+
+  it('applies one-off date bounds to the delivery date input', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.deliveries = [stop];
+    component.filteredDeliveries = [stop];
+    component.offScheduleStop = stop;
+    component.offDonationDraft = {
+      status: 'Donated',
+      method: 'cash',
+      amount: 8,
+      suggestedAmount: 8,
+      date: '2025-06-15'
+    };
+    component.oneOffDateMin = '2025-01-01';
+    component.oneOffDateMax = '2026-12-31';
+    component.oneOffDeliveryDate = '2025-06-15';
+
+    fixture.detectChanges();
+
+    const dateInput = fixture.nativeElement.querySelector(
+      'input[name="oneOffDeliveryDate"]'
+    ) as HTMLInputElement;
+    expect(dateInput).toBeTruthy();
+    expect(dateInput.min).toBe('2025-01-01');
+    expect(dateInput.max).toBe('2026-12-31');
   });
 
   it('allows one-off delivery save when donation status is NotRecorded', async () => {
@@ -869,6 +924,44 @@ describe('RoutePlannerComponent', () => {
     const sorted = [...timestamps].sort((a, b) => b - a);
 
     expect(timestamps).toEqual(sorted);
+  });
+
+  it('filters all receipts to the selected tax year', async () => {
+    storage.runEntries = [
+      createRunEntry({ id: 'entry-2025', eventDate: '2025-01-05' }),
+      createRunEntry({ id: 'entry-2024', eventDate: '2024-12-20' })
+    ];
+    storage.deliveries = [
+      createDelivery({
+        id: 'delivery-1',
+        baseRowId: 'base-1',
+        oneOffDonations: [
+          {
+            status: 'Donated',
+            method: 'cash',
+            amount: 10,
+            suggestedAmount: 8,
+            date: '2025-02-01'
+          },
+          {
+            status: 'Donated',
+            method: 'cash',
+            amount: 5,
+            suggestedAmount: 4,
+            date: '2024-02-01'
+          }
+        ]
+      })
+    ];
+
+    localStorage.setItem('selectedTaxYear', '2025');
+
+    await component.onRouteOrRunChange('receipts:all');
+
+    const years = component.filteredRunEntries.map((entry) =>
+      Number(entry.eventDate?.slice(0, 4))
+    );
+    expect(years.every((year) => year === 2025)).toBeTrue();
   });
 
   it('shows delete action in run history action row', () => {

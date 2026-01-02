@@ -215,7 +215,7 @@ Automated coverage:
 - `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipts edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
-Date range tied to the selected tax year is covered in `route-planner.component.spec.ts`; UI min/max changes remain manual.
+Date range tied to the selected tax year and UI min/max attributes are covered in `route-planner.component.spec.ts`.
 Donation validation rules are partially covered in `route-planner.component.spec.ts`; picker invalid-input error states are covered in `donation-amount-picker.component.spec.ts`.
 
 Manual checks:
@@ -273,7 +273,7 @@ Automated coverage:
 - `src/app/pages/route-planner.component.spec.ts` (receipts sorting and edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (tax-year receipt filtering).
 
-All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
+All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts` and `route-planner.component.spec.ts`.
 Receipt validation behavior (amount required/max) is covered in `route-planner.component.spec.ts`; UI error styling remains manual.
 Navigation/reset behavior for receipts is covered in `route-planner.component.spec.ts`.
 Run completion reset behavior is covered in `storage.service.spec.ts`; UI history ordering remains manual.
