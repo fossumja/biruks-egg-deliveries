@@ -62,6 +62,7 @@ The Home page has four main sections:
 
 - **Tax year**
   - **Tax year selector**: choose the year used for totals and exports.
+  - Planner totals and receipt history (including **All receipts**) follow the selected tax year.
   - If the app detects multiple years of data, it shows a warning to export and start a new file for the new year.
 
 - **Settings**
@@ -129,6 +130,7 @@ When viewing `Current (live)`:
     - Record a one‑off donation (not tied to a specific run state).
   - **Delivery** (one‑off):
     - Record an extra delivery outside of the normal schedule (e.g., extra dozens delivered during the week).
+  - One‑off date entry is limited to the selected tax year; change the tax year on Home to add receipts for a different year.
 
 ### 4.3. Reordering
 
@@ -145,7 +147,7 @@ When viewing `Current (live)`:
 ### 4.4. Past Runs and Receipts
 
 - **Past runs** show archived delivery entries for a specific run.
-- **All receipts** aggregates receipts across runs and one‑offs.
+- **All receipts** aggregates receipts across runs and one‑offs for the selected tax year.
 - Each entry shows status, dozens, donation, and date; use **Edit** to adjust receipts.
 - To remove a mistaken receipt:
   - Use **Delete** in the run history action row for **Past runs** or **All receipts**.
