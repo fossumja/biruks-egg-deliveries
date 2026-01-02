@@ -31,6 +31,7 @@ Use editor settings as guidance when they are provided, but do not treat them as
 - Split multi-step work into separate commands so allowlists can match the real tool (`gh`, `git`, `npm`) directly.
 - Use `--body-file` and temp files instead of complex heredocs inside quoted shells.
 - Do not combine temp-file creation and `gh` calls in the same quoted command; run them as separate commands.
+- Prefer temp files inside the repo (for example `tmp/` under the repo root) to avoid escalated permissions for `/tmp`.
 
 ### Approval and sandbox alignment
 

@@ -58,13 +58,14 @@ You are my feature delivery assistant.
 6. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
 7. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 8. Commit the child issue work so the branch is clean before moving to the next child issue.
-9. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
-10. Update the parent issue checklist to reflect completion:
+9. Do not push the feature branch yet unless the user explicitly requests it.
+10. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
+11. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-11. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-12. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+12. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+13. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
@@ -80,12 +81,13 @@ You are my feature delivery assistant.
 4. Run the quality workflow if applicable (this is the full check for the feature).
 5. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
 6. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-7. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-8. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
-9. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-10. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-11. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-12. Suggest release workflow if requested.
+7. Push the feature branch now (only after all child issues are complete).
+8. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+9. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
+10. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+11. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+12. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+13. Suggest release workflow if requested.
 
 ## Output
 

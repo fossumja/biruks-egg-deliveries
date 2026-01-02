@@ -29,6 +29,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Use the development workflow to validate each issue plan before implementation.
 - Keep child issues and the parent checklist updated as work completes.
 - Commit each child issue’s changes before moving to the next one.
+- Do not push the feature branch until the parent feature is complete unless the user explicitly asks.
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Use the docs prompt and documentation style guide when updating docs.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
@@ -78,6 +79,7 @@ Use this once per repo to keep `main` safe without blocking work.
 6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
+   - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
    - Verify the PR includes the Review Evidence section; if missing, stop and update the PR before merge.
    - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
@@ -106,6 +108,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Retrospective follow-ups are applied or tracked in new issues.
 - Base checks run for each child issue; full quality run before PR.
 - Child issues are closed only after base checks pass.
+- Feature branch is pushed only at finish unless explicitly requested earlier.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
 - Each child issue was committed before starting the next one.
