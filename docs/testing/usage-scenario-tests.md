@@ -181,6 +181,24 @@ Expected:
 - Export totals match the selected tax year.
 - Export filename includes the selected tax year.
 
+### Scenario 9: Donation amount validation edge cases
+
+Related packs: TP-06, TP-07, TP-08, TP-09.
+
+Steps:
+
+1. In a one-off donation, set status to Donated and leave amount blank.
+2. Switch status to NotRecorded and leave amount blank.
+3. Enter a decimal donation amount greater than 100 (for example 125.50).
+4. Enter an amount above 9999 and attempt to save.
+
+Expected:
+
+- Donated with a blank amount blocks save.
+- NotRecorded allows a blank amount (treated as 0 in totals).
+- Decimal amounts above 100 save successfully.
+- Amounts over 9999 are rejected with a validation error.
+
 ## Outcomes
 
 - Manual scenarios confirm Planner, Run, and receipts behavior end to end.

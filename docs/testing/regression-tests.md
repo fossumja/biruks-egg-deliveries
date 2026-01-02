@@ -178,6 +178,7 @@ Scope:
 - Hidden menu donation and delivery flows.
 - Date validation and allowed year range tied to the selected tax year.
 - Donation type selection and amount handling.
+- Donation amount validation (required when Donated, optional when NotRecorded, 0–9999 cap, decimals).
 - Totals and receipts inclusion.
 
 Automated coverage:
@@ -186,6 +187,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
 Date range tied to the selected tax year is covered in `route-planner.component.spec.ts`; UI min/max changes remain manual.
+Donation validation rules are partially covered in `route-planner.component.spec.ts`; picker error states remain manual.
 
 Manual checks:
 
@@ -193,6 +195,8 @@ Manual checks:
 - Totals include one-off donations and deliveries.
 - One-off modals show a compact receipt history list (including skips) for the selected person.
 - Switch tax year and confirm the one-off date min/max updates to the selected year window.
+- Status=Donated requires an amount; NotRecorded allows blank (treated as 0 in totals).
+- Amount accepts decimals and values above 100; 10000+ is rejected.
 
 ### TP-07 Run flow and donation controls
 
@@ -201,6 +205,7 @@ Scope:
 - Deliver and skip actions with reasons.
 - Quantity adjustments and status changes.
 - Donation status and method toggles.
+- Donation amount entry with decimals and validation.
 - Address copy and map launch behavior.
 
 Automated coverage:
@@ -213,6 +218,7 @@ Manual checks:
 
 - Status transitions: Pending -> Changed -> Delivered.
 - Skip dialog updates counts and progress.
+- Enter a decimal donation amount > 100 and confirm save works.
 
 ### TP-08 Run completion and receipts
 
@@ -222,6 +228,7 @@ Scope:
 - Run history selection and run entry ordering.
 - All receipts view (runs + one-offs).
 - Editing run entries and one-off receipts.
+- Receipt edit validation for donation status + amount.
 
 Automated coverage:
 
@@ -230,6 +237,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-totals.spec.ts` (tax-year receipt filtering).
 
 All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
+Receipt validation behavior is partially covered in `route-planner.component.spec.ts`; UI error states remain manual.
 
 Manual checks:
 
@@ -238,6 +246,7 @@ Manual checks:
 - Delete a receipt from **Past runs** / **All receipts** and confirm it disappears and totals refresh.
 - Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
 - Switch tax year and confirm All receipts and totals update to the selected year.
+- Edit a receipt: Donated requires an amount; NotRecorded allows blank.
 
 ### TP-09 Shared UI components
 
@@ -247,15 +256,20 @@ Scope:
 - Donation amount picker defaults and save/cancel.
 - Stop card emits correct events.
 - Toast message lifecycle.
+- Donation amount picker validation and error states.
 
 Automated coverage:
 
 - `src/app/components/stop-delivery-card.component.spec.ts` (event emissions).
+- `src/app/components/donation-amount-picker.component.spec.ts`
+
+Donation amount picker validation is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
 
 Manual checks:
 
 - Donation controls respect allow-reselect behavior.
 - Toasts appear and auto-dismiss.
+- Invalid picker input shows an error and disables Save; valid input clears the error.
 
 ### TP-10 Data and utilities
 
