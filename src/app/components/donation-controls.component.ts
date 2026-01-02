@@ -24,15 +24,14 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   @Output() amountChange = new EventEmitter<number>();
   @Output() qtyChange = new EventEmitter<number>();
 
-  amountOptions: number[] = [];
   amountValue = 0;
   qtyLocal = 0;
   private amountTouched = false;
+  private readonly donationAmountMax = 9999;
 
   ngOnInit(): void {
     const base = this.computeBaseAmount();
     this.amountValue = base;
-    this.refreshAmountOptions(base);
     this.qtyLocal = this.qtyValue;
   }
 
@@ -44,13 +43,11 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       if (!this.amountTouched) {
         this.amountValue = nextSuggested;
       }
-      this.refreshAmountOptions(nextSuggested);
     } else if ('donation' in changes) {
       const base = this.computeBaseAmount();
       if (!this.amountTouched) {
         this.amountValue = base;
       }
-      this.refreshAmountOptions(base);
     }
     if ('qtyValue' in changes) {
       this.qtyLocal = this.qtyValue;
@@ -80,7 +77,6 @@ export class DonationControlsComponent implements OnInit, OnChanges {
     if (status === 'NoDonation') {
       // Immediately reflect "None" by snapping the picker to $0
       this.amountValue = 0;
-      this.refreshAmountOptions(0);
       this.amountChange.emit(0);
     }
   }
@@ -103,14 +99,14 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   }
 
   onAmountChangeSelect(value: number): void {
-    const num = Number(value) || 0;
-    this.amountValue = num;
+    const num = Number(value);
+    const next = this.clampAmount(Number.isFinite(num) ? num : 0);
+    this.amountValue = next;
     this.amountTouched = true;
-    this.amountChange.emit(num);
+    this.amountChange.emit(next);
   }
 
-  private refreshAmountOptions(base: number): void {
-    const max = Math.min(9999, Math.max(200, Math.ceil(base * 2 + 50)));
-    this.amountOptions = Array.from({ length: max + 1 }, (_, i) => i);
+  private clampAmount(value: number): number {
+    return Math.min(this.donationAmountMax, Math.max(0, value));
   }
 }
