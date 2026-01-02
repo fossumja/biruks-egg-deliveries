@@ -25,6 +25,7 @@ General rules:
 - Generate the commit message from the changes (I won’t type it).
 - If I don’t provide a version tag, propose the next `vYYYY.M.P` and ask me to confirm.
 - Ask whether to run tests before shipping.
+- Require full regression packs (TP-01 through TP-11) and usage scenarios before tagging or deploying; if skipping, get explicit confirmation and note it in release notes.
 - If any command fails, stop and report the error and repo state.
 - Use the repo’s default branch (detect via `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name` or `git symbolic-ref refs/remotes/origin/HEAD`).
 
@@ -44,6 +45,7 @@ Supported commands I will say to you:
      - Proposed commit message
      - Proposed next tag (`vYYYY.M.P`) with reasoning
      - Draft release notes (Summary / Changes / Notes / Device checklist for TP-11)
+     - Regression pack readiness (TP-01 through TP-11 + usage scenarios)
    - Ask: "Update docs before release? (yes/no)"
      - If yes, pause and invoke the docs workflow (`/docs action=update`) then re-check status.
    - Do NOT run git/build/deploy commands.
@@ -59,11 +61,13 @@ Supported commands I will say to you:
       - Propose the next tag and ask for confirmation.
    3. Ask: "Run tests before shipping? (yes/no)"
       - If yes, run `npm test` and stop on failures.
-   4. Stage all changes, commit, tag, and push default branch + tags.
-   5. Build and deploy:
+   4. Ask: "Run full regression packs (TP-01 through TP-11) and usage scenarios? (yes/no)"
+      - If no, stop and request explicit approval to proceed without full regression.
+   5. Stage all changes, commit, tag, and push default branch + tags.
+   6. Build and deploy:
       - Run the build command.
       - If build succeeds, run the deploy command so `gh-pages` reflects this tag.
-   6. Report:
+   7. Report:
       - Commit SHA
       - Tag name
       - Confirmation that GH Pages was deployed from that tag

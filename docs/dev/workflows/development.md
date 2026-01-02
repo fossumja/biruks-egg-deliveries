@@ -64,6 +64,7 @@ Use this workflow to set up and run the app locally during active development.
    - Use targeted checks (lint/test) when the change affects behavior.
    - Use the testing workflow (`testing scope`) to select regression packs when behavior changes, then run automated/manual checks and record the TP-xx IDs.
    - Update or add tests for behavior changes; if coverage is deferred, log a follow-up issue and note it.
+   - Review `docs/testing/regression-tests.md` and `docs/testing/usage-scenario-tests.md` for updates when new behaviors or flows are introduced.
    - Run at least one base check (default: `npm run build`) for each issue-sized change; fix any errors before closing the issue.
    - If `public/build-info.json` changes, restore it before committing.
 9. Update docs when behavior changes:

@@ -76,14 +76,15 @@ You are my feature delivery assistant.
 
 1. Confirm all child issues are closed and the parent checklist is complete.
 2. Cross-check parent acceptance criteria and child issue outcomes; mark parent checklist items complete if the evidence supports them.
-3. Run the quality workflow if applicable (this is the full check for the feature).
-4. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
-5. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-6. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-7. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-8. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-9. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-10. Suggest release workflow if requested.
+3. Run the required regression packs per `docs/testing/regression-tests.md`, record TP-xx IDs, and update regression docs if new behavior was introduced.
+4. Run the quality workflow if applicable (this is the full check for the feature).
+5. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
+6. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
+7. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+8. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+9. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+10. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+11. Suggest release workflow if requested.
 
 ## Output
 
