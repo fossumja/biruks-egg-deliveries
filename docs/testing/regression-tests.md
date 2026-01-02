@@ -323,6 +323,7 @@ Scope:
 - Date normalization rules and sorting.
  - Import parsing and validation utilities.
 - Totals calculations under suggested rate changes.
+- Dexie migration safety and upgrade persistence checks.
 
 Automated coverage:
 
@@ -332,6 +333,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 
 Totals with suggested rate changes are covered in `usage-scenario-totals.spec.ts`.
+Dexie migration and upgrade flows are manual-only unless test utilities are extended.
 
 Manual checks:
 
@@ -339,6 +341,8 @@ Manual checks:
 - Import state survives backup and restore.
 - Switch tax year and confirm totals/exports are computed for the selected year.
 - Suggested rate changes do not retroactively alter existing totals.
+- With existing data present, upgrade to a new build and confirm deliveries, runs, and one-offs persist.
+- Verify import state and totals survive a refresh after upgrade.
 
 ### TP-11 Device and PWA
 
