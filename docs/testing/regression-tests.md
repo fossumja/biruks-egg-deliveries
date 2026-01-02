@@ -152,6 +152,7 @@ Manual checks:
 - Reorder only works when toggle is active.
 - New deliveries insert at the correct order and reindex.
 - Search hides non-matching stops and is reversible.
+- Switching between routes or All Schedules resets filters to the full list and closes any inline edits or swipe states.
 
 ### TP-05 Planner status actions
 
@@ -228,6 +229,7 @@ Scope:
 - Run history selection and run entry ordering.
 - All receipts view (runs + one-offs).
 - Editing run entries and one-off receipts.
+- Run/receipt navigation resets edit state.
 - Receipt edit validation for donation status + amount.
 
 Automated coverage:
@@ -238,6 +240,7 @@ Automated coverage:
 
 All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
 Receipt validation behavior is partially covered in `route-planner.component.spec.ts`; UI error states remain manual.
+Navigation/reset behavior for receipts is manual only.
 
 Manual checks:
 
@@ -247,6 +250,8 @@ Manual checks:
 - Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
 - Switch tax year and confirm All receipts and totals update to the selected year.
 - Edit a receipt: Donated requires an amount; NotRecorded allows blank.
+- Switching between a specific run and **All receipts** closes any inline edit panel and resets the list to full entries.
+- One-off receipts allow editing date and suggested amount; run receipts do not.
 
 ### TP-09 Shared UI components
 
