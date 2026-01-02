@@ -79,7 +79,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
    - Open a PR linked to the parent issue.
-   - Perform a code review using `pr review` and document it via a formal GitHub review (approve/request changes).
+   - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
      - Include evidence: acceptance criteria coverage, tests/TP-xx packs, and known gaps.
    - Confirm branch protection/rulesets won’t block the merge and note any skipped checks in the PR.
    - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
@@ -134,6 +134,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - `.github/prompts/branch.prompt.md`
 - `.github/prompts/docs.prompt.md`
 - `.github/prompts/pr.prompt.md`
+- `docs/dev/workflows/code-review.md`
 - `.github/prompts/testing.prompt.md`
 - `docs/dev/best-practices/documentation-style-guide.md`
 - `docs/dev/workflows/testing.md`
