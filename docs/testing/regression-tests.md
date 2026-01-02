@@ -227,6 +227,7 @@ Scope:
 - Donation status and method toggles.
 - Donation amount entry with decimals and validation.
 - Address copy and map launch behavior.
+- End run early behavior (remaining stops skipped with reason).
 
 Automated coverage:
 
@@ -239,6 +240,7 @@ Manual checks:
 - Status transitions: Pending -> Changed -> Delivered.
 - Skip dialog updates counts and progress.
 - Enter a decimal donation amount > 100 and confirm save works.
+- End a run early and confirm remaining stops are skipped with the correct reason.
 
 ### TP-08 Run completion and receipts
 
@@ -260,6 +262,7 @@ Automated coverage:
 All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
 Receipt validation behavior is partially covered in `route-planner.component.spec.ts`; UI error states remain manual.
 Navigation/reset behavior for receipts is manual only.
+Run completion reset behavior is covered in `storage.service.spec.ts`; UI history ordering remains manual.
 
 Manual checks:
 
@@ -271,6 +274,7 @@ Manual checks:
 - Edit a receipt: Donated requires an amount; NotRecorded allows blank.
 - Switching between a specific run and **All receipts** closes any inline edit panel and resets the list to full entries.
 - One-off receipts allow editing date and suggested amount; run receipts do not.
+- Complete a run and confirm Planner resets to the live route and the run appears first in history with the correct label/date.
 
 ### TP-09 Shared UI components
 

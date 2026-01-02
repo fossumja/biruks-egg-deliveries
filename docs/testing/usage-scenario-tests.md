@@ -252,6 +252,21 @@ Expected:
 - Totals and taxable amounts use the suggested rate from each event, not the latest rate.
 - Export totals match Planner totals after the rate change.
 
+### Scenario 13: Run completion reset and history ordering
+
+Related packs: TP-07, TP-08.
+
+Steps:
+
+1. Complete a run with a mix of Delivered and Skipped stops.
+2. Return to Planner and verify the live route reset.
+3. Open run history and confirm the completed run appears first with the correct label/date.
+
+Expected:
+
+- Planner resets to the live route after completion.
+- Run history is ordered newest-first and shows the latest run label/date.
+
 ## Outcomes
 
 - Manual scenarios confirm Planner, Run, and receipts behavior end to end.
