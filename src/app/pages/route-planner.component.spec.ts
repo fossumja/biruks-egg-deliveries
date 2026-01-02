@@ -1000,6 +1000,7 @@ describe('RoutePlannerComponent', () => {
     storage.runEntries = [];
     storage.runs = [];
 
+    localStorage.setItem('selectedTaxYear', '2025');
     await component.onRouteOrRunChange('receipts:all');
 
     component.oneOffDateMin = '2025-01-01';
