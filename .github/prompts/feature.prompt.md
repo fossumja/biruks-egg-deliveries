@@ -91,14 +91,15 @@ You are my feature delivery assistant.
 
 ## action=review
 
-1. Confirm a PR exists for the feature and includes Review Evidence.
-2. Run the code review per `docs/dev/workflows/code-review.md` and `pr review`.
+1. Confirm the feature branch is clean and pushed; if not, commit and push before reviewing.
+2. Confirm a PR exists for the feature and includes Review Evidence.
+3. Run the code review per `docs/dev/workflows/code-review.md` and `pr review`.
    - If self-reviewing and approvals are blocked, leave a formal PR comment with the evidence summary.
-3. Verify required checks are complete (`gh pr checks`) and note any skips/waivers.
-4. Confirm branch protection requirements are satisfied (approvals, checks).
-   - If approvals are required and you cannot self-approve, stop and request another reviewer.
-5. Ask for explicit confirmation before merge.
-6. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
+4. Verify required checks are complete (`gh pr checks`) and note any skips/waivers.
+5. Confirm branch protection requirements are satisfied (approvals, checks).
+   - If approvals are required and you cannot self-approve, stop and ask whether to adjust rulesets.
+6. Ask for explicit confirmation before merge.
+7. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
 
 ## Output
 

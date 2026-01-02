@@ -85,6 +85,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Verify the PR includes the Review Evidence section; if missing, stop and update the PR before merge.
    - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
      - Include evidence: acceptance criteria coverage, tests/TP-xx packs, and known gaps.
+   - If you are a solo maintainer, use a formal self-review comment and ensure branch protections do not require approvals.
    - Confirm branch protection/rulesets won’t block the merge and note any skipped checks in the PR.
    - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
 7. Cleanup after merge:
@@ -100,6 +101,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - PR includes `Fixes #{parent}` in the description.
 - PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
 - Review is documented (approval or self-review comment) before merge.
+- Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
 - Testing workflow used for behavior changes, with pack IDs recorded.

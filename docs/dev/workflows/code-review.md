@@ -32,6 +32,7 @@ Code reviews should show a clear line from requirements to verification. This wo
 - Use TP-xx pack IDs from `docs/testing/regression-tests.md` when applicable.
 - If evidence is missing, request changes or note explicit gaps with a follow-up issue.
 - For high-risk changes (data migrations, auth, payment, or destructive actions), ask for an additional reviewer.
+- For solo-maintainer repos, use a formal self-review comment (GitHub blocks self-approval) and ensure branch protections do not require approvals.
 
 ## Steps
 
