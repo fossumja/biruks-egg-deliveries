@@ -25,7 +25,7 @@ General rules:
 - Generate the commit message from the changes (I won’t type it).
 - If I don’t provide a version tag, propose the next `vYYYY.M.P` and ask me to confirm.
 - Ask whether to run tests before shipping.
-- Require full regression packs (TP-01 through TP-11) and usage scenarios before tagging or deploying; if skipping, get explicit confirmation and note it in release notes.
+- Require full regression packs (TP-01 through TP-11) and usage scenarios before tagging or deploying; if skipping, get explicit confirmation and record a waiver (what was skipped, why, who approved) in release notes or a PR comment.
 - If any command fails, stop and report the error and repo state.
 - Use the repo’s default branch (detect via `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name` or `git symbolic-ref refs/remotes/origin/HEAD`).
 
