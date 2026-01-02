@@ -76,6 +76,7 @@ Scope:
 - Dark mode toggle and theme application.
 - Tax year selector label and persistence.
 - Build info display and fetch behavior.
+- Accessibility and keyboard navigation for Home actions.
 
 Automated coverage:
 
@@ -83,12 +84,16 @@ Automated coverage:
 - `src/app/components/app-header.component.spec.ts` (progress summary calculations).
 - `src/app/app.component.spec.ts` (app shell bootstraps).
 
+Accessibility checks are manual-only unless automated tooling is added.
+
 Manual checks:
 
 - Home buttons show correct enabled/disabled states.
 - Route resume returns to the last selected route.
 - Header progress bar matches run state.
 - Switch tax year and confirm the selector label and state persist after refresh.
+- Keyboard tab order reaches import/export/help actions; focus is visible.
+- Home inputs and buttons have visible labels or aria-labels.
 
 ### TP-02 CSV import and baseline data
 
@@ -154,6 +159,7 @@ Scope:
 - Add delivery form validation and ordering.
 - Edit delivery fields and route changes.
 - Planner swipe gestures and back-card actions.
+- Accessibility and keyboard navigation for Planner actions.
 
 Automated coverage:
 
@@ -168,6 +174,8 @@ Manual checks:
 - Swipe a row open/close and confirm only one row is open at a time.
 - Trigger a back-card action (edit/skip/unsubscribe) and confirm the row closes after action.
 - Drag reorder is blocked when the toggle is off; enabled drag does not conflict with swipe states.
+- Tab order reaches search, add delivery, reorder toggle, and primary buttons; focus is visible.
+- Planner form inputs and buttons have visible labels or aria-labels.
 
 ### TP-05 Planner status actions
 
@@ -200,6 +208,7 @@ Scope:
 - Donation type selection and amount handling.
 - Donation amount validation (required when Donated, optional when NotRecorded, 0–9999 cap, decimals).
 - Totals and receipts inclusion.
+- Accessibility and keyboard navigation for one-off dialogs.
 
 Automated coverage:
 
@@ -217,6 +226,8 @@ Manual checks:
 - Switch tax year and confirm the one-off date min/max updates to the selected year window.
 - Status=Donated requires an amount; NotRecorded allows blank (treated as 0 in totals).
 - Amount accepts decimals and values above 100; 10000+ is rejected.
+- Tab order reaches save/cancel and donation controls in one-off dialogs; focus is visible.
+- One-off form inputs and buttons have visible labels or aria-labels.
 
 ### TP-07 Run flow and donation controls
 
@@ -228,6 +239,7 @@ Scope:
 - Donation amount entry with decimals and validation.
 - Address copy and map launch behavior.
 - End run early behavior (remaining stops skipped with reason).
+- Accessibility and keyboard navigation for Run actions.
 
 Automated coverage:
 
@@ -241,6 +253,8 @@ Manual checks:
 - Skip dialog updates counts and progress.
 - Enter a decimal donation amount > 100 and confirm save works.
 - End a run early and confirm remaining stops are skipped with the correct reason.
+- Tab order reaches Deliver/Skip/End Run actions and dialogs; focus is visible.
+- Run screen buttons and inputs have visible labels or aria-labels.
 
 ### TP-08 Run completion and receipts
 
