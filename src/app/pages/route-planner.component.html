@@ -714,24 +714,31 @@
                 "
               >
                 Suggested amount (baseline)
-                <select
+                <input
                   class="form-control"
-                  [(ngModel)]="runEntryDraft.suggestedAmount"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  max="9999"
+                  step="0.01"
+                  [ngModel]="runEntryDraft.suggestedAmount"
+                  (ngModelChange)="onRunEntrySuggestedAmountChange($event)"
                   name="runEntrySuggested"
-                >
-                  <option
-                    *ngFor="let val of receiptAmountOptions"
-                    [ngValue]="val"
-                  >
-                    ${{ val }}
-                  </option>
-                </select>
+                  [attr.aria-invalid]="runEntrySuggestedError ? 'true' : null"
+                  [attr.aria-describedby]="runEntrySuggestedError ? 'run-entry-suggested-error' : null"
+                />
+                @if (runEntrySuggestedError) {
+                  <p class="error-text" id="run-entry-suggested-error">
+                    {{ runEntrySuggestedError }}
+                  </p>
+                }
               </label>
               <label>
                 Donation status
                 <select
                   class="form-control"
-                  [(ngModel)]="runEntryDraft.donationStatus"
+                  [ngModel]="runEntryDraft.donationStatus"
+                  (ngModelChange)="onRunEntryDonationStatusChange($event)"
                   name="runEntryDonationStatus"
                 >
                   <option value="NotRecorded">Not recorded</option>
@@ -756,18 +763,24 @@
               </label>
               <label *ngIf="runEntryDraft.donationStatus === 'Donated'">
                 Donation amount
-                <select
+                <input
                   class="form-control"
-                  [(ngModel)]="runEntryDraft.donationAmount"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  max="9999"
+                  step="0.01"
+                  [ngModel]="runEntryDraft.donationAmount"
+                  (ngModelChange)="onRunEntryDonationAmountChange($event)"
                   name="runEntryDonationAmount"
-                >
-                  <option
-                    *ngFor="let val of receiptAmountOptions"
-                    [ngValue]="val"
-                  >
-                    ${{ val }}
-                  </option>
-                </select>
+                  [attr.aria-invalid]="runEntryAmountError ? 'true' : null"
+                  [attr.aria-describedby]="runEntryAmountError ? 'run-entry-amount-error' : null"
+                />
+                @if (runEntryAmountError) {
+                  <p class="error-text" id="run-entry-amount-error">
+                    {{ runEntryAmountError }}
+                  </p>
+                }
               </label>
             </div>
             <div class="donation-actions">
@@ -781,7 +794,11 @@
               <button
                 class="btn btn-primary"
                 type="button"
-                [disabled]="editingRunEntry?.runId === 'oneoff' && !!runEntryDateError"
+                [disabled]="
+                  (editingRunEntry?.runId === 'oneoff' && !!runEntryDateError) ||
+                  !!runEntryAmountError ||
+                  !!runEntrySuggestedError
+                "
                 (click)="saveRunEntryEdit()"
               >
                 Save
