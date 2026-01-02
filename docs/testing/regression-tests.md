@@ -81,6 +81,7 @@ Automated coverage:
 
 - `src/app/pages/home.component.spec.ts` (import/export/restore triggers, settings toggles, tax year persistence, multi-year warning).
 - `src/app/components/app-header.component.spec.ts` (progress summary calculations).
+- `src/app/app.component.spec.ts` (app shell bootstraps).
 
 Manual checks:
 
@@ -311,6 +312,7 @@ Automated coverage:
 
 - Unit tests cover share/download fallback, maps links, and clipboard flows.
 - Device and PWA checks remain manual.
+Offline cache, service worker update, and install flow checks are manual-only today.
 
 Device matrix (minimum regression target):
 
@@ -344,6 +346,9 @@ Use this table to choose packs based on changed files.
 
 | Change area | Required packs | Notes |
 | --- | --- | --- |
+| `src/app/app.component.*` | TP-01 | App shell bootstrapping and base layout. |
+| `src/app/app.config.ts` | TP-01, TP-11 | Router setup and service worker registration. |
+| `src/app/app.routes.ts` | TP-01 | Navigation and route wiring. |
 | `src/app/pages/home.component.*` | TP-01, TP-02, TP-03, TP-11 | Home owns import/export/restore and settings. |
 | `src/app/components/app-header.component.*` | TP-01 | Header progress and navigation. |
 | `src/app/pages/route-planner.component.*` | TP-04, TP-05, TP-06, TP-08 | Planner owns editing, one-offs, and receipts. |
