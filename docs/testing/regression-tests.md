@@ -122,6 +122,7 @@ Scope:
 - Event date normalization (Excel serials, date-only strings).
 - Share API fallback and file naming.
 - Backup/restore round-trip with RowType preservation.
+- Export totals reflect per-event suggested amounts when suggested rate changes.
 
 Automated coverage:
 
@@ -141,6 +142,7 @@ Manual checks:
 - Backup CSV includes RowType values for deliveries, runs, and run entries.
 - Restore warns about destructive overwrite, then rebuilds routes and run history.
 - Totals after restore match the selected tax-year totals.
+- Set suggested rate A, record donations; change to rate B, record more; export totals use per-event suggested amounts.
 
 ### TP-04 Planner core
 
@@ -293,6 +295,7 @@ Scope:
 - Import state save/load and baseRowId handling.
 - Date normalization rules and sorting.
  - Import parsing and validation utilities.
+- Totals calculations under suggested rate changes.
 
 Automated coverage:
 
@@ -301,11 +304,14 @@ Automated coverage:
 - `src/app/services/usage-scenario-totals.spec.ts`
 - `src/app/services/usage-scenario-runner.spec.ts`
 
+Totals with suggested rate changes are covered in `usage-scenario-totals.spec.ts`.
+
 Manual checks:
 
 - Suggested donation rate persists across sessions.
 - Import state survives backup and restore.
 - Switch tax year and confirm totals/exports are computed for the selected year.
+- Suggested rate changes do not retroactively alter existing totals.
 
 ### TP-11 Device and PWA
 

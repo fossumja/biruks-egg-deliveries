@@ -235,6 +235,23 @@ Expected:
 - Restore rebuilds routes and run history correctly.
 - Totals after restore match the selected tax-year totals.
 
+### Scenario 12: Suggested rate changes and totals
+
+Related packs: TP-03, TP-10.
+
+Steps:
+
+1. Set suggested donation rate A on Home.
+2. Record a run donation and a one-off donation.
+3. Change suggested donation rate to B.
+4. Record another run donation and a one-off donation.
+5. Export a CSV.
+
+Expected:
+
+- Totals and taxable amounts use the suggested rate from each event, not the latest rate.
+- Export totals match Planner totals after the rate change.
+
 ## Outcomes
 
 - Manual scenarios confirm Planner, Run, and receipts behavior end to end.
