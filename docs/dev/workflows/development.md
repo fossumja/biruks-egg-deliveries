@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-02
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -38,6 +38,8 @@ Use this workflow to set up and run the app locally during active development.
 - Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
 - In sandboxed environments, base checks and Karma may require escalated permissions; rerun with approval if blocked.
+- Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
+- Before starting new work or switching branches, confirm the working tree is clean or ask the user how to handle existing changes.
 
 ## Steps
 
@@ -83,6 +85,8 @@ Use this workflow to set up and run the app locally during active development.
 - Retrospective notes captured for completed features.
 - Base checks run for each issue-sized change.
 - Testing workflow executed when behavior changes, with pack IDs recorded.
+- High-risk actions were confirmed explicitly before execution.
+- Working tree state was confirmed before switching workstreams.
 
 ## Outputs
 
@@ -98,6 +102,8 @@ Use this workflow to set up and run the app locally during active development.
 - Added explicit docs prompt guidance so documentation updates stay aligned with the style guide.
 - Added testing workflow integration so behavior changes drive regression packs and test updates.
 - Added a sandbox note for base checks and Karma requiring escalated permissions.
+- Added explicit confirmation requirement for high-risk actions.
+- Added a worktree cleanliness confirmation step before switching tasks.
 
 ## Related docs
 

@@ -4,7 +4,7 @@ This guide documents how agents should choose and run terminal commands in this 
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-02
 - **Type**: Reference
 - **Scope**: terminal command selection, approvals, and settings alignment
 - **Non-goals**: redefining system or developer instructions, changing sandbox rules
@@ -12,7 +12,7 @@ This guide documents how agents should choose and run terminal commands in this 
 
 ## Summary
 
-Use editor settings as guidance when they are provided, but do not treat them as authoritative over sandbox or approval rules. Prefer commands that align with the auto-approve list to reduce prompts, and ask before running unusual or destructive commands.
+Use editor settings as guidance when they are provided, but do not treat them as authoritative over sandbox or approval rules. Prefer commands that align with the auto-approve list to reduce prompts, and ask before running unusual or destructive commands. For high-risk actions, warn the user and get explicit confirmation before proceeding.
 
 ## Inputs
 
@@ -34,6 +34,18 @@ Use editor settings as guidance when they are provided, but do not treat them as
 - If a command requires escalation (network access, elevated filesystem), request it once with a clear justification.
 - Avoid destructive commands unless explicitly requested.
 
+### High-risk operations
+
+Warn the user and obtain explicit confirmation before running commands that could cause irreversible repo or data changes.
+
+- History rewrite tools (`git filter-repo`, BFG, rebasing shared branches).
+- Force pushes or branch/tag deletions.
+- Repository settings changes (branch protections, required checks, permissions).
+- Large-scale deletions or resets (`git reset --hard`, `git clean -fdx`, `rm -rf`).
+- Data purges or migrations that delete exports or user data.
+
+When confirmation is needed, summarize the impact and offer a safer alternative (for example, a new clean repo or a non-destructive backup).
+
 ### Settings usage
 
 - If a `settings.json` snippet is provided, confirm any assumptions you plan to rely on.
@@ -46,6 +58,8 @@ Use editor settings as guidance when they are provided, but do not treat them as
 2. Note any provided editor settings that affect command approvals.
 3. Choose tools that align with repo standards and the auto-approve list.
 4. Ask before using commands outside the list unless required to complete the task.
+5. Call out high-risk actions early and confirm the user wants to proceed.
+6. Check for uncommitted changes before switching branches or starting new work, and ask the user how to proceed if the tree is dirty.
 
 ## Open questions
 

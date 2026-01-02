@@ -5,7 +5,7 @@ Follow them alongside system and developer instructions.
 
 - **Status**: Stable
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-02
 - **Type**: Reference
 - **Scope**: agent behavior and repo-specific standards
 - **Non-goals**: replace system/developer instructions or code-level standards
@@ -29,6 +29,22 @@ Follow them alongside system and developer instructions.
 - When adding new operational guidance, update the relevant prompt/workflow doc and note it here.
 - Canonical guidance for issue creation lives in `.github/prompts/issues.prompt.md` and `docs/dev/workflows/triage.md`.
 
+## Worktree safety checks
+
+- Before starting new work, switching branches, or running a workflow, check for uncommitted changes.
+- If the working tree is not clean, **stop and ask the user how to proceed** (commit, stash, discard, or keep working on current changes).
+
+## Safety for high-risk actions
+
+- If a task requires a high-risk or potentially irreversible change, **warn the user and get explicit confirmation before proceeding**.
+- High-risk actions include:
+  - History rewrites (for example `git filter-repo`, BFG, rebasing shared branches).
+  - Force pushes or destructive branch/tag deletes (including mass branch cleanup).
+  - Repo settings or ruleset changes (branch protection, required checks, permissions).
+  - Large-scale deletions or resets (`git reset --hard`, `git clean -fdx`, `rm -rf`, deleting folders across the repo).
+  - Data purges or migrations that can delete user data or exports.
+- Provide a brief summary of the impact, the alternative (if any), and the rollback option before asking for confirmation.
+
 ## Agent terminal practices
 
 - Guidance on terminal command selection and alignment with editor settings lives in `docs/dev/best-practices/agent-terminal-practices.md`.
@@ -50,3 +66,5 @@ Follow them alongside system and developer instructions.
 
 - Added command-formatting guidance so agents avoid brittle shell pipelines for issue creation.
 - Linked the new agent terminal practices doc for settings-aligned command usage.
+- Added explicit high-risk action warnings so agents confirm before potentially destructive changes.
+- Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.
