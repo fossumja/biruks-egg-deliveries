@@ -218,6 +218,23 @@ Expected:
 - Invalid numeric Dozens triggers an import validation error.
 - Extra custom columns are preserved in the export.
 
+### Scenario 11: Backup/restore round-trip
+
+Related packs: TP-03, TP-10.
+
+Steps:
+
+1. Complete a run and add at least one one-off donation.
+2. Export a backup CSV and verify it includes RowType values for deliveries, runs, and run entries.
+3. Restore from the backup and confirm the destructive overwrite warning.
+4. Verify routes, run history, and totals after restore.
+
+Expected:
+
+- Backup contains RowType rows for deliveries, runs, and run entries.
+- Restore rebuilds routes and run history correctly.
+- Totals after restore match the selected tax-year totals.
+
 ## Outcomes
 
 - Manual scenarios confirm Planner, Run, and receipts behavior end to end.

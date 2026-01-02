@@ -121,6 +121,7 @@ Scope:
 - Restore behavior for run history and one-off events.
 - Event date normalization (Excel serials, date-only strings).
 - Share API fallback and file naming.
+- Backup/restore round-trip with RowType preservation.
 
 Automated coverage:
 
@@ -137,6 +138,9 @@ Manual checks:
 - Restore replaces existing data and rebuilds run history.
 - Totals in export match app totals after one-offs.
 - Export totals reflect the selected tax year and the backup filename includes the year.
+- Backup CSV includes RowType values for deliveries, runs, and run entries.
+- Restore warns about destructive overwrite, then rebuilds routes and run history.
+- Totals after restore match the selected tax-year totals.
 
 ### TP-04 Planner core
 
