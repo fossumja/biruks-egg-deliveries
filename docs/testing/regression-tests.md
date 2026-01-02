@@ -333,7 +333,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 
 Totals with suggested rate changes are covered in `usage-scenario-totals.spec.ts`.
-Dexie migration and upgrade flows are manual-only unless test utilities are extended.
+Dexie migration upgrade coverage exists in `storage.service.spec.ts` for legacy data upgrades; device upgrade flows remain manual.
 
 Manual checks:
 
