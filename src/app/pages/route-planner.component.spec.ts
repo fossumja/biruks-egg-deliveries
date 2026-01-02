@@ -469,6 +469,38 @@ describe('RoutePlannerComponent', () => {
     expect(component.deliveries.length).toBe(2);
   });
 
+  it('resets search and inline edit state when switching routes', async () => {
+    const alpha = createDelivery({
+      id: 'delivery-1',
+      baseRowId: 'base-1',
+      routeDate: 'Week A',
+      name: 'Alpha',
+      deliveryOrder: 0,
+      sortIndex: 0,
+    });
+    const beta = createDelivery({
+      id: 'delivery-2',
+      baseRowId: 'base-2',
+      routeDate: 'Week A',
+      name: 'Beta',
+      deliveryOrder: 1,
+      sortIndex: 1,
+    });
+
+    storage.deliveries = [alpha, beta];
+    component.searchTerm = 'alp';
+    component.filteredDeliveries = [alpha];
+    component.editingStop = alpha;
+    component.openRowId = alpha.id;
+
+    await component.onRouteOrRunChange('route:Week A');
+
+    expect(component.searchTerm).toBe('');
+    expect(component.filteredDeliveries.length).toBe(2);
+    expect(component.editingStop).toBeNull();
+    expect(component.openRowId).toBeNull();
+  });
+
   it('filters deliveries by search term and clears on toggle', () => {
     const alpha = createDelivery({ id: 'delivery-1', name: 'Alpha' });
     const beta = createDelivery({ id: 'delivery-2', name: 'Beta' });
@@ -1053,6 +1085,39 @@ describe('RoutePlannerComponent', () => {
       '.inline-donation .btn.btn-primary'
     ) as HTMLButtonElement;
     expect(saveButton.disabled).toBeFalse();
+  });
+
+  it('clears receipt edit state when switching between run and all receipts', async () => {
+    const run = {
+      id: 'run-1',
+      date: '2025-01-05',
+      weekType: 'Week A',
+      label: 'Week A - 2025-01-05',
+      routeDate: 'Week A',
+    };
+    const entry = createRunEntry({
+      id: 'entry-1',
+      runId: 'run-1',
+      eventDate: '2025-01-05'
+    });
+    storage.runs = [run];
+    storage.runEntries = [entry];
+    storage.deliveries = [];
+
+    component.editingRunEntry = entry;
+    component.runEntryDraft = {
+      status: 'delivered',
+      dozens: 1,
+      deliveryOrder: 1,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 5,
+    };
+
+    await component.onRouteOrRunChange('receipts:all');
+
+    expect(component.editingRunEntry).toBeNull();
+    expect(component.runEntryDraft).toBeNull();
   });
 
   it('blocks receipt save when donated amount is missing', () => {

@@ -275,7 +275,7 @@ Automated coverage:
 
 All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
 Receipt validation behavior (amount required/max) is covered in `route-planner.component.spec.ts`; UI error styling remains manual.
-Navigation/reset behavior for receipts is manual only.
+Navigation/reset behavior for receipts is covered in `route-planner.component.spec.ts`.
 Run completion reset behavior is covered in `storage.service.spec.ts`; UI history ordering remains manual.
 
 Manual checks:
