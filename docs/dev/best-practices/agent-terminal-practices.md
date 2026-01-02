@@ -30,6 +30,7 @@ Use editor settings as guidance when they are provided, but do not treat them as
 - Prefer commands that are parseable by the approval rules engine (avoid wrapping multiple commands in a single `zsh -lc "<...>"` string when possible).
 - Split multi-step work into separate commands so allowlists can match the real tool (`gh`, `git`, `npm`) directly.
 - Use `--body-file` and temp files instead of complex heredocs inside quoted shells.
+- Do not combine temp-file creation and `gh` calls in the same quoted command; run them as separate commands.
 
 ### Approval and sandbox alignment
 
