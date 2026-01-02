@@ -7,33 +7,12 @@ import { StorageService } from '../services/storage.service';
 import { BackupService } from '../services/backup.service';
 import { ToastService } from '../services/toast.service';
 import { Delivery, DonationInfo } from '../models/delivery.model';
+import { buildAddress, clearLocalStorage, createStop } from '../../testing/spec-helpers';
 
 type DonationUpdate = {
   id: string;
   donation: DonationInfo;
 };
-
-const createStop = (overrides: Partial<Delivery> = {}): Delivery => ({
-  id: 'stop-1',
-  runId: 'Week A',
-  baseRowId: 'base-1',
-  routeDate: 'Week A',
-  name: 'Customer',
-  address: '123 Main St',
-  city: 'Springfield',
-  state: 'IL',
-  zip: '00000',
-  dozens: 2,
-  deliveryOrder: 0,
-  sortIndex: 0,
-  status: '',
-  createdAt: '2025-01-01T00:00:00.000Z',
-  updatedAt: '2025-01-01T00:00:00.000Z',
-  ...overrides,
-});
-
-const buildAddress = (stop: Delivery): string =>
-  `${stop.address}, ${stop.city}, ${stop.state} ${stop.zip ?? ''}`.trim();
 
 class StorageServiceStub {
   deliveries: Delivery[] = [];
@@ -117,7 +96,7 @@ describe('DeliveryRunComponent', () => {
   let toast: ToastServiceStub;
 
   beforeEach(async () => {
-    localStorage.clear();
+    clearLocalStorage();
 
     await TestBed.configureTestingModule({
       imports: [DeliveryRunComponent, RouterTestingModule, NoopAnimationsModule],

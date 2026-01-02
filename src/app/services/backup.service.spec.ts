@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { BackupService } from './backup.service';
 import { StorageService } from './storage.service';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
+import { buildImportStateFromDeliveries } from '../../testing/fixtures/csv-fixture-builder';
 import Papa from 'papaparse';
 
 // NOTE: These are initial data-level tests focused on totals.
@@ -15,21 +16,6 @@ type NavigatorShare = Navigator & {
 describe('BackupService totals with mini route', () => {
   let backup: BackupService;
   let storage: StorageService;
-
-  const buildImportState = (deliveries: { baseRowId: string; name: string }[]) => {
-    const headers = ['BaseRowId', 'Name'];
-    const rowsByBaseRowId: Record<string, string[]> = {};
-    deliveries.forEach((delivery) => {
-      if (!rowsByBaseRowId[delivery.baseRowId]) {
-        rowsByBaseRowId[delivery.baseRowId] = [delivery.baseRowId, delivery.name];
-      }
-    });
-    return {
-      headers,
-      rowsByBaseRowId,
-      mode: 'baseline' as const
-    };
-  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -256,7 +242,7 @@ describe('BackupService totals with mini route', () => {
     await storage.completeRun('2025-01-01', false);
 
     const deliveries = await storage.getAllDeliveries();
-    const importState = buildImportState(deliveries);
+    const importState = buildImportStateFromDeliveries(deliveries);
     const runEntries = await storage.getAllRunEntries();
     const runs = await storage.getAllRuns();
     const totals = (backup as any).computeTotalsByBase(
@@ -308,7 +294,7 @@ describe('BackupService totals with mini route', () => {
     });
 
     const deliveries = await storage.getAllDeliveries();
-    const importState = buildImportState(deliveries);
+    const importState = buildImportStateFromDeliveries(deliveries);
     const runEntries = await storage.getAllRunEntries();
     const runs = await storage.getAllRuns();
     const totals = (backup as any).computeTotalsByBase(

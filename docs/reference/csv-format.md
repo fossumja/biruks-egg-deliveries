@@ -4,7 +4,7 @@ Reference for the CSV files the app imports, exports, and restores. Covers basel
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2026-01-02
 - **Type**: Reference
 - **Scope**: CSV import/export schema and parsing rules
 - **Non-goals**: UI steps for importing/exporting CSV files
@@ -72,6 +72,8 @@ Backups include baseline columns plus history columns. They always include a `Ro
 #### History columns (run and one-off rows)
 
 These columns are appended on export and used during restore.
+
+One-off receipts use `EventDate` as the receipt date shown in history and exports.
 
 | Column | Type | Notes |
 | --- | --- | --- |
@@ -151,6 +153,10 @@ If the app has no saved import state, exports are a flat delivery list with thes
 - `RowType` values are case-insensitive on import and restore.
 - The restore parser accepts `RunTaxableAmount` or `TaxableAmount` when rebuilding receipts.
 - Backup exports preserve the original header order and append missing columns, so column order can vary between files.
+
+## What changed / Why
+
+- Clarified that one-off receipts use `EventDate` in history and exports.
 
 ## Examples
 
