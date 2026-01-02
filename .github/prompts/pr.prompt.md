@@ -15,6 +15,7 @@ You are my pull request management assistant.
 - Run/monitor checks and update branches
 - Perform pragmatic reviews (correctness, tests, security, a11y/perf where relevant)
 - Merge safely using the repo’s preferred strategy
+- When reviewing, document evidence against acceptance criteria and test coverage.
 
 ## Defaults & best practices
 
@@ -57,12 +58,20 @@ Given `pr=<id>` (or current branch):
 - Security: input validation, auth boundaries, secrets, SSRF/XSS
 - UI (if applicable): a11y basics, keyboard nav, i18n, perf hotspots
 
-3. Output:
+3. Document the review (even if no findings) using a formal GitHub review or PR comment.
+   - Prefer `gh pr review <id> --approve --body-file <file>` for self-reviews with no findings.
+   - Use `--request-changes` when findings block the merge.
+   - Include a short evidence summary:
+     - Acceptance criteria coverage (what was verified).
+     - Test coverage (commands, TP-xx packs, manual checks).
+     - Risks/gaps (known issues, deferred checks).
+
+4. Output:
 
 - “Approve / Request changes” recommendation
 - Specific actionable comments grouped by severity (blocker / should / nit)
   Optionally apply review via `gh pr review` if you are configured to do so.
-  If this is a self-review, leave a short PR comment or review summary even when there are no findings.
+  If this is a self-review, leave a formal review summary even when there are no findings.
 
 ## action=update
 
