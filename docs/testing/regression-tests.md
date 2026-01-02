@@ -153,6 +153,7 @@ Scope:
 - Reorder toggle and drag behavior.
 - Add delivery form validation and ordering.
 - Edit delivery fields and route changes.
+- Planner swipe gestures and back-card actions.
 
 Automated coverage:
 
@@ -164,6 +165,9 @@ Manual checks:
 - New deliveries insert at the correct order and reindex.
 - Search hides non-matching stops and is reversible.
 - Switching between routes or All Schedules resets filters to the full list and closes any inline edits or swipe states.
+- Swipe a row open/close and confirm only one row is open at a time.
+- Trigger a back-card action (edit/skip/unsubscribe) and confirm the row closes after action.
+- Drag reorder is blocked when the toggle is off; enabled drag does not conflict with swipe states.
 
 ### TP-05 Planner status actions
 
@@ -173,15 +177,19 @@ Scope:
 - Unsubscribe and resubscribe behavior.
 - Reset route and reset stop behavior.
 - Status pills across Planner and Run views.
+- Swipe back-card actions for status changes.
 
 Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (reset route/stop and unsubscribed preservation).
 
+Swipe/back-card gestures are only partially covered in `route-planner.component.spec.ts`; action reliability is manual.
+
 Manual checks:
 
 - Unsubscribed stops move to the end and stay skipped after reset.
 - Reset does not resubscribe users.
+- Swipe open a row and confirm skip/unskip/unsubscribe actions are clickable and close the row.
 
 ### TP-06 One-off donations and deliveries
 
