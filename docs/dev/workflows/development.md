@@ -40,6 +40,7 @@ Use this workflow to set up and run the app locally during active development.
 - In sandboxed environments, base checks and Karma may require escalated permissions; rerun with approval if blocked.
 - Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
 - Before starting new work or switching branches, confirm the working tree is clean or ask the user how to handle existing changes.
+- Use one command per tool call; avoid multi-command `zsh -lc` strings and repo-external temp files.
 
 ## Steps
 

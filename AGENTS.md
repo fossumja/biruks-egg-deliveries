@@ -26,6 +26,9 @@ Follow them alongside system and developer instructions.
 
 - Prefer `--body-file` for multi-line `gh issue create` bodies to avoid shell quoting/pipeline issues.
 - Avoid `cat <<EOF | gh issue create` pipes in favor of temp files or `--body-file`.
+- Follow `docs/dev/best-practices/agent-terminal-practices.md` strictly for command structure.
+- Do **not** run multi-command `zsh -lc` strings (loops, heredocs, chained commands); run one command per tool call.
+- Prefer repo-local temp files (for example `tmp/`) instead of `/tmp` to avoid approval prompts.
 - When adding new operational guidance, update the relevant prompt/workflow doc and note it here.
 - Canonical guidance for issue creation lives in `.github/prompts/issues.prompt.md` and `docs/dev/workflows/triage.md`.
 
@@ -67,6 +70,7 @@ Follow them alongside system and developer instructions.
 ## What changed / Why
 
 - Added command-formatting guidance so agents avoid brittle shell pipelines for issue creation.
+- Added explicit command-structure guardrails (no multi-command `zsh -lc`) and a pointer to terminal practices.
 - Linked the new agent terminal practices doc for settings-aligned command usage.
 - Added explicit high-risk action warnings so agents confirm before potentially destructive changes.
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.

@@ -26,6 +26,18 @@ labels: ["type:enhancement", "priority:medium"]
 - Automation references:
 - Usage scenarios:
 
+## Docs impact
+
+- [ ] Docs updated
+- [ ] Not needed (explain):
+
+## Risk assessment
+
+- Impacted areas:
+- Backward compatibility:
+- Data/security considerations:
+- Rollback plan:
+
 ## Review focus
 
 - 

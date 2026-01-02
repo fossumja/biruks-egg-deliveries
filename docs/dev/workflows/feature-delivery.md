@@ -30,6 +30,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Keep child issues and the parent checklist updated as work completes.
 - Commit each child issue’s changes before moving to the next one.
 - Do not push the feature branch until the parent feature is complete unless the user explicitly asks.
+- Use one command per tool call; avoid multi-command `zsh -lc` strings and repo-external temp files.
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Use the docs prompt and documentation style guide when updating docs.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.

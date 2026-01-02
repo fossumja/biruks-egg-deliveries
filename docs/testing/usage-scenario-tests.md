@@ -29,6 +29,7 @@ Use these scenarios to validate behavior that spans import, Planner actions, Run
 
 - Start from a clean app state (recommended): clear local storage/IndexedDB or use a fresh profile.
 - Import a real route CSV via **Import CSV** (or use the sample data if you are only smoke testing).
+- For CSV edge-case checks, prepare a small CSV with header aliases, missing optional columns, and extra custom columns.
 - Set the suggested donation rate on Home.
 - Pick a single route in Planner (avoid All Schedules for these scenarios).
 - If running on device or PWA, also run TP-11 from `docs/testing/regression-tests.md`.
@@ -42,6 +43,7 @@ Data-level scenarios are automated with Jasmine/Karma to validate totals and exp
 - `src/testing/fixtures/mini-route.fixture.ts`
 
 These tests focus on `StorageService` and `BackupService`. Planner and Run UI flows remain manual.
+Tax-year filtering and multi-year totals are covered in `usage-scenario-totals.spec.ts`; export filename year and UI switching remain manual.
 
 ## Manual scenarios
 
@@ -161,6 +163,109 @@ Expected:
 - All receipts view shows runs and one-offs in date order for the selected tax year.
 - Export totals match the Planner totals for the selected tax year.
 - Delete a receipt from **All receipts** and confirm the list and totals update.
+
+### Scenario 8: Multi-year filtering and export
+
+Related packs: TP-01, TP-03, TP-06, TP-08, TP-10.
+
+Steps:
+
+1. Set the tax year to the previous year and create a one-off donation with a date in that year.
+2. Switch to the current tax year and create a one-off donation with a date in the current year.
+3. On Home, switch between the two tax years.
+4. Export a CSV for each selected tax year.
+
+Expected:
+
+- All receipts lists only the entries for the selected tax year.
+- Planner totals update to reflect only the selected tax year.
+- Export totals match the selected tax year.
+- Export filename includes the selected tax year.
+
+### Scenario 9: Donation amount validation edge cases
+
+Related packs: TP-06, TP-07, TP-08, TP-09.
+
+Steps:
+
+1. In a one-off donation, set status to Donated and leave amount blank.
+2. Switch status to NotRecorded and leave amount blank.
+3. Enter a decimal donation amount greater than 100 (for example 125.50).
+4. Enter an amount above 9999 and attempt to save.
+
+Expected:
+
+- Donated with a blank amount blocks save.
+- NotRecorded allows a blank amount (treated as 0 in totals).
+- Decimal amounts above 100 save successfully.
+- Amounts over 9999 are rejected with a validation error.
+
+### Scenario 10: CSV import edge cases
+
+Related packs: TP-02, TP-10.
+
+Steps:
+
+1. Import a CSV with header aliases (for example, Schedule/Date, Qty/Dozens).
+2. Import a CSV missing optional columns (Notes, Donation fields).
+3. Import a CSV with an invalid numeric value in Dozens.
+4. Import a CSV with extra custom columns, then export.
+
+Expected:
+
+- Header aliases map correctly and import succeeds.
+- Missing optional columns do not block import.
+- Invalid numeric Dozens triggers an import validation error.
+- Extra custom columns are preserved in the export.
+
+### Scenario 11: Backup/restore round-trip
+
+Related packs: TP-03, TP-10.
+
+Steps:
+
+1. Complete a run and add at least one one-off donation.
+2. Export a backup CSV and verify it includes RowType values for deliveries, runs, and run entries.
+3. Restore from the backup and confirm the destructive overwrite warning.
+4. Verify routes, run history, and totals after restore.
+
+Expected:
+
+- Backup contains RowType rows for deliveries, runs, and run entries.
+- Restore rebuilds routes and run history correctly.
+- Totals after restore match the selected tax-year totals.
+
+### Scenario 12: Suggested rate changes and totals
+
+Related packs: TP-03, TP-10.
+
+Steps:
+
+1. Set suggested donation rate A on Home.
+2. Record a run donation and a one-off donation.
+3. Change suggested donation rate to B.
+4. Record another run donation and a one-off donation.
+5. Export a CSV.
+
+Expected:
+
+- Totals and taxable amounts use the suggested rate from each event, not the latest rate.
+- Export totals match Planner totals after the rate change.
+
+### Scenario 13: Run completion reset and history ordering
+
+Related packs: TP-07, TP-08.
+
+Steps:
+
+1. Complete a run with a mix of Delivered and Skipped stops.
+2. Return to Planner and verify the live route reset.
+3. Open run history and confirm the completed run appears first with the correct label/date.
+
+Expected:
+
+- Planner resets to the live route after completion.
+- Run history is ordered newest-first and shows the latest run label/date.
 
 ## Outcomes
 
