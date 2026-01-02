@@ -268,7 +268,8 @@ Manual checks:
 
 - Completing a run resets the route for the next run.
 - All receipts view shows both run entries and one-offs for the selected tax year.
-- Delete a receipt from **Past runs** / **All receipts** and confirm it disappears and totals refresh.
+- Delete a receipt from **All receipts** and confirm it disappears and totals refresh.
+- Delete a receipt from **Past runs** and confirm it disappears and totals refresh.
 - Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
 - Switch tax year and confirm All receipts and totals update to the selected year.
 - Edit a receipt: Donated requires an amount; NotRecorded allows blank.
