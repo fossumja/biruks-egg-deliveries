@@ -356,8 +356,8 @@ Scope:
 
 Automated coverage:
 
-- Unit tests cover share/download fallback, maps links, and clipboard flows.
-- Device and PWA checks remain manual.
+- Unit tests cover share/download fallback, maps links, clipboard flows, and service worker registration options (`app.config.spec.ts`).
+- Device and PWA install/offline checks remain manual.
 Offline cache, service worker update, and install flow checks are manual-only today.
 
 Device matrix (minimum regression target):
