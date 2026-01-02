@@ -28,6 +28,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Follow branch naming rules in `.github/prompts/branch.prompt.md`.
 - Use the development workflow to validate each issue plan before implementation.
 - Keep child issues and the parent checklist updated as work completes.
+- Commit each child issue’s changes before moving to the next one.
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Use the docs prompt and documentation style guide when updating docs.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
@@ -64,6 +65,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
    - Run at least one base check (default: `npm run build`) and note results.
    - If `public/build-info.json` changes, restore it before committing.
+   - Commit the child issue work before moving to the next child issue.
    - Update the parent checklist safely; if tooling is missing, leave a progress comment instead of editing the body.
 3. Retrospective (per feature):
    - Capture what worked, what hurt, and the next improvement in the parent issue or PR.
@@ -97,6 +99,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Base checks run for each child issue; full quality run before PR.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
+- Each child issue was committed before starting the next one.
 
 ## Outputs
 
@@ -114,6 +117,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added a retrospective follow-up step so learnings are applied or tracked.
 - Added explicit confirmation requirement for high-risk actions.
 - Added a worktree cleanliness confirmation step before switching tasks.
+- Added guidance to commit each child issue before moving on to keep the feature branch clean.
 
 ## Related docs
 

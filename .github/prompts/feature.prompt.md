@@ -57,13 +57,14 @@ You are my feature delivery assistant.
    - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
 6. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
 7. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
-8. Update the child issue status (close or comment with progress and test notes).
-9. Update the parent issue checklist to reflect completion:
+8. Commit the child issue work so the branch is clean before moving to the next child issue.
+9. Update the child issue status (close or comment with progress and test notes).
+10. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-10. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-11. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+11. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+12. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
