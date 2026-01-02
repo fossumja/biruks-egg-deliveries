@@ -29,6 +29,7 @@ Use these scenarios to validate behavior that spans import, Planner actions, Run
 
 - Start from a clean app state (recommended): clear local storage/IndexedDB or use a fresh profile.
 - Import a real route CSV via **Import CSV** (or use the sample data if you are only smoke testing).
+- For CSV edge-case checks, prepare a small CSV with header aliases, missing optional columns, and extra custom columns.
 - Set the suggested donation rate on Home.
 - Pick a single route in Planner (avoid All Schedules for these scenarios).
 - If running on device or PWA, also run TP-11 from `docs/testing/regression-tests.md`.
@@ -198,6 +199,24 @@ Expected:
 - NotRecorded allows a blank amount (treated as 0 in totals).
 - Decimal amounts above 100 save successfully.
 - Amounts over 9999 are rejected with a validation error.
+
+### Scenario 10: CSV import edge cases
+
+Related packs: TP-02, TP-10.
+
+Steps:
+
+1. Import a CSV with header aliases (for example, Schedule/Date, Qty/Dozens).
+2. Import a CSV missing optional columns (Notes, Donation fields).
+3. Import a CSV with an invalid numeric value in Dozens.
+4. Import a CSV with extra custom columns, then export.
+
+Expected:
+
+- Header aliases map correctly and import succeeds.
+- Missing optional columns do not block import.
+- Invalid numeric Dozens triggers an import validation error.
+- Extra custom columns are preserved in the export.
 
 ## Outcomes
 

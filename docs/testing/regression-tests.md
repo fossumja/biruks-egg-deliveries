@@ -108,6 +108,10 @@ Manual checks:
 
 - Import accepts real route CSVs and shows helpful errors for malformed files.
 - Imported routes appear with correct totals and can be opened.
+- Import with aliased headers (for example Schedule/Date, Qty/Dozens) maps correctly.
+- Import with missing optional columns (Notes, Donation fields) succeeds.
+- Import fails on invalid numeric Dozens and surfaces the validation error.
+- Import preserves extra custom columns for export.
 
 ### TP-03 Backup, export, restore
 
@@ -284,6 +288,7 @@ Scope:
 - Storage state transitions and persistence.
 - Import state save/load and baseRowId handling.
 - Date normalization rules and sorting.
+ - Import parsing and validation utilities.
 
 Automated coverage:
 
