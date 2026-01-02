@@ -64,7 +64,7 @@ Use this workflow to set up and run the app locally during active development.
    - Use targeted checks (lint/test) when the change affects behavior.
    - Use the testing workflow (`testing scope`) to select regression packs when behavior changes, then run automated/manual checks and record the TP-xx IDs.
    - Update or add tests for behavior changes; if coverage is deferred, log a follow-up issue and note it.
-   - Run at least one base check (default: `npm run build`) for each issue-sized change.
+   - Run at least one base check (default: `npm run build`) for each issue-sized change; fix any errors before closing the issue.
    - If `public/build-info.json` changes, restore it before committing.
 9. Update docs when behavior changes:
    - Use `/docs` with `doc: guide <file>` or `doc: align <file>` to keep docs consistent with the style guide.
@@ -84,6 +84,7 @@ Use this workflow to set up and run the app locally during active development.
 - Issue and plan reviewed; any plan updates are documented and approved.
 - Retrospective notes captured for completed features.
 - Base checks run for each issue-sized change.
+- Issues are closed only after base checks pass.
 - Testing workflow executed when behavior changes, with pack IDs recorded.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.

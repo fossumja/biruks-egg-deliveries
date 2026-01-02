@@ -63,7 +63,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Complete acceptance criteria, update docs, and close the issue.
    - If behavior changes, run `testing scope` to select regression packs, execute automated/manual checks, record TP-xx IDs, and update/add tests (or log a follow-up issue).
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
-   - Run at least one base check (default: `npm run build`) and note results.
+   - Run at least one base check (default: `npm run build`) and note results. Fix any errors before closing the child issue.
    - If `public/build-info.json` changes, restore it before committing.
    - Commit the child issue work before moving to the next child issue.
    - Update the parent checklist safely; if tooling is missing, leave a progress comment instead of editing the body.
@@ -97,6 +97,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Retrospective notes and prompt/workflow updates are recorded when new lessons are learned.
 - Retrospective follow-ups are applied or tracked in new issues.
 - Base checks run for each child issue; full quality run before PR.
+- Child issues are closed only after base checks pass.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
 - Each child issue was committed before starting the next one.

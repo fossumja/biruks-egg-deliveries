@@ -55,10 +55,10 @@ You are my feature delivery assistant.
 4. Sync the branch with the base branch if needed.
 5. Implement the issue, run targeted tests, and update docs if required.
    - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
-6. Run at least one base check (default: `npm run build`) and note results; if `public/build-info.json` changes, restore it before committing.
+6. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
 7. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 8. Commit the child issue work so the branch is clean before moving to the next child issue.
-9. Update the child issue status (close or comment with progress and test notes).
+9. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
 10. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
