@@ -158,7 +158,7 @@ Steps:
 Expected:
 
 - Totals accumulate across runs and one-offs.
-- All receipts view shows runs and one-offs in date order.
+- All receipts view shows runs and one-offs in date order for the selected tax year.
 - Export totals match the Planner totals for the selected tax year.
 - Delete a receipt from **All receipts** and confirm the list and totals update.
 
@@ -176,7 +176,8 @@ Expected:
 ## Troubleshooting
 
 - If totals look wrong, verify the selected tax year on Home.
-- If one-off dates are rejected, ensure the date is within the allowed year range shown in the UI.
+- If receipts look missing, verify the selected tax year on Home.
+- If one-off dates are rejected, ensure the date is within the selected tax year range shown in the UI.
 - If receipts are missing, confirm the Planner selector is on the correct route (not Past runs).
 
 ## What changed / Why

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { StorageService } from './storage.service';
 import { Delivery, DonationInfo } from '../models/delivery.model';
+import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
 import { normalizeEventDate } from '../utils/date-utils';
 
@@ -297,6 +298,65 @@ describe('StorageService regression tests', () => {
     const reloaded = await storage.getDeliveryById('c1-r1');
     expect(reloaded?.oneOffDonations?.[0]?.date).toBe(expectedDonationDate);
     expect(reloaded?.oneOffDeliveries?.[0]?.date).toBe(expectedDeliveryDate);
+  });
+
+  it('filters receipt history by tax year', async () => {
+    const delivery = buildDelivery({
+      id: 'delivery-1',
+      baseRowId: 'base-1',
+      routeDate: '2024-01-01'
+    });
+
+    await storage.importDeliveries([delivery]);
+
+    await storage.appendOneOffDonation('delivery-1', {
+      status: 'Donated',
+      method: 'cash',
+      amount: 5,
+      suggestedAmount: 4,
+      date: '2023-05-01'
+    });
+
+    await storage.appendOneOffDelivery('delivery-1', 2, {
+      status: 'Donated',
+      method: 'ach',
+      amount: 8,
+      suggestedAmount: 8,
+      date: '2024-07-01'
+    });
+
+    const runEntry: RunSnapshotEntry = {
+      id: 'run-entry-1',
+      runId: 'run-2025',
+      baseRowId: 'base-1',
+      name: delivery.name,
+      address: delivery.address,
+      city: delivery.city,
+      state: delivery.state,
+      zip: delivery.zip,
+      status: 'delivered',
+      dozens: 2,
+      deliveryOrder: 0,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 8,
+      taxableAmount: 0,
+      eventDate: '2025-02-01'
+    };
+
+    await storage.saveRunEntryOrdering('run-2025', [runEntry]);
+
+    const receipts2024 = await storage.getReceiptHistoryByBaseRowId('base-1', 2024);
+    expect(receipts2024.length).toBe(1);
+    expect(receipts2024[0]?.kind).toBe('oneOffDelivery');
+
+    const receipts2023 = await storage.getReceiptHistoryByBaseRowId('base-1', 2023);
+    expect(receipts2023.length).toBe(1);
+    expect(receipts2023[0]?.kind).toBe('oneOffDonation');
+
+    const receipts2025 = await storage.getReceiptHistoryByBaseRowId('base-1', 2025);
+    expect(receipts2025.length).toBe(1);
+    expect(receipts2025[0]?.kind).toBe('run');
   });
 
   it('deletes one-off receipts by index', async () => {
