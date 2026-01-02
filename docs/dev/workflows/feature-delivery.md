@@ -79,6 +79,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=finish` or `feature finish`.
    - Open a PR linked to the parent issue.
    - Confirm branch protection/rulesets won’t block the merge and note any skipped checks in the PR.
+   - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
 7. Cleanup after merge:
    - Ensure the feature branch is deleted (auto-delete or `/branch action=delete name={branch}`).
    - Prune refs with `git fetch --prune` and switch back to `main`.
