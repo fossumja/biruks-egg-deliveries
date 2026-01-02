@@ -1,21 +1,45 @@
 <div class="amount-dialog card">
   <h3>Donation</h3>
 
-  <div class="amount-hint text-muted">
-    Current: ${{ (currentAmount ?? suggestedAmount ?? 0) | number : '1.2-2' }} · Suggested: ${{ (suggestedAmount ?? 0) | number : '1.2-2' }}
-  </div>
-  <select
-    id="donation-amount-select"
-    class="amount-select"
-    [(ngModel)]="selectedAmount"
-  >
-    <option *ngFor="let val of amountOptions" [value]="val">
-      ${{ val }}
-    </option>
-  </select>
+  <p class="amount-hint text-muted" id="donation-amount-hint">
+    Current:
+    ${{ (currentAmount() ?? suggestedAmount() ?? 0) | number : '1.2-2' }}
+    · Suggested:
+    ${{ (suggestedAmount() ?? 0) | number : '1.2-2' }}
+  </p>
+  <label class="amount-label" for="donation-amount-input">Donation amount</label>
+  <input
+    id="donation-amount-input"
+    class="amount-input"
+    type="number"
+    inputmode="decimal"
+    min="0"
+    max="9999"
+    step="0.01"
+    [ngModel]="amountInput()"
+    (ngModelChange)="onAmountInputChange($event)"
+    [attr.aria-invalid]="amountError() ? 'true' : null"
+    [attr.aria-describedby]="
+      amountError()
+        ? 'donation-amount-hint donation-amount-error'
+        : 'donation-amount-hint'
+    "
+  />
+  @if (amountError()) {
+    <p class="error-text" id="donation-amount-error">
+      {{ amountError() }}
+    </p>
+  }
 
   <div class="amount-actions">
     <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="onSave()">Save</button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="!!amountError()"
+      (click)="onSave()"
+    >
+      Save
+    </button>
   </div>
 </div>

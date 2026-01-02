@@ -36,7 +36,6 @@ export class DeliveryRunComponent {
   errorMessage = '';
   deliveredQty = 0;
   showAmountPicker = false;
-  amountOptions: number[] = [];
   selectedAmount = 0;
 
   showSkipDialog = false;
@@ -366,7 +365,6 @@ export class DeliveryRunComponent {
   }
 
   openDonationAmountPicker(): void {
-    this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
     const current = Number(this.currentDonation.amount);
     this.selectedAmount = !Number.isNaN(current)
       ? current

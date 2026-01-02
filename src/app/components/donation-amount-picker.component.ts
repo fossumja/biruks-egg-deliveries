@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,22 +9,22 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './donation-amount-picker.component.html',
   styleUrl: './donation-amount-picker.component.scss'
 })
-export class DonationAmountPickerComponent implements OnInit, OnChanges {
-  @Input() currentAmount?: number;
-  @Input() suggestedAmount?: number;
-  @Output() cancel = new EventEmitter<void>();
-  @Output() save = new EventEmitter<number>();
+export class DonationAmountPickerComponent {
+  readonly currentAmount = input<number | null | undefined>(undefined);
+  readonly suggestedAmount = input<number | null | undefined>(undefined);
+  readonly cancel = output<void>();
+  readonly save = output<number>();
 
-  amountOptions: number[] = [];
-  selectedAmount = 0;
+  readonly amountInput = signal('');
+  readonly amountError = signal('');
+  private readonly donationAmountMax = 9999;
 
-  ngOnInit(): void {
-    this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
-    this.selectedAmount = this.computeDefaultAmount();
-  }
-
-  ngOnChanges(_: SimpleChanges): void {
-    this.selectedAmount = this.computeDefaultAmount();
+  constructor() {
+    effect(() => {
+      const next = this.computeDefaultAmount();
+      this.amountInput.set(next != null ? String(next) : '');
+      this.amountError.set(this.validateAmount(next));
+    });
   }
 
   onCancel(): void {
@@ -32,24 +32,49 @@ export class DonationAmountPickerComponent implements OnInit, OnChanges {
   }
 
   onSave(): void {
-    this.save.emit(this.selectedAmount);
+    const parsed = this.parseAmountInput(this.amountInput());
+    const error = this.validateAmount(parsed);
+    if (error) {
+      this.amountError.set(error);
+      return;
+    }
+    this.save.emit(parsed ?? 0);
+  }
+
+  onAmountInputChange(value: unknown): void {
+    const raw = value ?? '';
+    this.amountInput.set(raw === null ? '' : String(raw));
+    const parsed = this.parseAmountInput(raw);
+    this.amountError.set(this.validateAmount(parsed));
   }
 
   private computeDefaultAmount(): number {
+    const current = this.currentAmount();
     const hasCurrent =
-      this.currentAmount !== null &&
-      this.currentAmount !== undefined &&
-      !Number.isNaN(this.currentAmount);
+      current !== null && current !== undefined && !Number.isNaN(current);
     if (hasCurrent) {
-      return this.currentAmount as number;
+      return current as number;
     }
+    const suggested = this.suggestedAmount();
     const hasSuggested =
-      this.suggestedAmount !== null &&
-      this.suggestedAmount !== undefined &&
-      !Number.isNaN(this.suggestedAmount);
+      suggested !== null && suggested !== undefined && !Number.isNaN(suggested);
     if (hasSuggested) {
-      return this.suggestedAmount as number;
+      return suggested as number;
     }
     return 0;
+  }
+
+  private parseAmountInput(value: unknown): number | null {
+    if (value === '' || value === null || value === undefined) return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private validateAmount(value: number | null): string {
+    if (value == null) return '';
+    if (value < 0 || value > this.donationAmountMax) {
+      return `Donation amount must be between $0 and $${this.donationAmountMax}.`;
+    }
+    return '';
   }
 }

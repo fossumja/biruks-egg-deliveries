@@ -77,7 +77,6 @@ export class RoutePlannerComponent {
   private oneOffDeliveryDateTouched = false;
   oneOffDeliveryTypeError = '';
   showAmountPicker = false;
-  amountOptions: number[] = [];
   selectedAmount = 0;
   private readonly donationAmountMax = 9999;
   offScheduleStop: Delivery | null = null;
@@ -1428,7 +1427,6 @@ export class RoutePlannerComponent {
   openAmountPicker(): void {
     if (!this.donationDraft) return;
     this.pickerMode = 'main';
-    this.amountOptions = Array.from({ length: 101 }, (_, i) => i);
     this.selectedAmount =
       this.donationDraft.donation?.amount ??
       this.donationDraft.donation?.suggestedAmount ??

@@ -5,7 +5,7 @@
   gap: var(--spacing-3);
 }
 
-.amount-select {
+.amount-input {
   width: 100%;
   padding: 12px;
   border: 1px solid var(--color-border);
@@ -13,7 +13,6 @@
   font-size: var(--font-size-base);
   background: #fff;
   color: var(--color-text);
-  appearance: auto;
 }
 
 .amount-actions {
@@ -25,4 +24,15 @@
 .amount-hint {
   font-size: var(--font-size-sm);
   margin: var(--spacing-1) 0;
+}
+
+.amount-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.error-text {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  margin: 0;
 }
