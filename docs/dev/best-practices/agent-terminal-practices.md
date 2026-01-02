@@ -27,6 +27,9 @@ Use editor settings as guidance when they are provided, but do not treat them as
 - Prefer commands in the user’s `chat.tools.terminal.autoApprove` list when they accomplish the task.
 - Use the repo-recommended tools first (for example `rg` for search).
 - Keep commands minimal and scoped (avoid sweeping `find` or `git` operations unless needed).
+- Prefer commands that are parseable by the approval rules engine (avoid wrapping multiple commands in a single `zsh -lc "<...>"` string when possible).
+- Split multi-step work into separate commands so allowlists can match the real tool (`gh`, `git`, `npm`) directly.
+- Use `--body-file` and temp files instead of complex heredocs inside quoted shells.
 
 ### Approval and sandbox alignment
 
@@ -51,6 +54,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 - If a `settings.json` snippet is provided, confirm any assumptions you plan to rely on.
 - Do not assume access to user settings unless they are shared in the current session.
 - Record any deviations from settings and explain why.
+- If VS Code uses `zsh -lc`, remember the inner command is opaque to prefix rules; structure commands so rule matching still works.
 
 ## Checklist for new sessions
 
@@ -60,6 +64,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 4. Ask before using commands outside the list unless required to complete the task.
 5. Call out high-risk actions early and confirm the user wants to proceed.
 6. Check for uncommitted changes before switching branches or starting new work, and ask the user how to proceed if the tree is dirty.
+7. When possible, keep commands single-purpose so approval rules can match the real tool.
 
 ## Open questions
 
