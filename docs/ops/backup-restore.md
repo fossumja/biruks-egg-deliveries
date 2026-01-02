@@ -4,7 +4,7 @@ Runbook for backing up data and restoring from a backup CSV.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-02
 - **Type**: How-to
 - **Scope**: data backup and restore workflows
 - **Non-goals**: changing CSV formats or implementing new storage features
@@ -48,7 +48,7 @@ Do not use **Import CSV** for backup files unless you accept losing run history 
 
 - Planner shows expected routes and stops.
 - Run history (if present) matches the backup.
-- Totals and one-offs appear consistent.
+- Totals and one-offs appear consistent, including one-off receipt dates.
 - Backup uses share sheet or download fallback on the device.
 - Restore prompt appears and the file picker opens after the second tap.
 
@@ -57,6 +57,7 @@ Do not use **Import CSV** for backup files unless you accept losing run history 
 - Updated the restore flow to match the current two-step backup-first behavior.
 - Added backup filename and tax-year verification notes.
 - Added device/PWA verification checks for backup and restore flows.
+- Added a verification note to confirm one-off receipt dates after restore.
 
 ## Related docs
 

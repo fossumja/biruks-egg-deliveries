@@ -4,7 +4,7 @@ This style guide defines an iOS-inspired visual system for the Biruk's Egg Deliv
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2026-01-02
 - **Type**: Reference
 - **Scope**: visual system, UI components, and interaction patterns
 - **Non-goals**: implementation details for specific Angular components
@@ -551,6 +551,12 @@ Example markup:
   - Swipe cards for each stop, with front/back layers.
   - Inline panels for edit, donation, and one-off delivery.
 
+#### One-off panels and receipt history
+
+- Keep one-off donation and one-off delivery panels inline under the stop card.
+- Show a compact receipt history list under the card that includes one-off receipts.
+- Display one-off receipts using their event date (not the route date) so history reads chronologically.
+
 Example markup:
 
 ```html
@@ -645,6 +651,10 @@ Example markup:
 - **Utilities**: If you use Tailwind, map the tokens into the theme; otherwise use simple utility classes like `.text-muted` or `.btn-primary`.
 - **Dark mode (future)**: Use `@media (prefers-color-scheme: dark)` to swap token values.
 - **Testing**: Verify on a real iPhone or iOS simulator in both browser and installed PWA modes.
+
+## What changed / Why
+
+- Consolidated one-off panel and receipt history guidance, including event-date display, to avoid UX note drift.
 
 ## Related docs
 
