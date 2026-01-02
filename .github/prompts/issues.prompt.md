@@ -85,6 +85,12 @@ Given an existing issue (number/URL) or description:
   - **Potential supporting files** (paths that may be useful but are not confirmed)
   - **Architectural guidance** (recommended boundaries, ownership, and integration points)
   - **Unknowns** (call out gaps where more investigation is needed)
+  - For regression/testing-plan issues, also include:
+    - **Pack updates (proposed)** with TP-xx IDs
+    - **Manual checks to add**
+    - **Automation references** (existing specs)
+    - **Usage-scenario updates** (if applicable)
+    - **Change-impact map updates**
 - Decide the issue structure:
   - If work spans multiple areas, multiple deliverables, or 3+ distinct workstreams, create a parent feature issue plus child issues.
   - Otherwise, create a single feature issue with a detailed breakdown.

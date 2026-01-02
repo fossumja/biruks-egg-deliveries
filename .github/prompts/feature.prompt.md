@@ -81,10 +81,11 @@ You are my feature delivery assistant.
 5. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
 6. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
 7. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-8. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-9. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-10. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-11. Suggest release workflow if requested.
+8. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
+9. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+10. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+11. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+12. Suggest release workflow if requested.
 
 ## Output
 

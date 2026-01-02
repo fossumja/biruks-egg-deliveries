@@ -79,6 +79,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
    - Open a PR linked to the parent issue.
+   - Perform a code review using `pr review` and document the review in the PR (comment or review).
    - Confirm branch protection/rulesets won’t block the merge and note any skipped checks in the PR.
    - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
 7. Cleanup after merge:
@@ -96,6 +97,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Testing status is documented when checks are skipped.
 - Testing workflow used for behavior changes, with pack IDs recorded.
 - Regression pack updates were considered for behavior changes, and TP-xx IDs were recorded before the PR.
+- Code review results are documented in the PR.
 - Feature branch is deleted and local refs are pruned.
 - Retrospective notes and prompt/workflow updates are recorded when new lessons are learned.
 - Retrospective follow-ups are applied or tracked in new issues.
@@ -122,6 +124,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added explicit confirmation requirement for high-risk actions.
 - Added a worktree cleanliness confirmation step before switching tasks.
 - Added guidance to commit each child issue before moving on to keep the feature branch clean.
+- Required code reviews to be documented as part of feature finish.
 
 ## Related docs
 

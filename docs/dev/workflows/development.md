@@ -46,6 +46,7 @@ Use this workflow to set up and run the app locally during active development.
 1. Review the issue and proposed plan:
    - Confirm acceptance criteria, scope boundaries, and dependencies.
    - Identify missing context (designs, data contracts, ADRs) before coding.
+   - For regression/testing-plan issues, ensure the plan includes pack updates, manual checks, automation references, usage-scenario updates, and change-impact map updates.
 2. Validate feasibility in the codebase:
    - Scan relevant files, services, and tests to confirm the plan is implementable.
    - Note risks, migrations, or test packs likely required for the change.
@@ -106,6 +107,7 @@ Use this workflow to set up and run the app locally during active development.
 - Added a sandbox note for base checks and Karma requiring escalated permissions.
 - Added explicit confirmation requirement for high-risk actions.
 - Added a worktree cleanliness confirmation step before switching tasks.
+- Added a regression-testing plan detail check to prevent under-specified test coverage issues.
 
 ## Related docs
 

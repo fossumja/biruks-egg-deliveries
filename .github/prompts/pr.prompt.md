@@ -62,6 +62,7 @@ Given `pr=<id>` (or current branch):
 - “Approve / Request changes” recommendation
 - Specific actionable comments grouped by severity (blocker / should / nit)
   Optionally apply review via `gh pr review` if you are configured to do so.
+  If this is a self-review, leave a short PR comment or review summary even when there are no findings.
 
 ## action=update
 
