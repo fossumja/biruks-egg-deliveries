@@ -81,6 +81,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
    - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
+   - Run `feature review` to perform the review + merge flow (or use `pr review` and `pr merge` manually).
    - Verify the PR includes the Review Evidence section; if missing, stop and update the PR before merge.
    - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
      - Include evidence: acceptance criteria coverage, tests/TP-xx packs, and known gaps.
@@ -98,6 +99,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Issue plans reviewed and approved before implementation.
 - PR includes `Fixes #{parent}` in the description.
 - PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
+- Review is documented (approval or self-review comment) before merge.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
 - Testing workflow used for behavior changes, with pack IDs recorded.

@@ -1,7 +1,7 @@
 ---
 name: "feature"
 description: "Deliver a feature by creating a branch from a parent issue and completing child issues."
-argument-hint: "action=start|next|status|finish issue=<parent#|url> branch=<optional> (shorthand: feature {action} [issue])"
+argument-hint: "action=start|next|status|finish|review issue=<parent#|url> branch=<optional> (shorthand: feature {action} [issue])"
 agent: "agent"
 ---
 
@@ -28,7 +28,7 @@ You are my feature delivery assistant.
 - Base branch: infer the repo default branch.
 - Branch naming: follow `.github/prompts/branch.prompt.md` (`feat/<slug>`).
 - Issue order: data/storage -> export/import -> UI -> tests -> docs -> ops, unless the parent issue specifies otherwise.
-- Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish` map to their respective actions.
+- Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
 
 ## Procedure
 
@@ -88,6 +88,17 @@ You are my feature delivery assistant.
 11. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
 12. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 13. Suggest release workflow if requested.
+
+## action=review
+
+1. Confirm a PR exists for the feature and includes Review Evidence.
+2. Run the code review per `docs/dev/workflows/code-review.md` and `pr review`.
+   - If self-reviewing and approvals are blocked, leave a formal PR comment with the evidence summary.
+3. Verify required checks are complete (`gh pr checks`) and note any skips/waivers.
+4. Confirm branch protection requirements are satisfied (approvals, checks).
+   - If approvals are required and you cannot self-approve, stop and request another reviewer.
+5. Ask for explicit confirmation before merge.
+6. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
 
 ## Output
 

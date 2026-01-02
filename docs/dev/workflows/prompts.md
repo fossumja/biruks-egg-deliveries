@@ -60,7 +60,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Delivery flow
 
- - `feature` — deliver a parent feature with child issues, including plan validation, retrospective follow-ups, and testing workflow selection for behavior changes. Shorthand: `feature start 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
+ - `feature` — deliver a parent feature with child issues, including plan validation, retrospective follow-ups, testing workflow selection for behavior changes, and review/merge flow. Shorthand: `feature start 1`, `feature review`. Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
