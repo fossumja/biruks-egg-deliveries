@@ -4,7 +4,7 @@ This file describes the folder layout for the entire repo and where new files sh
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2026-01-02
 - **Type**: Reference
 - **Scope**: repository structure and documentation locations
 - **Non-goals**: detailed file-by-file inventories
@@ -18,7 +18,6 @@ This file describes the folder layout for the entire repo and where new files sh
   - .github/workflows/: CI workflows.
 - docs/: documentation hub.
   - docs/architecture/: architecture and data-flow docs.
-  - docs/data/: sample data and backup CSVs for reference.
   - docs/dev/: developer guidance and standards.
     - docs/dev/best-practices/: conventions and best-practice docs.
     - docs/dev/workflows/: repeatable development workflows.
@@ -29,10 +28,6 @@ This file describes the folder layout for the entire repo and where new files sh
   - docs/testing/: regression and scenario test plans.
   - docs/user/: user-facing guides.
   - docs/ux/: UX inventory and styling guidance.
-- deprecated/: archived artifacts.
-  - deprecated/docs/: deprecated documentation and plans.
-  - deprecated/data/: deprecated data exports and samples.
-  - deprecated/code/: deprecated or retired source (when applicable).
 - src/: Angular application source code.
 - public/: static assets, PWA manifest, and icons.
 - scripts/: helper scripts for builds or tooling.
@@ -55,7 +50,6 @@ This file describes the folder layout for the entire repo and where new files sh
 - Documentation inventory: `docs/reference/documentation-inventory.md`
 - Decisions (ADRs): `docs/decisions/`
 - Active planning: `docs/plans/documentation-refresh-plan.md`
-- Archived planning notes: `deprecated/docs/task-breakdown.md`, `deprecated/docs/task-breakdown-styling.md`
 
 ## Documentation purpose map
 
@@ -67,7 +61,6 @@ This file describes the folder layout for the entire repo and where new files sh
 - UX (`docs/ux/`): behavior, screens, and style guidance.
 - User (`docs/user/`): non-developer usage and day-to-day flows.
 - Ops (`docs/ops/`): runbooks, backup/restore, and operational steps.
-- Deprecated (`deprecated/`): historical artifacts; do not use for new work.
 
 ## Root-level files (by purpose)
 
@@ -75,4 +68,4 @@ This file describes the folder layout for the entire repo and where new files sh
 - Agent instructions: repo-wide behavior and standards entry point.
 - Repository index: this directory map.
 - Build/tooling configuration: package and Angular/TypeScript config files.
-- Legacy data exports: sample or backup CSVs kept at root (prefer docs/data for new data files).
+- Legacy data exports: keep redacted samples only; store sensitive data outside the repo.

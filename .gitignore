@@ -37,6 +37,8 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+/docs/data/
+/deprecated/
 
 # System files
 .DS_Store
