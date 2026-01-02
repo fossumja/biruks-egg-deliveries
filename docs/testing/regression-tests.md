@@ -136,7 +136,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 - `src/app/pages/home.component.spec.ts` (export/restore triggers and timestamps).
 
-Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year remains manual.
+Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year is covered in `backup.service.spec.ts`.
 
 Manual checks:
 

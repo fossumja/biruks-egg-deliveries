@@ -434,4 +434,62 @@ describe('BackupService totals with mini route', () => {
     expect(clickSpy).toHaveBeenCalled();
     expect(revokeSpy).toHaveBeenCalledWith('blob:backup');
   });
+
+  it('includes the selected tax year in the export filename', async () => {
+    localStorage.setItem('selectedTaxYear', '2025');
+    const navigatorShare = navigator as unknown as NavigatorShare;
+    const hadShare = 'share' in navigator;
+    const hadCanShare = 'canShare' in navigator;
+    const originalShare = navigatorShare.share;
+    const originalCanShare = navigatorShare.canShare;
+    const originalCreateElement = document.createElement.bind(document);
+
+    Object.defineProperty(navigator, 'share', {
+      value: undefined,
+      configurable: true
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      value: undefined,
+      configurable: true
+    });
+
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:backup');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+    const anchor = document.createElement('a');
+    const clickSpy = spyOn(anchor, 'click');
+    const createSpy = spyOn(document, 'createElement').and.callFake((tagName: string) => {
+      if (tagName === 'a') {
+        return anchor;
+      }
+      return originalCreateElement(tagName);
+    });
+
+    try {
+      await backup.exportAll();
+    } finally {
+      localStorage.removeItem('selectedTaxYear');
+      if (hadShare) {
+        Object.defineProperty(navigator, 'share', {
+          value: originalShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['share'];
+      }
+      if (hadCanShare) {
+        Object.defineProperty(navigator, 'canShare', {
+          value: originalCanShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['canShare'];
+      }
+    }
+
+    expect(createObjectUrlSpy).toHaveBeenCalled();
+    expect(createSpy).toHaveBeenCalledWith('a');
+    expect(clickSpy).toHaveBeenCalled();
+    expect(anchor.download).toContain('tax-year-2025');
+    expect(revokeSpy).toHaveBeenCalledWith('blob:backup');
+  });
 });
