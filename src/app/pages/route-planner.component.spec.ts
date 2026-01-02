@@ -1055,6 +1055,72 @@ describe('RoutePlannerComponent', () => {
     expect(saveButton.disabled).toBeFalse();
   });
 
+  it('blocks receipt save when donated amount is missing', () => {
+    const entry = createRunEntry({
+      id: 'entry-missing-amount',
+      runId: 'run-1'
+    });
+    component.loading = false;
+    component.viewingRun = true;
+    component.viewingAllReceipts = true;
+    component.runEntries = [entry];
+    component.filteredRunEntries = [entry];
+    component.editingRunEntry = entry;
+    component.runEntryDraft = {
+      status: 'delivered',
+      dozens: 1,
+      deliveryOrder: 1,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 4,
+    };
+
+    component.onRunEntryDonationAmountChange('');
+    fixture.detectChanges();
+
+    expect(component.runEntryAmountError).toBe(
+      'Donation amount is required when status is Donated.'
+    );
+
+    const saveButton = fixture.nativeElement.querySelector(
+      '.inline-donation .btn.btn-primary'
+    ) as HTMLButtonElement;
+    expect(saveButton.disabled).toBeTrue();
+  });
+
+  it('blocks receipt save when donated amount exceeds the max', () => {
+    const entry = createRunEntry({
+      id: 'entry-max-amount',
+      runId: 'run-1'
+    });
+    component.loading = false;
+    component.viewingRun = true;
+    component.viewingAllReceipts = true;
+    component.runEntries = [entry];
+    component.filteredRunEntries = [entry];
+    component.editingRunEntry = entry;
+    component.runEntryDraft = {
+      status: 'delivered',
+      dozens: 1,
+      deliveryOrder: 1,
+      donationStatus: 'Donated',
+      donationMethod: 'cash',
+      donationAmount: 4,
+    };
+
+    component.onRunEntryDonationAmountChange('10000');
+    fixture.detectChanges();
+
+    expect(component.runEntryAmountError).toBe(
+      'Donation amount must be between $0 and $9999.'
+    );
+
+    const saveButton = fixture.nativeElement.querySelector(
+      '.inline-donation .btn.btn-primary'
+    ) as HTMLButtonElement;
+    expect(saveButton.disabled).toBeTrue();
+  });
+
   it('updates run entry without changing date fields', async () => {
     const entry = createRunEntry({
       id: 'entry-1',

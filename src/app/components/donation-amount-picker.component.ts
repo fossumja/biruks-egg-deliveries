@@ -33,7 +33,7 @@ export class DonationAmountPickerComponent {
 
   onSave(): void {
     const parsed = this.parseAmountInput(this.amountInput());
-    const error = this.validateAmount(parsed);
+    const error = this.validateAmount(parsed, this.amountInput());
     if (error) {
       this.amountError.set(error);
       return;
@@ -45,7 +45,7 @@ export class DonationAmountPickerComponent {
     const raw = value ?? '';
     this.amountInput.set(raw === null ? '' : String(raw));
     const parsed = this.parseAmountInput(raw);
-    this.amountError.set(this.validateAmount(parsed));
+    this.amountError.set(this.validateAmount(parsed, this.amountInput()));
   }
 
   private computeDefaultAmount(): number {
@@ -70,7 +70,10 @@ export class DonationAmountPickerComponent {
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  private validateAmount(value: number | null): string {
+  private validateAmount(value: number | null, rawInput?: string): string {
+    if (rawInput !== undefined && rawInput !== '' && value == null) {
+      return 'Enter a valid donation amount.';
+    }
     if (value == null) return '';
     if (value < 0 || value > this.donationAmountMax) {
       return `Donation amount must be between $0 and $${this.donationAmountMax}.`;
