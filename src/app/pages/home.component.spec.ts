@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import Papa from 'papaparse';
 import { HomeComponent } from './home.component';
 import { StorageService } from '../services/storage.service';
 import { BackupService } from '../services/backup.service';
@@ -17,17 +16,13 @@ import {
   deliverStop
 } from '../../testing/scenario-runner';
 import { miniRouteFixture } from '../../testing/fixtures/mini-route.fixture';
-
-const buildCsvFile = (
-  headers: string[],
-  rows: Record<string, string>[]
-): File => {
-  const data = rows.map((row) =>
-    headers.map((header) => row[header] ?? '')
-  );
-  const csv = Papa.unparse({ fields: headers, data });
-  return new File([csv], 'backup.csv', { type: 'text/csv' });
-};
+import {
+  buildBackupCsvFile,
+  buildBackupDeliveryRow,
+  buildBackupOneOffDonationRow,
+  buildBackupOneOffDeliveryRow,
+  buildBackupRunEntryRow
+} from '../../testing/fixtures/csv-fixture-builder';
 
 const createRoute = (routeDate: string): Route => ({
   routeDate,
@@ -179,59 +174,12 @@ describe('HomeComponent restore', () => {
   });
 
   it('restores one-off rows with normalized EventDate values', async () => {
-    const headers = [
-      'RowType',
-      'BaseRowId',
-      'RunBaseRowId',
-      'Schedule',
-      'Name',
-      'Address',
-      'City',
-      'State',
-      'ZIP',
-      'Dozens',
-      'Delivery Order',
-      'RunDonationStatus',
-      'RunDonationMethod',
-      'RunDonationAmount',
-      'SuggestedAmount',
-      'RunDozens',
-      'EventDate'
+    const rows = [
+      buildBackupDeliveryRow(),
+      buildBackupOneOffDonationRow({ EventDate: '2025-06-15' }),
+      buildBackupOneOffDeliveryRow({ EventDate: '45123' })
     ];
-    const rows: Record<string, string>[] = [
-      {
-        RowType: 'Delivery',
-        BaseRowId: 'c1',
-        Schedule: '2025-01-01',
-        Name: 'Alice',
-        Address: '123 Main St',
-        City: 'Testville',
-        State: 'TS',
-        ZIP: '12345',
-        Dozens: '2',
-        'Delivery Order': '0'
-      },
-      {
-        RowType: 'OneOffDonation',
-        RunBaseRowId: 'c1',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'cash',
-        RunDonationAmount: '5',
-        SuggestedAmount: '5',
-        EventDate: '2025-06-15'
-      },
-      {
-        RowType: 'OneOffDelivery',
-        RunBaseRowId: 'c1',
-        RunDozens: '2',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'ach',
-        RunDonationAmount: '8',
-        SuggestedAmount: '8',
-        EventDate: '45123'
-      }
-    ];
-    const file = buildCsvFile(headers, rows);
+    const file = buildBackupCsvFile(rows);
 
     await (component as any).restoreFromBackupFile(file);
 
@@ -249,87 +197,18 @@ describe('HomeComponent restore', () => {
   });
 
   it('falls back to route or run dates when EventDate is missing', async () => {
-    const headers = [
-      'RowType',
-      'BaseRowId',
-      'RunBaseRowId',
-      'Schedule',
-      'Name',
-      'Address',
-      'City',
-      'State',
-      'ZIP',
-      'Dozens',
-      'Delivery Order',
-      'RunId',
-      'RouteDate',
-      'ScheduleId',
-      'RunStatus',
-      'RunEntryStatus',
-      'RunDozens',
-      'RunDonationStatus',
-      'RunDonationMethod',
-      'RunDonationAmount',
-      'RunTaxableAmount',
-      'RunCompletedAt',
-      'SuggestedAmount',
-      'EventDate'
-    ];
-    const rows: Record<string, string>[] = [
-      {
-        RowType: 'Delivery',
-        BaseRowId: 'c1',
-        Schedule: '2025-01-01',
-        Name: 'Alice',
-        Address: '123 Main St',
-        City: 'Testville',
-        State: 'TS',
-        ZIP: '12345',
-        Dozens: '2',
-        'Delivery Order': '0'
-      },
-      {
-        RowType: 'OneOffDonation',
-        RunBaseRowId: 'c1',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'cash',
-        RunDonationAmount: '5',
-        SuggestedAmount: '5',
-        EventDate: ''
-      },
-      {
-        RowType: 'OneOffDelivery',
-        RunBaseRowId: 'c1',
+    const rows = [
+      buildBackupDeliveryRow(),
+      buildBackupOneOffDonationRow({ EventDate: '' }),
+      buildBackupOneOffDeliveryRow({
+        EventDate: '',
         RunDozens: '1',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'ach',
         RunDonationAmount: '4',
-        SuggestedAmount: '4',
-        EventDate: ''
-      },
-      {
-        RowType: 'RunEntry',
-        RunId: '2025-01-01_2025-01-02T00:00:00.000Z',
-        RunBaseRowId: 'c1',
-        RouteDate: '2025-01-01',
-        ScheduleId: 'ScheduleA',
-        RunStatus: 'completed',
-        RunEntryStatus: 'delivered',
-        RunDozens: '2',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'cash',
-        RunDonationAmount: '8',
-        RunTaxableAmount: '0',
-        RunCompletedAt: '2025-01-02',
-        Name: 'Alice',
-        Address: '123 Main St',
-        City: 'Testville',
-        State: 'TS',
-        ZIP: '12345',
-        EventDate: ''
-      }
+        SuggestedAmount: '4'
+      }),
+      buildBackupRunEntryRow({ EventDate: '' })
     ];
-    const file = buildCsvFile(headers, rows);
+    const file = buildBackupCsvFile(rows);
 
     await (component as any).restoreFromBackupFile(file);
 
@@ -349,87 +228,23 @@ describe('HomeComponent restore', () => {
   });
 
   it('recomputes totals from restored receipts', async () => {
-    const headers = [
-      'RowType',
-      'BaseRowId',
-      'RunBaseRowId',
-      'Schedule',
-      'Name',
-      'Address',
-      'City',
-      'State',
-      'ZIP',
-      'Dozens',
-      'Delivery Order',
-      'RunId',
-      'RouteDate',
-      'ScheduleId',
-      'RunStatus',
-      'RunEntryStatus',
-      'RunDozens',
-      'RunDonationStatus',
-      'RunDonationMethod',
-      'RunDonationAmount',
-      'RunTaxableAmount',
-      'RunCompletedAt',
-      'SuggestedAmount',
-      'EventDate'
-    ];
-    const rows: Record<string, string>[] = [
-      {
-        RowType: 'Delivery',
-        BaseRowId: 'c1',
-        Schedule: '2025-01-01',
-        Name: 'Alice',
-        Address: '123 Main St',
-        City: 'Testville',
-        State: 'TS',
-        ZIP: '12345',
-        Dozens: '2',
-        'Delivery Order': '0'
-      },
-      {
-        RowType: 'RunEntry',
-        RunId: '2025-01-01_2025-01-02T00:00:00.000Z',
-        RunBaseRowId: 'c1',
-        RouteDate: '2025-01-01',
-        ScheduleId: 'ScheduleA',
-        RunStatus: 'completed',
-        RunEntryStatus: 'delivered',
-        RunDozens: '2',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'cash',
-        RunDonationAmount: '8',
-        RunTaxableAmount: '0',
-        RunCompletedAt: '2025-01-02',
-        Name: 'Alice',
-        Address: '123 Main St',
-        City: 'Testville',
-        State: 'TS',
-        ZIP: '12345',
-        EventDate: '2025-01-02'
-      },
-      {
-        RowType: 'OneOffDonation',
-        RunBaseRowId: 'c1',
-        RunDonationStatus: 'Donated',
-        RunDonationMethod: 'cash',
+    const rows = [
+      buildBackupDeliveryRow(),
+      buildBackupRunEntryRow(),
+      buildBackupOneOffDonationRow({
+        EventDate: '2025-02-01',
         RunDonationAmount: '5',
-        SuggestedAmount: '5',
-        EventDate: '2025-02-01'
-      },
-      {
-        RowType: 'OneOffDelivery',
-        RunBaseRowId: 'c1',
+        SuggestedAmount: '5'
+      }),
+      buildBackupOneOffDeliveryRow({
+        EventDate: '2025-03-01',
         RunDozens: '1',
-        RunDonationStatus: 'Donated',
         RunDonationMethod: 'venmo',
         RunDonationAmount: '4',
-        SuggestedAmount: '4',
-        EventDate: '2025-03-01'
-      }
+        SuggestedAmount: '4'
+      })
     ];
-    const file = buildCsvFile(headers, rows);
+    const file = buildBackupCsvFile(rows);
 
     await (component as any).restoreFromBackupFile(file);
 

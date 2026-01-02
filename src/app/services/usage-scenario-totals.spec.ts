@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { StorageService } from './storage.service';
 import { BackupService } from './backup.service';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
+import { buildImportStateFromDeliveries } from '../../testing/fixtures/csv-fixture-builder';
 import Papa from 'papaparse';
 import { normalizeEventDate } from '../utils/date-utils';
 
@@ -16,21 +17,6 @@ import { normalizeEventDate } from '../utils/date-utils';
 describe('Usage scenario totals (data-level)', () => {
   let storage: StorageService;
   let backup: BackupService;
-
-  const buildImportState = (deliveries: { baseRowId: string; name: string }[]) => {
-    const headers = ['BaseRowId', 'Name'];
-    const rowsByBaseRowId: Record<string, string[]> = {};
-    deliveries.forEach((delivery) => {
-      if (!rowsByBaseRowId[delivery.baseRowId]) {
-        rowsByBaseRowId[delivery.baseRowId] = [delivery.baseRowId, delivery.name];
-      }
-    });
-    return {
-      headers,
-      rowsByBaseRowId,
-      mode: 'baseline' as const
-    };
-  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -300,7 +286,7 @@ describe('Usage scenario totals (data-level)', () => {
     expect(updatedDelivery?.oneOffDeliveries?.[0]?.donation?.date).toBe(expectedDeliveryDate);
 
     const deliveries = await storage.getAllDeliveries();
-    const importState = buildImportState(deliveries);
+    const importState = buildImportStateFromDeliveries(deliveries);
     const totalsMap = (backup as any).computeTotalsByBase(
       deliveries,
       [],
@@ -379,7 +365,7 @@ describe('Usage scenario totals (data-level)', () => {
     expect(updatedDelivery?.oneOffDeliveries?.[0]?.donation?.date).toBe(expectedDeliveryDate);
 
     const deliveries = await storage.getAllDeliveries();
-    const importState = buildImportState(deliveries);
+    const importState = buildImportStateFromDeliveries(deliveries);
     const totalsMap = (backup as any).computeTotalsByBase(
       deliveries,
       [],
