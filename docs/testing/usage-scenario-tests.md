@@ -42,6 +42,7 @@ Data-level scenarios are automated with Jasmine/Karma to validate totals and exp
 - `src/testing/fixtures/mini-route.fixture.ts`
 
 These tests focus on `StorageService` and `BackupService`. Planner and Run UI flows remain manual.
+Tax-year filtering and multi-year totals are covered in `usage-scenario-totals.spec.ts`; export filename year and UI switching remain manual.
 
 ## Manual scenarios
 
@@ -161,6 +162,24 @@ Expected:
 - All receipts view shows runs and one-offs in date order for the selected tax year.
 - Export totals match the Planner totals for the selected tax year.
 - Delete a receipt from **All receipts** and confirm the list and totals update.
+
+### Scenario 8: Multi-year filtering and export
+
+Related packs: TP-01, TP-03, TP-06, TP-08, TP-10.
+
+Steps:
+
+1. Set the tax year to the previous year and create a one-off donation with a date in that year.
+2. Switch to the current tax year and create a one-off donation with a date in the current year.
+3. On Home, switch between the two tax years.
+4. Export a CSV for each selected tax year.
+
+Expected:
+
+- All receipts lists only the entries for the selected tax year.
+- Planner totals update to reflect only the selected tax year.
+- Export totals match the selected tax year.
+- Export filename includes the selected tax year.
 
 ## Outcomes
 

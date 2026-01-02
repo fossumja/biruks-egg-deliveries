@@ -74,6 +74,7 @@ Scope:
 - Help overlay content and toggle.
 - Suggested donation rate controls and persistence.
 - Dark mode toggle and theme application.
+- Tax year selector label and persistence.
 - Build info display and fetch behavior.
 
 Automated coverage:
@@ -86,6 +87,7 @@ Manual checks:
 - Home buttons show correct enabled/disabled states.
 - Route resume returns to the last selected route.
 - Header progress bar matches run state.
+- Switch tax year and confirm the selector label and state persist after refresh.
 
 ### TP-02 CSV import and baseline data
 
@@ -122,11 +124,14 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 - `src/app/pages/home.component.spec.ts` (export/restore triggers and timestamps).
 
+Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year remains manual.
+
 Manual checks:
 
 - Backup CSV opens with all original columns preserved.
 - Restore replaces existing data and rebuilds run history.
 - Totals in export match app totals after one-offs.
+- Export totals reflect the selected tax year and the backup filename includes the year.
 
 ### TP-04 Planner core
 
@@ -171,7 +176,7 @@ Manual checks:
 Scope:
 
 - Hidden menu donation and delivery flows.
-- Date validation and allowed year range (earliest data year through next year).
+- Date validation and allowed year range tied to the selected tax year.
 - Donation type selection and amount handling.
 - Totals and receipts inclusion.
 
@@ -180,11 +185,14 @@ Automated coverage:
 - `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipts edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
+Date range tied to the selected tax year is covered in `route-planner.component.spec.ts`; UI min/max changes remain manual.
+
 Manual checks:
 
 - One-off saves do not change live run status.
 - Totals include one-off donations and deliveries.
 - One-off modals show a compact receipt history list (including skips) for the selected person.
+- Switch tax year and confirm the one-off date min/max updates to the selected year window.
 
 ### TP-07 Run flow and donation controls
 
@@ -219,6 +227,9 @@ Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (run completion and resets).
 - `src/app/pages/route-planner.component.spec.ts` (receipts sorting and edits).
+- `src/app/services/usage-scenario-totals.spec.ts` (tax-year receipt filtering).
+
+All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
 
 Manual checks:
 
@@ -226,6 +237,7 @@ Manual checks:
 - All receipts view shows both run entries and one-offs for the selected tax year.
 - Delete a receipt from **Past runs** / **All receipts** and confirm it disappears and totals refresh.
 - Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
+- Switch tax year and confirm All receipts and totals update to the selected year.
 
 ### TP-09 Shared UI components
 
@@ -264,6 +276,7 @@ Manual checks:
 
 - Suggested donation rate persists across sessions.
 - Import state survives backup and restore.
+- Switch tax year and confirm totals/exports are computed for the selected year.
 
 ### TP-11 Device and PWA
 
