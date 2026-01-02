@@ -335,6 +335,8 @@ Manual checks:
 - Clipboard: copy a stop address and paste into a notes app.
 - Gestures: swipe to reveal the Planner hidden menu; drag reorder works only when enabled.
 - PWA assets: app icon and splash screen assets render correctly.
+- Offline cache: load the app, go offline, refresh, and confirm the app shell and core screens load.
+- Service worker update: after a new deploy, reload and confirm the app updates to the latest build (prompt or refresh flow).
 
 ## Change-impact map
 
