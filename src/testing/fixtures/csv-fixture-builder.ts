@@ -53,7 +53,6 @@ export const buildBackupCsvFile = (
 export const buildBackupDeliveryRow = (
   overrides: Partial<CsvRow> = {}
 ): CsvRow => ({
-  RowType: 'Delivery',
   BaseRowId: 'c1',
   Schedule: '2025-01-01',
   Name: 'Alice',
@@ -70,7 +69,6 @@ export const buildBackupDeliveryRow = (
 export const buildBackupOneOffDonationRow = (
   overrides: Partial<CsvRow> = {}
 ): CsvRow => ({
-  RowType: 'OneOffDonation',
   RunBaseRowId: 'c1',
   RunDonationStatus: 'Donated',
   RunDonationMethod: 'cash',
@@ -84,7 +82,6 @@ export const buildBackupOneOffDonationRow = (
 export const buildBackupOneOffDeliveryRow = (
   overrides: Partial<CsvRow> = {}
 ): CsvRow => ({
-  RowType: 'OneOffDelivery',
   RunBaseRowId: 'c1',
   RunDozens: '2',
   RunDonationStatus: 'Donated',
@@ -99,7 +96,6 @@ export const buildBackupOneOffDeliveryRow = (
 export const buildBackupRunEntryRow = (
   overrides: Partial<CsvRow> = {}
 ): CsvRow => ({
-  RowType: 'RunEntry',
   RunId: '2025-01-01_2025-01-02T00:00:00.000Z',
   RunBaseRowId: 'c1',
   RouteDate: '2025-01-01',

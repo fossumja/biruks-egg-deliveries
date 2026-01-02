@@ -23,6 +23,7 @@ import {
   buildBackupOneOffDeliveryRow,
   buildBackupRunEntryRow
 } from '../../testing/fixtures/csv-fixture-builder';
+import { buildFileInputEvent } from '../../testing/spec-helpers';
 
 const createRoute = (routeDate: string): Route => ({
   routeDate,
@@ -424,9 +425,9 @@ describe('HomeComponent core actions', () => {
     const autoSpy = spyOn(component as any, 'autoselectRoute');
 
     const file = new File(['data'], 'input.csv', { type: 'text/csv' });
-    const input = { files: [file], value: 'input.csv' } as unknown as HTMLInputElement;
+    const { input, event } = buildFileInputEvent(file, 'input.csv');
 
-    await component.onFileSelected({ target: input } as unknown as Event);
+    await component.onFileSelected(event);
 
     expect(parseSpy).toHaveBeenCalled();
     expect(importSpy).toHaveBeenCalled();
@@ -475,9 +476,9 @@ describe('HomeComponent core actions', () => {
     component.currentRoute = 'Week A';
 
     const file = new File(['data'], 'backup.csv', { type: 'text/csv' });
-    const input = { files: [file], value: 'backup.csv' } as unknown as HTMLInputElement;
+    const { input, event } = buildFileInputEvent(file, 'backup.csv');
 
-    await component.onRestoreSelected({ target: input } as unknown as Event);
+    await component.onRestoreSelected(event);
 
     expect(confirmSpy).toHaveBeenCalled();
     expect(restoreSpy).toHaveBeenCalledWith(file);
@@ -493,9 +494,9 @@ describe('HomeComponent core actions', () => {
     const restoreSpy = spyOn(component as any, 'restoreFromBackupFile').and.resolveTo();
 
     const file = new File(['data'], 'backup.csv', { type: 'text/csv' });
-    const input = { files: [file], value: 'backup.csv' } as unknown as HTMLInputElement;
+    const { input, event } = buildFileInputEvent(file, 'backup.csv');
 
-    await component.onRestoreSelected({ target: input } as unknown as Event);
+    await component.onRestoreSelected(event);
 
     expect(confirmSpy).toHaveBeenCalled();
     expect(restoreSpy).not.toHaveBeenCalled();

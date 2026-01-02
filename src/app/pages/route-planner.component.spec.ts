@@ -11,6 +11,14 @@ import { Route } from '../models/route.model';
 import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { toSortableTimestamp } from '../utils/date-utils';
+import {
+  buildAddress,
+  createDelivery,
+  createPointerEvent,
+  createRoute,
+  createRunEntry,
+  stubClipboard
+} from '../../testing/spec-helpers';
 
 type OneOffDonationUpdate = {
   donationStatus: DonationInfo['status'];
@@ -23,89 +31,6 @@ type OneOffDonationUpdate = {
 type OneOffDeliveryUpdate = OneOffDonationUpdate & {
   dozens: number;
 };
-
-const createRoute = (routeDate: string): Route => ({
-  routeDate,
-  totalStops: 0,
-  deliveredCount: 0,
-  skippedCount: 0,
-  createdAt: '2025-01-01T00:00:00.000Z',
-  lastUpdatedAt: '2025-01-01T00:00:00.000Z',
-});
-
-const createDelivery = (overrides: Partial<Delivery> = {}): Delivery => ({
-  id: 'delivery-1',
-  runId: 'Week A',
-  baseRowId: 'base-1',
-  routeDate: 'Week A',
-  name: 'Customer',
-  address: '123 Main St',
-  city: 'Springfield',
-  state: 'IL',
-  zip: '00000',
-  dozens: 2,
-  deliveryOrder: 0,
-  sortIndex: 0,
-  status: '',
-  createdAt: '2025-01-01T00:00:00.000Z',
-  updatedAt: '2025-01-01T00:00:00.000Z',
-  ...overrides,
-});
-
-const buildAddress = (delivery: Delivery): string =>
-  `${delivery.address}, ${delivery.city}, ${delivery.state} ${delivery.zip ?? ''}`.trim();
-
-const createPointerEvent = (clientX: number, clientY: number): PointerEvent =>
-  ({
-    clientX,
-    clientY,
-    preventDefault: jasmine.createSpy('preventDefault'),
-  } as unknown as PointerEvent);
-
-const stubClipboard = (
-  clipboard: { writeText: (text: string) => Promise<void> } | undefined
-): (() => void) => {
-  const navigatorClipboard = navigator as unknown as {
-    clipboard?: { writeText: (text: string) => Promise<void> };
-  };
-  const hadClipboard = 'clipboard' in navigator;
-  const originalClipboard = navigatorClipboard.clipboard;
-
-  Object.defineProperty(navigator, 'clipboard', {
-    value: clipboard,
-    configurable: true
-  });
-
-  return () => {
-    if (hadClipboard) {
-      Object.defineProperty(navigator, 'clipboard', {
-        value: originalClipboard,
-        configurable: true
-      });
-    } else {
-      delete navigatorClipboard.clipboard;
-    }
-  };
-};
-
-const createRunEntry = (overrides: Partial<RunSnapshotEntry> = {}): RunSnapshotEntry => ({
-  id: 'entry-1',
-  runId: 'run-1',
-  baseRowId: 'base-1',
-  name: 'Customer',
-  address: '123 Main St',
-  city: 'Springfield',
-  state: 'IL',
-  status: 'delivered',
-  dozens: 2,
-  deliveryOrder: 0,
-  donationStatus: 'Donated',
-  donationMethod: 'cash',
-  donationAmount: 8,
-  taxableAmount: 0,
-  eventDate: '2025-01-05',
-  ...overrides,
-});
 
 class StorageServiceStub {
   deliveries: Delivery[] = [];
