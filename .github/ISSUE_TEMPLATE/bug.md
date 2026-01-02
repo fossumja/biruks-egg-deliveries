@@ -30,6 +30,17 @@ labels: ["type:bug", "priority:medium"]
 - Automation references:
 - Usage scenarios:
 
+## Docs impact
+
+- [ ] Docs updated
+- [ ] Not needed (explain):
+
+## Risk assessment
+
+- Impacted areas:
+- Data/security considerations:
+- Rollback plan:
+
 ## Review focus
 
 - 
