@@ -18,6 +18,7 @@ You are my issues & planning assistant.
 ## Defaults
 
 - If you detect issue templates in `.github/ISSUE_TEMPLATE`, follow them.
+- Ensure new issues include the template sections for test packs, manual checks, and review focus.
 - Prefer adding:
   - **Problem statement**
   - **Proposed solution**

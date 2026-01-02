@@ -38,6 +38,9 @@ Use this workflow to ship a release to GitHub Pages for this app.
    - Execute TP-01 through TP-11 per `docs/testing/regression-tests.md`.
    - Execute `docs/testing/usage-scenario-tests.md`.
    - Record results (or explicitly document any skipped packs).
+4. If any packs are skipped, create a waiver record before deployment:
+   - Note which packs were skipped, why, and who approved the skip.
+   - Store the waiver in the release notes or a PR comment.
 4. Record device checklist status:
    - Note TP-11 device/PWA checks in release notes or a shared test log.
 5. Build the production bundle:
@@ -54,6 +57,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 - Release tag created and pushed.
 - TP-11 device checklist status recorded.
 - Full regression packs and usage scenarios completed (or explicitly deferred with approval).
+- Waiver recorded when any packs are skipped.
 
 ## Outputs
 
@@ -64,6 +68,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 
 - Added a TP-11 device checklist note so manual device coverage is tracked per release.
 - Required full regression packs and usage scenarios before release tags and GH Pages deploys.
+- Added a waiver requirement for any skipped regression packs.
 
 ## Related docs
 

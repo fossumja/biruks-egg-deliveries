@@ -37,9 +37,12 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
    - Typecheck (if separate).
    - Tests.
      - Prefer `npm run test:ci` when you need artifacts. It writes `test-results/junit.xml` and `coverage/` (`coverage/index.html`, `coverage/lcov.info`). Use `npm test` for interactive runs.
-3. If running fixes:
+3. If a PR is open for the work:
+   - Confirm the PR includes a Review Evidence section (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
+   - If missing, stop and update the PR before merge.
+4. If running fixes:
    - Apply fixes in the same order (format → lint → types → tests).
-4. Re-run checks to confirm green.
+5. Re-run checks to confirm green.
 
 ## Checks
 
@@ -47,6 +50,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 - Lint passes with no errors.
 - Typecheck passes (if configured).
 - Tests pass (or documented reason if skipped).
+- PR Review Evidence section present before merge.
 
 ## Outputs
 

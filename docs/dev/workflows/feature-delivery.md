@@ -29,6 +29,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Use the development workflow to validate each issue plan before implementation.
 - Keep child issues and the parent checklist updated as work completes.
 - Commit each child issue’s changes before moving to the next one.
+- Do not push the feature branch until the parent feature is complete unless the user explicitly asks.
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Use the docs prompt and documentation style guide when updating docs.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
@@ -78,9 +79,13 @@ Use this once per repo to keep `main` safe without blocking work.
 6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
+   - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
-   - Perform a code review using `pr review` and document it via a formal GitHub review (approve/request changes).
+   - Run `feature review` to perform the review + merge flow (or use `pr review` and `pr merge` manually).
+   - Verify the PR includes the Review Evidence section; if missing, stop and update the PR before merge.
+   - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
      - Include evidence: acceptance criteria coverage, tests/TP-xx packs, and known gaps.
+   - If you are a solo maintainer, use a formal self-review comment and ensure branch protections do not require approvals.
    - Confirm branch protection/rulesets won’t block the merge and note any skipped checks in the PR.
    - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
 7. Cleanup after merge:
@@ -94,6 +99,9 @@ Use this once per repo to keep `main` safe without blocking work.
 - Parent issue checklist reflects completion.
 - Issue plans reviewed and approved before implementation.
 - PR includes `Fixes #{parent}` in the description.
+- PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
+- Review is documented (approval or self-review comment) before merge.
+- Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
 - Testing workflow used for behavior changes, with pack IDs recorded.
@@ -104,6 +112,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Retrospective follow-ups are applied or tracked in new issues.
 - Base checks run for each child issue; full quality run before PR.
 - Child issues are closed only after base checks pass.
+- Feature branch is pushed only at finish unless explicitly requested earlier.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
 - Each child issue was committed before starting the next one.
@@ -134,6 +143,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - `.github/prompts/branch.prompt.md`
 - `.github/prompts/docs.prompt.md`
 - `.github/prompts/pr.prompt.md`
+- `docs/dev/workflows/code-review.md`
 - `.github/prompts/testing.prompt.md`
 - `docs/dev/best-practices/documentation-style-guide.md`
 - `docs/dev/workflows/testing.md`
