@@ -85,6 +85,8 @@ Use this once per repo to keep `main` safe without blocking work.
 6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
+   - Run required usage scenarios when behavior affects end-to-end flows (see `docs/testing/usage-scenario-tests.md`) and record the scenario IDs.
+   - Record validation/UAT sign-off (self-review OK for solo maintainer).
    - Confirm automated coverage was added/updated for any new behavior; list the relevant specs in the PR Review Evidence.
    - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
@@ -113,6 +115,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - PR Review Evidence lists the automated specs updated and the TP-xx packs executed.
 - PR Traceability section maps ACs to evidence and matches tests run.
 - Review is documented (approval or self-review comment) before merge.
+- Validation/UAT sign-off recorded with scenario IDs when applicable.
 - Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
@@ -151,6 +154,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added a traceability requirement to link acceptance criteria to verification evidence.
 - Added a design/architecture review gate with ADR decision tracking.
 - Added change-control guidance for requirements/AC updates and re-approval.
+- Added validation/UAT sign-off requirement with usage-scenario references.
 
 ## Related docs
 

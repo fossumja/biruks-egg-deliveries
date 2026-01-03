@@ -53,6 +53,12 @@
 - [ ] Docs updated
 - [ ] Not needed (explain): <!-- ... -->
 
+## Validation sign-off
+- Usage scenarios run (IDs):
+  - <!-- Scenario-xx -->
+- Sign-off:
+  - [ ] Complete (self-review OK for solo work)
+
 ## Notes for reviewers
 - <!-- Non-obvious decisions, tradeoffs, follow-ups, focus areas -->
 

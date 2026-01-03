@@ -56,6 +56,7 @@ Given `pr=<id>` (or current branch):
 - Correctness: does it match the issue/AC?
 - Traceability: PR Traceability section maps ACs to evidence and matches tests run.
 - Tests: added/updated? do they cover edge cases?
+- Validation: usage scenarios run and sign-off recorded when applicable.
 - DX: clear names, low complexity, no dead code
 - Security: input validation, auth boundaries, secrets, SSRF/XSS
 - UI (if applicable): a11y basics, keyboard nav, i18n, perf hotspots

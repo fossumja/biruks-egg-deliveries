@@ -83,17 +83,20 @@ You are my feature delivery assistant.
 1. Confirm all child issues are closed and the parent checklist is complete.
 2. Cross-check parent acceptance criteria and child issue outcomes; mark parent checklist items complete if the evidence supports them.
 3. Run the required regression packs per `docs/testing/regression-tests.md`, record TP-xx IDs, and update regression docs if new behavior was introduced.
-4. Run the quality workflow if applicable (this is the full check for the feature).
-5. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
-6. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-7. Push the feature branch now (only after all child issues are complete).
-8. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-9. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
-10. Ensure the PR Traceability section is completed and matches the tests executed.
-11. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-12. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-13. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-14. Suggest release workflow if requested.
+4. Run required usage scenarios when behavior affects end-to-end flows; record scenario IDs for validation.
+5. Record validation/UAT sign-off (self-review OK for solo maintainer).
+6. Run the quality workflow if applicable (this is the full check for the feature).
+7. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
+8. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
+9. Push the feature branch now (only after all child issues are complete).
+10. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+11. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
+12. Ensure the PR Traceability section is completed and matches the tests executed.
+13. Ensure validation/UAT sign-off is recorded with scenario IDs when applicable.
+14. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+15. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+16. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+17. Suggest release workflow if requested.
 
 ## action=review
 
