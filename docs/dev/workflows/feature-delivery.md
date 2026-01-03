@@ -60,10 +60,12 @@ Use this once per repo to keep `main` safe without blocking work.
    - Confirm the branch name and ordered child issues.
    - Validate the parent issue plan per `docs/dev/workflows/development.md` and comment if changes are needed.
    - Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
+   - Confirm a design/architecture review was completed and ADR decisions are recorded before coding.
 2. Implement each child issue:
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
    - Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
+   - Confirm the design/ADR decision is documented; update it if scope changes before coding.
    - Complete acceptance criteria, update docs, and close the issue.
    - If behavior changes, run `testing scope` to select regression packs, enumerate required automated specs, update/add those tests, execute automated/manual checks, record TP-xx IDs, and log any deferrals with a follow-up issue.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
@@ -104,6 +106,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Parent issue checklist reflects completion.
 - Issue plans reviewed and approved before implementation.
 - Test plans approved before implementation; changes re-approved if scope changed.
+- Design/architecture review completed and ADR decision recorded.
 - PR includes `Fixes #{parent}` in the description.
 - PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
 - PR Review Evidence lists the automated specs updated and the TP-xx packs executed.
@@ -145,6 +148,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Required code reviews to be documented as part of feature finish.
 - Added an explicit test-plan approval gate and review-evidence requirement for automated specs.
 - Added a traceability requirement to link acceptance criteria to verification evidence.
+- Added a design/architecture review gate with ADR decision tracking.
 
 ## Related docs
 

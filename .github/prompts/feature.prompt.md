@@ -37,16 +37,17 @@ You are my feature delivery assistant.
 1. Read the parent issue and extract child issue links or checklists.
 2. Validate the parent plan against the codebase per `docs/dev/workflows/development.md` and comment if changes are needed.
 3. Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
-4. If no child issues are listed:
+4. Confirm design/architecture review is completed and ADR decisions are recorded before coding.
+5. If no child issues are listed:
    - Search for issues referencing the parent (for example, `#{parent}` in the issue body).
    - If still missing, ask once whether to create them via `/issues action=breakdown`.
-5. Create or reuse a feature branch:
+6. Create or reuse a feature branch:
    - If a linked branch exists, check it out.
    - Prefer `gh issue develop <issue>` if available.
    - Otherwise follow the branch naming convention in `.github/prompts/branch.prompt.md`.
-6. Verify the current branch matches the feature branch; if not, check out the local branch from `origin/<branch>`.
-7. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
-8. Report the branch name and planned issue order.
+7. Verify the current branch matches the feature branch; if not, check out the local branch from `origin/<branch>`.
+8. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
+9. Report the branch name and planned issue order.
 
 ## action=next
 
@@ -54,20 +55,21 @@ You are my feature delivery assistant.
 2. Restate its acceptance criteria, impacted files, test plan (automated specs + TP-xx/manual checks), and unknowns before changes.
 3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
 4. Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
-5. Sync the branch with the base branch if needed.
-6. Implement the issue, run targeted tests, and update docs if required.
+5. Confirm the design/ADR decision is documented; update it if scope changes before coding.
+6. Sync the branch with the base branch if needed.
+7. Implement the issue, run targeted tests, and update docs if required.
    - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
-7. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
-8. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
-9. Commit the child issue work so the branch is clean before moving to the next child issue.
-10. Do not push the feature branch yet unless the user explicitly requests it.
-11. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
-12. Update the parent issue checklist to reflect completion:
+8. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
+9. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
+10. Commit the child issue work so the branch is clean before moving to the next child issue.
+11. Do not push the feature branch yet unless the user explicitly requests it.
+12. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
+13. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-13. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-14. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+14. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+15. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 

@@ -35,6 +35,7 @@ Use this workflow to set up and run the app locally during active development.
 - Use the docs prompt and documentation style guide for any doc updates.
 - Use the testing workflow and TP-xx packs for behavior changes; update or add tests to cover new behavior.
 - Require a documented and approved test plan before implementation; re-approve if scope changes.
+- Perform a design/architecture review and decide whether an ADR is required; record the decision.
 - Use short-lived feature branches off `main`; delete them after merge.
 - Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
@@ -43,11 +44,24 @@ Use this workflow to set up and run the app locally during active development.
 - Before starting new work or switching branches, confirm the working tree is clean or ask the user how to handle existing changes.
 - Use one command per tool call; avoid multi-command `zsh -lc` strings and repo-external temp files.
 
+## ADR trigger checklist
+
+Create or update an ADR in `docs/decisions/` when changes:
+
+- Introduce or alter data models, storage schema, or persistence rules.
+- Change cross-feature behavior or core user flows.
+- Affect CSV formats, backup/restore behavior, or data migration logic.
+- Add or replace external integrations, device APIs, or platform dependencies.
+- Introduce new invariants, performance tradeoffs, or security considerations.
+
+If none apply, document the design decision in the issue (comment or checklist note).
+
 ## Steps
 
 1. Review the issue and proposed plan:
    - Confirm acceptance criteria, scope boundaries, and dependencies.
    - Identify missing context (designs, data contracts, ADRs) before coding.
+   - Review UX, data-model, and architecture impact; decide if an ADR is required and document the decision (ADR or issue note).
    - Confirm the issue lists required automated specs and TP-xx/manual checks, and mark the test plan approved.
    - For regression/testing-plan issues, ensure the plan includes pack updates, manual checks, automation references, usage-scenario updates, and change-impact map updates.
 2. Validate feasibility in the codebase:
@@ -93,6 +107,7 @@ Use this workflow to set up and run the app locally during active development.
 - Issues are closed only after base checks pass.
 - Testing workflow executed when behavior changes, with pack IDs recorded.
 - Test plan approved before coding; changes were re-approved if scope changed.
+- Design/architecture review completed and ADR decision recorded.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
 
@@ -114,6 +129,7 @@ Use this workflow to set up and run the app locally during active development.
 - Added a worktree cleanliness confirmation step before switching tasks.
 - Added a regression-testing plan detail check to prevent under-specified test coverage issues.
 - Added a test-plan approval requirement to align with V-model planning gates.
+- Added a design/architecture review gate with ADR decision guidance.
 
 ## Related docs
 
