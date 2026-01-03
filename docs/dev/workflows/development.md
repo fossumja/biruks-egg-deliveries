@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-03
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -34,6 +34,7 @@ Use this workflow to set up and run the app locally during active development.
 - Prefer prompts for repeatable tasks; create a prompt if one is missing.
 - Use the docs prompt and documentation style guide for any doc updates.
 - Use the testing workflow and TP-xx packs for behavior changes; update or add tests to cover new behavior.
+- Require a documented and approved test plan before implementation; re-approve if scope changes.
 - Use short-lived feature branches off `main`; delete them after merge.
 - Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
@@ -47,6 +48,7 @@ Use this workflow to set up and run the app locally during active development.
 1. Review the issue and proposed plan:
    - Confirm acceptance criteria, scope boundaries, and dependencies.
    - Identify missing context (designs, data contracts, ADRs) before coding.
+   - Confirm the issue lists required automated specs and TP-xx/manual checks, and mark the test plan approved.
    - For regression/testing-plan issues, ensure the plan includes pack updates, manual checks, automation references, usage-scenario updates, and change-impact map updates.
 2. Validate feasibility in the codebase:
    - Scan relevant files, services, and tests to confirm the plan is implementable.
@@ -54,6 +56,7 @@ Use this workflow to set up and run the app locally during active development.
 3. Adjust and approve the plan when needed:
    - If the plan needs changes, update the plan/checklist and comment on the issue with the revised steps.
    - Explicitly mark the updated plan as approved and continue unless a blocking decision remains.
+   - If the test plan changes, update it in the issue and re-approve before continuing.
 4. Set up the branch (if needed):
    - Use `.github/prompts/branch.prompt.md` for branch creation or sync.
 5. Read the repo overview:
@@ -89,6 +92,7 @@ Use this workflow to set up and run the app locally during active development.
 - Base checks run for each issue-sized change.
 - Issues are closed only after base checks pass.
 - Testing workflow executed when behavior changes, with pack IDs recorded.
+- Test plan approved before coding; changes were re-approved if scope changed.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
 
@@ -109,6 +113,7 @@ Use this workflow to set up and run the app locally during active development.
 - Added explicit confirmation requirement for high-risk actions.
 - Added a worktree cleanliness confirmation step before switching tasks.
 - Added a regression-testing plan detail check to prevent under-specified test coverage issues.
+- Added a test-plan approval requirement to align with V-model planning gates.
 
 ## Related docs
 

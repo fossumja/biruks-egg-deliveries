@@ -28,6 +28,8 @@
   - <!-- List ACs or link to ticket -->
 - Tests run (commands) + results
   - <!-- e.g., npm test -- --watch=false -->
+- Automated specs updated
+  - <!-- spec file paths -->
 - Manual checks / TP packs
   - <!-- What you ran/checked -->
 - Risk assessment

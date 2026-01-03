@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-03
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -59,9 +59,11 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=start issue={parent}` or `feature start {parent}`.
    - Confirm the branch name and ordered child issues.
    - Validate the parent issue plan per `docs/dev/workflows/development.md` and comment if changes are needed.
+   - Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
 2. Implement each child issue:
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
+   - Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
    - Complete acceptance criteria, update docs, and close the issue.
    - If behavior changes, run `testing scope` to select regression packs, enumerate required automated specs, update/add those tests, execute automated/manual checks, record TP-xx IDs, and log any deferrals with a follow-up issue.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
@@ -100,8 +102,10 @@ Use this once per repo to keep `main` safe without blocking work.
 - All child issues are closed or explicitly deferred.
 - Parent issue checklist reflects completion.
 - Issue plans reviewed and approved before implementation.
+- Test plans approved before implementation; changes re-approved if scope changed.
 - PR includes `Fixes #{parent}` in the description.
 - PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
+- PR Review Evidence lists the automated specs updated and the TP-xx packs executed.
 - Review is documented (approval or self-review comment) before merge.
 - Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
@@ -137,6 +141,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added a worktree cleanliness confirmation step before switching tasks.
 - Added guidance to commit each child issue before moving on to keep the feature branch clean.
 - Required code reviews to be documented as part of feature finish.
+- Added an explicit test-plan approval gate and review-evidence requirement for automated specs.
 
 ## Related docs
 
