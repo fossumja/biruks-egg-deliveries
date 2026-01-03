@@ -28,6 +28,8 @@
   - <!-- List ACs or link to ticket -->
 - Tests run (commands) + results
   - <!-- e.g., npm test -- --watch=false -->
+- Automated specs updated
+  - <!-- spec file paths -->
 - Manual checks / TP packs
   - <!-- What you ran/checked -->
 - Risk assessment
@@ -40,9 +42,22 @@
   1. <!-- step -->
   2. <!-- expected result -->
 
+## Traceability
+<!-- Map requirements/ACs to verification evidence. Use AC-1 style IDs or short labels. -->
+
+| Requirement/AC | Evidence (specs, TP-xx, manual checks) | Type (Auto/Manual) |
+| --- | --- | --- |
+| <!-- AC-1 --> | <!-- src/app/...spec.ts; TP-xx --> | <!-- Auto/Manual --> |
+
 ## Docs impact
 - [ ] Docs updated
 - [ ] Not needed (explain): <!-- ... -->
+
+## Validation sign-off
+- Usage scenarios run (IDs):
+  - <!-- Scenario-xx -->
+- Sign-off:
+  - [ ] Complete (self-review OK for solo work)
 
 ## Notes for reviewers
 - <!-- Non-obvious decisions, tradeoffs, follow-ups, focus areas -->

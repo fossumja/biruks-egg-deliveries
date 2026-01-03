@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-03
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -59,11 +59,16 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=start issue={parent}` or `feature start {parent}`.
    - Confirm the branch name and ordered child issues.
    - Validate the parent issue plan per `docs/dev/workflows/development.md` and comment if changes are needed.
+   - Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
+   - Confirm a design/architecture review was completed and ADR decisions are recorded before coding.
 2. Implement each child issue:
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
+   - Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
+   - Confirm the design/ADR decision is documented; update it if scope changes before coding.
+   - If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.
    - Complete acceptance criteria, update docs, and close the issue.
-   - If behavior changes, run `testing scope` to select regression packs, execute automated/manual checks, record TP-xx IDs, and update/add tests (or log a follow-up issue).
+   - If behavior changes, run `testing scope` to select regression packs, enumerate required automated specs, update/add those tests, execute automated/manual checks, record TP-xx IDs, and log any deferrals with a follow-up issue.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
    - Run at least one base check (default: `npm run build`) and note results. Fix any errors before closing the child issue.
    - If `public/build-info.json` changes, restore it before committing.
@@ -80,10 +85,14 @@ Use this once per repo to keep `main` safe without blocking work.
 6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
+   - Run required usage scenarios when behavior affects end-to-end flows (see `docs/testing/usage-scenario-tests.md`) and record the scenario IDs.
+   - Record validation/UAT sign-off (self-review OK for solo maintainer).
+   - Confirm automated coverage was added/updated for any new behavior; list the relevant specs in the PR Review Evidence.
    - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
    - Run `feature review` to perform the review + merge flow (or use `pr review` and `pr merge` manually).
    - Verify the PR includes the Review Evidence section; if missing, stop and update the PR before merge.
+   - Verify the PR Traceability section is completed and matches executed tests; update it before review/merge if needed.
    - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
      - Include evidence: acceptance criteria coverage, tests/TP-xx packs, and known gaps.
    - If you are a solo maintainer, use a formal self-review comment and ensure branch protections do not require approvals.
@@ -99,9 +108,14 @@ Use this once per repo to keep `main` safe without blocking work.
 - All child issues are closed or explicitly deferred.
 - Parent issue checklist reflects completion.
 - Issue plans reviewed and approved before implementation.
+- Test plans approved before implementation; changes re-approved if scope changed.
+- Design/architecture review completed and ADR decision recorded.
 - PR includes `Fixes #{parent}` in the description.
 - PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
+- PR Review Evidence lists the automated specs updated and the TP-xx packs executed.
+- PR Traceability section maps ACs to evidence and matches tests run.
 - Review is documented (approval or self-review comment) before merge.
+- Validation/UAT sign-off recorded with scenario IDs when applicable.
 - Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
@@ -136,6 +150,11 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added a worktree cleanliness confirmation step before switching tasks.
 - Added guidance to commit each child issue before moving on to keep the feature branch clean.
 - Required code reviews to be documented as part of feature finish.
+- Added an explicit test-plan approval gate and review-evidence requirement for automated specs.
+- Added a traceability requirement to link acceptance criteria to verification evidence.
+- Added a design/architecture review gate with ADR decision tracking.
+- Added change-control guidance for requirements/AC updates and re-approval.
+- Added validation/UAT sign-off requirement with usage-scenario references.
 
 ## Related docs
 

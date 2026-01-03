@@ -21,10 +21,12 @@ labels: ["type:enhancement", "priority:medium"]
 
 ## Testing plan
 
+- Automated specs (spec file paths):
 - TP-xx packs:
 - Manual checks:
-- Automation references:
 - Usage scenarios:
+- Test plan approved:
+  - [ ] Approved (self-review OK for solo work)
 
 ## Docs impact
 
