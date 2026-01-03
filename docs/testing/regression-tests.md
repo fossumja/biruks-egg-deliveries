@@ -136,7 +136,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 - `src/app/pages/home.component.spec.ts` (export/restore triggers and timestamps).
 
-Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year remains manual.
+Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year is covered in `backup.service.spec.ts`.
 
 Manual checks:
 
@@ -215,8 +215,8 @@ Automated coverage:
 - `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipts edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
-Date range tied to the selected tax year is covered in `route-planner.component.spec.ts`; UI min/max changes remain manual.
-Donation validation rules are partially covered in `route-planner.component.spec.ts`; picker error states remain manual.
+Date range tied to the selected tax year and UI min/max attributes are covered in `route-planner.component.spec.ts`.
+Donation validation rules are partially covered in `route-planner.component.spec.ts`; picker invalid-input error states are covered in `donation-amount-picker.component.spec.ts`.
 
 Manual checks:
 
@@ -273,9 +273,9 @@ Automated coverage:
 - `src/app/pages/route-planner.component.spec.ts` (receipts sorting and edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (tax-year receipt filtering).
 
-All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts`; UI year switching remains manual.
-Receipt validation behavior is partially covered in `route-planner.component.spec.ts`; UI error states remain manual.
-Navigation/reset behavior for receipts is manual only.
+All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts` and `route-planner.component.spec.ts`.
+Receipt validation behavior (amount required/max) is covered in `route-planner.component.spec.ts`; UI error styling remains manual.
+Navigation/reset behavior for receipts is covered in `route-planner.component.spec.ts`.
 Run completion reset behavior is covered in `storage.service.spec.ts`; UI history ordering remains manual.
 
 Manual checks:
@@ -306,7 +306,7 @@ Automated coverage:
 - `src/app/components/stop-delivery-card.component.spec.ts` (event emissions).
 - `src/app/components/donation-amount-picker.component.spec.ts`
 
-Donation amount picker validation is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
+Donation amount picker validation (max and invalid input) is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
 
 Manual checks:
 
@@ -333,7 +333,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 
 Totals with suggested rate changes are covered in `usage-scenario-totals.spec.ts`.
-Dexie migration and upgrade flows are manual-only unless test utilities are extended.
+Dexie migration upgrade coverage exists in `storage.service.spec.ts` for legacy data upgrades; device upgrade flows remain manual.
 
 Manual checks:
 
@@ -356,8 +356,8 @@ Scope:
 
 Automated coverage:
 
-- Unit tests cover share/download fallback, maps links, and clipboard flows.
-- Device and PWA checks remain manual.
+- Unit tests cover share/download fallback, maps links, clipboard flows, and service worker registration options (`app.config.spec.ts`).
+- Device and PWA install/offline checks remain manual.
 Offline cache, service worker update, and install flow checks are manual-only today.
 
 Device matrix (minimum regression target):

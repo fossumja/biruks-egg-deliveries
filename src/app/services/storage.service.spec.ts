@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import Dexie from 'dexie';
 import { StorageService } from './storage.service';
 import { Delivery, DonationInfo } from '../models/delivery.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
@@ -6,6 +7,7 @@ import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
 import { normalizeEventDate } from '../utils/date-utils';
 
 const SUGGESTED_KEY = 'suggestedDonationRate';
+const DB_NAME = 'BiruksEggDeliveriesDB';
 
 const buildDelivery = (overrides: Partial<Delivery> = {}): Delivery => {
   const id = overrides.id ?? `delivery_${Math.random()}`;
@@ -99,6 +101,53 @@ describe('StorageService regression tests', () => {
     expect(stored.donation?.taxableAmount).toBe(0);
     expect(stored.originalDonation?.suggestedAmount).toBe(15);
     expect(stored.subscribed).toBe(true);
+  });
+
+  it('upgrades legacy Dexie data and preserves deliveries', async () => {
+    const existingDb = (storage as unknown as { db: Dexie }).db;
+    existingDb.close();
+    await Dexie.delete(DB_NAME);
+
+    const legacyDb = new Dexie(DB_NAME);
+    legacyDb.version(1).stores({
+      deliveries: 'id, routeDate, status, sortIndex',
+      routes: 'routeDate'
+    });
+    await legacyDb.open();
+    await legacyDb.table('deliveries').add({
+      id: 'legacy-1',
+      routeDate: '2024-01-01',
+      dozens: 2,
+      sortIndex: 0,
+      status: '',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z'
+    });
+    await legacyDb.table('routes').add({
+      routeDate: '2024-01-01',
+      totalStops: 1,
+      deliveredCount: 0,
+      skippedCount: 0,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      lastUpdatedAt: '2024-01-01T00:00:00.000Z',
+      completed: false
+    });
+    legacyDb.close();
+
+    const upgraded = new StorageService();
+    storage = upgraded;
+
+    const deliveries = await upgraded.getAllDeliveries();
+    expect(deliveries.length).toBe(1);
+    const legacy = deliveries[0];
+    expect(legacy.runId).toBe('2024-01-01');
+    expect(legacy.baseRowId).toBe('legacy-1');
+    expect(legacy.donation?.status).toBe('NotRecorded');
+    expect(legacy.donation?.suggestedAmount).toBe(8);
+    expect(legacy.donation?.taxableAmount).toBe(0);
+
+    const routes = await upgraded.getRoutes();
+    expect(routes.some((route) => route.routeDate === '2024-01-01')).toBeTrue();
   });
 
   it('addDelivery inserts at the expected order and reindexes', async () => {

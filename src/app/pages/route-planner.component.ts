@@ -1550,6 +1550,9 @@ export class RoutePlannerComponent {
     this.runEntryDraft = null;
     this.resetRunEntryDate();
     this.resetRunEntryErrors();
+    this.searchTerm = '';
+    this.editingStop = null;
+    this.openRowId = null;
 
     if (!key) {
       this.routeDate = undefined;
