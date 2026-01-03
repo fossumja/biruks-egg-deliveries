@@ -37,6 +37,7 @@ You are my feature delivery assistant.
 1. Read the parent issue and extract child issue links or checklists.
 2. Validate the parent plan against the codebase per `docs/dev/workflows/development.md` and comment if changes are needed.
 3. Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
+   - If missing, stop and request updates to the issue before proceeding.
 4. Confirm design/architecture review is completed and ADR decisions are recorded before coding.
 5. If no child issues are listed:
    - Search for issues referencing the parent (for example, `#{parent}` in the issue body).
