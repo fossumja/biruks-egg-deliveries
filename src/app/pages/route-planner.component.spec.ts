@@ -1047,6 +1047,39 @@ describe('RoutePlannerComponent', () => {
     expect(component.runEntries.length).toBe(0);
   });
 
+  it('deletes a run entry from all receipts and refreshes the list', async () => {
+    const entry = createRunEntry({
+      id: 'entry-1',
+      runId: 'run-1',
+      eventDate: '2025-01-05'
+    });
+    storage.runEntries = [entry];
+    storage.runs = [
+      {
+        id: 'run-1',
+        date: '2025-01-05',
+        weekType: 'WeekA',
+        label: 'Week A - 2025-01-05',
+        routeDate: 'Week A',
+      }
+    ];
+    storage.deliveries = [];
+
+    localStorage.setItem('selectedTaxYear', '2025');
+    await component.onRouteOrRunChange('receipts:all');
+
+    expect(component.runEntries.length).toBe(1);
+
+    spyOn(window, 'confirm').and.returnValue(true);
+    const deleteSpy = spyOn(storage, 'deleteRunEntry').and.callThrough();
+
+    await component.confirmDeleteRunEntry(component.runEntries[0]!);
+
+    expect(deleteSpy).toHaveBeenCalledWith('entry-1');
+    expect(component.runEntries.length).toBe(0);
+    expect(component.filteredRunEntries.length).toBe(0);
+  });
+
   it('updates a one-off receipt date and refreshes ordering', async () => {
     const deliveryA = createDelivery({
       id: 'delivery-1',

@@ -227,16 +227,14 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/delivery-run.component.spec.ts` (deliver/skip/end early, donation updates).
+- `src/app/pages/delivery-run.component.spec.ts` (deliver/skip/end early, counts/progress updates, end-run-early reasons, donation updates).
 - `src/app/components/stop-delivery-card.component.spec.ts` (stop card event wiring).
 - `src/app/services/storage.service.spec.ts` (change status logic).
 
 Manual checks:
 
 - Status transitions: Pending -> Changed -> Delivered.
-- Skip dialog updates counts and progress.
-- Enter a decimal donation amount > 100 and confirm save works.
-- End a run early and confirm remaining stops are skipped with the correct reason.
+- End run early dialog behavior and confirmation copy.
 - Tab order reaches Deliver/Skip/End Run actions and dialogs; focus is visible.
 - Run screen buttons and inputs have visible labels or aria-labels.
 
@@ -254,7 +252,7 @@ Scope:
 Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (run completion and resets).
-- `src/app/pages/route-planner.component.spec.ts` (receipts sorting and edits).
+- `src/app/pages/route-planner.component.spec.ts` (receipts sorting, deletion, and edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (tax-year receipt filtering).
 
 All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts` and `route-planner.component.spec.ts`.
@@ -266,9 +264,7 @@ Manual checks:
 
 - Completing a run resets the route for the next run.
 - All receipts view shows both run entries and one-offs for the selected tax year.
-- Delete a receipt from **All receipts** and confirm it disappears and totals refresh.
-- Delete a receipt from **Past runs** and confirm it disappears and totals refresh.
-- Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
+- After deleting receipts, confirm totals refresh to match the updated list.
 - Switch tax year and confirm All receipts and totals update to the selected year.
 - Edit a receipt: Donated requires an amount; NotRecorded allows blank.
 - Switching between a specific run and **All receipts** closes any inline edit panel and resets the list to full entries.
