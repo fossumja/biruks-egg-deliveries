@@ -49,9 +49,13 @@ Use this once per repo to keep `main` safe without blocking work.
    - Require pull requests before merging.
    - Block force pushes.
    - Block branch deletion.
-4. Optional when the team is ready:
-   - Require 1 approval and resolve conversations.
-5. Do **not** require status checks until CI is stable, or merges will be blocked.
+4. Status checks (recommended once CI is stable):
+   - Require `unit-tests`.
+   - Require `pr-body-validation` (V-model evidence guard).
+   - Stage rollout: enable as **informational** first, then mark required once the team is ready.
+5. Optional when the team is ready:
+   - Require 1 approval and resolve conversations (skip for solo maintainer).
+6. If a required check must be waived, document the waiver in the PR with reason and approval.
 
 ## Steps
 
@@ -155,6 +159,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added a design/architecture review gate with ADR decision tracking.
 - Added change-control guidance for requirements/AC updates and re-approval.
 - Added validation/UAT sign-off requirement with usage-scenario references.
+- Documented required status checks (unit-tests, pr-body-validation) and staged rollout guidance.
 
 ## Related docs
 

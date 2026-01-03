@@ -44,6 +44,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
      - Validation sign-off checkbox is checked.
      - Automated specs updated lists spec paths or `N/A` for docs-only changes.
    - If missing, stop and update the PR before merge.
+   - If the PR-body check is required but needs a waiver, document the waiver in the PR with reason and approval.
 4. If running fixes:
    - Apply fixes in the same order (format → lint → types → tests).
 5. Re-run checks to confirm green.
