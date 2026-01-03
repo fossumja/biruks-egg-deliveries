@@ -285,15 +285,17 @@ Scope:
 Automated coverage:
 
 - `src/app/components/stop-delivery-card.component.spec.ts` (event emissions).
+- `src/app/components/donation-controls.component.spec.ts` (allow-reselect behavior).
 - `src/app/components/donation-amount-picker.component.spec.ts`
+- `src/app/services/toast.service.spec.ts` (toast lifecycle).
 
-Donation amount picker validation (max and invalid input) is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
+Donation amount picker validation (max, invalid input, and recovery) is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
+Toast auto-dismiss timing is covered in `toast.service.spec.ts`; visual style remains manual.
 
 Manual checks:
 
-- Donation controls respect allow-reselect behavior.
-- Toasts appear and auto-dismiss.
-- Invalid picker input shows an error and disables Save; valid input clears the error.
+- Picker error styling/ARIA states are visible and consistent for invalid input.
+- Toasts render in the UI with the correct styling and placement.
 
 ### TP-10 Data and utilities
 
