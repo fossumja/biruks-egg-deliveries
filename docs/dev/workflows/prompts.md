@@ -53,19 +53,20 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Planning and tracking
 
- - `issues` — create, break down, and triage issues, including test-failure rerun guidance. Shorthand: `issues breakdown 1`. Workflow: `docs/dev/workflows/triage.md`.
+- `issues` — create, break down, and triage issues, including test-failure rerun guidance. Shorthand: `issues breakdown 1`. Workflow: `docs/dev/workflows/triage.md`.
 - `project` — manage GitHub Projects. Shorthand: `project add 1 2`. Workflow: `docs/dev/workflows/triage.md`.
 - `triage` — bulk triage issues and PRs. Shorthand: `triage "is:open label:type:bug"`. Workflow: `docs/dev/workflows/triage.md`.
 - `labels` — manage label taxonomy. Shorthand: `labels sync`. Workflow: `docs/dev/workflows/triage.md`.
 
 ### Delivery flow
 
- - `feature` — deliver a parent feature with child issues, including plan validation, V-model gates (design review, test-plan approval, traceability, validation sign-off, change control), retrospective follow-ups, testing workflow selection for behavior changes, and review/merge flow. Shorthand: `feature start 1`, `feature review` (review + merge). Workflow: `docs/dev/workflows/feature-delivery.md`.
+- `feature` — deliver a parent feature with child issues, including plan validation, V-model gates (design review, test-plan approval, traceability, validation sign-off, change control), retrospective follow-ups, testing workflow selection for behavior changes, and review/merge flow. Shorthand: `feature start 1`, `feature review` (review + merge). Workflow: `docs/dev/workflows/feature-delivery.md`.
+- `feature-all` — iterate through child issues by repeatedly running the `feature next` flow until a stop condition is reached. Shorthand: `feature all 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
 - `quality` — run quality gates. Shorthand: `quality check`. Workflow: `docs/dev/workflows/quality.md`.
- - `testing` — select and run modular regression packs (TP-xx), updating automation notes when coverage changes. Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
+- `testing` — select and run modular regression packs (TP-xx), updating automation notes when coverage changes. Shorthand: `testing scope`. Workflow: `docs/dev/workflows/testing.md`.
 
 ### Documentation and knowledge
 
@@ -76,7 +77,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 - `ci` — create or update CI workflows. Shorthand: `ci ci angular`. Workflow: `docs/dev/workflows/development.md`.
 - `deps` — dependency maintenance. Shorthand: `deps audit`. Workflow: `docs/dev/workflows/quality.md`.
- - `release` — ship releases with a TP-11 device checklist callout in release notes. Shorthand: `release status`. Workflow: `docs/dev/workflows/release.md`.
+- `release` — ship releases with a TP-11 device checklist callout in release notes. Shorthand: `release status`. Workflow: `docs/dev/workflows/release.md`.
 
 ### Repo setup
 
@@ -102,6 +103,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Noted the feature prompt's testing workflow integration for behavior changes.
 - Updated prompt entries for retrospective follow-ups and device checklist callouts.
 - Updated the feature prompt entry to include V-model gate coverage.
+- Added the `feature-all` prompt for cycling through child issues.
 
 ## Related docs
 
