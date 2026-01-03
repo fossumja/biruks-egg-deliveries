@@ -200,20 +200,16 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipts edits).
+- `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipt history rendering with skips, receipts edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
 Date range tied to the selected tax year and UI min/max attributes are covered in `route-planner.component.spec.ts`.
-Donation validation rules are partially covered in `route-planner.component.spec.ts`; picker invalid-input error states are covered in `donation-amount-picker.component.spec.ts`.
+Donation validation rules (required when Donated, blank allowed when NotRecorded, max cap/decimals) are covered in `route-planner.component.spec.ts` and `donation-amount-picker.component.spec.ts`.
 
 Manual checks:
 
 - One-off saves do not change live run status.
-- Totals include one-off donations and deliveries.
-- One-off modals show a compact receipt history list (including skips) for the selected person.
-- Switch tax year and confirm the one-off date min/max updates to the selected year window.
-- Status=Donated requires an amount; NotRecorded allows blank (treated as 0 in totals).
-- Amount accepts decimals and values above 100; 10000+ is rejected.
+- Receipt history layout remains compact and readable for long lists.
 - Tab order reaches save/cancel and donation controls in one-off dialogs; focus is visible.
 - One-off form inputs and buttons have visible labels or aria-labels.
 
