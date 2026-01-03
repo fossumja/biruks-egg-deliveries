@@ -195,6 +195,88 @@ describe('DeliveryRunComponent', () => {
     expect(component.currentStop).toBeUndefined();
   });
 
+  it('builds a run summary when the run is finished', async () => {
+    storage.deliveries = [
+      createStop({
+        id: 'stop-1',
+        status: 'delivered',
+        dozens: 2,
+        deliveredDozens: 2,
+        donation: {
+          status: 'Donated',
+          method: 'cash',
+          amount: 10,
+          suggestedAmount: 8,
+        }
+      }),
+      createStop({
+        id: 'stop-2',
+        status: 'delivered',
+        dozens: 1,
+        deliveredDozens: 1,
+        donation: {
+          status: 'Donated',
+          method: 'venmo',
+          amount: 4,
+          suggestedAmount: 4,
+        }
+      }),
+      createStop({
+        id: 'stop-3',
+        status: 'skipped',
+        donation: { status: 'NoDonation', suggestedAmount: 8 }
+      }),
+      createStop({
+        id: 'stop-4',
+        status: 'skipped',
+        donation: { status: 'NotRecorded', suggestedAmount: 8 }
+      }),
+    ];
+
+    await component.ngOnInit();
+
+    expect(component.finished).toBeTrue();
+    const summary = component.runSummary!;
+    expect(summary.routeLabel).toBe('Week A');
+    expect(summary.totalStops).toBe(4);
+    expect(summary.delivered).toBe(2);
+    expect(summary.skipped).toBe(2);
+    expect(summary.dozensDelivered).toBe(3);
+    expect(summary.donationTotal).toBeCloseTo(14, 2);
+    expect(summary.taxableTotal).toBeCloseTo(2, 2);
+    expect(summary.statusBreakdown).toEqual({
+      donated: 2,
+      notRecorded: 1,
+      noDonation: 1
+    });
+    expect(summary.methodBreakdown).toEqual({
+      cash: 1,
+      online: 1,
+      other: 0
+    });
+    expect(summary.completedAt).toBeTruthy();
+  });
+
+  it('shows an ended-early indicator in the summary', async () => {
+    storage.deliveries = [
+      createStop({ id: 'stop-1', status: 'delivered' }),
+      createStop({ id: 'stop-2', status: 'skipped' }),
+    ];
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    (component as unknown as { endedEarly: boolean }).endedEarly = true;
+    component.runFinishedAt = new Date().toISOString();
+    component.runSummary = (component as unknown as {
+      buildRunSummary: () => typeof component.runSummary;
+    }).buildRunSummary();
+    fixture.detectChanges();
+
+    expect(component.runSummary?.endedEarly).toBeTrue();
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+    expect(text).toContain('Ended early');
+  });
+
   it('updates donation status and method and refreshes status', async () => {
     storage.deliveries = [createStop({ id: 'stop-1' })];
     const updateSpy = spyOn(storage, 'updateDonation').and.callThrough();
