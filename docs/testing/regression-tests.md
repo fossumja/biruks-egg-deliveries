@@ -340,7 +340,7 @@ Scope:
 
 Automated coverage:
 
-- Unit tests cover share/download fallback, maps links, clipboard flows, and service worker registration options (`app.config.spec.ts`).
+- Unit tests cover share/download fallback, maps links, clipboard flows, wake lock toggling, and service worker registration options (`backup.service.spec.ts`, `route-planner.component.spec.ts`, `delivery-run.component.spec.ts`, `home.component.spec.ts`, `app.config.spec.ts`).
 - Device and PWA install/offline checks remain manual.
 Offline cache, service worker update, and install flow checks are manual-only today.
 
