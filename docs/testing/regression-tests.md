@@ -316,6 +316,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 
 Totals with suggested rate changes are covered in `usage-scenario-totals.spec.ts`.
+Import state persistence across storage reloads is covered in `storage.service.spec.ts`.
 Dexie migration upgrade coverage exists in `storage.service.spec.ts` for legacy data upgrades; device upgrade flows remain manual.
 
 Manual checks:
@@ -325,7 +326,7 @@ Manual checks:
 - Switch tax year and confirm totals/exports are computed for the selected year.
 - Suggested rate changes do not retroactively alter existing totals.
 - With existing data present, upgrade to a new build and confirm deliveries, runs, and one-offs persist.
-- Verify import state and totals survive a refresh after upgrade.
+- Verify totals survive a refresh after upgrade.
 
 ### TP-11 Device and PWA
 
