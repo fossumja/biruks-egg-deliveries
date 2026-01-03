@@ -99,6 +99,33 @@ describe('Usage scenario totals (data-level)', () => {
     expect(totals2025.get('c2')?.donation ?? 0).toBeCloseTo(7, 5);
   });
 
+  it('uses per-event suggested amounts when suggested rate changes', async () => {
+    storage.setSuggestedRate(4);
+    await storage.markDelivered('c1-r1', 2);
+    await storage.updateDonation('c1-r1', {
+      status: 'Donated' as const,
+      method: 'cash' as const,
+      amount: 10,
+      suggestedAmount: 8
+    });
+
+    storage.setSuggestedRate(6);
+
+    const deliveries = await storage.getAllDeliveries();
+    const totals = (backup as any).computeTotalsByBase(deliveries) as Map<
+      string,
+      { donation: number; dozens: number; taxable: number }
+    >;
+    const baseRowId =
+      deliveries.find((d) => d.id === 'c1-r1')?.baseRowId ??
+      deliveries.find((d) => d.id === 'c1-r1')?.id;
+    expect(baseRowId).toBeDefined();
+    const c1Totals = totals.get(baseRowId as string);
+    expect(c1Totals).toBeDefined();
+    expect(c1Totals?.donation ?? 0).toBeCloseTo(10, 5);
+    expect(c1Totals?.taxable ?? 0).toBeCloseTo(2, 5);
+  });
+
   it('totals one-off deliveries only (dozens + donation)', async () => {
     const rate = storage.getSuggestedRate();
 

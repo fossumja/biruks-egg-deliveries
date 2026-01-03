@@ -80,7 +80,7 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/home.component.spec.ts` (import/export/restore triggers, settings toggles, tax year persistence, multi-year warning).
+- `src/app/pages/home.component.spec.ts` (import/export/restore triggers, settings toggles, tax year persistence, route resume, multi-year warning).
 - `src/app/components/app-header.component.spec.ts` (progress summary calculations).
 - `src/app/app.component.spec.ts` (app shell bootstraps).
 
@@ -89,9 +89,7 @@ Accessibility checks are manual-only unless automated tooling is added.
 Manual checks:
 
 - Home buttons show correct enabled/disabled states.
-- Route resume returns to the last selected route.
-- Header progress bar matches run state.
-- Switch tax year and confirm the selector label and state persist after refresh.
+- Tax year selector label and state persist after refresh.
 - Keyboard tab order reaches import/export/help actions; focus is visible.
 - Home inputs and buttons have visible labels or aria-labels.
 
@@ -107,16 +105,12 @@ Scope:
 Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (import normalization and baseline state).
-- `src/app/pages/home.component.spec.ts` (import trigger and timestamp updates).
+- `src/app/pages/home.component.spec.ts` (import trigger and timestamp updates, CSV alias headers, missing optional columns, invalid numeric detection, custom columns preserved in import state).
 
 Manual checks:
 
 - Import accepts real route CSVs and shows helpful errors for malformed files.
 - Imported routes appear with correct totals and can be opened.
-- Import with aliased headers (for example Schedule/Date, Qty/Dozens) maps correctly.
-- Import with missing optional columns (Notes, Donation fields) succeeds.
-- Import fails on invalid numeric Dozens and surfaces the validation error.
-- Import preserves extra custom columns for export.
 
 ### TP-03 Backup, export, restore
 
@@ -132,9 +126,9 @@ Scope:
 Automated coverage:
 
 - `src/app/services/backup.service.spec.ts`
-- `src/app/services/usage-scenario-totals.spec.ts`
+- `src/app/services/usage-scenario-totals.spec.ts` (per-event suggested amount totals).
 - `src/app/services/usage-scenario-runner.spec.ts`
-- `src/app/pages/home.component.spec.ts` (export/restore triggers and timestamps).
+- `src/app/pages/home.component.spec.ts` (export/restore triggers, confirmation gating, and timestamps).
 
 Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year is covered in `backup.service.spec.ts`.
 
@@ -142,12 +136,7 @@ Manual checks:
 
 - Backup CSV opens with all original columns preserved.
 - Restore replaces existing data and rebuilds run history.
-- Totals in export match app totals after one-offs.
-- Export totals reflect the selected tax year and the backup filename includes the year.
-- Backup CSV includes RowType values for deliveries, runs, and run entries.
-- Restore warns about destructive overwrite, then rebuilds routes and run history.
 - Totals after restore match the selected tax-year totals.
-- Set suggested rate A, record donations; change to rate B, record more; export totals use per-event suggested amounts.
 
 ### TP-04 Planner core
 

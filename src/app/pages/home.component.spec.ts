@@ -361,6 +361,75 @@ describe('HomeComponent restore', () => {
   });
 });
 
+describe('HomeComponent CSV parsing', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+  let storage: StorageService;
+
+  const buildCsv = (headers: string[], rows: string[][]): string => {
+    return [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HomeComponent, RouterTestingModule]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
+    storage = TestBed.inject(StorageService);
+    await storage.clearAll();
+  });
+
+  afterEach(async () => {
+    await storage.clearAll();
+  });
+
+  it('parses alias headers and preserves custom columns in import state', async () => {
+    const csv = buildCsv(
+      ['Date', 'BaseRowId', 'Name', 'Address', 'City', 'State', 'ZIP', 'Qty', 'CustomField'],
+      [['Week A', 'base-1', 'Alice', '1 Main St', 'Springfield', 'IL', '12345', '3', 'ExtraValue']]
+    );
+
+    const deliveries = await (component as any).parseCsvText(csv);
+
+    expect(deliveries.length).toBe(1);
+    expect(deliveries[0].routeDate).toBe('Week A');
+    expect(deliveries[0].dozens).toBe(3);
+
+    const importState = await storage.getImportState();
+    expect(importState?.headers).toContain('CustomField');
+    const customIndex = importState?.headers.indexOf('CustomField') ?? -1;
+    expect(customIndex).toBeGreaterThan(-1);
+    expect(importState?.rowsByBaseRowId['base-1']?.[customIndex]).toBe('ExtraValue');
+  });
+
+  it('accepts CSVs missing optional columns', async () => {
+    const csv = buildCsv(
+      ['Schedule', 'Name', 'Address', 'City', 'State', 'ZIP', 'Dozens'],
+      [['Week A', 'Alex', '2 Oak St', 'Springfield', 'IL', '12345', '2']]
+    );
+
+    const deliveries = await (component as any).parseCsvText(csv);
+
+    expect(deliveries.length).toBe(1);
+    expect(deliveries[0].name).toBe('Alex');
+    expect(deliveries[0].notes).toBeUndefined();
+    expect(deliveries[0].donation?.status).toBe('NotRecorded');
+  });
+
+  it('rejects non-numeric dozens values', async () => {
+    const csv = buildCsv(
+      ['Schedule', 'Name', 'Address', 'City', 'State', 'ZIP', 'Dozens'],
+      [['Week A', 'Alex', '2 Oak St', 'Springfield', 'IL', '12345', 'nope']]
+    );
+
+    await expectAsync((component as any).parseCsvText(csv))
+      .toBeRejectedWithError('Row 2: "Dozens" must be a number.');
+  });
+});
+
 describe('HomeComponent core actions', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
@@ -464,6 +533,32 @@ describe('HomeComponent core actions', () => {
 
     expect(component.selectedTaxYear).toBe(2023);
     expect(localStorage.getItem('selectedTaxYear')).toBe('2023');
+  });
+
+  it('retains current route when pending deliveries exist', async () => {
+    localStorage.setItem('currentRoute', 'Week A');
+    storage.deliveries = [
+      createDelivery({ routeDate: 'Week A', status: '' }),
+      createDelivery({ id: 'delivery-2', routeDate: 'Week A', status: 'changed' })
+    ];
+
+    await component.ngOnInit();
+
+    expect(component.currentRoute).toBe('Week A');
+    expect(localStorage.getItem('currentRoute')).toBe('Week A');
+  });
+
+  it('clears current route when no pending deliveries remain', async () => {
+    localStorage.setItem('currentRoute', 'Week A');
+    storage.deliveries = [
+      createDelivery({ routeDate: 'Week A', status: 'delivered' }),
+      createDelivery({ id: 'delivery-2', routeDate: 'Week A', status: 'skipped' })
+    ];
+
+    await component.ngOnInit();
+
+    expect(component.currentRoute).toBeUndefined();
+    expect(localStorage.getItem('currentRoute')).toBeNull();
   });
 
   it('gates restore with confirmation and refreshes routes on success', async () => {
