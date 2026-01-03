@@ -42,7 +42,7 @@ This document captures the current UI so we can keep the experience consistent w
   - “Deliver” / “Skip” actions and next‑stop navigation.
   - “Open Map” and “Copy” address actions.
   - Compact “Next up” summary for the upcoming stop.
-  - Finished state with “Backup now” and “Complete run” (archives history + resets and returns Home).
+  - Finished state includes a compact run completion summary (counts, dozens, donation totals, ended-early indicator) plus “Backup now” and “Complete run”.
 
 ### Shared / Supporting
 

@@ -259,13 +259,15 @@ Related packs: TP-07, TP-08.
 Steps:
 
 1. Complete a run with a mix of Delivered and Skipped stops.
-2. Return to Planner and verify the live route reset.
-3. Open run history and confirm the completed run appears first with the correct label/date.
+2. On the run completion screen, verify the summary totals, donation/taxable amounts, and ended‑early indicator (if applicable).
+3. Return to Planner and verify the live route reset.
+4. Open run history and confirm the completed run appears first with the correct label/date.
 
 Expected:
 
 - Planner resets to the live route after completion.
 - Run history is ordered newest-first and shows the latest run label/date.
+- Run completion summary shows the expected totals and ended‑early indicator.
 
 ## Outcomes
 
