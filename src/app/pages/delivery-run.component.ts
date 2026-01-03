@@ -10,6 +10,28 @@ import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 import { cardChangeTrigger } from '../components/animations';
 
+type RunSummary = {
+  routeLabel: string;
+  completedAt: string;
+  totalStops: number;
+  delivered: number;
+  skipped: number;
+  dozensDelivered: number;
+  donationTotal: number;
+  taxableTotal: number;
+  statusBreakdown: {
+    donated: number;
+    notRecorded: number;
+    noDonation: number;
+  };
+  methodBreakdown: {
+    cash: number;
+    online: number;
+    other: number;
+  };
+  endedEarly: boolean;
+};
+
 @Component({
   selector: 'app-delivery-run',
   standalone: true,
@@ -34,6 +56,8 @@ export class DeliveryRunComponent {
   finished = false;
   loading = true;
   errorMessage = '';
+  runFinishedAt?: string;
+  runSummary?: RunSummary;
   deliveredQty = 0;
   showAmountPicker = false;
   selectedAmount = 0;
@@ -79,12 +103,16 @@ export class DeliveryRunComponent {
       this.currentStop = undefined;
       // Natural completion (not ended early).
       this.endedEarly = false;
+      this.captureRunFinishedAt();
+      this.runSummary = this.buildRunSummary();
     } else {
       this.finished = false;
       this.currentIndex = nextIndex;
       this.currentStop = this.normalizeStop({ ...this.stops[this.currentIndex] });
       this.deliveredQty = this.currentStop.deliveredDozens ?? this.currentStop.dozens;
       this.syncDonationDefaults();
+      this.runFinishedAt = undefined;
+      this.runSummary = undefined;
     }
   }
 
@@ -177,6 +205,8 @@ export class DeliveryRunComponent {
       this.finished = true;
       this.currentStop = undefined;
       this.endedEarly = true;
+      this.captureRunFinishedAt(now);
+      this.runSummary = this.buildRunSummary();
       this.showEndRunDialog = false;
       this.toast.show('Run ended early; remaining stops skipped', 'info');
     } catch (err) {
@@ -184,6 +214,99 @@ export class DeliveryRunComponent {
       this.toast.show('Failed to end run early', 'error');
       this.showEndRunDialog = false;
     }
+  }
+
+  private captureRunFinishedAt(timestamp?: string): void {
+    if (!this.runFinishedAt) {
+      this.runFinishedAt = timestamp ?? new Date().toISOString();
+    }
+  }
+
+  private buildRunSummary(): RunSummary {
+    const totalStops = this.stops.length;
+    const deliveredStops = this.stops.filter((s) => s.status === 'delivered');
+    const skippedStops = this.stops.filter((s) => s.status === 'skipped');
+    const delivered = deliveredStops.length;
+    const skipped = skippedStops.length;
+    const dozensDelivered = deliveredStops.reduce(
+      (sum, stop) => sum + Number(stop.deliveredDozens ?? stop.dozens ?? 0),
+      0
+    );
+
+    const statusBreakdown = {
+      donated: 0,
+      notRecorded: 0,
+      noDonation: 0
+    };
+    const methodBreakdown = {
+      cash: 0,
+      online: 0,
+      other: 0
+    };
+    let donationTotal = 0;
+    let taxableTotal = 0;
+    const suggestedRate = this.storage.getSuggestedRate();
+
+    for (const stop of this.stops) {
+      if (stop.status !== 'delivered' && stop.status !== 'skipped') {
+        continue;
+      }
+
+      const donation = stop.donation ?? {
+        status: 'NotRecorded',
+        suggestedAmount: 0
+      };
+      const status = donation.status ?? 'NotRecorded';
+      if (status === 'Donated') {
+        statusBreakdown.donated += 1;
+      } else if (status === 'NoDonation') {
+        statusBreakdown.noDonation += 1;
+      } else {
+        statusBreakdown.notRecorded += 1;
+      }
+
+      if (status !== 'Donated') {
+        continue;
+      }
+
+      const deliveredDozens =
+        stop.status === 'delivered'
+          ? Number(stop.deliveredDozens ?? stop.dozens ?? 0)
+          : 0;
+      const suggested =
+        donation.suggestedAmount ?? deliveredDozens * suggestedRate;
+      const amount = Number(
+        donation.amount ?? donation.suggestedAmount ?? suggested
+      );
+      donationTotal += amount;
+      const taxable = amount - suggested;
+      if (taxable > 0) {
+        taxableTotal += taxable;
+      }
+
+      const method = donation.method ?? 'other';
+      if (method === 'cash') {
+        methodBreakdown.cash += 1;
+      } else if (method === 'venmo' || method === 'ach' || method === 'paypal') {
+        methodBreakdown.online += 1;
+      } else {
+        methodBreakdown.other += 1;
+      }
+    }
+
+    return {
+      routeLabel: this.routeDate ?? 'Route',
+      completedAt: this.runFinishedAt ?? new Date().toISOString(),
+      totalStops,
+      delivered,
+      skipped,
+      dozensDelivered,
+      donationTotal,
+      taxableTotal,
+      statusBreakdown,
+      methodBreakdown,
+      endedEarly: this.endedEarly
+    };
   }
 
   async backupNow(): Promise<void> {

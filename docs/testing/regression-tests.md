@@ -290,6 +290,7 @@ Manual checks:
 - Switching between a specific run and **All receipts** closes any inline edit panel and resets the list to full entries.
 - One-off receipts allow editing date and suggested amount; run receipts do not.
 - Complete a run and confirm Planner resets to the live route and the run appears first in history with the correct label/date.
+- On the run completion screen, verify the summary shows totals, donation/taxable amounts, and the ended‑early indicator when applicable.
 
 ### TP-09 Shared UI components
 

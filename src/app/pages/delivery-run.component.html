@@ -65,17 +65,82 @@
   </div>
 
   <div class="actions-complete" *ngIf="finished && !loading && !errorMessage">
-    <button type="button" class="btn btn-primary" (click)="backupNow()">
-      Backup now
-    </button>
-    <button
-      type="button"
-      class="btn btn-secondary"
-      [disabled]="isCompleting"
-      (click)="completeRun()"
-    >
-      {{ isCompleting ? "Completing…" : "Complete run" }}
-    </button>
+    <div class="run-summary card" *ngIf="runSummary">
+      <div class="summary-header">
+        <div>
+          <div class="summary-title">Run summary</div>
+          <div class="summary-sub text-muted">{{ runSummary.routeLabel }}</div>
+        </div>
+        <span class="summary-pill" *ngIf="runSummary.endedEarly">
+          Ended early
+        </span>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-label">Completed at</div>
+          <div class="summary-value">
+            {{ runSummary.completedAt | date:"short" }}
+          </div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Total stops</div>
+          <div class="summary-value">{{ runSummary.totalStops }}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Delivered</div>
+          <div class="summary-value">{{ runSummary.delivered }}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Skipped</div>
+          <div class="summary-value">{{ runSummary.skipped }}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Dozens delivered</div>
+          <div class="summary-value">{{ runSummary.dozensDelivered }}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Total donations</div>
+          <div class="summary-value">
+            {{ runSummary.donationTotal | currency:"USD":"symbol":"1.2-2" }}
+          </div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Taxable total</div>
+          <div class="summary-value">
+            {{ runSummary.taxableTotal | currency:"USD":"symbol":"1.2-2" }}
+          </div>
+        </div>
+        <div class="summary-item span-2">
+          <div class="summary-label">Donation status</div>
+          <div class="summary-value">
+            Donated {{ runSummary.statusBreakdown.donated }} / Not recorded
+            {{ runSummary.statusBreakdown.notRecorded }} / None
+            {{ runSummary.statusBreakdown.noDonation }}
+          </div>
+        </div>
+        <div class="summary-item span-2">
+          <div class="summary-label">Donation methods</div>
+          <div class="summary-value">
+            Cash {{ runSummary.methodBreakdown.cash }} / Online
+            {{ runSummary.methodBreakdown.online }} / Other
+            {{ runSummary.methodBreakdown.other }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="completion-actions">
+      <button type="button" class="btn btn-primary" (click)="backupNow()">
+        Backup now
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="isCompleting"
+        (click)="completeRun()"
+      >
+        {{ isCompleting ? "Completing…" : "Complete run" }}
+      </button>
+    </div>
   </div>
 </div>
 
