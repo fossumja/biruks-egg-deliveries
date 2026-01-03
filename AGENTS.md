@@ -17,6 +17,23 @@ Follow them alongside system and developer instructions.
   - `.github/instructions/project-standards.instructions.md`
 - Agents working in this repository **must read and follow** those standards when writing or modifying TypeScript, Angular templates, HTML, or styles.
 
+## V-model workflow gates
+
+Agents must treat the `feature` workflow as the gateway into V-model verification/validation steps. For feature work:
+
+- Confirm a **design/architecture review** is complete and record any ADR decision before coding.
+- Require a **test plan** in the issue (automated specs + TP-xx/manual checks) and mark it approved before implementation.
+- If requirements/ACs change, update the issue, traceability notes, and test plan, then re-approve before proceeding.
+- Ensure **traceability** from requirements/ACs to verification evidence is documented in the PR.
+- Record **validation/UAT sign-off** with usage-scenario IDs when applicable.
+
+Canonical workflows:
+
+- `docs/dev/workflows/feature-delivery.md`
+- `docs/dev/workflows/development.md`
+- `docs/dev/workflows/testing.md`
+- `docs/dev/workflows/code-review.md`
+
 ## Prompt and workflow helpers
 
 - Reusable workflow prompts live under `.github/prompts`.
