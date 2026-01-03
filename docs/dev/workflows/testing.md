@@ -45,18 +45,23 @@ This workflow helps you select the right test packs for a change, run automated 
 - Use pack IDs (TP-xx) in all reporting.
 - Record what you ran and the results.
 - When behavior changes or new UI flows are added, review whether regression packs or usage scenarios need updates; update `docs/testing/regression-tests.md` and `docs/testing/usage-scenario-tests.md` as needed.
+- Automated coverage is required for any new or changed behavior unless explicitly deferred with a follow-up issue and documented rationale.
+- For UI changes, add or update component specs that assert the new behavior and data display.
+- For data logic changes, add or update service/util tests that validate calculations and edge cases.
 
 ## Steps
 
 1. Identify the scope of the change.
 2. Map changes to packs using the change-impact map and list the TP-xx IDs (or run `testing scope` to confirm).
-3. Choose a test tier:
+3. Enumerate the automated specs that must be added or updated for the change (components + services).
+4. Add/extend the automated tests before running the final regression checks.
+5. Choose a test tier:
 
   - Smoke: quick validation for low-risk changes.
   - Targeted: only packs impacted by the change.
   - Full regression: all packs, plus usage scenarios.
 
-4. Run automated checks:
+6. Run automated checks:
 
 ```bash
 npm test -- --watch=false --browsers=ChromeHeadless
@@ -76,12 +81,13 @@ npm run test:ci
 
 This writes a JUnit report to `test-results/junit.xml` and coverage outputs to `coverage/` (`coverage/index.html` and `coverage/lcov.info`). Open `coverage/index.html` to view the HTML report; use the JUnit file in CI.
 
-5. Run the manual checks listed in each selected pack.
-6. If required, execute the usage scenarios in `docs/testing/usage-scenario-tests.md`.
-7. Record results and update docs when coverage changes. Include:
+7. Run the manual checks listed in each selected pack.
+8. If required, execute the usage scenarios in `docs/testing/usage-scenario-tests.md`.
+9. Record results and update docs when coverage changes. Include:
 
   - Pack IDs and tier.
   - Commands executed.
+  - Automated specs added/updated.
   - Manual checks completed (or deferred).
   - Failures and follow-up issues.
   - Base check results if automated tests are skipped.

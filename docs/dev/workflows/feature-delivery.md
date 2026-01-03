@@ -63,7 +63,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run `/feature action=next` or `feature next` to select the next issue.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
    - Complete acceptance criteria, update docs, and close the issue.
-   - If behavior changes, run `testing scope` to select regression packs, execute automated/manual checks, record TP-xx IDs, and update/add tests (or log a follow-up issue).
+   - If behavior changes, run `testing scope` to select regression packs, enumerate required automated specs, update/add those tests, execute automated/manual checks, record TP-xx IDs, and log any deferrals with a follow-up issue.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
    - Run at least one base check (default: `npm run build`) and note results. Fix any errors before closing the child issue.
    - If `public/build-info.json` changes, restore it before committing.
@@ -80,6 +80,7 @@ Use this once per repo to keep `main` safe without blocking work.
 6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
+   - Confirm automated coverage was added/updated for any new behavior; list the relevant specs in the PR Review Evidence.
    - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
    - Run `feature review` to perform the review + merge flow (or use `pr review` and `pr merge` manually).
