@@ -556,6 +556,23 @@ describe('RoutePlannerComponent', () => {
     expect(component.isSwiping).toBeFalse();
   });
 
+  it('keeps only one row open when swiping different stops', () => {
+    const first = createDelivery({ id: 'delivery-1' });
+    const second = createDelivery({ id: 'delivery-2' });
+
+    component.startSwipe(createPointerEvent(100, 100), first);
+    component.moveSwipe(createPointerEvent(40, 100), first);
+    component.endSwipe(createPointerEvent(30, 100), first);
+
+    expect(component.openRowId).toBe(first.id);
+
+    component.startSwipe(createPointerEvent(100, 120), second);
+    component.moveSwipe(createPointerEvent(40, 120), second);
+    component.endSwipe(createPointerEvent(30, 120), second);
+
+    expect(component.openRowId).toBe(second.id);
+  });
+
   it('closes an open row when swiped right past the threshold', () => {
     const stop = createDelivery();
     component.openRowId = stop.id;
@@ -575,6 +592,24 @@ describe('RoutePlannerComponent', () => {
     component.isSwiping = true;
 
     component.toggleRow(stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('closes an open row when opening donation details', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.openRowId = stop.id;
+
+    component.openDonationDetails(stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('closes an open row when opening an off-schedule delivery', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.openRowId = stop.id;
+
+    component.openOffScheduleDelivery(stop);
 
     expect(component.openRowId).toBeNull();
   });

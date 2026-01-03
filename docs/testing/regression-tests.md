@@ -152,7 +152,7 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, swipe open/close, add/edit).
+- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, swipe open/close with single-row enforcement, add/edit, back-card close for donation/delivery actions).
 
 Manual checks:
 
@@ -160,8 +160,7 @@ Manual checks:
 - New deliveries insert at the correct order and reindex.
 - Search hides non-matching stops and is reversible.
 - Switching between routes or All Schedules resets filters to the full list and closes any inline edits or swipe states.
-- Swipe a row open/close and confirm only one row is open at a time.
-- Trigger a back-card action (edit/skip/unsubscribe) and confirm the row closes after action.
+- Trigger a back-card status action (skip/unsubscribe) and confirm the row closes after action.
 - Drag reorder is blocked when the toggle is off; enabled drag does not conflict with swipe states.
 - Tab order reaches search, add delivery, reorder toggle, and primary buttons; focus is visible.
 - Planner form inputs and buttons have visible labels or aria-labels.
@@ -180,7 +179,7 @@ Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (reset route/stop and unsubscribed preservation).
 
-Swipe/back-card gestures are only partially covered in `route-planner.component.spec.ts`; action reliability is manual.
+Swipe/back-card gestures are only partially covered in `route-planner.component.spec.ts`; status-action reliability is manual.
 
 Manual checks:
 
