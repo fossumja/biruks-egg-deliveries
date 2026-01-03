@@ -63,6 +63,7 @@ If none apply, document the design decision in the issue (comment or checklist n
    - Identify missing context (designs, data contracts, ADRs) before coding.
    - Review UX, data-model, and architecture impact; decide if an ADR is required and document the decision (ADR or issue note).
    - Confirm the issue lists required automated specs and TP-xx/manual checks, and mark the test plan approved.
+   - If the test plan section is missing or incomplete, stop and update the issue before proceeding.
    - For regression/testing-plan issues, ensure the plan includes pack updates, manual checks, automation references, usage-scenario updates, and change-impact map updates.
 2. Validate feasibility in the codebase:
    - Scan relevant files, services, and tests to confirm the plan is implementable.

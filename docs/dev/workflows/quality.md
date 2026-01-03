@@ -4,7 +4,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-03
 - **Type**: How-to
 - **Scope**: code quality checks for this repo
 - **Non-goals**: introducing new tooling without explicit approval
@@ -39,7 +39,12 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
      - Prefer `npm run test:ci` when you need artifacts. It writes `test-results/junit.xml` and `coverage/` (`coverage/index.html`, `coverage/lcov.info`). Use `npm test` for interactive runs.
 3. If a PR is open for the work:
    - Confirm the PR includes a Review Evidence section (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
+   - Confirm the PR body validation check passes (Traceability, Validation sign-off, Automated specs updated).
+     - Traceability table has at least one filled row (not placeholders).
+     - Validation sign-off checkbox is checked.
+     - Automated specs updated lists spec paths or `N/A` for docs-only changes.
    - If missing, stop and update the PR before merge.
+   - If the PR-body check is required but needs a waiver, document the waiver in the PR with reason and approval.
 4. If running fixes:
    - Apply fixes in the same order (format → lint → types → tests).
 5. Re-run checks to confirm green.
@@ -51,6 +56,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 - Typecheck passes (if configured).
 - Tests pass (or documented reason if skipped).
 - PR Review Evidence section present before merge.
+- PR body validation check passes when enabled in CI.
 
 ## Outputs
 
@@ -61,6 +67,7 @@ Use this workflow to run and document quality gates (format, lint, typecheck, te
 ## What changed / Why
 
 - Documented the CI test command and artifact paths for test reporting.
+- Added PR body validation check guidance for V-model evidence enforcement.
 
 ## Related docs
 

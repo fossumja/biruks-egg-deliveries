@@ -4,7 +4,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-03
 - **Type**: How-to
 - **Scope**: release and deployment for biruks-egg-deliveries
 - **Non-goals**: changing deployment tooling or hosting strategy
@@ -27,6 +27,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 - Confirm the version tag before releasing.
 - Prefer running the release flow via the `/release` prompt.
 - Run full regression packs (TP-01 through TP-11) and usage scenarios before tagging or deploying to GitHub Pages.
+- Ensure required branch protection checks (for example `unit-tests`, `pr-body-validation`) are passing before release tags.
 
 ## Steps
 
@@ -69,6 +70,7 @@ Use this workflow to ship a release to GitHub Pages for this app.
 - Added a TP-11 device checklist note so manual device coverage is tracked per release.
 - Required full regression packs and usage scenarios before release tags and GH Pages deploys.
 - Added a waiver requirement for any skipped regression packs.
+- Noted required branch protection checks before release tags.
 
 ## Related docs
 
