@@ -71,6 +71,7 @@ If none apply, document the design decision in the issue (comment or checklist n
    - If the plan needs changes, update the plan/checklist and comment on the issue with the revised steps.
    - Explicitly mark the updated plan as approved and continue unless a blocking decision remains.
    - If the test plan changes, update it in the issue and re-approve before continuing.
+   - If requirements/ACs change, update the issue, traceability notes, and re-approve before continuing.
 4. Set up the branch (if needed):
    - Use `.github/prompts/branch.prompt.md` for branch creation or sync.
 5. Read the repo overview:
@@ -108,6 +109,7 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Testing workflow executed when behavior changes, with pack IDs recorded.
 - Test plan approved before coding; changes were re-approved if scope changed.
 - Design/architecture review completed and ADR decision recorded.
+- Change-control followed when requirements/ACs changed, with re-approval recorded.
 - High-risk actions were confirmed explicitly before execution.
 - Working tree state was confirmed before switching workstreams.
 
@@ -130,6 +132,7 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Added a regression-testing plan detail check to prevent under-specified test coverage issues.
 - Added a test-plan approval requirement to align with V-model planning gates.
 - Added a design/architecture review gate with ADR decision guidance.
+- Added change-control guidance for requirements/AC updates and re-approval.
 
 ## Related docs
 

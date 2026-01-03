@@ -66,6 +66,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Review the issue plan and feasibility per `docs/dev/workflows/development.md` before coding.
    - Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
    - Confirm the design/ADR decision is documented; update it if scope changes before coding.
+   - If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.
    - Complete acceptance criteria, update docs, and close the issue.
    - If behavior changes, run `testing scope` to select regression packs, enumerate required automated specs, update/add those tests, execute automated/manual checks, record TP-xx IDs, and log any deferrals with a follow-up issue.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
@@ -149,6 +150,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added an explicit test-plan approval gate and review-evidence requirement for automated specs.
 - Added a traceability requirement to link acceptance criteria to verification evidence.
 - Added a design/architecture review gate with ADR decision tracking.
+- Added change-control guidance for requirements/AC updates and re-approval.
 
 ## Related docs
 

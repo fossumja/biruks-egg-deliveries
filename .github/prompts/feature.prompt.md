@@ -56,20 +56,21 @@ You are my feature delivery assistant.
 3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
 4. Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
 5. Confirm the design/ADR decision is documented; update it if scope changes before coding.
-6. Sync the branch with the base branch if needed.
-7. Implement the issue, run targeted tests, and update docs if required.
+6. If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.
+7. Sync the branch with the base branch if needed.
+8. Implement the issue, run targeted tests, and update docs if required.
    - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
-8. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
-9. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
-10. Commit the child issue work so the branch is clean before moving to the next child issue.
-11. Do not push the feature branch yet unless the user explicitly requests it.
-12. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
-13. Update the parent issue checklist to reflect completion:
+9. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
+10. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
+11. Commit the child issue work so the branch is clean before moving to the next child issue.
+12. Do not push the feature branch yet unless the user explicitly requests it.
+13. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
+14. Update the parent issue checklist to reflect completion:
    - Prefer `python3` or `node` for body edits.
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-14. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-15. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+15. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+16. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 
