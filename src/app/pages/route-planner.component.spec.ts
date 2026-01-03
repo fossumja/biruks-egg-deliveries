@@ -556,6 +556,23 @@ describe('RoutePlannerComponent', () => {
     expect(component.isSwiping).toBeFalse();
   });
 
+  it('keeps only one row open when swiping different stops', () => {
+    const first = createDelivery({ id: 'delivery-1' });
+    const second = createDelivery({ id: 'delivery-2' });
+
+    component.startSwipe(createPointerEvent(100, 100), first);
+    component.moveSwipe(createPointerEvent(40, 100), first);
+    component.endSwipe(createPointerEvent(30, 100), first);
+
+    expect(component.openRowId).toBe(first.id);
+
+    component.startSwipe(createPointerEvent(100, 120), second);
+    component.moveSwipe(createPointerEvent(40, 120), second);
+    component.endSwipe(createPointerEvent(30, 120), second);
+
+    expect(component.openRowId).toBe(second.id);
+  });
+
   it('closes an open row when swiped right past the threshold', () => {
     const stop = createDelivery();
     component.openRowId = stop.id;
@@ -575,6 +592,24 @@ describe('RoutePlannerComponent', () => {
     component.isSwiping = true;
 
     component.toggleRow(stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('closes an open row when opening donation details', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.openRowId = stop.id;
+
+    component.openDonationDetails(stop);
+
+    expect(component.openRowId).toBeNull();
+  });
+
+  it('closes an open row when opening an off-schedule delivery', () => {
+    const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
+    component.openRowId = stop.id;
+
+    component.openOffScheduleDelivery(stop);
 
     expect(component.openRowId).toBeNull();
   });
@@ -1010,6 +1045,39 @@ describe('RoutePlannerComponent', () => {
 
     expect(deleteSpy).toHaveBeenCalledWith('entry-1');
     expect(component.runEntries.length).toBe(0);
+  });
+
+  it('deletes a run entry from all receipts and refreshes the list', async () => {
+    const entry = createRunEntry({
+      id: 'entry-1',
+      runId: 'run-1',
+      eventDate: '2025-01-05'
+    });
+    storage.runEntries = [entry];
+    storage.runs = [
+      {
+        id: 'run-1',
+        date: '2025-01-05',
+        weekType: 'WeekA',
+        label: 'Week A - 2025-01-05',
+        routeDate: 'Week A',
+      }
+    ];
+    storage.deliveries = [];
+
+    localStorage.setItem('selectedTaxYear', '2025');
+    await component.onRouteOrRunChange('receipts:all');
+
+    expect(component.runEntries.length).toBe(1);
+
+    spyOn(window, 'confirm').and.returnValue(true);
+    const deleteSpy = spyOn(storage, 'deleteRunEntry').and.callThrough();
+
+    await component.confirmDeleteRunEntry(component.runEntries[0]!);
+
+    expect(deleteSpy).toHaveBeenCalledWith('entry-1');
+    expect(component.runEntries.length).toBe(0);
+    expect(component.filteredRunEntries.length).toBe(0);
   });
 
   it('updates a one-off receipt date and refreshes ordering', async () => {

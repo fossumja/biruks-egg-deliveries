@@ -80,7 +80,7 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/home.component.spec.ts` (import/export/restore triggers, settings toggles, tax year persistence, multi-year warning).
+- `src/app/pages/home.component.spec.ts` (import/export/restore triggers, settings toggles, tax year persistence, route resume, multi-year warning).
 - `src/app/components/app-header.component.spec.ts` (progress summary calculations).
 - `src/app/app.component.spec.ts` (app shell bootstraps).
 
@@ -89,9 +89,7 @@ Accessibility checks are manual-only unless automated tooling is added.
 Manual checks:
 
 - Home buttons show correct enabled/disabled states.
-- Route resume returns to the last selected route.
-- Header progress bar matches run state.
-- Switch tax year and confirm the selector label and state persist after refresh.
+- Tax year selector label and state persist after refresh.
 - Keyboard tab order reaches import/export/help actions; focus is visible.
 - Home inputs and buttons have visible labels or aria-labels.
 
@@ -107,16 +105,12 @@ Scope:
 Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (import normalization and baseline state).
-- `src/app/pages/home.component.spec.ts` (import trigger and timestamp updates).
+- `src/app/pages/home.component.spec.ts` (import trigger and timestamp updates, CSV alias headers, missing optional columns, invalid numeric detection, custom columns preserved in import state).
 
 Manual checks:
 
 - Import accepts real route CSVs and shows helpful errors for malformed files.
 - Imported routes appear with correct totals and can be opened.
-- Import with aliased headers (for example Schedule/Date, Qty/Dozens) maps correctly.
-- Import with missing optional columns (Notes, Donation fields) succeeds.
-- Import fails on invalid numeric Dozens and surfaces the validation error.
-- Import preserves extra custom columns for export.
 
 ### TP-03 Backup, export, restore
 
@@ -132,9 +126,9 @@ Scope:
 Automated coverage:
 
 - `src/app/services/backup.service.spec.ts`
-- `src/app/services/usage-scenario-totals.spec.ts`
+- `src/app/services/usage-scenario-totals.spec.ts` (per-event suggested amount totals).
 - `src/app/services/usage-scenario-runner.spec.ts`
-- `src/app/pages/home.component.spec.ts` (export/restore triggers and timestamps).
+- `src/app/pages/home.component.spec.ts` (export/restore triggers, confirmation gating, and timestamps).
 
 Tax-year totals assertions are covered in `usage-scenario-totals.spec.ts`; export filename year is covered in `backup.service.spec.ts`.
 
@@ -142,12 +136,7 @@ Manual checks:
 
 - Backup CSV opens with all original columns preserved.
 - Restore replaces existing data and rebuilds run history.
-- Totals in export match app totals after one-offs.
-- Export totals reflect the selected tax year and the backup filename includes the year.
-- Backup CSV includes RowType values for deliveries, runs, and run entries.
-- Restore warns about destructive overwrite, then rebuilds routes and run history.
 - Totals after restore match the selected tax-year totals.
-- Set suggested rate A, record donations; change to rate B, record more; export totals use per-event suggested amounts.
 
 ### TP-04 Planner core
 
@@ -163,7 +152,7 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, swipe open/close, add/edit).
+- `src/app/pages/route-planner.component.spec.ts` (route selection, search, reorder, swipe open/close with single-row enforcement, add/edit, back-card close for donation/delivery actions).
 
 Manual checks:
 
@@ -171,8 +160,7 @@ Manual checks:
 - New deliveries insert at the correct order and reindex.
 - Search hides non-matching stops and is reversible.
 - Switching between routes or All Schedules resets filters to the full list and closes any inline edits or swipe states.
-- Swipe a row open/close and confirm only one row is open at a time.
-- Trigger a back-card action (edit/skip/unsubscribe) and confirm the row closes after action.
+- Trigger a back-card status action (skip/unsubscribe) and confirm the row closes after action.
 - Drag reorder is blocked when the toggle is off; enabled drag does not conflict with swipe states.
 - Tab order reaches search, add delivery, reorder toggle, and primary buttons; focus is visible.
 - Planner form inputs and buttons have visible labels or aria-labels.
@@ -191,7 +179,7 @@ Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (reset route/stop and unsubscribed preservation).
 
-Swipe/back-card gestures are only partially covered in `route-planner.component.spec.ts`; action reliability is manual.
+Swipe/back-card gestures are only partially covered in `route-planner.component.spec.ts`; status-action reliability is manual.
 
 Manual checks:
 
@@ -212,20 +200,16 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipts edits).
+- `src/app/pages/route-planner.component.spec.ts` (hidden menu swipe/toggle, one-off validation, receipt history rendering with skips, receipts edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
 Date range tied to the selected tax year and UI min/max attributes are covered in `route-planner.component.spec.ts`.
-Donation validation rules are partially covered in `route-planner.component.spec.ts`; picker invalid-input error states are covered in `donation-amount-picker.component.spec.ts`.
+Donation validation rules (required when Donated, blank allowed when NotRecorded, max cap/decimals) are covered in `route-planner.component.spec.ts` and `donation-amount-picker.component.spec.ts`.
 
 Manual checks:
 
 - One-off saves do not change live run status.
-- Totals include one-off donations and deliveries.
-- One-off modals show a compact receipt history list (including skips) for the selected person.
-- Switch tax year and confirm the one-off date min/max updates to the selected year window.
-- Status=Donated requires an amount; NotRecorded allows blank (treated as 0 in totals).
-- Amount accepts decimals and values above 100; 10000+ is rejected.
+- Receipt history layout remains compact and readable for long lists.
 - Tab order reaches save/cancel and donation controls in one-off dialogs; focus is visible.
 - One-off form inputs and buttons have visible labels or aria-labels.
 
@@ -243,16 +227,14 @@ Scope:
 
 Automated coverage:
 
-- `src/app/pages/delivery-run.component.spec.ts` (deliver/skip/end early, donation updates).
+- `src/app/pages/delivery-run.component.spec.ts` (deliver/skip/end early, counts/progress updates, end-run-early reasons, donation updates).
 - `src/app/components/stop-delivery-card.component.spec.ts` (stop card event wiring).
 - `src/app/services/storage.service.spec.ts` (change status logic).
 
 Manual checks:
 
 - Status transitions: Pending -> Changed -> Delivered.
-- Skip dialog updates counts and progress.
-- Enter a decimal donation amount > 100 and confirm save works.
-- End a run early and confirm remaining stops are skipped with the correct reason.
+- End run early dialog behavior and confirmation copy.
 - Tab order reaches Deliver/Skip/End Run actions and dialogs; focus is visible.
 - Run screen buttons and inputs have visible labels or aria-labels.
 
@@ -270,7 +252,7 @@ Scope:
 Automated coverage:
 
 - `src/app/services/storage.service.spec.ts` (run completion and resets).
-- `src/app/pages/route-planner.component.spec.ts` (receipts sorting and edits).
+- `src/app/pages/route-planner.component.spec.ts` (receipts sorting, deletion, and edits).
 - `src/app/services/usage-scenario-totals.spec.ts` (tax-year receipt filtering).
 
 All receipts tax-year filtering is covered in `usage-scenario-totals.spec.ts` and `route-planner.component.spec.ts`.
@@ -282,9 +264,7 @@ Manual checks:
 
 - Completing a run resets the route for the next run.
 - All receipts view shows both run entries and one-offs for the selected tax year.
-- Delete a receipt from **All receipts** and confirm it disappears and totals refresh.
-- Delete a receipt from **Past runs** and confirm it disappears and totals refresh.
-- Delete a receipt from the one‑off modal history list and confirm it disappears and totals refresh.
+- After deleting receipts, confirm totals refresh to match the updated list.
 - Switch tax year and confirm All receipts and totals update to the selected year.
 - Edit a receipt: Donated requires an amount; NotRecorded allows blank.
 - Switching between a specific run and **All receipts** closes any inline edit panel and resets the list to full entries.
@@ -305,15 +285,17 @@ Scope:
 Automated coverage:
 
 - `src/app/components/stop-delivery-card.component.spec.ts` (event emissions).
+- `src/app/components/donation-controls.component.spec.ts` (allow-reselect behavior).
 - `src/app/components/donation-amount-picker.component.spec.ts`
+- `src/app/services/toast.service.spec.ts` (toast lifecycle).
 
-Donation amount picker validation (max and invalid input) is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
+Donation amount picker validation (max, invalid input, and recovery) is covered in `donation-amount-picker.component.spec.ts`; UI error styling remains manual.
+Toast auto-dismiss timing is covered in `toast.service.spec.ts`; visual style remains manual.
 
 Manual checks:
 
-- Donation controls respect allow-reselect behavior.
-- Toasts appear and auto-dismiss.
-- Invalid picker input shows an error and disables Save; valid input clears the error.
+- Picker error styling/ARIA states are visible and consistent for invalid input.
+- Toasts render in the UI with the correct styling and placement.
 
 ### TP-10 Data and utilities
 
@@ -334,6 +316,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-runner.spec.ts`
 
 Totals with suggested rate changes are covered in `usage-scenario-totals.spec.ts`.
+Import state persistence across storage reloads is covered in `storage.service.spec.ts`.
 Dexie migration upgrade coverage exists in `storage.service.spec.ts` for legacy data upgrades; device upgrade flows remain manual.
 
 Manual checks:
@@ -343,7 +326,7 @@ Manual checks:
 - Switch tax year and confirm totals/exports are computed for the selected year.
 - Suggested rate changes do not retroactively alter existing totals.
 - With existing data present, upgrade to a new build and confirm deliveries, runs, and one-offs persist.
-- Verify import state and totals survive a refresh after upgrade.
+- Verify totals survive a refresh after upgrade.
 
 ### TP-11 Device and PWA
 
@@ -357,7 +340,7 @@ Scope:
 
 Automated coverage:
 
-- Unit tests cover share/download fallback, maps links, clipboard flows, and service worker registration options (`app.config.spec.ts`).
+- Unit tests cover share/download fallback, maps links, clipboard flows, wake lock toggling, and service worker registration options (`backup.service.spec.ts`, `route-planner.component.spec.ts`, `delivery-run.component.spec.ts`, `home.component.spec.ts`, `app.config.spec.ts`).
 - Device and PWA install/offline checks remain manual.
 Offline cache, service worker update, and install flow checks are manual-only today.
 

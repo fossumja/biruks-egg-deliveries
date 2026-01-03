@@ -60,4 +60,25 @@ describe('DonationAmountPickerComponent', () => {
     component.onSave();
     expect(saveSpy).not.toHaveBeenCalled();
   });
+
+  it('clears the error and enables save after a valid amount is entered', () => {
+    const saveSpy = spyOn(component.save, 'emit');
+    component.onAmountInputChange('12.3.4');
+    fixture.detectChanges();
+
+    expect(component.amountError()).toBe('Enter a valid donation amount.');
+
+    component.onAmountInputChange('12.34');
+    fixture.detectChanges();
+
+    expect(component.amountError()).toBe('');
+
+    const saveButton = fixture.nativeElement.querySelector(
+      '.amount-actions .btn.btn-primary'
+    ) as HTMLButtonElement;
+
+    expect(saveButton.disabled).toBeFalse();
+    component.onSave();
+    expect(saveSpy).toHaveBeenCalledWith(12.34);
+  });
 });

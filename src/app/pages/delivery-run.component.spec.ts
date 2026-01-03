@@ -195,6 +195,21 @@ describe('DeliveryRunComponent', () => {
     expect(component.currentStop).toBeUndefined();
   });
 
+  it('records the end-run-early reason on remaining stops', async () => {
+    storage.deliveries = [
+      createStop({ id: 'stop-1', status: '' }),
+      createStop({ id: 'stop-2', status: 'changed' }),
+    ];
+    const skipSpy = spyOn(storage, 'markSkipped').and.callThrough();
+
+    await component.ngOnInit();
+    await component.confirmEndRunEarly();
+
+    expect(skipSpy).toHaveBeenCalledWith('stop-1', 'Ended run early');
+    expect(skipSpy).toHaveBeenCalledWith('stop-2', 'Ended run early');
+    expect(component.stops.every((stop) => stop.skippedReason === 'Ended run early')).toBeTrue();
+  });
+
   it('builds a run summary when the run is finished', async () => {
     storage.deliveries = [
       createStop({

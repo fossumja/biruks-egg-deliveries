@@ -103,6 +103,25 @@ describe('StorageService regression tests', () => {
     expect(stored.subscribed).toBe(true);
   });
 
+  it('persists import state across storage reloads', async () => {
+    const importState = {
+      id: 'default',
+      headers: ['Name', 'Dozens', 'Notes'],
+      rowsByBaseRowId: {
+        'base-1': ['Alice', '2', 'Leave at porch']
+      }
+    };
+
+    await storage.saveImportState(importState);
+
+    const reloaded = new StorageService();
+    storage = reloaded;
+
+    const loaded = await reloaded.getImportState();
+    expect(loaded?.headers).toEqual(importState.headers);
+    expect(loaded?.rowsByBaseRowId['base-1']).toEqual(['Alice', '2', 'Leave at porch']);
+  });
+
   it('upgrades legacy Dexie data and preserves deliveries', async () => {
     const existingDb = (storage as unknown as { db: Dexie }).db;
     existingDb.close();

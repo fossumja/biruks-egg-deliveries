@@ -4,7 +4,7 @@ This guide documents how agents should choose and run terminal commands in this 
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-03
 - **Type**: Reference
 - **Scope**: terminal command selection, approvals, and settings alignment
 - **Non-goals**: redefining system or developer instructions, changing sandbox rules
@@ -33,6 +33,7 @@ Use editor settings as guidance when they are provided, but do not treat them as
 - Do not combine temp-file creation and `gh` calls in the same quoted command; run them as separate commands.
 - Prefer temp files inside the repo (for example `tmp/` under the repo root) to avoid escalated permissions for `/tmp`.
 - Avoid multi-command `zsh -lc` blocks that include `python3 - <<'PY'` heredocs; run the Python step as its own command.
+- Do not embed `gh` calls inside a Python heredoc (`python3 - <<'PY'`) inside `zsh -lc`; split it into discrete `gh` and `python3` commands or use a repo script file.
 
 ### Approval and sandbox alignment
 
@@ -73,6 +74,10 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 
 - Should we add a repo-level allowlist for commands beyond editor settings?
 - Should we standardize a default retention for auto-approve lists across machines?
+
+## What changed / Why
+
+- Added a rule to avoid `gh` calls inside Python heredocs, which can trigger approval prompts.
 
 ## Related docs
 
