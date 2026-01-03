@@ -42,6 +42,13 @@
   1. <!-- step -->
   2. <!-- expected result -->
 
+## Traceability
+<!-- Map requirements/ACs to verification evidence. Use AC-1 style IDs or short labels. -->
+
+| Requirement/AC | Evidence (specs, TP-xx, manual checks) | Type (Auto/Manual) |
+| --- | --- | --- |
+| <!-- AC-1 --> | <!-- src/app/...spec.ts; TP-xx --> | <!-- Auto/Manual --> |
+
 ## Docs impact
 - [ ] Docs updated
 - [ ] Not needed (explain): <!-- ... -->

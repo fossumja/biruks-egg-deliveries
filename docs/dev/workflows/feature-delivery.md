@@ -87,6 +87,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Open a PR linked to the parent issue.
    - Run `feature review` to perform the review + merge flow (or use `pr review` and `pr merge` manually).
    - Verify the PR includes the Review Evidence section; if missing, stop and update the PR before merge.
+   - Verify the PR Traceability section is completed and matches executed tests; update it before review/merge if needed.
    - Perform a code review using `pr review` and `docs/dev/workflows/code-review.md`, then document it via a formal GitHub review (approve/request changes).
      - Include evidence: acceptance criteria coverage, tests/TP-xx packs, and known gaps.
    - If you are a solo maintainer, use a formal self-review comment and ensure branch protections do not require approvals.
@@ -106,6 +107,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - PR includes `Fixes #{parent}` in the description.
 - PR includes Review Evidence content (AC coverage, tests, TP-xx packs, manual checks, risks/gaps).
 - PR Review Evidence lists the automated specs updated and the TP-xx packs executed.
+- PR Traceability section maps ACs to evidence and matches tests run.
 - Review is documented (approval or self-review comment) before merge.
 - Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
@@ -142,6 +144,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added guidance to commit each child issue before moving on to keep the feature branch clean.
 - Required code reviews to be documented as part of feature finish.
 - Added an explicit test-plan approval gate and review-evidence requirement for automated specs.
+- Added a traceability requirement to link acceptance criteria to verification evidence.
 
 ## Related docs
 

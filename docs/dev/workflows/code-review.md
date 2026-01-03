@@ -4,7 +4,7 @@ Use this workflow to perform and document code reviews with traceable evidence a
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-03
 - **Type**: How-to
 - **Scope**: reviewing PRs and documenting verification evidence
 - **Non-goals**: replacing CI or enforcing multi-reviewer policies
@@ -29,6 +29,7 @@ Code reviews should show a clear line from requirements to verification. This wo
 
 - Follow the review expectations in `.github/prompts/pr.prompt.md`.
 - Document evidence against acceptance criteria and test coverage.
+- Verify the PR Traceability section is complete and matches executed tests.
 - Use TP-xx pack IDs from `docs/testing/regression-tests.md` when applicable.
 - If evidence is missing, request changes or note explicit gaps with a follow-up issue.
 - For high-risk changes (data migrations, auth, payment, or destructive actions), ask for an additional reviewer.
@@ -39,6 +40,7 @@ Code reviews should show a clear line from requirements to verification. This wo
 1. Gather context:
    - Read the parent issue and linked child issues.
    - List acceptance criteria that must be verified.
+   - Review the PR Traceability section for requirement → evidence mapping.
 2. Review the diff:
    - Scan code, tests, and docs for alignment with ACs.
    - Check for regressions or cross-feature impacts.
@@ -56,6 +58,7 @@ Code reviews should show a clear line from requirements to verification. This wo
 ## Evidence checklist
 
 - Acceptance criteria mapped to code changes.
+- Traceability section maps requirements/ACs to evidence and matches tests run.
 - Tests updated or added when behavior changes.
 - TP-xx pack IDs and manual checks documented.
 - Risks or gaps captured with follow-up issues when needed.
@@ -64,6 +67,10 @@ Code reviews should show a clear line from requirements to verification. This wo
 
 - A PR review (approve or request changes) with documented evidence.
 - Clear traceability between requirements and verification.
+
+## What changed / Why
+
+- Added an explicit traceability check to align requirements with verification evidence.
 
 ## Related docs
 

@@ -54,6 +54,7 @@ Given `pr=<id>` (or current branch):
 2. Review checklist (short, practical) and align with `docs/dev/workflows/code-review.md`:
 
 - Correctness: does it match the issue/AC?
+- Traceability: PR Traceability section maps ACs to evidence and matches tests run.
 - Tests: added/updated? do they cover edge cases?
 - DX: clear names, low complexity, no dead code
 - Security: input validation, auth boundaries, secrets, SSRF/XSS
