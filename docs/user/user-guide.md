@@ -130,6 +130,8 @@ When viewing `Current (live)`:
     - Record a one‑off donation (not tied to a specific run state).
   - **Delivery** (one‑off):
     - Record an extra delivery outside of the normal schedule (e.g., extra dozens delivered during the week).
+  - One‑off donation/delivery panels default to **None** with an amount of **0**.
+    Selecting a method fills the suggested amount; switching back to **None** resets to **0**.
   - One‑off date entry is limited to the selected tax year; change the tax year on Home to add receipts for a different year.
 
 ### 4.3. Reordering
@@ -165,6 +167,8 @@ The Run page is for the actual delivery day.
   - Status pill.
   - Quantity (dozens).
   - Donation controls: None / Cash / ACH / Venmo / PayPal / Other, plus amount.
+    - Default is **None** with an amount of **0**.
+    - Selecting a method fills the suggested amount; switching back to **None** resets to **0**.
   - `Copy` and `Open Map` buttons next to the address.
 - Shows **Next up** card for the upcoming stop (name, address, dozens).
 - Bottom bar:
