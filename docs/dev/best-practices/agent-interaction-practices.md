@@ -23,12 +23,28 @@ Guidance for using instructions, prompts, templates, and workflows together so a
 - Keep prompts aligned with workflow docs; update the workflow whenever prompt behavior changes.
 - When delegating, verify the target prompt is current before relying on it.
 - Avoid duplicate prompts that do the same job; extend existing ones instead.
+- Keep prompts concise, but require clear Inputs/Defaults/Stop conditions so short user commands stay safe.
+
+## Structured issue intake (Markdown templates)
+
+- Keep markdown templates in `.github/ISSUE_TEMPLATE/` as the source of truth for issue structure.
+- Ensure new issues include the template sections for test plan, risk assessment, and review focus.
+- Treat missing sections as a **refine** trigger, not a blocker:
+  - Create the issue quickly if needed.
+  - Immediately run `issues refine` to fill missing sections before implementation starts.
+- Require artifacts when relevant (repro steps, logs/screenshots, data samples).
 
 ## Workflow hygiene
 
 - Keep each prompt backed by a workflow doc in `docs/dev/workflows/`.
 - Use issue templates for new work to keep test plans and review focus consistent.
 - Update the prompt catalog (`docs/dev/workflows/prompts.md`) whenever prompts change.
+
+## Prompt clarity checklist (for prompt files)
+
+- **Must include**: Goals, Inputs or Defaults, Decision aids, Stop/ask conditions, Procedure, Output.
+- **Should include**: Examples of shorthand usage.
+- **Keep user input lightweight**: accept short commands and ask only for missing critical info.
 
 ## Inputs and artifacts
 

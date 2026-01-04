@@ -19,6 +19,8 @@ You are my issues & planning assistant.
 
 - If you detect issue templates in `.github/ISSUE_TEMPLATE`, follow them.
 - Ensure new issues include the template sections for test packs, manual checks, and review focus.
+- Ensure template sections are present for testing plan, risk assessment, and docs impact.
+- If sections are missing, create the issue quickly and then run `issues refine` to complete them before implementation starts.
 - Prefer adding:
   - **Problem statement**
   - **Proposed solution**
@@ -97,10 +99,12 @@ Refinement question categories (default set):
    - Context
    - Repro steps (for bugs) or user story (for features)
    - Acceptance criteria checklist
+   - Testing plan, risk assessment, and docs impact (from the templates)
 3. Suggest labels (type/area/priority) and apply them if authorized:
    - `gh issue create --title ... --body ... --label "type:...,area:...,priority:..."`
 4. If a Project is configured (or user asks), add it:
    - `gh project item-add ... --url <issueUrl>`
+5. If any required template sections are missing after creation, immediately run `issues refine` to fill them in.
 
 ### action=breakdown
 
@@ -174,6 +178,7 @@ Use this when the issue scope is ambiguous or design/algorithm choices are requi
 
 1. Read the issue and linked references; restate the goal in your own words.
 2. Scan relevant docs and code to identify unknowns (UX, data model, edge cases).
+3. Ensure required template sections exist (testing plan, risk assessment, docs impact, review focus).
 3. Produce a decision list with:
    - Question
    - Options (2-3)

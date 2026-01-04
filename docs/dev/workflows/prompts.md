@@ -39,6 +39,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Keep shorthand inputs consistent with each prompt definition.
 - Update this catalog and `index.md` when prompts are added or behavior changes.
 - Follow the prompt/instruction structure in `docs/dev/best-practices/documentation-style-guide.md`, including a single H1 after front matter.
+- Apply the prompt clarity checklist in `docs/dev/best-practices/agent-interaction-practices.md` when adding or updating prompts.
 
 ## Steps
 
