@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -21,7 +21,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Base branch if it is not the repo default.
 - Optional preferred order for child issues.
 - Shorthand: `feature start {issue}` maps to `/feature action=start issue={issue}`.
-- Optional: run `feature all {issue}` (prompt: `feature-all`) to auto-detect the stage and chain `feature start` → repeated `feature next` → `feature finish`.
+- Optional: run `feature all {issue}` (feature prompt `action=all`) to auto-detect the stage and chain `feature start` → repeated `feature next` → `feature finish`.
 
 ## Constraints
 
@@ -162,7 +162,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added change-control guidance for requirements/AC updates and re-approval.
 - Added validation/UAT sign-off requirement with usage-scenario references.
 - Documented required status checks (unit-tests, pr-body-validation) and staged rollout guidance.
-- Clarified `feature-all` as a state-aware flow that can resume from any stage.
+- Folded `feature-all` into the `feature` prompt and clarified the state-aware flow.
 
 ## Related docs
 

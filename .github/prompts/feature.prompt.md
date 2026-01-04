@@ -29,7 +29,18 @@ You are my feature delivery assistant.
 - Branch naming: follow `.github/prompts/branch.prompt.md` (`feat/<slug>`).
 - Issue order: data/storage -> export/import -> UI -> tests -> docs -> ops, unless the parent issue specifies otherwise.
 - Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
-- `feature all {issue}` delegates to the `feature-all` prompt to run the state-aware full lifecycle.
+- `feature all {issue}` runs the state-aware full lifecycle (start → next loop → finish).
+
+## Delegations (use other prompts when appropriate)
+
+- **Branching:** use `.github/prompts/branch.prompt.md` for create/sync/delete.
+- **Testing:** use `.github/prompts/testing.prompt.md` for TP-xx pack selection and execution.
+- **Quality:** use `.github/prompts/quality.prompt.md` for required checks and reporting.
+- **Docs:** use `.github/prompts/docs.prompt.md` when documentation updates are required.
+- **PRs:** use `.github/prompts/pr.prompt.md` for PR create/review/merge steps.
+- **Issues:** use `.github/prompts/issues.prompt.md` for breakdowns or follow-ups.
+
+Before delegating, confirm the target prompt exists and is up to date. If it is missing or stale, update it before relying on it.
 
 ## Decision aids
 
@@ -82,7 +93,8 @@ Documentation gates (do not skip):
 6. If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.
 7. Sync the branch with the base branch if needed.
 8. Implement the issue, run targeted tests, and update docs if required.
-   - If behavior changes, update/add tests and run `testing scope` to select packs, then execute automated/manual checks and record TP-xx IDs.
+   - If behavior changes, run `testing scope` via `.github/prompts/testing.prompt.md` to select packs, then execute automated/manual checks and record TP-xx IDs.
+   - Use `.github/prompts/docs.prompt.md` for any documentation updates.
 9. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
 10. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 11. Commit the child issue work so the branch is clean before moving to the next child issue.
@@ -109,6 +121,7 @@ Documentation gates (do not skip):
 4. Run required usage scenarios when behavior affects end-to-end flows; record scenario IDs for validation.
 5. Record validation/UAT sign-off (self-review OK for solo maintainer).
 6. Run the quality workflow if applicable (this is the full check for the feature).
+   - Use `.github/prompts/quality.prompt.md` to run required checks consistently.
 7. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
 8. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
 9. Push the feature branch now (only after all child issues are complete).
@@ -135,11 +148,19 @@ Documentation gates (do not skip):
 
 ## action=all
 
-1. Delegate to `.github/prompts/feature-all.prompt.md`.
-2. Use `feature start` when the feature has not been initialized.
-3. Loop `feature next` until all child issues are complete.
-4. Run `feature finish` once all child issues are done.
-5. Stop and ask when requirements are unclear or a high-risk action is required.
+1. Determine the parent issue (from input or current workstream); ask if unclear.
+2. If the feature branch/workflow has not started, run `feature start` for the parent issue.
+3. Read the parent issue and collect child issue links.
+4. If open child issues remain:
+   - Determine the next open child issue (respecting the preferred order).
+   - Run `feature next` for that child issue.
+5. If the child issue completes:
+   - Commit the work.
+   - Update the child issue and parent checklist.
+   - Record the child retrospective.
+6. Repeat steps 4–5 until no open child issues remain.
+7. When all child issues are complete, run `feature finish`.
+8. Stop and ask when requirements are unclear, a decision is needed, or a high-risk action is required.
 
 ## Output
 

@@ -46,6 +46,15 @@ You are my issues & planning assistant.
 - `issues refine {issue}` runs the issue refinement flow.
 - `issues all {issue|title}` chains create → refine → breakdown → triage as needed.
 
+## Delegations (use other prompts when appropriate)
+
+- **Labels:** use `.github/prompts/labels.prompt.md` to add or audit label taxonomy.
+- **Projects:** use `.github/prompts/project.prompt.md` to add issues to Projects.
+- **Triage:** use `.github/prompts/triage.prompt.md` for bulk issue triage runs.
+- **Branches:** use `.github/prompts/branch.prompt.md` if a linked dev branch is requested.
+
+Before delegating, confirm the target prompt exists and is up to date. If it is missing or stale, update it before relying on it.
+
 ## Decision aids
 
 - Use **action=create** when the request is new and has a clear problem statement + outcome.

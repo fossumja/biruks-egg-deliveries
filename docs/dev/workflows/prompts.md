@@ -4,7 +4,7 @@ Use this workflow to discover, choose, and run prompts consistently. It includes
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: prompt discovery and usage
 - **Non-goals**: writing new prompts or changing workflows without review
@@ -60,8 +60,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Delivery flow
 
-- `feature` — deliver a parent feature with child issues, including plan validation, V-model gates (design review, test-plan approval, traceability, validation sign-off, change control), retrospective follow-ups, testing workflow selection for behavior changes, and review/merge flow. Shorthand: `feature start 1`, `feature review` (review + merge). Workflow: `docs/dev/workflows/feature-delivery.md`.
-- `feature-all` — state-aware flow that can run from any stage; it chains `feature start`, repeated `feature next`, and `feature finish` as needed. Shorthand: `feature all 1`. Workflow: `docs/dev/workflows/feature-delivery.md`.
+- `feature` — deliver a parent feature with child issues, including plan validation, V-model gates (design review, test-plan approval, traceability, validation sign-off, change control), retrospective follow-ups, testing workflow selection for behavior changes, and review/merge flow. Shorthand: `feature start 1`, `feature all 1`, `feature review` (review + merge). Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
 - `pr` — create/review/update/merge PRs. Shorthand: `pr create`. Workflow: `docs/dev/workflows/development.md`.
@@ -103,7 +102,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Noted the feature prompt's testing workflow integration for behavior changes.
 - Updated prompt entries for retrospective follow-ups and device checklist callouts.
 - Updated the feature prompt entry to include V-model gate coverage.
-- Clarified the `feature-all` prompt as state-aware and able to resume from any stage.
+- Folded `feature-all` into `feature` and documented the state-aware `feature all` flow.
 - Clarified `issues` prompt coverage for refine/all actions and added decision aids.
 
 ## Related docs
