@@ -109,6 +109,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Clarified `issues` prompt coverage for refine/all actions and added decision aids.
 - Added the `develop` prompt for end-to-end V-model delivery.
 - Added a prompt quality audit step to keep prompt updates consistent and safe.
+- Added guidance to use `testing plan` for drafting issue test plans when needed.
 
 ## Related docs
 

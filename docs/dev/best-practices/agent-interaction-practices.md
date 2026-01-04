@@ -24,6 +24,7 @@ Guidance for using instructions, prompts, templates, and workflows together so a
 - When delegating, verify the target prompt is current before relying on it.
 - Avoid duplicate prompts that do the same job; extend existing ones instead.
 - Keep prompts concise, but require clear Inputs/Defaults/Stop conditions so short user commands stay safe.
+- Use `testing plan` to draft issue test plans when missing, then mark approved before implementation.
 
 ## Structured issue intake (Markdown templates)
 

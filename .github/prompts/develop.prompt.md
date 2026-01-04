@@ -58,7 +58,8 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
    - Design/ADR decision recorded.
    - Test plan approved (automated specs + TP-xx/manual checks).
    - Acceptance criteria are clear and traceable.
-   - If any are missing, stop and request updates before implementation.
+   - If the test plan is missing, run `testing plan` to draft and update it, then ask to approve.
+   - If any other prerequisites are missing, stop and request updates before implementation.
 5. Decide whether to reuse the current branch:
    - If already on a branch linked to the parent issue, continue on it.
    - If on an unrelated branch, stop and ask whether to switch or create the feature branch.

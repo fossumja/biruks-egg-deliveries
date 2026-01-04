@@ -75,7 +75,7 @@ Documentation gates (do not skip):
 1. Read the parent issue and extract child issue links or checklists.
 2. Validate the parent plan against the codebase per `docs/dev/workflows/development.md` and comment if changes are needed.
 3. Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
-   - If missing, stop and request updates to the issue before proceeding.
+   - If missing, run `testing plan` to draft and update the issue, then ask to approve before proceeding.
 4. Confirm design/architecture review is completed and ADR decisions are recorded before coding.
 5. If no child issues are listed:
    - Search for issues referencing the parent (for example, `#{parent}` in the issue body).
@@ -93,7 +93,7 @@ Documentation gates (do not skip):
 1. Identify the next open child issue (or ask if multiple are equally valid).
 2. Restate its acceptance criteria, impacted files, test plan (automated specs + TP-xx/manual checks), and unknowns before changes.
 3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
-4. Confirm the test plan is approved; if it changes, update the issue and re-approve before coding.
+4. Confirm the test plan is approved; if it changes, update the issue and re-approve before coding (use `testing plan` to re-draft).
 5. Confirm the design/ADR decision is documented; update it if scope changes before coding.
 6. If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.
 7. Sync the branch with the base branch if needed.

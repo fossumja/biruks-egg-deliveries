@@ -21,6 +21,7 @@ You are my testing workflow assistant.
 - Change summary or file list.
 - Desired test tier: smoke, targeted, or full regression.
 - Optional pack list if already known.
+- Optional issue number/URL to update the Testing plan section.
 
 ## Defaults
 
@@ -28,6 +29,7 @@ You are my testing workflow assistant.
 - Follow `docs/dev/workflows/testing.md`.
 - Prefer targeted packs unless the change is high risk.
 - Include usage scenarios when running full regression.
+- If an issue is provided and the test plan is missing, draft and write the plan into the issue.
 
 ## V-model alignment
 
@@ -48,15 +50,20 @@ You are my testing workflow assistant.
 ## action=plan
 
 1. Confirm the test tier and pack list.
-2. Provide automated test commands, using `npm test -- --watch=false --browsers=ChromeHeadless --include <spec>` when possible.
-3. List the manual checks required for each pack.
-4. Call out any required fixtures or data resets.
+2. Enumerate automated specs to add/update (paths).
+3. Provide automated test commands, using `npm test -- --watch=false --browsers=ChromeHeadless --include <spec>` when possible.
+4. List the manual checks required for each pack.
+5. Call out any required fixtures or data resets.
+6. If an issue is provided and the Testing plan section is missing or incomplete:
+   - Update the issue body with the drafted plan.
+   - Ask whether to mark the test plan approved (self-approval OK for solo work).
 
 ## action=run
 
 1. Execute automated test commands in the planned order.
 2. Report failures immediately with reproduction commands.
 3. Summarize which manual checks remain.
+4. Do not claim manual checks are complete unless explicitly confirmed.
 
 ## action=report
 
@@ -64,6 +71,7 @@ You are my testing workflow assistant.
 2. Update docs when test coverage or packs changed, including automation notes in `docs/testing/regression-tests.md`.
 3. Suggest follow-up issues for any failures.
 4. Provide a short PR-ready evidence summary (AC coverage, TP-xx IDs, usage-scenario IDs, and known gaps).
+5. If an issue is provided, add a short test-results comment or update the issue Testing plan/results section.
 
 ## Output
 

@@ -4,7 +4,7 @@ Use this workflow to run reliable, scoped testing with modular test packs.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: selecting and executing regression packs for this app
 - **Non-goals**: changing test tooling or adding new frameworks
@@ -57,6 +57,7 @@ This workflow helps you select the right test packs for a change, run automated 
    - Required automated specs.
    - TP-xx packs and manual checks.
    - Mark the test plan approved before implementation (self-approval is fine for solo work).
+   - Use `testing plan` to draft and write the test plan into the issue when needed.
 4. Enumerate the automated specs that must be added or updated for the change (components + services).
 5. Add/extend the automated tests before running the final regression checks.
 6. Choose a test tier:
@@ -119,6 +120,7 @@ This writes a JUnit report to `test-results/junit.xml` and coverage outputs to `
 - Added base-check guidance when automated tests are deferred.
 - Documented the CI test command and artifact paths for JUnit and coverage outputs.
 - Added a test-plan approval gate and explicit automated spec listing for V-model traceability.
+- Added guidance to draft the issue test plan via the testing prompt.
 
 ## Related docs
 
