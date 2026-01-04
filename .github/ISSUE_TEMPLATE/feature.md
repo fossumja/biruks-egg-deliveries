@@ -15,6 +15,14 @@ labels: ["type:enhancement", "priority:medium"]
 
 ## Proposed solution
 
+## Change impact / test mapping
+
+- Impacted flows/screens:
+- Impacted data/storage:
+- Impacted files (expected):
+- Automation coverage to add/update:
+- Regression packs to run (TP-xx):
+
 ## Acceptance criteria
 
 - [ ] 

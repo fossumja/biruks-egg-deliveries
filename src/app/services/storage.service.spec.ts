@@ -277,6 +277,19 @@ describe('StorageService regression tests', () => {
       suggestedAmount: 8
     };
     expect(storage.computeChangeStatus(stop, undefined, donated)).toBe('changed');
+    const notRecorded: DonationInfo = {
+      status: 'NotRecorded',
+      amount: 0,
+      suggestedAmount: 8
+    };
+    expect(storage.computeChangeStatus(stop, undefined, notRecorded)).toBe('');
+
+    const legacyStop = buildDelivery({
+      ...stop,
+      originalDonation: { ...notRecorded },
+      donation: { ...baseDonation }
+    });
+    expect(storage.computeChangeStatus(legacyStop)).toBe('');
 
     const delivered: Delivery = { ...stop, status: 'delivered' };
     expect(storage.computeChangeStatus(delivered)).toBe('delivered');

@@ -584,6 +584,10 @@ export class DeliveryRunComponent {
         amount: 0,
         suggestedAmount: (stop.originalDozens ?? stop.dozens ?? 0) * 4
       };
+    } else if (stop.originalDonation.status === 'NotRecorded') {
+      stop.originalDonation.status = 'NoDonation';
+      stop.originalDonation.amount = 0;
+      stop.originalDonation.method = undefined;
     }
     if (!stop.donation) {
       stop.donation = {
@@ -591,6 +595,10 @@ export class DeliveryRunComponent {
         amount: 0,
         suggestedAmount: (stop.dozens ?? 0) * 4
       };
+    } else if (stop.donation.status === 'NotRecorded') {
+      stop.donation.status = 'NoDonation';
+      stop.donation.amount = 0;
+      stop.donation.method = undefined;
     }
     stop.status = this.storage.computeChangeStatus(stop, undefined, stop.donation);
     return stop;

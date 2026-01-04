@@ -101,3 +101,4 @@ Canonical workflows:
 - Added explicit high-risk action warnings so agents confirm before potentially destructive changes.
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.
 - Added a docs-impact gate so documentation updates are completed or tracked with a doc child issue.
+- Added a change-impact summary gate to capture impacted flows, files, automation, and TP-xx packs before coding.

@@ -57,6 +57,7 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
 4. Confirm V-model prerequisites on the parent issue:
    - Design/ADR decision recorded.
    - Test plan approved (automated specs + TP-xx/manual checks).
+   - Change-impact summary recorded (flows, files, automation, TP-xx packs).
    - Acceptance criteria are clear and traceable.
    - If the test plan is missing, run `testing plan` to draft and update it, then ask to approve.
    - If any other prerequisites are missing, stop and request updates before implementation.

@@ -93,6 +93,7 @@ Documentation gates (do not skip):
 1. Identify the next open child issue (or ask if multiple are equally valid).
 2. Restate its acceptance criteria, impacted files, test plan (automated specs + TP-xx/manual checks), and unknowns before changes.
 3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
+   - Ensure the change-impact summary (flows, files, automation, TP-xx packs) is present; add it if missing.
 4. Confirm the test plan is approved; if it changes, update the issue and re-approve before coding (use `testing plan` to re-draft).
 5. Confirm the design/ADR decision is documented; update it if scope changes before coding.
 6. If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.

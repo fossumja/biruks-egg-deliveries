@@ -1201,8 +1201,10 @@ export class StorageService {
         stop.donation ??
         defaultDonation(stop))
     };
-    const baseStatus = baseDonation.status ?? 'NoDonation';
-    const currStatus = currentDonation.status ?? 'NoDonation';
+    const normalizeStatus = (status?: DonationInfo['status']): DonationInfo['status'] =>
+      status === 'NotRecorded' ? 'NoDonation' : (status ?? 'NoDonation');
+    const baseStatus = normalizeStatus(baseDonation.status);
+    const currStatus = normalizeStatus(currentDonation.status);
     const currentSuggested = (overrides?.dozens ?? stop.dozens ?? 0) * 4;
     const currentAmount = Number(
       currentDonation.amount ?? currentDonation.suggestedAmount ?? currentSuggested

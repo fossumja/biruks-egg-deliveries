@@ -11,7 +11,28 @@ import { DonationInfo, DonationMethod, DonationStatus } from '../models/delivery
   styleUrl: './donation-controls.component.scss'
 })
 export class DonationControlsComponent implements OnInit, OnChanges {
-  @Input() donation: DonationInfo | null = null;
+  private donationValue: DonationInfo | null = null;
+  private lastDonationRef: DonationInfo | null = null;
+  @Input()
+  set donation(value: DonationInfo | null) {
+    if (this.lastDonationRef !== value) {
+      this.amountTouched = false;
+    }
+    this.donationValue = value;
+    this.lastDonationRef = value;
+    this.normalizeLegacyDonation();
+    if (this.donation?.status === 'NoDonation') {
+      this.amountTouched = false;
+      this.amountValue = 0;
+      return;
+    }
+    if (!this.amountTouched) {
+      this.amountValue = this.computeBaseAmount();
+    }
+  }
+  get donation(): DonationInfo | null {
+    return this.donationValue;
+  }
   @Input() suggestedAmount = 0;
   @Input() showNoDonation = true;
   @Input() allowReselect = false;
@@ -44,15 +65,6 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       if (!this.amountTouched && this.donation?.status !== 'NoDonation') {
         this.amountValue = nextSuggested;
       }
-    } else if ('donation' in changes) {
-      const base = this.computeBaseAmount();
-      if (!this.amountTouched) {
-        this.amountValue = base;
-      }
-    }
-    this.normalizeLegacyDonation();
-    if (this.donation?.status === 'NoDonation') {
-      this.amountTouched = false;
     }
     if ('qtyValue' in changes) {
       this.qtyLocal = this.qtyValue;

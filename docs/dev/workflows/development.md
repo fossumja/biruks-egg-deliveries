@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -35,6 +35,7 @@ Use this workflow to set up and run the app locally during active development.
 - Use the docs prompt and documentation style guide for any doc updates.
 - Use the testing workflow and TP-xx packs for behavior changes; update or add tests to cover new behavior.
 - Require a documented and approved test plan before implementation; re-approve if scope changes.
+- Require a change-impact summary (flows, files, automation, TP-xx packs) in the issue before coding.
 - Perform a design/architecture review and decide whether an ADR is required; record the decision.
 - Use short-lived feature branches off `main`; delete them after merge.
 - Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
@@ -60,10 +61,11 @@ If none apply, document the design decision in the issue (comment or checklist n
 
 1. Review the issue and proposed plan:
    - Confirm acceptance criteria, scope boundaries, and dependencies.
-   - Identify missing context (designs, data contracts, ADRs) before coding.
-   - Review UX, data-model, and architecture impact; decide if an ADR is required and document the decision (ADR or issue note).
-   - Confirm the issue lists required automated specs and TP-xx/manual checks, and mark the test plan approved.
-   - If the test plan section is missing or incomplete, stop and update the issue before proceeding.
+    - Identify missing context (designs, data contracts, ADRs) before coding.
+    - Review UX, data-model, and architecture impact; decide if an ADR is required and document the decision (ADR or issue note).
+    - Record a change-impact summary (flows, files, automation, TP-xx packs) and update the issue if missing.
+    - Confirm the issue lists required automated specs and TP-xx/manual checks, and mark the test plan approved.
+    - If the test plan section is missing or incomplete, stop and update the issue before proceeding.
    - For regression/testing-plan issues, ensure the plan includes pack updates, manual checks, automation references, usage-scenario updates, and change-impact map updates.
 2. Validate feasibility in the codebase:
    - Scan relevant files, services, and tests to confirm the plan is implementable.
@@ -104,6 +106,7 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Changes render/behave as expected.
 - Relevant docs updated when behavior changes.
 - Issue and plan reviewed; any plan updates are documented and approved.
+- Change-impact summary recorded in the issue (flows, files, automation, TP-xx packs).
 - Retrospective notes captured for completed features.
 - Base checks run for each issue-sized change.
 - Issues are closed only after base checks pass.
@@ -134,6 +137,7 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Added a test-plan approval requirement to align with V-model planning gates.
 - Added a design/architecture review gate with ADR decision guidance.
 - Added change-control guidance for requirements/AC updates and re-approval.
+- Added a change-impact summary requirement to map flows, files, automation, and TP-xx packs before coding.
 
 ## Related docs
 

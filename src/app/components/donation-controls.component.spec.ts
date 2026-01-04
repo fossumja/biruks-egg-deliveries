@@ -100,4 +100,24 @@ describe('DonationControlsComponent', () => {
     expect(component.amountValue).toBe(8);
     expect(amountSpy).toHaveBeenCalledWith(8);
   });
+
+  it('resets amount to 0 when moving from a custom amount to None', () => {
+    component.donation = {
+      status: 'Donated',
+      amount: 12,
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    component.onAmountChangeSelect(12);
+
+    component.donation = {
+      status: 'NoDonation',
+      suggestedAmount: 8,
+    };
+    fixture.detectChanges();
+
+    expect(component.amountValue).toBe(0);
+  });
 });
