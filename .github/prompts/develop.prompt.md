@@ -61,6 +61,8 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
 6. Review + merge:
    - Run `feature review` to perform code review and merge (squash + delete branch).
    - Confirm Review Evidence and Traceability are complete; record any waivers.
+   - Verify required checks/approvals; if possible, use `pr review` and `pr merge` to satisfy them.
+   - If branch protection blocks self-merge (required approvals or checks), stop and ask how to proceed.
 7. Wrap up:
    - Ensure parent issue checklist is complete and closed.
    - Capture a short retrospective note (what worked, what hurt, next improvement).
