@@ -102,3 +102,4 @@ Canonical workflows:
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.
 - Added a docs-impact gate so documentation updates are completed or tracked with a doc child issue.
 - Added a change-impact summary gate to capture impacted flows, files, automation, and TP-xx packs before coding.
+- Added explicit merge cleanup steps (delete local branch, prune refs) in merge workflows/prompts.

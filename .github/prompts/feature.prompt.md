@@ -155,6 +155,7 @@ Documentation gates (do not skip):
    - If approvals are required and you cannot self-approve, stop and ask whether to adjust rulesets.
 6. Ask for explicit confirmation before merge.
 7. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
+8. Run merge cleanup per `pr merge` (switch to base, delete local branch if merged, prune refs).
 
 ## action=all
 

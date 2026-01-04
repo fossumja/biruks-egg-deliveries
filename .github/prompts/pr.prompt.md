@@ -97,7 +97,12 @@ Given `pr=<id>` (or current branch):
 - If checks pending, `gh pr merge <id> --auto` (and add `--squash` if required/allowed)
 - If branch deletion is blocked, follow with `/branch action=delete name=<branch>`.
 
-4. Summarize what merged and which issue(s) closed.
+4. Cleanup after merge:
+   - Switch to the base branch and pull.
+   - Delete the local feature branch (only if merged).
+   - Prune refs (`git fetch --prune`) and confirm `git status -sb` is clean.
+
+5. Summarize what merged and which issue(s) closed.
 
 ## Output
 

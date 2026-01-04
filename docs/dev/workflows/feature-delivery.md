@@ -110,6 +110,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
 7. Cleanup after merge:
    - Ensure the feature branch is deleted (auto-delete or `/branch action=delete name={branch}`).
+   - Delete the local feature branch once merge is confirmed.
    - Prune refs with `git fetch --prune` and switch back to `main`.
 
 ## Checks
