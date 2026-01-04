@@ -41,7 +41,10 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
 ## action=run
 
 1. Establish current context:
-   - Identify the current branch and whether the working tree is clean.
+   - Identify the current branch, repo default branch, and whether the working tree is clean.
+   - Detect whether a PR already exists for the current branch.
+   - If on the default branch with no issue context, ask whether to create a new issue or select an existing one.
+   - If on a non-default branch with no issue context, ask whether to reuse the branch or switch.
    - If the working tree is not clean, ask how to proceed before switching or creating branches.
 2. Determine whether the issue already exists:
    - If not, run `issues all` to create/refine/break down/triage.
