@@ -5,7 +5,7 @@ Follow them alongside system and developer instructions.
 
 - **Status**: Stable
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: Reference
 - **Scope**: agent behavior and repo-specific standards
 - **Non-goals**: replace system/developer instructions or code-level standards
@@ -90,8 +90,13 @@ Canonical workflows:
 - Added command-formatting guidance so agents avoid brittle shell pipelines for issue creation.
 - Added explicit command-structure guardrails (no multi-command `zsh -lc`) and a pointer to terminal practices.
 - Added a command-structure rule to avoid embedding `gh` inside Python heredocs, which triggers approval prompts.
-- Added a `feature-all` prompt to iterate through child issues with the same gates as `feature next`.
-- Clarified that `feature-all` is state-aware and can resume from any stage.
+- Folded the `feature-all` flow into the `feature` prompt and removed the standalone prompt file.
+- Added issue-prompt delegations so agents reuse label/project/triage workflows consistently.
+- Added a `develop` prompt for end-to-end V-model delivery (issues → feature → review/merge).
+- Refined delegated prompts (branch/testing/quality/PR) to align with V-model evidence and safety gates.
+- Added agent-interaction best practices covering structured issue intake and prompt clarity.
+- Added prompt quality audit, context probes, and evidence snippet guidance for agent interactions.
+- Added `issues` actions for refine/all to cover issue clarity and end-to-end issue flow.
 - Linked the new agent terminal practices doc for settings-aligned command usage.
 - Added explicit high-risk action warnings so agents confirm before potentially destructive changes.
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.

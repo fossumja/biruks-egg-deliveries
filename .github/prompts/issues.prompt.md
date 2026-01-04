@@ -1,7 +1,7 @@
 ---
 name: "issues"
 description: "Create, refine, and triage GitHub issues with gh; optionally add to Projects and create a linked dev branch."
-argument-hint: "action=create|breakdown|triage|close issue=<#|url> title=<title> (shorthand: issues {action} [issue|title])"
+argument-hint: "action=create|breakdown|triage|close|refine|all issue=<#|url> title=<title> (shorthand: issues {action} [issue|title])"
 agent: "agent"
 ---
 
@@ -19,6 +19,9 @@ You are my issues & planning assistant.
 
 - If you detect issue templates in `.github/ISSUE_TEMPLATE`, follow them.
 - Ensure new issues include the template sections for test packs, manual checks, and review focus.
+- Ensure template sections are present for testing plan, risk assessment, and docs impact.
+- If sections are missing, create the issue quickly and then run `issues refine` to complete them before implementation starts.
+- Apply `status:needs-triage` when the label exists, and run `issues triage` to normalize metadata.
 - Prefer adding:
   - **Problem statement**
   - **Proposed solution**
@@ -43,6 +46,39 @@ You are my issues & planning assistant.
 - If priority is not provided, default to `priority:medium` and note the assumption in the issue.
 - For test-failure issues, re-run the targeted test pack before filing and capture the rerun result.
 - Shorthand: `issues breakdown {issue}`, `issues triage {query}`, `issues close {issue}`, `issues create {title}`; positional issues can be `#{id}` or URL, and multi-word titles/queries should be quoted.
+- `issues refine {issue}` runs the issue refinement flow.
+- `issues all {issue|title}` chains create → refine → breakdown → triage as needed.
+
+## Delegations (use other prompts when appropriate)
+
+- **Labels:** use `.github/prompts/labels.prompt.md` to add or audit label taxonomy.
+- **Projects:** use `.github/prompts/project.prompt.md` to add issues to Projects.
+- **Triage:** use `.github/prompts/triage.prompt.md` for bulk issue triage runs.
+- **Branches:** use `.github/prompts/branch.prompt.md` if a linked dev branch is requested.
+
+Before delegating, confirm the target prompt exists and is up to date. If it is missing or stale, update it before relying on it.
+
+## Decision aids
+
+- Use **action=create** when the request is new and has a clear problem statement + outcome.
+- Use **action=refine** when any of these are missing or ambiguous:
+  - UX/styling expectations (layout, labels, interactions).
+  - Data/algorithm rules (totals, thresholds, ordering, validation).
+  - Edge cases or error states.
+  - Testing expectations (specs, TP-xx packs, manual checks).
+- Use **action=breakdown** when:
+  - Work spans 3+ distinct workstreams (UI, data/storage, docs, tests, ops).
+  - There are multiple deliverables or dependencies that can be parallelized.
+  - The issue mixes research/planning with implementation tasks.
+- Use **action=triage** after create/breakdown to apply labels and priority consistently.
+
+Refinement question categories (default set):
+
+- UX/styling direction (layout, text, interactions, accessibility)
+- Data model/logic (calculations, defaults, validation, ordering)
+- Edge cases (empty states, error handling, limits)
+- Testing scope (spec files, TP-xx packs, manual checks)
+- Rollout/compatibility (migration, backward compatibility, risks)
 
 ## GitHub CLI behaviors
 
@@ -64,10 +100,13 @@ You are my issues & planning assistant.
    - Context
    - Repro steps (for bugs) or user story (for features)
    - Acceptance criteria checklist
+   - Testing plan, risk assessment, and docs impact (from the templates)
 3. Suggest labels (type/area/priority) and apply them if authorized:
    - `gh issue create --title ... --body ... --label "type:...,area:...,priority:..."`
 4. If a Project is configured (or user asks), add it:
    - `gh project item-add ... --url <issueUrl>`
+5. If any required template sections are missing after creation, immediately run `issues refine` to fill them in.
+6. Apply `status:needs-triage` if available, then run `issues triage` when batching new issues.
 
 ### action=breakdown
 
@@ -134,6 +173,49 @@ Close with a reason and optional state:
 
 - `gh issue close <id> --comment "..."`
 - If closing as duplicate, reference canonical issue.
+
+### action=refine
+
+Use this when the issue scope is ambiguous or design/algorithm choices are required.
+
+1. Read the issue and linked references; restate the goal in your own words.
+2. Scan relevant docs and code to identify unknowns (UX, data model, edge cases).
+3. Ensure required template sections exist (testing plan, risk assessment, docs impact, review focus).
+3. Produce a decision list with:
+   - Question
+   - Options (2-3)
+   - Recommended default (if safe)
+4. Ask the questions and pause for answers.
+5. After answers, update the issue:
+   - Decisions section (bulleted)
+   - Acceptance criteria aligned to answers
+   - Testing plan updates (specs, TP-xx, manual checks)
+6. If any decision remains unknown, stop and request it explicitly.
+
+Stop conditions (always stop and ask):
+
+- Requirements are ambiguous or conflict with existing behavior.
+- UX/styling direction is missing and affects layout or validation.
+- Algorithm/data decisions impact totals, persistence, or exports.
+- A high-risk change is required (history rewrite, ruleset change, data purge).
+
+### action=all
+
+Run the full issue workflow: create, refine if needed, break down, then triage.
+
+1. Determine whether the issue already exists.
+2. If not, create it via `issues action=create`.
+3. Evaluate clarity; if unclear, run `issues action=refine` and wait for answers.
+4. Run `issues action=breakdown` to create child issues when needed.
+5. Run `issues action=triage` to apply labels and priority.
+6. Stop and ask if any decision is required or a risk gate is triggered.
+
+Stop conditions (always stop and ask):
+
+- Requirements are unclear or conflicting.
+- Implementation choices affect UX/styling or core calculations.
+- A high-risk action is required (history rewrite, ruleset change, data purge).
+- The issue needs user-provided artifacts (designs, CSV samples, logs).
 
 ## Output
 

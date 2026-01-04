@@ -29,6 +29,12 @@ You are my testing workflow assistant.
 - Prefer targeted packs unless the change is high risk.
 - Include usage scenarios when running full regression.
 
+## V-model alignment
+
+- Ensure the issue test plan is approved before executing packs; stop and ask if it is missing.
+- Record TP-xx pack IDs and usage-scenario IDs so they can be mapped into PR Traceability.
+- If coverage changes, update `docs/testing/regression-tests.md` and note the change in the parent issue or PR.
+
 ## Procedure
 
 ## action=scope
@@ -36,7 +42,8 @@ You are my testing workflow assistant.
 1. Read `docs/testing/regression-tests.md` and `docs/dev/workflows/testing.md`.
 2. Map changes to test packs using the change-impact map.
 3. If change inputs are missing, ask for them once.
-4. Output the recommended pack list and test tier.
+4. If the issue lacks an approved test plan, stop and request it before proceeding.
+5. Output the recommended pack list and test tier.
 
 ## action=plan
 
@@ -56,6 +63,7 @@ You are my testing workflow assistant.
 1. Summarize packs run (with TP-xx IDs), commands used, and outcomes.
 2. Update docs when test coverage or packs changed, including automation notes in `docs/testing/regression-tests.md`.
 3. Suggest follow-up issues for any failures.
+4. Provide a short PR-ready evidence summary (AC coverage, TP-xx IDs, usage-scenario IDs, and known gaps).
 
 ## Output
 

@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -21,7 +21,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Base branch if it is not the repo default.
 - Optional preferred order for child issues.
 - Shorthand: `feature start {issue}` maps to `/feature action=start issue={issue}`.
-- Optional: run `feature all {issue}` (prompt: `feature-all`) to auto-detect the stage and chain `feature start` → repeated `feature next` → `feature finish`.
+- Optional: run `feature all {issue}` (feature prompt `action=all`) to auto-detect the stage and chain `feature start` → repeated `feature next` → `feature finish`.
 
 ## Constraints
 
@@ -37,6 +37,8 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
 - If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 - Confirm branch protection and rulesets for `main` before merging so required checks match available CI.
+- If data import/export/backup/restore is affected, require a backup/restore verification (or document a waiver) before merge.
+- If docs are updated or added, update `index.md` and documentation inventory entries as needed.
 - Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
 - Before switching branches or starting the feature, confirm the working tree is clean or ask the user how to handle existing changes.
 
@@ -125,6 +127,8 @@ Use this once per repo to keep `main` safe without blocking work.
 - Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
+- Backup/restore verification is documented when data flows change (or a waiver is recorded).
+- Documentation index/inventory updates are included when docs change.
 - Testing workflow used for behavior changes, with pack IDs recorded.
 - Regression pack updates were considered for behavior changes, and TP-xx IDs were recorded before the PR.
 - Code review results are documented in the PR.
@@ -162,7 +166,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added change-control guidance for requirements/AC updates and re-approval.
 - Added validation/UAT sign-off requirement with usage-scenario references.
 - Documented required status checks (unit-tests, pr-body-validation) and staged rollout guidance.
-- Clarified `feature-all` as a state-aware flow that can resume from any stage.
+- Folded `feature-all` into the `feature` prompt and clarified the state-aware flow.
 
 ## Related docs
 

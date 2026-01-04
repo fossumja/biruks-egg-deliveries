@@ -22,6 +22,11 @@ Make the repo "green" with consistent formatting, linting, and tests, without ex
 - Tests: unit tests at minimum; e2e optional
 - Shorthand: `quality check` and `quality fix` map to `action=check` and `action=fix`; add `scope={scope}` when needed.
 
+## V-model alignment
+
+- When running as part of `feature finish`, record results for PR Review Evidence and Traceability.
+- If a required check is skipped or fails, document the waiver and open a follow-up issue before merge.
+
 ## action=check
 
 1. Discover scripts:
