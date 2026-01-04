@@ -54,6 +54,8 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 ### Planning and tracking
 
 - `issues` — create, break down, and triage issues, including test-failure rerun guidance. Shorthand: `issues breakdown 1`. Workflow: `docs/dev/workflows/triage.md`.
+- `issue-refine` — ask decision-focused questions to refine an issue before implementation. Shorthand: `issue refine 1`. Workflow: `docs/dev/workflows/triage.md`.
+- `issue-all` — chain issue create → refine → breakdown → triage as needed. Shorthand: `issue all "Title"` or `issue all 1`. Workflow: `docs/dev/workflows/triage.md`.
 - `project` — manage GitHub Projects. Shorthand: `project add 1 2`. Workflow: `docs/dev/workflows/triage.md`.
 - `triage` — bulk triage issues and PRs. Shorthand: `triage "is:open label:type:bug"`. Workflow: `docs/dev/workflows/triage.md`.
 - `labels` — manage label taxonomy. Shorthand: `labels sync`. Workflow: `docs/dev/workflows/triage.md`.
@@ -104,6 +106,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Updated prompt entries for retrospective follow-ups and device checklist callouts.
 - Updated the feature prompt entry to include V-model gate coverage.
 - Clarified the `feature-all` prompt as state-aware and able to resume from any stage.
+- Added `issue-refine` and `issue-all` prompts for deeper issue clarity and end-to-end issue flow.
 
 ## Related docs
 

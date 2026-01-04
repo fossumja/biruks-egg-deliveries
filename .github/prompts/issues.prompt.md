@@ -1,7 +1,7 @@
 ---
 name: "issues"
 description: "Create, refine, and triage GitHub issues with gh; optionally add to Projects and create a linked dev branch."
-argument-hint: "action=create|breakdown|triage|close issue=<#|url> title=<title> (shorthand: issues {action} [issue|title])"
+argument-hint: "action=create|breakdown|triage|close|refine|all issue=<#|url> title=<title> (shorthand: issues {action} [issue|title])"
 agent: "agent"
 ---
 
@@ -43,6 +43,8 @@ You are my issues & planning assistant.
 - If priority is not provided, default to `priority:medium` and note the assumption in the issue.
 - For test-failure issues, re-run the targeted test pack before filing and capture the rerun result.
 - Shorthand: `issues breakdown {issue}`, `issues triage {query}`, `issues close {issue}`, `issues create {title}`; positional issues can be `#{id}` or URL, and multi-word titles/queries should be quoted.
+- `issues refine {issue}` delegates to the issue refinement prompt.
+- `issues all {issue|title}` delegates to the issue-all prompt to chain create → refine → breakdown → triage.
 
 ## GitHub CLI behaviors
 
@@ -134,6 +136,14 @@ Close with a reason and optional state:
 
 - `gh issue close <id> --comment "..."`
 - If closing as duplicate, reference canonical issue.
+
+### action=refine
+
+Delegate to `.github/prompts/issue-refine.prompt.md` to identify implementation decisions and update the issue.
+
+### action=all
+
+Delegate to `.github/prompts/issue-all.prompt.md` to run create → refine → breakdown → triage as needed.
 
 ## Output
 
