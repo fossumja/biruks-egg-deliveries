@@ -92,7 +92,7 @@ Canonical workflows:
 - Added a command-structure rule to avoid embedding `gh` inside Python heredocs, which triggers approval prompts.
 - Added a `feature-all` prompt to iterate through child issues with the same gates as `feature next`.
 - Clarified that `feature-all` is state-aware and can resume from any stage.
-- Added `issue-refine` and `issue-all` prompts for issue clarity and end-to-end issue flow.
+- Added `issues` actions for refine/all to cover issue clarity and end-to-end issue flow.
 - Linked the new agent terminal practices doc for settings-aligned command usage.
 - Added explicit high-risk action warnings so agents confirm before potentially destructive changes.
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.

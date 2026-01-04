@@ -43,8 +43,8 @@ You are my issues & planning assistant.
 - If priority is not provided, default to `priority:medium` and note the assumption in the issue.
 - For test-failure issues, re-run the targeted test pack before filing and capture the rerun result.
 - Shorthand: `issues breakdown {issue}`, `issues triage {query}`, `issues close {issue}`, `issues create {title}`; positional issues can be `#{id}` or URL, and multi-word titles/queries should be quoted.
-- `issues refine {issue}` delegates to the issue refinement prompt.
-- `issues all {issue|title}` delegates to the issue-all prompt to chain create → refine → breakdown → triage.
+- `issues refine {issue}` runs the issue refinement flow.
+- `issues all {issue|title}` chains create → refine → breakdown → triage as needed.
 
 ## GitHub CLI behaviors
 
@@ -139,11 +139,45 @@ Close with a reason and optional state:
 
 ### action=refine
 
-Delegate to `.github/prompts/issue-refine.prompt.md` to identify implementation decisions and update the issue.
+Use this when the issue scope is ambiguous or design/algorithm choices are required.
+
+1. Read the issue and linked references; restate the goal in your own words.
+2. Scan relevant docs and code to identify unknowns (UX, data model, edge cases).
+3. Produce a decision list with:
+   - Question
+   - Options (2-3)
+   - Recommended default (if safe)
+4. Ask the questions and pause for answers.
+5. After answers, update the issue:
+   - Decisions section (bulleted)
+   - Acceptance criteria aligned to answers
+   - Testing plan updates (specs, TP-xx, manual checks)
+6. If any decision remains unknown, stop and request it explicitly.
+
+Stop conditions (always stop and ask):
+
+- Requirements are ambiguous or conflict with existing behavior.
+- UX/styling direction is missing and affects layout or validation.
+- Algorithm/data decisions impact totals, persistence, or exports.
+- A high-risk change is required (history rewrite, ruleset change, data purge).
 
 ### action=all
 
-Delegate to `.github/prompts/issue-all.prompt.md` to run create → refine → breakdown → triage as needed.
+Run the full issue workflow: create, refine if needed, break down, then triage.
+
+1. Determine whether the issue already exists.
+2. If not, create it via `issues action=create`.
+3. Evaluate clarity; if unclear, run `issues action=refine` and wait for answers.
+4. Run `issues action=breakdown` to create child issues when needed.
+5. Run `issues action=triage` to apply labels and priority.
+6. Stop and ask if any decision is required or a risk gate is triggered.
+
+Stop conditions (always stop and ask):
+
+- Requirements are unclear or conflicting.
+- Implementation choices affect UX/styling or core calculations.
+- A high-risk action is required (history rewrite, ruleset change, data purge).
+- The issue needs user-provided artifacts (designs, CSV samples, logs).
 
 ## Output
 
