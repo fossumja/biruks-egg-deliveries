@@ -1,7 +1,7 @@
 ---
 name: "feature"
 description: "Deliver a feature by creating a branch from a parent issue and completing child issues."
-argument-hint: "action=start|next|status|finish|review issue=<parent#|url> branch=<optional> (shorthand: feature {action} [issue])"
+argument-hint: "action=start|next|status|finish|review|all issue=<parent#|url> branch=<optional> (shorthand: feature {action} [issue])"
 agent: "agent"
 ---
 
@@ -29,6 +29,7 @@ You are my feature delivery assistant.
 - Branch naming: follow `.github/prompts/branch.prompt.md` (`feat/<slug>`).
 - Issue order: data/storage -> export/import -> UI -> tests -> docs -> ops, unless the parent issue specifies otherwise.
 - Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
+- `feature all {issue}` delegates to the `feature-all` prompt to run the state-aware full lifecycle.
 
 ## Procedure
 
@@ -110,6 +111,14 @@ You are my feature delivery assistant.
    - If approvals are required and you cannot self-approve, stop and ask whether to adjust rulesets.
 6. Ask for explicit confirmation before merge.
 7. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
+
+## action=all
+
+1. Delegate to `.github/prompts/feature-all.prompt.md`.
+2. Use `feature start` when the feature has not been initialized.
+3. Loop `feature next` until all child issues are complete.
+4. Run `feature finish` once all child issues are done.
+5. Stop and ask when requirements are unclear or a high-risk action is required.
 
 ## Output
 
