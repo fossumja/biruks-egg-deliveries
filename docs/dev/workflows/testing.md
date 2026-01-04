@@ -48,25 +48,27 @@ This workflow helps you select the right test packs for a change, run automated 
 - Automated coverage is required for any new or changed behavior unless explicitly deferred with a follow-up issue and documented rationale.
 - For UI changes, add or update component specs that assert the new behavior and data display.
 - For data logic changes, add or update service/util tests that validate calculations and edge cases.
+- Require a change-impact summary (flows, files, automation, TP-xx packs) in the issue before executing packs.
 
 ## Steps
 
 1. Identify the scope of the change.
 2. Map changes to packs using the change-impact map and list the TP-xx IDs (or run `testing scope` to confirm).
-3. Document the test plan in the issue:
+3. Ensure the issue includes a change-impact summary (flows, files, automation, TP-xx packs); add it if missing.
+4. Document the test plan in the issue:
    - Required automated specs.
    - TP-xx packs and manual checks.
    - Mark the test plan approved before implementation (self-approval is fine for solo work).
    - Use `testing plan` to draft and write the test plan into the issue when needed.
-4. Enumerate the automated specs that must be added or updated for the change (components + services).
-5. Add/extend the automated tests before running the final regression checks.
-6. Choose a test tier:
+5. Enumerate the automated specs that must be added or updated for the change (components + services).
+6. Add/extend the automated tests before running the final regression checks.
+7. Choose a test tier:
 
   - Smoke: quick validation for low-risk changes.
   - Targeted: only packs impacted by the change.
   - Full regression: all packs, plus usage scenarios.
 
-7. Run automated checks:
+8. Run automated checks:
 
 ```bash
 npm test -- --watch=false --browsers=ChromeHeadless
@@ -86,9 +88,9 @@ npm run test:ci
 
 This writes a JUnit report to `test-results/junit.xml` and coverage outputs to `coverage/` (`coverage/index.html` and `coverage/lcov.info`). Open `coverage/index.html` to view the HTML report; use the JUnit file in CI.
 
-8. Run the manual checks listed in each selected pack.
-9. If required, execute the usage scenarios in `docs/testing/usage-scenario-tests.md`.
-10. Record results and update docs when coverage changes. Include:
+9. Run the manual checks listed in each selected pack.
+10. If required, execute the usage scenarios in `docs/testing/usage-scenario-tests.md`.
+11. Record results and update docs when coverage changes. Include:
 
   - Pack IDs and tier.
   - Commands executed.
@@ -121,6 +123,7 @@ This writes a JUnit report to `test-results/junit.xml` and coverage outputs to `
 - Documented the CI test command and artifact paths for JUnit and coverage outputs.
 - Added a test-plan approval gate and explicit automated spec listing for V-model traceability.
 - Added guidance to draft the issue test plan via the testing prompt.
+- Added a change-impact summary requirement before selecting packs.
 
 ## Related docs
 

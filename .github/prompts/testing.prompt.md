@@ -44,8 +44,9 @@ You are my testing workflow assistant.
 1. Read `docs/testing/regression-tests.md` and `docs/dev/workflows/testing.md`.
 2. Map changes to test packs using the change-impact map.
 3. If change inputs are missing, ask for them once.
-4. If the issue lacks an approved test plan, stop and request it before proceeding.
-5. Output the recommended pack list and test tier.
+4. If the issue lacks a change-impact summary (flows, files, automation, TP-xx packs), stop and request it before proceeding.
+5. If the issue lacks an approved test plan, stop and request it before proceeding.
+6. Output the recommended pack list and test tier.
 
 ## action=plan
 

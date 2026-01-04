@@ -18,6 +18,7 @@ You are my documentation assistant.
 - Keep `index.md` up to date when docs are added, removed, or moved
 - Use `docs/dev/best-practices/documentation-style-guide.md` as the source of truth for doc structure and formatting.
 - For `action=update` and `action=create`, apply the documentation style guide to the target file.
+- If docs are required but deferred, create a doc child issue via the issues prompt and link it in the parent issue's **Docs impact** section.
 
 ## Shorthand
 
@@ -135,4 +136,5 @@ Procedure:
 ## Output
 
 - Files created/updated
+- Doc issue created/linked when docs are deferred
 - Suggested next prompt (often `/release` or `/quality`)

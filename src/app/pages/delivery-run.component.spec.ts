@@ -49,17 +49,19 @@ class StorageServiceStub {
     const baseDozens = stop.originalDozens ?? stop.dozens ?? 0;
     const currentDozens = overrides?.dozens ?? stop.dozens ?? 0;
     const baseDonation = stop.originalDonation ?? {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: baseDozens * 4,
     };
     const currentDonation = donationOverride ?? stop.donation ?? {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: currentDozens * 4,
     };
 
     const donationStatusChanged =
-      (baseDonation.status ?? 'NotRecorded') !==
-      (currentDonation.status ?? 'NotRecorded');
+      (baseDonation.status ?? 'NoDonation') !==
+      (currentDonation.status ?? 'NoDonation');
     const donationMethodChanged =
       (baseDonation.method ?? null) !== (currentDonation.method ?? null);
     const currentSuggested = currentDozens * 4;
@@ -67,7 +69,7 @@ class StorageServiceStub {
       currentDonation.amount ?? currentDonation.suggestedAmount ?? currentSuggested
     );
     const donationAmountChanged =
-      (currentDonation.status ?? 'NotRecorded') === 'Donated' &&
+      (currentDonation.status ?? 'NoDonation') === 'Donated' &&
       currentAmount !== currentSuggested;
     const qtyChanged = Number(baseDozens) !== Number(currentDozens);
 
@@ -261,8 +263,7 @@ describe('DeliveryRunComponent', () => {
     expect(summary.taxableTotal).toBeCloseTo(2, 2);
     expect(summary.statusBreakdown).toEqual({
       donated: 2,
-      notRecorded: 1,
-      noDonation: 1
+      noDonation: 2
     });
     expect(summary.methodBreakdown).toEqual({
       cash: 1,
@@ -304,7 +305,7 @@ describe('DeliveryRunComponent', () => {
     expect(updateSpy).toHaveBeenCalled();
     expect(component.currentStop?.donation?.status).toBe('NoDonation');
     expect(component.currentStop?.donation?.amount).toBe(0);
-    expect(component.currentStop?.status).toBe('changed');
+    expect(component.currentStop?.status).toBe('');
 
     await component.setDonationDonated('cash');
 
@@ -313,11 +314,29 @@ describe('DeliveryRunComponent', () => {
     expect(component.currentStop?.status).toBe('changed');
   });
 
+  it('updates status before donation persistence resolves', async () => {
+    storage.deliveries = [createStop({ id: 'stop-1' })];
+    let resolveUpdate!: () => void;
+    const updatePromise = new Promise<void>((resolve) => {
+      resolveUpdate = resolve;
+    });
+    spyOn(storage, 'updateDonation').and.returnValue(updatePromise);
+
+    await component.ngOnInit();
+
+    const pending = component.setDonationDonated('cash');
+
+    expect(component.currentStop?.status).toBe('changed');
+
+    resolveUpdate();
+    await pending;
+  });
+
   it('does not auto-select a donation method when amount changes', async () => {
     storage.deliveries = [
       createStop({
         id: 'stop-1',
-        donation: { status: 'NotRecorded', suggestedAmount: 8 },
+        donation: { status: 'NoDonation', amount: 0, suggestedAmount: 8 },
       })
     ];
     const updateSpy = spyOn(storage, 'updateDonation').and.callThrough();
@@ -336,7 +355,7 @@ describe('DeliveryRunComponent', () => {
     storage.deliveries = [
       createStop({
         id: 'stop-1',
-        donation: { status: 'NotRecorded', suggestedAmount: 8 },
+        donation: { status: 'NoDonation', amount: 0, suggestedAmount: 8 },
       })
     ];
     const updateSpy = spyOn(storage, 'updateDonation').and.callThrough();

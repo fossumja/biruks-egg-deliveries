@@ -19,6 +19,14 @@ labels: ["type:bug", "priority:medium"]
 
 ## Scope / impact
 
+## Change impact / test mapping
+
+- Impacted flows/screens:
+- Impacted data/storage:
+- Impacted files (expected):
+- Automation coverage to add/update:
+- Regression packs to run (TP-xx):
+
 ## Acceptance criteria
 
 - [ ] 
@@ -29,6 +37,8 @@ labels: ["type:bug", "priority:medium"]
 - Manual checks:
 - Automation references:
 - Usage scenarios:
+- Test plan approved:
+  - [ ] Approved (self-review OK for solo work)
 
 ## Docs impact
 

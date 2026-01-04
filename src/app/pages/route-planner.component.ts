@@ -404,9 +404,7 @@ export class RoutePlannerComponent {
   }
 
   private ensureOneOffDeliveryType(): boolean {
-    const error = this.validateDonationSelection(this.offDonationDraft, {
-      allowNotRecorded: true
-    });
+    const error = this.validateDonationSelection(this.offDonationDraft);
     this.oneOffDeliveryTypeError = error;
     return !error;
   }
@@ -422,8 +420,7 @@ export class RoutePlannerComponent {
   private refreshOneOffDeliveryTypeError(): void {
     if (this.oneOffDeliveryTypeError) {
       this.oneOffDeliveryTypeError = this.validateDonationSelection(
-        this.offDonationDraft,
-        { allowNotRecorded: true }
+        this.offDonationDraft
       );
     }
   }
@@ -513,10 +510,17 @@ export class RoutePlannerComponent {
     const suggested = (stop.dozens ?? 0) * rate;
     const today = this.getTodayDateInput();
     this.oneOffDeliveryDateTouched = false;
+    const existingStatus = stop.donation?.status;
+    const nextStatus = existingStatus && existingStatus !== 'NotRecorded'
+      ? existingStatus
+      : 'NoDonation';
+    const nextAmount =
+      stop.donation?.amount ??
+      (nextStatus === 'NoDonation' ? 0 : undefined);
     this.offDonationDraft = {
-      status: stop.donation?.status ?? 'NotRecorded',
+      status: nextStatus,
       method: stop.donation?.method,
-      amount: stop.donation?.amount ?? suggested,
+      amount: nextAmount ?? suggested,
       suggestedAmount: suggested,
       date: today,
     };
@@ -549,12 +553,10 @@ export class RoutePlannerComponent {
 
   setOffDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
     if (!this.offDonationDraft) return;
-    this.offDonationDraft.status = status;
-    if (status === 'NoDonation') {
+    const normalizedStatus = status === 'NotRecorded' ? 'NoDonation' : status;
+    this.offDonationDraft.status = normalizedStatus;
+    if (normalizedStatus === 'NoDonation') {
       this.offDonationDraft.amount = 0;
-      this.offDonationDraft.method = undefined;
-    } else if (status === 'NotRecorded') {
-      this.offDonationDraft.amount = undefined;
       this.offDonationDraft.method = undefined;
     } else {
       this.offDonationDraft.amount =
@@ -565,9 +567,14 @@ export class RoutePlannerComponent {
 
   setOffDonationMethod(method: 'cash' | 'venmo' | 'ach' | 'paypal' | 'other'): void {
     if (!this.offDonationDraft) return;
+    const shouldResetAmount =
+      this.offDonationDraft.status === 'NoDonation' ||
+      this.offDonationDraft.status === 'NotRecorded' ||
+      this.offDonationDraft.amount == null ||
+      this.offDonationDraft.amount === 0;
     this.offDonationDraft.status = 'Donated';
     this.offDonationDraft.method = method;
-    if (this.offDonationDraft.amount == null) {
+    if (shouldResetAmount) {
       this.offDonationDraft.amount = this.offDonationDraft.suggestedAmount ?? 0;
     }
     this.refreshOneOffDeliveryTypeError();
@@ -929,7 +936,8 @@ export class RoutePlannerComponent {
     stop.status = '';
     stop.deliveredDozens = undefined;
     stop.donation = {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: (stop.dozens ?? 0) * 4,
     };
     stop.updatedAt = new Date().toISOString();
@@ -1066,12 +1074,19 @@ export class RoutePlannerComponent {
     const today = this.getTodayDateInput();
     this.oneOffDonationDateTouched = false;
     // shallow clone to edit
+    const existingStatus = stop.donation?.status;
+    const nextStatus = existingStatus && existingStatus !== 'NotRecorded'
+      ? existingStatus
+      : 'NoDonation';
+    const nextAmount =
+      stop.donation?.amount ??
+      (nextStatus === 'NoDonation' ? 0 : undefined);
     this.donationDraft = {
       ...stop,
       donation: {
-        status: stop.donation?.status ?? 'NotRecorded',
+        status: nextStatus,
         method: stop.donation?.method,
-        amount: stop.donation?.amount,
+        amount: nextAmount,
         suggestedAmount: (stop.dozens ?? 0) * rate,
         date: today,
         note: stop.donation?.note,
@@ -1112,15 +1127,16 @@ export class RoutePlannerComponent {
     const donation =
       this.donationDraft.donation ??
       ({
-        status: 'NotRecorded',
+        status: 'NoDonation',
+        amount: 0,
         suggestedAmount: safeQty * rate
       } as DonationInfo);
     const previousSuggested = donation.suggestedAmount ?? safeQty * rate;
     donation.suggestedAmount = safeQty * rate;
     // If amount hasn't been customized yet, keep it tied to suggested.
     if (
-      donation.amount == null ||
-      donation.amount === previousSuggested
+      donation.status === 'Donated' &&
+      (donation.amount == null || donation.amount === previousSuggested)
     ) {
       donation.amount = donation.suggestedAmount;
     }
@@ -1391,16 +1407,15 @@ export class RoutePlannerComponent {
     if (!this.donationDraft) return;
     const rate = this.storage.getSuggestedRate();
     const donation = this.donationDraft.donation ?? {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: (this.donationDraft.dozens ?? 0) * rate,
     };
-    donation.status = status;
-    if (status === 'NoDonation') {
+    const normalizedStatus = status === 'NotRecorded' ? 'NoDonation' : status;
+    donation.status = normalizedStatus;
+    if (normalizedStatus === 'NoDonation') {
       donation.method = undefined;
       donation.amount = 0;
-    } else if (status === 'NotRecorded') {
-      donation.method = undefined;
-      donation.amount = undefined;
     }
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * rate;
     this.donationDraft.donation = donation;
@@ -1411,13 +1426,19 @@ export class RoutePlannerComponent {
     if (!this.donationDraft) return;
     const rate = this.storage.getSuggestedRate();
     const donation = this.donationDraft.donation ?? {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: (this.donationDraft.dozens ?? 0) * rate,
     };
+    const shouldResetAmount =
+      donation.status === 'NoDonation' ||
+      donation.status === 'NotRecorded' ||
+      donation.amount == null ||
+      donation.amount === 0;
     donation.status = 'Donated';
     donation.method = method;
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * rate;
-    if (donation.amount == null) {
+    if (shouldResetAmount) {
       donation.amount = donation.suggestedAmount;
     }
     this.donationDraft.donation = donation;
@@ -1503,13 +1524,19 @@ export class RoutePlannerComponent {
 
   openRunEntryEdit(entry: RunSnapshotEntry): void {
     this.editingRunEntry = entry;
+    const normalizedStatus =
+      entry.donationStatus === 'NotRecorded' ? 'NoDonation' : entry.donationStatus;
+    const normalizedMethod =
+      normalizedStatus === 'Donated' ? entry.donationMethod ?? '' : '';
+    const normalizedAmount =
+      normalizedStatus === 'NoDonation' ? 0 : entry.donationAmount;
     this.runEntryDraft = {
       status: entry.status,
       dozens: entry.dozens,
       deliveryOrder: (entry.deliveryOrder ?? 0) + 1,
-      donationStatus: entry.donationStatus,
-      donationMethod: entry.donationMethod ?? '',
-      donationAmount: entry.donationAmount,
+      donationStatus: normalizedStatus,
+      donationMethod: normalizedMethod,
+      donationAmount: normalizedAmount,
     };
     this.resetRunEntryDate();
     this.refreshRunEntryAmountError();
@@ -1772,7 +1799,7 @@ export class RoutePlannerComponent {
           zip,
           status: 'delivered',
           dozens: deliveredDozens,
-          donationStatus: (don?.status ?? 'NotRecorded') as DonationStatus,
+          donationStatus: (don?.status ?? 'NoDonation') as DonationStatus,
           donationMethod: don?.method as DonationMethod | undefined,
           donationAmount: amount,
           taxableAmount: taxable,
@@ -2164,12 +2191,17 @@ export class RoutePlannerComponent {
     }
     if (!stop.originalDonation) {
       stop.originalDonation = {
-        status: 'NotRecorded',
+        status: 'NoDonation',
+        amount: 0,
         suggestedAmount: baseDozens * 4,
       };
     }
     if (!stop.donation) {
-      stop.donation = { status: 'NotRecorded', suggestedAmount: (stop.dozens ?? 0) * 4 };
+      stop.donation = {
+        status: 'NoDonation',
+        amount: 0,
+        suggestedAmount: (stop.dozens ?? 0) * 4
+      };
     }
     stop.status = this.storage.computeChangeStatus(stop);
     return stop;

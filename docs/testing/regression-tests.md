@@ -194,7 +194,7 @@ Scope:
 - Hidden menu donation and delivery flows.
 - Date validation and allowed year range tied to the selected tax year.
 - Donation type selection and amount handling.
-- Donation amount validation (required when Donated, optional when NotRecorded, 0–9999 cap, decimals).
+- Donation amount validation (required when Donated, None keeps amount at 0, 0–9999 cap, decimals).
 - Totals and receipts inclusion.
 - Accessibility and keyboard navigation for one-off dialogs.
 
@@ -204,7 +204,7 @@ Automated coverage:
 - `src/app/services/usage-scenario-totals.spec.ts` (one-off totals).
 
 Date range tied to the selected tax year and UI min/max attributes are covered in `route-planner.component.spec.ts`.
-Donation validation rules (required when Donated, blank allowed when NotRecorded, max cap/decimals) are covered in `route-planner.component.spec.ts` and `donation-amount-picker.component.spec.ts`.
+Donation validation rules (required when Donated, None keeps amount at 0, max cap/decimals) are covered in `route-planner.component.spec.ts` and `donation-amount-picker.component.spec.ts`.
 
 Manual checks:
 
@@ -266,7 +266,7 @@ Manual checks:
 - All receipts view shows both run entries and one-offs for the selected tax year.
 - After deleting receipts, confirm totals refresh to match the updated list.
 - Switch tax year and confirm All receipts and totals update to the selected year.
-- Edit a receipt: Donated requires an amount; NotRecorded allows blank.
+- Edit a receipt: Donated requires an amount; No donation keeps amount at 0.
 - Switching between a specific run and **All receipts** closes any inline edit panel and resets the list to full entries.
 - One-off receipts allow editing date and suggested amount; run receipts do not.
 - Complete a run and confirm Planner resets to the live route and the run appears first in history with the correct label/date.

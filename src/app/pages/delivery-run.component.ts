@@ -21,7 +21,6 @@ type RunSummary = {
   taxableTotal: number;
   statusBreakdown: {
     donated: number;
-    notRecorded: number;
     noDonation: number;
   };
   methodBreakdown: {
@@ -235,7 +234,6 @@ export class DeliveryRunComponent {
 
     const statusBreakdown = {
       donated: 0,
-      notRecorded: 0,
       noDonation: 0
     };
     const methodBreakdown = {
@@ -253,16 +251,15 @@ export class DeliveryRunComponent {
       }
 
       const donation = stop.donation ?? {
-        status: 'NotRecorded',
+        status: 'NoDonation',
+        amount: 0,
         suggestedAmount: 0
       };
-      const status = donation.status ?? 'NotRecorded';
+      const status = donation.status ?? 'NoDonation';
       if (status === 'Donated') {
         statusBreakdown.donated += 1;
-      } else if (status === 'NoDonation') {
-        statusBreakdown.noDonation += 1;
       } else {
-        statusBreakdown.notRecorded += 1;
+        statusBreakdown.noDonation += 1;
       }
 
       if (status !== 'Donated') {
@@ -441,11 +438,12 @@ export class DeliveryRunComponent {
 
   get currentDonation(): DonationInfo {
     if (!this.currentStop) {
-      return { status: 'NotRecorded' };
+      return { status: 'NoDonation', amount: 0 };
     }
     if (!this.currentStop.donation) {
       this.currentStop.donation = {
-        status: 'NotRecorded',
+        status: 'NoDonation',
+        amount: 0,
         suggestedAmount: this.suggestedDonationAmount
       };
     } else {
@@ -455,7 +453,11 @@ export class DeliveryRunComponent {
         this.currentStop.donation.amount === null ||
         Number.isNaN(this.currentStop.donation.amount as number)
       ) {
-        this.currentStop.donation.amount = this.suggestedDonationAmount;
+        if (this.currentStop.donation.status === 'Donated') {
+          this.currentStop.donation.amount = this.suggestedDonationAmount;
+        } else {
+          this.currentStop.donation.amount = 0;
+        }
       }
     }
     return this.currentStop.donation;
@@ -480,7 +482,7 @@ export class DeliveryRunComponent {
     donation.status = 'Donated';
     donation.method = method;
     donation.suggestedAmount = this.suggestedDonationAmount;
-    if (donation.amount == null) {
+    if (donation.amount == null || donation.amount === 0) {
       donation.amount = this.suggestedDonationAmount;
     }
     donation.date = new Date().toISOString();
@@ -543,8 +545,8 @@ export class DeliveryRunComponent {
 
   private async persistCurrentStopDonation(): Promise<void> {
     if (!this.currentStop) return;
-    await this.storage.updateDonation(this.currentStop.id, this.currentDonation);
     this.refreshCurrentStatus();
+    await this.storage.updateDonation(this.currentStop.id, this.currentDonation);
   }
 
   private syncDonationDefaults(): void {
@@ -565,10 +567,12 @@ export class DeliveryRunComponent {
 
   private refreshCurrentStatus(): void {
     if (!this.currentStop) return;
-    this.currentStop.status = this.storage.computeChangeStatus(this.currentStop, {
+    const status = this.storage.computeChangeStatus(this.currentStop, {
       dozens: this.deliveredQty,
       deliveredDozens: this.deliveredQty
     }, this.currentDonation);
+    const donation = this.currentStop.donation ? { ...this.currentStop.donation } : undefined;
+    this.currentStop = { ...this.currentStop, status, donation };
     this.stops[this.currentIndex] = { ...this.currentStop };
   }
 
@@ -578,15 +582,25 @@ export class DeliveryRunComponent {
     }
     if (!stop.originalDonation) {
       stop.originalDonation = {
-        status: 'NotRecorded',
+        status: 'NoDonation',
+        amount: 0,
         suggestedAmount: (stop.originalDozens ?? stop.dozens ?? 0) * 4
       };
+    } else if (stop.originalDonation.status === 'NotRecorded') {
+      stop.originalDonation.status = 'NoDonation';
+      stop.originalDonation.amount = 0;
+      stop.originalDonation.method = undefined;
     }
     if (!stop.donation) {
       stop.donation = {
-        status: 'NotRecorded',
+        status: 'NoDonation',
+        amount: 0,
         suggestedAmount: (stop.dozens ?? 0) * 4
       };
+    } else if (stop.donation.status === 'NotRecorded') {
+      stop.donation.status = 'NoDonation';
+      stop.donation.amount = 0;
+      stop.donation.method = undefined;
     }
     stop.status = this.storage.computeChangeStatus(stop, undefined, stop.donation);
     return stop;

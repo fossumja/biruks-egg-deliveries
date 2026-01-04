@@ -11,7 +11,28 @@ import { DonationInfo, DonationMethod, DonationStatus } from '../models/delivery
   styleUrl: './donation-controls.component.scss'
 })
 export class DonationControlsComponent implements OnInit, OnChanges {
-  @Input() donation: DonationInfo | null = null;
+  private donationValue: DonationInfo | null = null;
+  private lastDonationRef: DonationInfo | null = null;
+  @Input()
+  set donation(value: DonationInfo | null) {
+    if (this.lastDonationRef !== value) {
+      this.amountTouched = false;
+    }
+    this.donationValue = value;
+    this.lastDonationRef = value;
+    this.normalizeLegacyDonation();
+    if (this.donation?.status === 'NoDonation') {
+      this.amountTouched = false;
+      this.amountValue = 0;
+      return;
+    }
+    if (!this.amountTouched) {
+      this.amountValue = this.computeBaseAmount();
+    }
+  }
+  get donation(): DonationInfo | null {
+    return this.donationValue;
+  }
   @Input() suggestedAmount = 0;
   @Input() showNoDonation = true;
   @Input() allowReselect = false;
@@ -30,6 +51,7 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   private readonly donationAmountMax = 9999;
 
   ngOnInit(): void {
+    this.normalizeLegacyDonation();
     const base = this.computeBaseAmount();
     this.amountValue = base;
     this.qtyLocal = this.qtyValue;
@@ -40,13 +62,8 @@ export class DonationControlsComponent implements OnInit, OnChanges {
     // to follow the new suggestion until the user explicitly customizes it.
     if ('suggestedAmount' in changes) {
       const nextSuggested = Number(this.suggestedAmount ?? 0) || 0;
-      if (!this.amountTouched) {
+      if (!this.amountTouched && this.donation?.status !== 'NoDonation') {
         this.amountValue = nextSuggested;
-      }
-    } else if ('donation' in changes) {
-      const base = this.computeBaseAmount();
-      if (!this.amountTouched) {
-        this.amountValue = base;
       }
     }
     if ('qtyValue' in changes) {
@@ -58,6 +75,9 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   }
 
   private computeBaseAmount(): number {
+    if (this.donation?.status === 'NoDonation' || this.donation?.status === 'NotRecorded') {
+      return 0;
+    }
     return (
       (this.donation?.amount ??
         this.donation?.suggestedAmount ??
@@ -68,15 +88,13 @@ export class DonationControlsComponent implements OnInit, OnChanges {
 
   onDonationStatus(status: DonationStatus): void {
     if (this.donation?.status === status) {
-      if (this.allowReselect) {
-        this.donationStatusChange.emit('NotRecorded');
-      }
       return;
     }
     this.donationStatusChange.emit(status);
     if (status === 'NoDonation') {
       // Immediately reflect "None" by snapping the picker to $0
       this.amountValue = 0;
+      this.amountTouched = false;
       this.amountChange.emit(0);
     }
   }
@@ -88,14 +106,23 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   }
 
   onDonationMethod(method: DonationMethod): void {
+    const nextSuggested = Number(this.suggestedAmount ?? 0) || 0;
     if (this.donation?.status === 'Donated' && this.donation?.method === method) {
       if (this.allowReselect) {
-        // Toggle off to not recorded when re-clicking the active method.
-        this.donationStatusChange.emit('NotRecorded');
+        // Toggle off to none when re-clicking the active method.
+        this.donationStatusChange.emit('NoDonation');
+        this.amountValue = 0;
+        this.amountTouched = false;
+        this.amountChange.emit(0);
       }
       return;
     }
     this.donationMethodChange.emit(method);
+    if (!this.amountTouched || this.amountValue === 0) {
+      this.amountValue = nextSuggested;
+      this.amountTouched = false;
+      this.amountChange.emit(nextSuggested);
+    }
   }
 
   onAmountChangeSelect(value: number): void {
@@ -108,5 +135,15 @@ export class DonationControlsComponent implements OnInit, OnChanges {
 
   private clampAmount(value: number): number {
     return Math.min(this.donationAmountMax, Math.max(0, value));
+  }
+
+  private normalizeLegacyDonation(): void {
+    if (this.donation?.status !== 'NotRecorded') return;
+    this.donation.status = 'NoDonation';
+    this.donation.method = undefined;
+    this.donation.amount = 0;
+    if (!this.amountTouched) {
+      this.amountValue = 0;
+    }
   }
 }

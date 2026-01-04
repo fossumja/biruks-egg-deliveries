@@ -545,7 +545,8 @@ export class HomeComponent implements OnDestroy {
         d.deliveryOrder = i;
         if (!d.donation) {
           d.donation = {
-            status: 'NotRecorded',
+            status: 'NoDonation',
+            amount: 0,
             suggestedAmount: d.dozens * this.storage.getSuggestedRate(),
           };
         }
@@ -587,7 +588,7 @@ export class HomeComponent implements OnDestroy {
       | undefined;
     const amountRaw = row['DonationAmount'] || row['donationamount'];
     const amount = amountRaw ? Number(amountRaw) : undefined;
-    const status: DonationStatus = statusRaw ?? 'NotRecorded';
+    const status: DonationStatus = statusRaw ?? 'NoDonation';
     return {
       status,
       method: methodRaw,

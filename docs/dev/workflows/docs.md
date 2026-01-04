@@ -4,7 +4,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: creating and updating documentation in this repo
 - **Non-goals**: modifying application code or external tooling
@@ -38,6 +38,9 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
    - `doc: align <file>` to inspect code and update the doc to match reality.
 1. Use the docs prompt when possible:
    - For existing docs, start with `doc: guide <file>`.
+1. Check documentation impact for the active feature/issue:
+   - If docs must change but you are not updating them now, create a **doc child issue** and link it in the parent issue's **Docs impact** section.
+   - Use the issues prompt to create the doc issue, then update the parent issue to reference it.
 1. Identify the doc type:
    - Human-facing docs in `docs/` or root use the required header and templates.
    - Prompts/instructions keep YAML front matter and skip doc metadata.
@@ -73,6 +76,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 - Added a reminder to include "What changed / Why" notes when updating standards or workflows.
 - Added an explicit H1 requirement for prompt and instruction files to match the style guide.
 - Added a checklist item to verify prompt/instruction H1s during doc updates.
+- Added a docs-impact gate to ensure docs updates are completed or tracked with a doc child issue.
 
 ## Related docs
 

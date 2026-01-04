@@ -14,7 +14,7 @@ describe('DonationControlsComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('emits NotRecorded when reselecting the active status with allowReselect', () => {
+  it('does not emit when reselecting the active status with allowReselect', () => {
     component.donation = {
       status: 'NoDonation',
       suggestedAmount: 8,
@@ -26,7 +26,7 @@ describe('DonationControlsComponent', () => {
 
     component.onDonationStatus('NoDonation');
 
-    expect(statusSpy).toHaveBeenCalledWith('NotRecorded');
+    expect(statusSpy).not.toHaveBeenCalled();
   });
 
   it('does not emit when reselecting the active status without allowReselect', () => {
@@ -44,7 +44,7 @@ describe('DonationControlsComponent', () => {
     expect(statusSpy).not.toHaveBeenCalled();
   });
 
-  it('emits NotRecorded when reselecting the active method with allowReselect', () => {
+  it('emits NoDonation and resets amount when reselecting the active method with allowReselect', () => {
     component.donation = {
       status: 'Donated',
       method: 'cash',
@@ -54,9 +54,70 @@ describe('DonationControlsComponent', () => {
     fixture.detectChanges();
 
     const statusSpy = spyOn(component.donationStatusChange, 'emit');
+    const amountSpy = spyOn(component.amountChange, 'emit');
 
     component.onDonationMethod('cash');
 
-    expect(statusSpy).toHaveBeenCalledWith('NotRecorded');
+    expect(statusSpy).toHaveBeenCalledWith('NoDonation');
+    expect(amountSpy).toHaveBeenCalledWith(0);
+  });
+
+  it('defaults the amount to 0 when status is NoDonation', () => {
+    component.donation = {
+      status: 'NoDonation',
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    expect(component.amountValue).toBe(0);
+  });
+
+  it('normalizes NotRecorded to NoDonation and resets amount', () => {
+    component.donation = {
+      status: 'NotRecorded',
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    expect(component.donation?.status).toBe('NoDonation');
+    expect(component.amountValue).toBe(0);
+  });
+
+  it('populates the suggested amount when selecting a method from None', () => {
+    component.donation = {
+      status: 'NoDonation',
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    const amountSpy = spyOn(component.amountChange, 'emit');
+
+    component.onDonationMethod('cash');
+
+    expect(component.amountValue).toBe(8);
+    expect(amountSpy).toHaveBeenCalledWith(8);
+  });
+
+  it('resets amount to 0 when moving from a custom amount to None', () => {
+    component.donation = {
+      status: 'Donated',
+      amount: 12,
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    component.onAmountChangeSelect(12);
+
+    component.donation = {
+      status: 'NoDonation',
+      suggestedAmount: 8,
+    };
+    fixture.detectChanges();
+
+    expect(component.amountValue).toBe(0);
   });
 });

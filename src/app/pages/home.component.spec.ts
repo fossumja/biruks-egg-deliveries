@@ -416,7 +416,7 @@ describe('HomeComponent CSV parsing', () => {
     expect(deliveries.length).toBe(1);
     expect(deliveries[0].name).toBe('Alex');
     expect(deliveries[0].notes).toBeUndefined();
-    expect(deliveries[0].donation?.status).toBe('NotRecorded');
+    expect(deliveries[0].donation?.status).toBe('NoDonation');
   });
 
   it('rejects non-numeric dozens values', async () => {

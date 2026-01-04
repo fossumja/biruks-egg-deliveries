@@ -96,7 +96,7 @@ describe('StorageService regression tests', () => {
     expect(stored.runId).toBe('2025-02-01');
     expect(stored.baseRowId).toBe('import-1');
     expect(stored.originalDozens).toBe(3);
-    expect(stored.donation?.status).toBe('NotRecorded');
+    expect(stored.donation?.status).toBe('NoDonation');
     expect(stored.donation?.suggestedAmount).toBe(15);
     expect(stored.donation?.taxableAmount).toBe(0);
     expect(stored.originalDonation?.suggestedAmount).toBe(15);
@@ -161,7 +161,7 @@ describe('StorageService regression tests', () => {
     const legacy = deliveries[0];
     expect(legacy.runId).toBe('2024-01-01');
     expect(legacy.baseRowId).toBe('legacy-1');
-    expect(legacy.donation?.status).toBe('NotRecorded');
+    expect(legacy.donation?.status).toBe('NoDonation');
     expect(legacy.donation?.suggestedAmount).toBe(8);
     expect(legacy.donation?.taxableAmount).toBe(0);
 
@@ -253,7 +253,8 @@ describe('StorageService regression tests', () => {
 
   it('computeChangeStatus tracks quantity and donation changes', () => {
     const baseDonation: DonationInfo = {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: 8
     };
     const stop = buildDelivery({
@@ -276,6 +277,19 @@ describe('StorageService regression tests', () => {
       suggestedAmount: 8
     };
     expect(storage.computeChangeStatus(stop, undefined, donated)).toBe('changed');
+    const notRecorded: DonationInfo = {
+      status: 'NotRecorded',
+      amount: 0,
+      suggestedAmount: 8
+    };
+    expect(storage.computeChangeStatus(stop, undefined, notRecorded)).toBe('');
+
+    const legacyStop = buildDelivery({
+      ...stop,
+      originalDonation: { ...notRecorded },
+      donation: { ...baseDonation }
+    });
+    expect(storage.computeChangeStatus(legacyStop)).toBe('');
 
     const delivered: Delivery = { ...stop, status: 'delivered' };
     expect(storage.computeChangeStatus(delivered)).toBe('delivered');
