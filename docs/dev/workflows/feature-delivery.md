@@ -37,6 +37,8 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
 - If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 - Confirm branch protection and rulesets for `main` before merging so required checks match available CI.
+- If data import/export/backup/restore is affected, require a backup/restore verification (or document a waiver) before merge.
+- If docs are updated or added, update `index.md` and documentation inventory entries as needed.
 - Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
 - Before switching branches or starting the feature, confirm the working tree is clean or ask the user how to handle existing changes.
 
@@ -125,6 +127,8 @@ Use this once per repo to keep `main` safe without blocking work.
 - Branch protection does not require external approvals for solo-maintainer repos.
 - Branch protection/ruleset requirements are understood and satisfied.
 - Testing status is documented when checks are skipped.
+- Backup/restore verification is documented when data flows change (or a waiver is recorded).
+- Documentation index/inventory updates are included when docs change.
 - Testing workflow used for behavior changes, with pack IDs recorded.
 - Regression pack updates were considered for behavior changes, and TP-xx IDs were recorded before the PR.
 - Code review results are documented in the PR.

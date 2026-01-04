@@ -49,24 +49,29 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
 2. Determine whether the issue already exists:
    - If not, run `issues all` to create/refine/break down/triage.
    - Capture the parent issue number and child issues (if created).
-3. Confirm V-model prerequisites on the parent issue:
+3. Verify required artifacts are available before implementation:
+   - UX/design inputs (mockups, layout notes, or clear styling direction).
+   - Repro steps + logs/screenshots for bugs.
+   - Data samples (CSV/import/export examples) when data flows are affected.
+   - If any required artifacts are missing, stop and request them.
+4. Confirm V-model prerequisites on the parent issue:
    - Design/ADR decision recorded.
    - Test plan approved (automated specs + TP-xx/manual checks).
    - Acceptance criteria are clear and traceable.
    - If any are missing, stop and request updates before implementation.
-4. Decide whether to reuse the current branch:
+5. Decide whether to reuse the current branch:
    - If already on a branch linked to the parent issue, continue on it.
    - If on an unrelated branch, stop and ask whether to switch or create the feature branch.
    - If no feature branch exists, create it via the feature workflow.
-5. Deliver the implementation:
+6. Deliver the implementation:
    - Run `feature all` for the parent issue to complete all child issues and finish the feature.
    - Ensure each child is committed before moving on (per feature workflow).
-6. Review + merge:
+7. Review + merge:
    - Run `feature review` to perform code review and merge (squash + delete branch).
    - Confirm Review Evidence and Traceability are complete; record any waivers.
    - Verify required checks/approvals; if possible, use `pr review` and `pr merge` to satisfy them.
    - If branch protection blocks self-merge (required approvals or checks), stop and ask how to proceed.
-7. Wrap up:
+8. Wrap up:
    - Ensure parent issue checklist is complete and closed.
    - Capture a short retrospective note (what worked, what hurt, next improvement).
 
