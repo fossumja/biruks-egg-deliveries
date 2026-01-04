@@ -263,8 +263,7 @@ describe('DeliveryRunComponent', () => {
     expect(summary.taxableTotal).toBeCloseTo(2, 2);
     expect(summary.statusBreakdown).toEqual({
       donated: 2,
-      notRecorded: 1,
-      noDonation: 1
+      noDonation: 2
     });
     expect(summary.methodBreakdown).toEqual({
       cash: 1,
@@ -306,7 +305,7 @@ describe('DeliveryRunComponent', () => {
     expect(updateSpy).toHaveBeenCalled();
     expect(component.currentStop?.donation?.status).toBe('NoDonation');
     expect(component.currentStop?.donation?.amount).toBe(0);
-    expect(component.currentStop?.status).toBe('changed');
+    expect(component.currentStop?.status).toBe('');
 
     await component.setDonationDonated('cash');
 

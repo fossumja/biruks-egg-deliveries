@@ -863,7 +863,7 @@ describe('RoutePlannerComponent', () => {
     expect(dateInput.max).toBe('2026-12-31');
   });
 
-  it('allows one-off delivery save when donation status is NotRecorded', async () => {
+  it('allows one-off delivery save when donation status is NoDonation', async () => {
     const stop = createDelivery({ id: 'delivery-1', baseRowId: 'base-1' });
     component.routeDate = 'Week A';
     storage.deliveries = [stop];
@@ -873,7 +873,8 @@ describe('RoutePlannerComponent', () => {
     component.oneOffYearRangeLabel = '2025 and 2026';
     component.oneOffDeliveryDate = '2025-06-15';
     component.offDonationDraft = {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
       suggestedAmount: 8,
       date: '2025-06-15'
     };
@@ -1181,6 +1182,22 @@ describe('RoutePlannerComponent', () => {
       '.inline-donation .btn.btn-primary'
     ) as HTMLButtonElement;
     expect(saveButton.disabled).toBeTrue();
+  });
+
+  it('normalizes NotRecorded to NoDonation when editing a receipt', () => {
+    const entry = createRunEntry({
+      id: 'entry-legacy',
+      runId: 'run-1',
+      donationStatus: 'NotRecorded',
+      donationMethod: 'cash',
+      donationAmount: 12,
+    });
+
+    component.openRunEntryEdit(entry);
+
+    expect(component.runEntryDraft?.donationStatus).toBe('NoDonation');
+    expect(component.runEntryDraft?.donationMethod).toBe('');
+    expect(component.runEntryDraft?.donationAmount).toBe(0);
   });
 
   it('renders a numeric donation amount input for receipt edits', () => {

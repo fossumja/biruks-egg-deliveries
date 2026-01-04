@@ -100,6 +100,7 @@ Documentation gates (do not skip):
 8. Implement the issue, run targeted tests, and update docs if required.
    - If behavior changes, run `testing scope` via `.github/prompts/testing.prompt.md` to select packs, then execute automated/manual checks and record TP-xx IDs.
    - Use `.github/prompts/docs.prompt.md` for any documentation updates.
+   - If docs are required but deferred, create a doc child issue and link it in the parent issue's **Docs impact** section.
 9. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
 10. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 11. Commit the child issue work so the branch is clean before moving to the next child issue.
@@ -128,17 +129,19 @@ Documentation gates (do not skip):
 5. Record validation/UAT sign-off (self-review OK for solo maintainer).
 6. Run the quality workflow if applicable (this is the full check for the feature).
    - Use `.github/prompts/quality.prompt.md` to run required checks consistently.
-7. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
-8. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-9. Push the feature branch now (only after all child issues are complete).
-10. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-11. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
-12. Ensure the PR Traceability section is completed and matches the tests executed.
-13. Ensure validation/UAT sign-off is recorded with scenario IDs when applicable.
-14. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-15. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-16. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-17. Suggest release workflow if requested.
+7. Confirm docs impact is resolved:
+   - Docs updated via `docs` prompt, or a doc child issue is created and linked in the parent issue.
+8. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
+9. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
+10. Push the feature branch now (only after all child issues are complete).
+11. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+12. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
+13. Ensure the PR Traceability section is completed and matches the tests executed.
+14. Ensure validation/UAT sign-off is recorded with scenario IDs when applicable.
+15. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+16. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+17. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+18. Suggest release workflow if requested.
 
 ## action=review
 

@@ -34,6 +34,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Use one command per tool call; avoid multi-command `zsh -lc` strings and repo-external temp files.
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Use the docs prompt and documentation style guide when updating docs.
+- If docs are required but deferred, create a doc child issue and link it in the parent issue's **Docs impact** section.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
 - If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 - Confirm branch protection and rulesets for `main` before merging so required checks match available CI.
@@ -77,6 +78,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Complete acceptance criteria, update docs, and close the issue.
    - If behavior changes, run `testing scope` to select regression packs, enumerate required automated specs, update/add those tests, execute automated/manual checks, record TP-xx IDs, and log any deferrals with a follow-up issue.
    - Use `/docs` (`doc: align` / `doc: guide`) for any doc updates tied to the issue.
+   - If docs are required but deferred, create a doc child issue and link it in the parent issue's **Docs impact** section.
    - Run at least one base check (default: `npm run build`) and note results. Fix any errors before closing the child issue.
    - If `public/build-info.json` changes, restore it before committing.
    - Commit the child issue work before moving to the next child issue.
@@ -167,6 +169,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added validation/UAT sign-off requirement with usage-scenario references.
 - Documented required status checks (unit-tests, pr-body-validation) and staged rollout guidance.
 - Folded `feature-all` into the `feature` prompt and clarified the state-aware flow.
+- Added a docs-impact gate to ensure documentation updates are completed or tracked with a doc child issue.
 
 ## Related docs
 

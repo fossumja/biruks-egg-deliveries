@@ -21,7 +21,6 @@ type RunSummary = {
   taxableTotal: number;
   statusBreakdown: {
     donated: number;
-    notRecorded: number;
     noDonation: number;
   };
   methodBreakdown: {
@@ -235,7 +234,6 @@ export class DeliveryRunComponent {
 
     const statusBreakdown = {
       donated: 0,
-      notRecorded: 0,
       noDonation: 0
     };
     const methodBreakdown = {
@@ -260,10 +258,8 @@ export class DeliveryRunComponent {
       const status = donation.status ?? 'NoDonation';
       if (status === 'Donated') {
         statusBreakdown.donated += 1;
-      } else if (status === 'NoDonation') {
-        statusBreakdown.noDonation += 1;
       } else {
-        statusBreakdown.notRecorded += 1;
+        statusBreakdown.noDonation += 1;
       }
 
       if (status !== 'Donated') {

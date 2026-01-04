@@ -67,12 +67,15 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
 6. Deliver the implementation:
    - Run `feature all` for the parent issue to complete all child issues and finish the feature.
    - Ensure each child is committed before moving on (per feature workflow).
-7. Review + merge:
+7. Documentation gate:
+   - If docs must change, update them via `docs` prompt.
+   - If docs are required but deferred, create a doc child issue and link it in the parent issue's **Docs impact** section.
+8. Review + merge:
    - Run `feature review` to perform code review and merge (squash + delete branch).
    - Confirm Review Evidence and Traceability are complete; record any waivers.
    - Verify required checks/approvals; if possible, use `pr review` and `pr merge` to satisfy them.
    - If branch protection blocks self-merge (required approvals or checks), stop and ask how to proceed.
-8. Wrap up:
+9. Wrap up:
    - Ensure parent issue checklist is complete and closed.
    - Capture a short retrospective note (what worked, what hurt, next improvement).
    - If pausing before completion, add a **Current context** note in the parent issue or PR.

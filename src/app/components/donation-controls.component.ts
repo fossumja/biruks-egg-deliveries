@@ -30,6 +30,7 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   private readonly donationAmountMax = 9999;
 
   ngOnInit(): void {
+    this.normalizeLegacyDonation();
     const base = this.computeBaseAmount();
     this.amountValue = base;
     this.qtyLocal = this.qtyValue;
@@ -48,9 +49,10 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       if (!this.amountTouched) {
         this.amountValue = base;
       }
-      if (this.donation?.status === 'NoDonation') {
-        this.amountTouched = false;
-      }
+    }
+    this.normalizeLegacyDonation();
+    if (this.donation?.status === 'NoDonation') {
+      this.amountTouched = false;
     }
     if ('qtyValue' in changes) {
       this.qtyLocal = this.qtyValue;
@@ -74,9 +76,6 @@ export class DonationControlsComponent implements OnInit, OnChanges {
 
   onDonationStatus(status: DonationStatus): void {
     if (this.donation?.status === status) {
-      if (this.allowReselect) {
-        this.donationStatusChange.emit('NotRecorded');
-      }
       return;
     }
     this.donationStatusChange.emit(status);
@@ -98,8 +97,11 @@ export class DonationControlsComponent implements OnInit, OnChanges {
     const nextSuggested = Number(this.suggestedAmount ?? 0) || 0;
     if (this.donation?.status === 'Donated' && this.donation?.method === method) {
       if (this.allowReselect) {
-        // Toggle off to not recorded when re-clicking the active method.
-        this.donationStatusChange.emit('NotRecorded');
+        // Toggle off to none when re-clicking the active method.
+        this.donationStatusChange.emit('NoDonation');
+        this.amountValue = 0;
+        this.amountTouched = false;
+        this.amountChange.emit(0);
       }
       return;
     }
@@ -121,5 +123,15 @@ export class DonationControlsComponent implements OnInit, OnChanges {
 
   private clampAmount(value: number): number {
     return Math.min(this.donationAmountMax, Math.max(0, value));
+  }
+
+  private normalizeLegacyDonation(): void {
+    if (this.donation?.status !== 'NotRecorded') return;
+    this.donation.status = 'NoDonation';
+    this.donation.method = undefined;
+    this.donation.amount = 0;
+    if (!this.amountTouched) {
+      this.amountValue = 0;
+    }
   }
 }

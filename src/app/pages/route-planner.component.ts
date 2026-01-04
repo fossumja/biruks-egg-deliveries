@@ -404,9 +404,7 @@ export class RoutePlannerComponent {
   }
 
   private ensureOneOffDeliveryType(): boolean {
-    const error = this.validateDonationSelection(this.offDonationDraft, {
-      allowNotRecorded: true
-    });
+    const error = this.validateDonationSelection(this.offDonationDraft);
     this.oneOffDeliveryTypeError = error;
     return !error;
   }
@@ -422,8 +420,7 @@ export class RoutePlannerComponent {
   private refreshOneOffDeliveryTypeError(): void {
     if (this.oneOffDeliveryTypeError) {
       this.oneOffDeliveryTypeError = this.validateDonationSelection(
-        this.offDonationDraft,
-        { allowNotRecorded: true }
+        this.offDonationDraft
       );
     }
   }
@@ -556,12 +553,10 @@ export class RoutePlannerComponent {
 
   setOffDonationStatus(status: 'NotRecorded' | 'Donated' | 'NoDonation'): void {
     if (!this.offDonationDraft) return;
-    this.offDonationDraft.status = status;
-    if (status === 'NoDonation') {
+    const normalizedStatus = status === 'NotRecorded' ? 'NoDonation' : status;
+    this.offDonationDraft.status = normalizedStatus;
+    if (normalizedStatus === 'NoDonation') {
       this.offDonationDraft.amount = 0;
-      this.offDonationDraft.method = undefined;
-    } else if (status === 'NotRecorded') {
-      this.offDonationDraft.amount = undefined;
       this.offDonationDraft.method = undefined;
     } else {
       this.offDonationDraft.amount =
@@ -1416,13 +1411,11 @@ export class RoutePlannerComponent {
       amount: 0,
       suggestedAmount: (this.donationDraft.dozens ?? 0) * rate,
     };
-    donation.status = status;
-    if (status === 'NoDonation') {
+    const normalizedStatus = status === 'NotRecorded' ? 'NoDonation' : status;
+    donation.status = normalizedStatus;
+    if (normalizedStatus === 'NoDonation') {
       donation.method = undefined;
       donation.amount = 0;
-    } else if (status === 'NotRecorded') {
-      donation.method = undefined;
-      donation.amount = undefined;
     }
     donation.suggestedAmount = (this.donationDraft.dozens ?? 0) * rate;
     this.donationDraft.donation = donation;
@@ -1531,13 +1524,19 @@ export class RoutePlannerComponent {
 
   openRunEntryEdit(entry: RunSnapshotEntry): void {
     this.editingRunEntry = entry;
+    const normalizedStatus =
+      entry.donationStatus === 'NotRecorded' ? 'NoDonation' : entry.donationStatus;
+    const normalizedMethod =
+      normalizedStatus === 'Donated' ? entry.donationMethod ?? '' : '';
+    const normalizedAmount =
+      normalizedStatus === 'NoDonation' ? 0 : entry.donationAmount;
     this.runEntryDraft = {
       status: entry.status,
       dozens: entry.dozens,
       deliveryOrder: (entry.deliveryOrder ?? 0) + 1,
-      donationStatus: entry.donationStatus,
-      donationMethod: entry.donationMethod ?? '',
-      donationAmount: entry.donationAmount,
+      donationStatus: normalizedStatus,
+      donationMethod: normalizedMethod,
+      donationAmount: normalizedAmount,
     };
     this.resetRunEntryDate();
     this.refreshRunEntryAmountError();
@@ -1800,7 +1799,7 @@ export class RoutePlannerComponent {
           zip,
           status: 'delivered',
           dozens: deliveredDozens,
-          donationStatus: (don?.status ?? 'NotRecorded') as DonationStatus,
+          donationStatus: (don?.status ?? 'NoDonation') as DonationStatus,
           donationMethod: don?.method as DonationMethod | undefined,
           donationAmount: amount,
           taxableAmount: taxable,
