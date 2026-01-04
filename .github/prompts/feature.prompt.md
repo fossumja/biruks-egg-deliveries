@@ -63,6 +63,11 @@ Documentation gates (do not skip):
 - PR Review Evidence + Traceability are complete and match tests run.
 - Retrospective notes are captured and applied or tracked.
 
+## Context probes (always do)
+
+- Confirm current branch, working tree cleanliness, and whether a PR already exists.
+- If a PR exists, prefer resuming at `feature review` unless work remains.
+
 ## Procedure
 
 ## action=start
@@ -105,7 +110,8 @@ Documentation gates (do not skip):
    - Validate the new body is non-empty before calling `gh issue edit`.
    - If tooling is missing or validation fails, add a progress comment instead of editing the body.
 15. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-16. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+16. If pausing, add or update a **Current context** note in the parent issue or PR (active branch, next child issue, open decisions).
+17. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
 
 ## action=status
 

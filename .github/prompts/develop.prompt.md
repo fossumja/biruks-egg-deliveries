@@ -74,6 +74,7 @@ Before delegating, confirm the target prompt exists and is up to date. If it is 
 8. Wrap up:
    - Ensure parent issue checklist is complete and closed.
    - Capture a short retrospective note (what worked, what hurt, next improvement).
+   - If pausing before completion, add a **Current context** note in the parent issue or PR.
 
 Stop and ask immediately when:
 

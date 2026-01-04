@@ -21,6 +21,7 @@ You are my issues & planning assistant.
 - Ensure new issues include the template sections for test packs, manual checks, and review focus.
 - Ensure template sections are present for testing plan, risk assessment, and docs impact.
 - If sections are missing, create the issue quickly and then run `issues refine` to complete them before implementation starts.
+- Apply `status:needs-triage` when the label exists, and run `issues triage` to normalize metadata.
 - Prefer adding:
   - **Problem statement**
   - **Proposed solution**
@@ -105,6 +106,7 @@ Refinement question categories (default set):
 4. If a Project is configured (or user asks), add it:
    - `gh project item-add ... --url <issueUrl>`
 5. If any required template sections are missing after creation, immediately run `issues refine` to fill them in.
+6. Apply `status:needs-triage` if available, then run `issues triage` when batching new issues.
 
 ### action=breakdown
 

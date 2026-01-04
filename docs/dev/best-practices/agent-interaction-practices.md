@@ -46,6 +46,15 @@ Guidance for using instructions, prompts, templates, and workflows together so a
 - **Should include**: Examples of shorthand usage.
 - **Keep user input lightweight**: accept short commands and ask only for missing critical info.
 
+## Prompt quality audit checklist (when adding or editing prompts)
+
+- Structure matches the documentation style guide for prompts.
+- Workflow linkage exists (prompt is referenced by the relevant workflow doc).
+- Stop/ask conditions cover missing artifacts, ambiguous requirements, and high-risk actions.
+- V-model gates are called out where applicable (test-plan approval, ADRs, traceability, validation).
+- Prompt catalog updated if behavior or shorthand changed.
+- Short user inputs still behave safely (decision aids + defaults handle ambiguity).
+
 ## Inputs and artifacts
 
 - Require artifacts before implementation when needed:
@@ -53,6 +62,26 @@ Guidance for using instructions, prompts, templates, and workflows together so a
   - Bug repro steps and logs/screenshots
   - Data samples (CSV/import/export) for data-flow changes
 - If any artifact is missing, stop and request it.
+
+## Context probes and session notes
+
+- Always check: current branch, working tree cleanliness, and existing PR status before acting.
+- When work spans multiple sessions, add a short **Current context** note in the parent issue or PR:
+  - Active branch
+  - Next child issue
+  - Open decisions or missing artifacts
+
+## Review evidence snippet (use in PR comments)
+
+```
+Review Evidence
+- AC coverage: ...
+- Tests: ...
+- TP-xx packs: ...
+- Manual checks: ...
+- Traceability: ...
+- Risks/gaps: ...
+```
 
 ## Command and safety discipline
 
@@ -72,6 +101,7 @@ Guidance for using instructions, prompts, templates, and workflows together so a
 - Closing issues before base checks pass.
 - Merging without Review Evidence or Traceability.
 - Creating new prompts without updating workflows and the prompt catalog.
+- Proceeding without confirming branch/PR context or required artifacts.
 
 ## Related docs
 

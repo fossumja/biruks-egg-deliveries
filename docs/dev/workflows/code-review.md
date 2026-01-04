@@ -4,7 +4,7 @@ Use this workflow to perform and document code reviews with traceable evidence a
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: reviewing PRs and documenting verification evidence
 - **Non-goals**: replacing CI or enforcing multi-reviewer policies
@@ -65,6 +65,18 @@ Code reviews should show a clear line from requirements to verification. This wo
 - TP-xx pack IDs and manual checks documented.
 - Validation/UAT sign-off recorded when usage scenarios are required.
 - Risks or gaps captured with follow-up issues when needed.
+
+## Review evidence snippet
+
+```
+Review Evidence
+- AC coverage: ...
+- Tests: ...
+- TP-xx packs: ...
+- Manual checks: ...
+- Traceability: ...
+- Risks/gaps: ...
+```
 
 ## Outputs
 

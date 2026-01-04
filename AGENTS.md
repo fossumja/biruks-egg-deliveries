@@ -95,6 +95,7 @@ Canonical workflows:
 - Added a `develop` prompt for end-to-end V-model delivery (issues → feature → review/merge).
 - Refined delegated prompts (branch/testing/quality/PR) to align with V-model evidence and safety gates.
 - Added agent-interaction best practices covering structured issue intake and prompt clarity.
+- Added prompt quality audit, context probes, and evidence snippet guidance for agent interactions.
 - Added `issues` actions for refine/all to cover issue clarity and end-to-end issue flow.
 - Linked the new agent terminal practices doc for settings-aligned command usage.
 - Added explicit high-risk action warnings so agents confirm before potentially destructive changes.

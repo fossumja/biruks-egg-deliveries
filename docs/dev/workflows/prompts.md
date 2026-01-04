@@ -48,7 +48,8 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 2. Filter by keyword when needed:
    - Run `prompts release` or `/prompts action=find query=release`.
 3. Pick the prompt and use its shorthand syntax.
-4. If a needed prompt is missing, add it under `.github/prompts/` and update this catalog.
+4. If you add or edit a prompt, run the prompt quality audit checklist in `docs/dev/best-practices/agent-interaction-practices.md`.
+5. If a needed prompt is missing, add it under `.github/prompts/` and update this catalog.
 
 ## Prompt catalog
 
@@ -107,6 +108,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Folded `feature-all` into `feature` and documented the state-aware `feature all` flow.
 - Clarified `issues` prompt coverage for refine/all actions and added decision aids.
 - Added the `develop` prompt for end-to-end V-model delivery.
+- Added a prompt quality audit step to keep prompt updates consistent and safe.
 
 ## Related docs
 

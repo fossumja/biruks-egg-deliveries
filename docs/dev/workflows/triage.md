@@ -4,7 +4,7 @@ Use this workflow to log, reproduce, and prioritize issues consistently.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-04
 - **Type**: How-to
 - **Scope**: issue and PR triage for this repo
 - **Non-goals**: long-term product planning
@@ -36,13 +36,16 @@ Use this workflow to log, reproduce, and prioritize issues consistently.
    - Ensure problem statement, expected vs actual, and repro steps are recorded.
 3. Apply metadata:
    - Add labels, priority, and status.
+   - Apply `status:needs-triage` when available for new items.
 4. Decide next action:
    - Assign to a milestone, create a branch, or request more info.
+5. If required template sections are missing, run `issues refine` to complete them before implementation.
 
 ## Checks
 
 - Issue has clear repro steps or is explicitly marked “needs info.”
 - Labels and priority reflect impact and urgency.
+- Template sections (testing plan, risk assessment, docs impact) are present or a refine follow-up exists.
 - Next action is assigned.
 
 ## Outputs
