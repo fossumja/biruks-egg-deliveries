@@ -545,8 +545,8 @@ export class DeliveryRunComponent {
 
   private async persistCurrentStopDonation(): Promise<void> {
     if (!this.currentStop) return;
-    await this.storage.updateDonation(this.currentStop.id, this.currentDonation);
     this.refreshCurrentStatus();
+    await this.storage.updateDonation(this.currentStop.id, this.currentDonation);
   }
 
   private syncDonationDefaults(): void {
@@ -567,10 +567,12 @@ export class DeliveryRunComponent {
 
   private refreshCurrentStatus(): void {
     if (!this.currentStop) return;
-    this.currentStop.status = this.storage.computeChangeStatus(this.currentStop, {
+    const status = this.storage.computeChangeStatus(this.currentStop, {
       dozens: this.deliveredQty,
       deliveredDozens: this.deliveredQty
     }, this.currentDonation);
+    const donation = this.currentStop.donation ? { ...this.currentStop.donation } : undefined;
+    this.currentStop = { ...this.currentStop, status, donation };
     this.stops[this.currentIndex] = { ...this.currentStop };
   }
 

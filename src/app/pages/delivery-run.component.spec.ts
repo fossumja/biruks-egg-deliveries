@@ -314,6 +314,24 @@ describe('DeliveryRunComponent', () => {
     expect(component.currentStop?.status).toBe('changed');
   });
 
+  it('updates status before donation persistence resolves', async () => {
+    storage.deliveries = [createStop({ id: 'stop-1' })];
+    let resolveUpdate!: () => void;
+    const updatePromise = new Promise<void>((resolve) => {
+      resolveUpdate = resolve;
+    });
+    spyOn(storage, 'updateDonation').and.returnValue(updatePromise);
+
+    await component.ngOnInit();
+
+    const pending = component.setDonationDonated('cash');
+
+    expect(component.currentStop?.status).toBe('changed');
+
+    resolveUpdate();
+    await pending;
+  });
+
   it('does not auto-select a donation method when amount changes', async () => {
     storage.deliveries = [
       createStop({
