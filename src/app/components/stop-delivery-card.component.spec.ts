@@ -37,7 +37,7 @@ describe('StopDeliveryCardComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('stop', createStop());
     fixture.componentRef.setInput('deliveredQty', 2);
-    fixture.componentRef.setInput('donation', { status: 'NotRecorded', suggestedAmount: 8 });
+    fixture.componentRef.setInput('donation', { status: 'NoDonation', amount: 0, suggestedAmount: 8 });
     fixture.componentRef.setInput('suggestedAmount', 8);
     fixture.detectChanges();
   });

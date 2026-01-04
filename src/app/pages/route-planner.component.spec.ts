@@ -192,7 +192,8 @@ class StorageServiceStub {
     const current = delivery?.oneOffDeliveries?.[index];
     if (!delivery || !current) return Promise.resolve();
     const currentDonation: DonationInfo = current.donation ?? {
-      status: 'NotRecorded',
+      status: 'NoDonation',
+      amount: 0,
     };
     const nextDonation: DonationInfo = {
       ...currentDonation,

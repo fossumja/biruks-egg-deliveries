@@ -26,7 +26,8 @@ function getSuggestedRate(): number {
 
 function defaultDonation(d?: Delivery): DonationInfo {
   return {
-    status: 'NotRecorded',
+    status: 'NoDonation',
+    amount: 0,
     suggestedAmount: (d?.dozens ?? 0) * getSuggestedRate(),
     taxableAmount: 0
   };
@@ -136,7 +137,8 @@ export class StorageService {
         d.originalDonation ??
         d.donation ??
         ({
-          status: 'NotRecorded' as const,
+          status: 'NoDonation' as const,
+          amount: 0,
           suggestedAmount: (d.dozens ?? 0) * rate,
           taxableAmount: 0
         } as DonationInfo);
@@ -304,7 +306,7 @@ export class StorageService {
           date,
           status: 'delivered',
           dozens: deliveredDozens,
-          donationStatus: (donation?.status ?? 'NotRecorded') as DonationStatus,
+          donationStatus: (donation?.status ?? 'NoDonation') as DonationStatus,
           donationMethod: donation?.method,
           donationAmount: amount,
           taxableAmount: taxable,
@@ -1173,7 +1175,7 @@ export class StorageService {
 
   private baseDonation(existing: Delivery): DonationInfo {
     const baselineDozens = existing.originalDozens ?? existing.dozens ?? 0;
-    return { status: 'NotRecorded', suggestedAmount: baselineDozens * 4 };
+    return { status: 'NoDonation', amount: 0, suggestedAmount: baselineDozens * 4 };
   }
 
   private isUnsubscribed(stop: Delivery): boolean {
@@ -1199,8 +1201,8 @@ export class StorageService {
         stop.donation ??
         defaultDonation(stop))
     };
-    const baseStatus = baseDonation.status ?? 'NotRecorded';
-    const currStatus = currentDonation.status ?? 'NotRecorded';
+    const baseStatus = baseDonation.status ?? 'NoDonation';
+    const currStatus = currentDonation.status ?? 'NoDonation';
     const currentSuggested = (overrides?.dozens ?? stop.dozens ?? 0) * 4;
     const currentAmount = Number(
       currentDonation.amount ?? currentDonation.suggestedAmount ?? currentSuggested

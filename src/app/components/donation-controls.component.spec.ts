@@ -59,4 +59,31 @@ describe('DonationControlsComponent', () => {
 
     expect(statusSpy).toHaveBeenCalledWith('NotRecorded');
   });
+
+  it('defaults the amount to 0 when status is NoDonation', () => {
+    component.donation = {
+      status: 'NoDonation',
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    expect(component.amountValue).toBe(0);
+  });
+
+  it('populates the suggested amount when selecting a method from None', () => {
+    component.donation = {
+      status: 'NoDonation',
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    const amountSpy = spyOn(component.amountChange, 'emit');
+
+    component.onDonationMethod('cash');
+
+    expect(component.amountValue).toBe(8);
+    expect(amountSpy).toHaveBeenCalledWith(8);
+  });
 });

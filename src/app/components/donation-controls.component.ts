@@ -40,13 +40,16 @@ export class DonationControlsComponent implements OnInit, OnChanges {
     // to follow the new suggestion until the user explicitly customizes it.
     if ('suggestedAmount' in changes) {
       const nextSuggested = Number(this.suggestedAmount ?? 0) || 0;
-      if (!this.amountTouched) {
+      if (!this.amountTouched && this.donation?.status !== 'NoDonation') {
         this.amountValue = nextSuggested;
       }
     } else if ('donation' in changes) {
       const base = this.computeBaseAmount();
       if (!this.amountTouched) {
         this.amountValue = base;
+      }
+      if (this.donation?.status === 'NoDonation') {
+        this.amountTouched = false;
       }
     }
     if ('qtyValue' in changes) {
@@ -58,6 +61,9 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   }
 
   private computeBaseAmount(): number {
+    if (this.donation?.status === 'NoDonation' || this.donation?.status === 'NotRecorded') {
+      return 0;
+    }
     return (
       (this.donation?.amount ??
         this.donation?.suggestedAmount ??
@@ -77,6 +83,7 @@ export class DonationControlsComponent implements OnInit, OnChanges {
     if (status === 'NoDonation') {
       // Immediately reflect "None" by snapping the picker to $0
       this.amountValue = 0;
+      this.amountTouched = false;
       this.amountChange.emit(0);
     }
   }
@@ -88,6 +95,7 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   }
 
   onDonationMethod(method: DonationMethod): void {
+    const nextSuggested = Number(this.suggestedAmount ?? 0) || 0;
     if (this.donation?.status === 'Donated' && this.donation?.method === method) {
       if (this.allowReselect) {
         // Toggle off to not recorded when re-clicking the active method.
@@ -96,6 +104,11 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       return;
     }
     this.donationMethodChange.emit(method);
+    if (!this.amountTouched || this.amountValue === 0) {
+      this.amountValue = nextSuggested;
+      this.amountTouched = false;
+      this.amountChange.emit(nextSuggested);
+    }
   }
 
   onAmountChangeSelect(value: number): void {
