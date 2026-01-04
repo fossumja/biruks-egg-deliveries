@@ -91,6 +91,7 @@ Canonical workflows:
 - Added explicit command-structure guardrails (no multi-command `zsh -lc`) and a pointer to terminal practices.
 - Added a command-structure rule to avoid embedding `gh` inside Python heredocs, which triggers approval prompts.
 - Added a `feature-all` prompt to iterate through child issues with the same gates as `feature next`.
+- Clarified that `feature-all` is state-aware and can resume from any stage.
 - Linked the new agent terminal practices doc for settings-aligned command usage.
 - Added explicit high-risk action warnings so agents confirm before potentially destructive changes.
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.

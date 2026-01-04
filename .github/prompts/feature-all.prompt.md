@@ -1,6 +1,6 @@
 ---
 name: "feature-all"
-description: "Iterate through all child issues for a parent feature by repeatedly running feature next until completion gates are met."
+description: "Run the full feature lifecycle from any stage by chaining feature start, repeated feature next calls, and feature finish."
 argument-hint: "issue=<parent#|url> order=<optional> stop_on=decision|manual|checks (shorthand: feature all [issue])"
 agent: "agent"
 ---
@@ -11,6 +11,7 @@ You are my feature delivery assistant.
 
 ## Goals
 
+- Determine the current stage (start/next/finish) and continue from there.
 - Cycle through all open child issues for a parent feature in order.
 - Keep child issues, parent checklist, and commits up to date as each child completes.
 - Stop safely when a blocking decision, manual check, or required approval is needed.
@@ -23,22 +24,26 @@ You are my feature delivery assistant.
 
 ## Defaults
 
-- Use the same rules and gates as `feature start` and `feature next`.
+- Use the same rules and gates as `feature start`, `feature next`, and `feature finish`.
+- If the parent issue is not provided, infer it from the current branch/workstream; otherwise ask.
 - Do not push the branch until the parent feature is complete unless the user asks.
 - Stop if any step requires user confirmation, missing test-plan approval, manual checks, or failing checks.
 
 ## Procedure
 
-1. Ensure `feature start` has been run for the parent issue.
-2. Read the parent issue and collect child issue links.
-3. Determine the next open child issue (respecting the preferred order).
-4. Run the `feature next` procedure for that child issue.
+1. Determine the parent issue (from input or current workstream); ask if unclear.
+2. If the feature branch/workflow has not started, run `feature start` for the parent issue.
+3. Read the parent issue and collect child issue links.
+4. If open child issues remain:
+   - Determine the next open child issue (respecting the preferred order).
+   - Run the `feature next` procedure for that child issue.
 5. If the child issue completes:
    - Commit the work.
    - Update the child issue and parent checklist.
    - Record the child retrospective.
-6. Repeat steps 3–5 until no open child issues remain.
-7. If all child issues are complete, prompt to run `feature finish`.
+6. Repeat steps 4–5 until no open child issues remain.
+7. When all child issues are complete, run `feature finish` to execute the end-to-end closeout.
+8. If any step requires a decision, clarification, or high-risk action, stop and ask before proceeding.
 
 ## Stop conditions (always stop and ask)
 
@@ -47,10 +52,10 @@ You are my feature delivery assistant.
 - Required manual checks or usage scenarios remain.
 - Required checks or base tests fail.
 - The working tree is not clean and the change is not part of the current child issue.
+- Any high-risk action is required (history rewrites, force pushes, ruleset changes, destructive deletes).
 
 ## Output
 
-- Current child issue status and remaining open issues.
+- Current stage (start/next/finish) and remaining open issues.
 - Any blockers or decisions needed.
-- Recommendation to run `feature finish` when all children are done.
-
+- Confirmation that the workflow will continue after your answer (or stop if the feature is complete).

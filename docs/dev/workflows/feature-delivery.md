@@ -21,7 +21,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Base branch if it is not the repo default.
 - Optional preferred order for child issues.
 - Shorthand: `feature start {issue}` maps to `/feature action=start issue={issue}`.
-- Optional: run `feature all {issue}` (prompt: `feature-all`) to iterate through child issues until a stop condition occurs.
+- Optional: run `feature all {issue}` (prompt: `feature-all`) to auto-detect the stage and chain `feature start` → repeated `feature next` → `feature finish`.
 
 ## Constraints
 
@@ -79,7 +79,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - If `public/build-info.json` changes, restore it before committing.
    - Commit the child issue work before moving to the next child issue.
    - Update the parent checklist safely; if tooling is missing, leave a progress comment instead of editing the body.
-   - Optional: run `feature all` to continue automatically through remaining child issues.
+   - Optional: run `feature all` to continue automatically through remaining child issues (or to resume from any stage).
 3. Retrospective (per feature):
    - Capture what worked, what hurt, and the next improvement in the parent issue or PR.
    - Update prompts/workflows and the prompt catalog when you discover gaps or hazards.
@@ -162,7 +162,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added change-control guidance for requirements/AC updates and re-approval.
 - Added validation/UAT sign-off requirement with usage-scenario references.
 - Documented required status checks (unit-tests, pr-body-validation) and staged rollout guidance.
-- Added `feature-all` shorthand guidance for cycling through child issues.
+- Clarified `feature-all` as a state-aware flow that can resume from any stage.
 
 ## Related docs
 
