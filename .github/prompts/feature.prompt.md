@@ -31,6 +31,27 @@ You are my feature delivery assistant.
 - Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
 - `feature all {issue}` delegates to the `feature-all` prompt to run the state-aware full lifecycle.
 
+## Decision aids
+
+- Use **action=start** when the parent issue exists but no feature branch/workflow has started.
+- Use **action=next** when a feature branch exists and at least one child issue is open.
+- Use **action=finish** only when all child issues are closed and the parent checklist is complete.
+- Use **action=review** after `feature finish` and once a PR exists.
+- Use **action=all** to auto-detect the stage and chain start → next loop → finish.
+
+Stop and ask immediately when:
+
+- The issue lacks test-plan approval or ADR decisions required by the V-model gates.
+- UX/styling choices or algorithm/data rules are unclear.
+- The working tree is not clean and changes are unrelated to the active child issue.
+- A high-risk action is required (history rewrite, ruleset change, destructive delete).
+
+Documentation gates (do not skip):
+
+- Issue test plan includes specs + TP-xx/manual checks and is approved.
+- PR Review Evidence + Traceability are complete and match tests run.
+- Retrospective notes are captured and applied or tracked.
+
 ## Procedure
 
 ## action=start

@@ -104,7 +104,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Updated prompt entries for retrospective follow-ups and device checklist callouts.
 - Updated the feature prompt entry to include V-model gate coverage.
 - Clarified the `feature-all` prompt as state-aware and able to resume from any stage.
-- Clarified `issues` prompt coverage for refine/all actions.
+- Clarified `issues` prompt coverage for refine/all actions and added decision aids.
 
 ## Related docs
 
