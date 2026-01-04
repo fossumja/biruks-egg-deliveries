@@ -28,6 +28,12 @@ You are my branching workflow assistant.
 - Slug rules: lowercase, hyphens; no spaces; keep it short
 - Shorthand: `branch {action} {name}` maps to `action={action} name={name}`; if `{name}` starts with `#` or looks like a URL, treat it as `issue={id}`.
 
+## Workflow guardrails
+
+- If the working tree is not clean, stop and ask how to proceed before switching branches.
+- For feature work, avoid pushing a new branch until `feature finish` unless the user explicitly requests a push.
+- Treat remote deletes, force deletes, and rebases of shared branches as high-risk: summarize impact and ask for confirmation.
+
 ## Special GitHub CLI integration
 
 If an `issue` number/URL is provided:
@@ -51,7 +57,7 @@ If an `issue` number/URL is provided:
   - `git checkout <base>`
   - `git pull --ff-only`
   - `git checkout -b <newBranch>`
-  - Push upstream: `git push -u origin <newBranch>`
+  - Push upstream: `git push -u origin <newBranch>` (skip this for feature branches unless explicitly requested)
 
 3. Action: sync (merge or rebase)
 

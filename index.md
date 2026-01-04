@@ -4,7 +4,7 @@ This file describes the folder layout for the entire repo and where new files sh
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-04
 - **Type**: Reference
 - **Scope**: repository structure and documentation locations
 - **Non-goals**: detailed file-by-file inventories

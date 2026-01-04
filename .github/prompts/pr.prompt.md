@@ -24,6 +24,7 @@ You are my pull request management assistant.
 - Prefer `gh pr create`, `gh pr view`, `gh pr checks`, `gh pr merge`
 - If checks are required and not finished, prefer auto-merge / merge queue behavior instead of manual waiting
 - Shorthand: `pr create`, `pr review {pr}`, `pr update {pr}`, `pr merge {pr}` map to their respective actions.
+- Stop and ask if Review Evidence or Traceability sections are missing or incomplete.
 
 ## action=create
 
@@ -35,7 +36,8 @@ You are my pull request management assistant.
    - recent commits
    - diff summary
 3. If an issue number is present in branch name or input, add `Closes #<n>` to body.
-4. Create PR:
+4. Ensure the PR body includes Review Evidence and Traceability sections (per `.github/pull_request_template.md`); if missing, update the body before creating.
+5. Create PR:
 
 - Draft if requested: `gh pr create --draft`
 - Otherwise: `gh pr create --title ... --body ... --base <base>`
@@ -87,14 +89,15 @@ Given `pr=<id>` (or current branch):
 1. Confirm merge method preference:
 
 - Squash merge is the default recommendation for short-lived feature branches.
+2. Confirm required checks, Review Evidence, and Traceability are complete; document any waivers before merge.
 
-2. Merge via CLI:
+3. Merge via CLI:
 
 - `gh pr merge <id> --squash --delete-branch`
 - If checks pending, `gh pr merge <id> --auto` (and add `--squash` if required/allowed)
 - If branch deletion is blocked, follow with `/branch action=delete name=<branch>`.
 
-3. Summarize what merged and which issue(s) closed.
+4. Summarize what merged and which issue(s) closed.
 
 ## Output
 

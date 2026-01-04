@@ -60,6 +60,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 
 ### Delivery flow
 
+- `develop` — end-to-end V-model delivery for a bug or enhancement; it chains `issues all` → `feature all` → `feature review` to get work merged. Shorthand: `develop "Title"` or `develop 123`. Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `feature` — deliver a parent feature with child issues, including plan validation, V-model gates (design review, test-plan approval, traceability, validation sign-off, change control), retrospective follow-ups, testing workflow selection for behavior changes, and review/merge flow. Shorthand: `feature start 1`, `feature all 1`, `feature review` (review + merge). Workflow: `docs/dev/workflows/feature-delivery.md`.
 - `branch` — create/sync/delete branches. Shorthand: `branch create feat/{slug}`. Workflow: `docs/dev/workflows/development.md`.
 - `commit` — generate commit messages. Shorthand: `commit feat planner #123`. Workflow: `docs/dev/workflows/development.md`.
@@ -104,6 +105,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Updated the feature prompt entry to include V-model gate coverage.
 - Folded `feature-all` into `feature` and documented the state-aware `feature all` flow.
 - Clarified `issues` prompt coverage for refine/all actions and added decision aids.
+- Added the `develop` prompt for end-to-end V-model delivery.
 
 ## Related docs
 
