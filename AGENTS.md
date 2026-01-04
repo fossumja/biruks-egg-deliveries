@@ -71,7 +71,7 @@ Canonical workflows:
 ## Agent terminal practices
 
 - Guidance on terminal command selection and alignment with editor settings lives in `docs/dev/best-practices/agent-terminal-practices.md`.
-- Multi-repo safety guidance (repo ID, guard confirmations) is documented there; follow it when running multiple Codex instances.
+- Multi-repo safety guidance (repo ID, guard confirmations) is documented there; follow it for all mutating actions.
 
 ## Documentation index
 

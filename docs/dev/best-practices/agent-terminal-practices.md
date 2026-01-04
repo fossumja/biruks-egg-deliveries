@@ -22,17 +22,21 @@ Use editor settings as guidance when they are provided, but do not treat them as
 
 ## Practices
 
-### Multi-repo safety (multi-instance Codex)
+### Multi-repo safety (always-on guard)
 
 When running 2–5 Codex instances across multiple clones, use a consistent, low-friction guard to prevent cross-repo mistakes:
 
 - Use a short **repo ID** derived from the repo name (example: `biruks-egg-deliveries` → `BED`) and include it in confirmations for mutating actions.
-- Before any mutating action (push/merge/issue edit/close/delete), confirm:
+- Before any mutating action, confirm:
   - Repo ID + repo name
   - `cwd`
   - `git remote -v`
   - Current branch
   - Target issue/PR number (if applicable)
+- Mutating actions include:
+  - Issue create/edit/close, label or project edits
+  - PR create/update/merge
+  - `git push`, branch delete, ruleset/permission changes
 - Keep temp files repo-local (use `tmp/` under the repo root); avoid `/tmp` to prevent mixing across clones.
 - Distinguish terminals per repo (window title, shell prompt prefix, or tmux pane name).
 - If running multiple dev servers, use distinct ports (e.g., `ng serve --port 4201`).

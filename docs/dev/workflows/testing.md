@@ -49,7 +49,7 @@ This workflow helps you select the right test packs for a change, run automated 
 - For UI changes, add or update component specs that assert the new behavior and data display.
 - For data logic changes, add or update service/util tests that validate calculations and edge cases.
 - Require a change-impact summary (flows, files, automation, TP-xx packs) in the issue before executing packs.
-- When multiple repos are active, confirm repo ID + name, `cwd`, and `git remote -v` before mutating actions (issue edits, PR updates).
+- Confirm repo ID + name, `cwd`, and `git remote -v` before mutating actions (issue edits, PR updates).
 
 ## Steps
 
