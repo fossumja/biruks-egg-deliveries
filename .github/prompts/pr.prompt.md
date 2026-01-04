@@ -25,19 +25,31 @@ You are my pull request management assistant.
 - If checks are required and not finished, prefer auto-merge / merge queue behavior instead of manual waiting
 - Shorthand: `pr create`, `pr review {pr}`, `pr update {pr}`, `pr merge {pr}` map to their respective actions.
 - Stop and ask if Review Evidence or Traceability sections are missing or incomplete.
+- Repo ID: derive a short alias from the repo name (for example, `biruks-egg-deliveries` → `BED`) and use it in confirmations.
+
+## Multi-repo guard (mutating actions only)
+
+Before PR create/update/merge, restate and confirm:
+
+- Repo ID + repo name
+- `cwd`
+- `git remote -v`
+- Current branch
+- Target PR number (if applicable)
 
 ## action=create
 
-1. Infer base branch:
+1. Run the multi-repo guard before creating the PR.
+2. Infer base branch:
    - If the current branch has `gh-merge-base` configured, respect it
    - Else default to repo default branch (detect via `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`)
-2. Derive title/body from:
+3. Derive title/body from:
    - branch name
    - recent commits
    - diff summary
-3. If an issue number is present in branch name or input, add `Closes #<n>` to body.
-4. Ensure the PR body includes Review Evidence and Traceability sections (per `.github/pull_request_template.md`); if missing, update the body before creating.
-5. Create PR:
+4. If an issue number is present in branch name or input, add `Closes #<n>` to body.
+5. Ensure the PR body includes Review Evidence and Traceability sections (per `.github/pull_request_template.md`); if missing, update the body before creating.
+6. Create PR:
 
 - Draft if requested: `gh pr create --draft`
 - Otherwise: `gh pr create --title ... --body ... --base <base>`
@@ -80,29 +92,31 @@ Given `pr=<id>` (or current branch):
 
 ## action=update
 
-- Update PR branch with base branch changes:
+1. Run the multi-repo guard before updating the PR branch.
+2. Update PR branch with base branch changes:
   - merge-style default: `gh pr update-branch <id>`
   - rebase only if requested: `gh pr update-branch <id> --rebase`
 
 ## action=merge
 
-1. Confirm merge method preference:
+1. Run the multi-repo guard before merging.
+2. Confirm merge method preference:
 
 - Squash merge is the default recommendation for short-lived feature branches.
-2. Confirm required checks, Review Evidence, and Traceability are complete; document any waivers before merge.
+3. Confirm required checks, Review Evidence, and Traceability are complete; document any waivers before merge.
 
-3. Merge via CLI:
+4. Merge via CLI:
 
 - `gh pr merge <id> --squash --delete-branch`
 - If checks pending, `gh pr merge <id> --auto` (and add `--squash` if required/allowed)
 - If branch deletion is blocked, follow with `/branch action=delete name=<branch>`.
 
-4. Cleanup after merge:
+5. Cleanup after merge:
    - Switch to the base branch and pull.
    - Delete the local feature branch (only if merged).
    - Prune refs (`git fetch --prune`) and confirm `git status -sb` is clean.
 
-5. Summarize what merged and which issue(s) closed.
+6. Summarize what merged and which issue(s) closed.
 
 ## Output
 

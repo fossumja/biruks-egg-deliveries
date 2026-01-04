@@ -30,6 +30,7 @@ You are my feature delivery assistant.
 - Issue order: data/storage -> export/import -> UI -> tests -> docs -> ops, unless the parent issue specifies otherwise.
 - Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
 - `feature all {issue}` runs the state-aware full lifecycle (start → next loop → finish).
+- Repo ID: derive a short alias from the repo name (for example, `biruks-egg-deliveries` → `BED`) and use it in confirmations.
 
 ## Delegations (use other prompts when appropriate)
 
@@ -65,6 +66,7 @@ Documentation gates (do not skip):
 
 ## Context probes (always do)
 
+- Confirm repo ID + repo name, `cwd`, and `git remote -v` match the intended repo.
 - Confirm current branch, working tree cleanliness, and whether a PR already exists.
 - If a PR exists, prefer resuming at `feature review` unless work remains.
 
@@ -134,15 +136,17 @@ Documentation gates (do not skip):
    - Docs updated via `docs` prompt, or a doc child issue is created and linked in the parent issue.
 8. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
 9. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-10. Push the feature branch now (only after all child issues are complete).
-11. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-12. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
-13. Ensure the PR Traceability section is completed and matches the tests executed.
-14. Ensure validation/UAT sign-off is recorded with scenario IDs when applicable.
-15. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-16. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-17. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-18. Suggest release workflow if requested.
+10. Run the multi-repo guard before mutating actions (push/PR/merge):
+    - Confirm repo ID + name, `cwd`, `git remote -v`, current branch, and target issue/PR.
+11. Push the feature branch now (only after all child issues are complete).
+12. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
+13. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
+14. Ensure the PR Traceability section is completed and matches the tests executed.
+15. Ensure validation/UAT sign-off is recorded with scenario IDs when applicable.
+16. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
+17. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
+18. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+19. Suggest release workflow if requested.
 
 ## action=review
 
@@ -153,9 +157,11 @@ Documentation gates (do not skip):
 4. Verify required checks are complete (`gh pr checks`) and note any skips/waivers.
 5. Confirm branch protection requirements are satisfied (approvals, checks).
    - If approvals are required and you cannot self-approve, stop and ask whether to adjust rulesets.
-6. Ask for explicit confirmation before merge.
-7. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
-8. Run merge cleanup per `pr merge` (switch to base, delete local branch if merged, prune refs).
+6. Run the multi-repo guard before merge:
+   - Confirm repo ID + name, `cwd`, `git remote -v`, current branch, and target PR.
+7. Ask for explicit confirmation before merge.
+8. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
+9. Run merge cleanup per `pr merge` (switch to base, delete local branch if merged, prune refs).
 
 ## action=all
 

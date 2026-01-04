@@ -21,6 +21,7 @@ You are my issues & planning assistant.
 - Ensure new issues include the template sections for test packs, manual checks, and review focus.
 - Ensure template sections are present for testing plan, risk assessment, and docs impact.
 - Ensure a change impact / test mapping section is present and populated.
+- Repo ID: derive a short alias from the repo name (for example, `biruks-egg-deliveries` → `BED`) and use it in confirmations.
 - If sections are missing, create the issue quickly and then run `issues refine` to complete them before implementation starts.
 - Apply `status:needs-triage` when the label exists, and run `issues triage` to normalize metadata.
 - Prefer adding:
@@ -50,6 +51,15 @@ You are my issues & planning assistant.
 - Shorthand: `issues breakdown {issue}`, `issues triage {query}`, `issues close {issue}`, `issues create {title}`; positional issues can be `#{id}` or URL, and multi-word titles/queries should be quoted.
 - `issues refine {issue}` runs the issue refinement flow.
 - `issues all {issue|title}` chains create → refine → breakdown → triage as needed.
+
+## Multi-repo guard (mutating actions only)
+
+Before creating, editing, or closing issues (including triage bulk edits), restate and confirm:
+
+- Repo ID + repo name
+- `cwd`
+- `git remote -v`
+- Target issue number(s)
 
 ## Delegations (use other prompts when appropriate)
 
@@ -97,23 +107,25 @@ Refinement question categories (default set):
 
 ### action=create
 
-1. Infer a good title (imperative, < 72 chars) if missing.
-2. Write a complete issue body including:
+1. Run the multi-repo guard before creating the issue.
+2. Infer a good title (imperative, < 72 chars) if missing.
+3. Write a complete issue body including:
    - Context
    - Repro steps (for bugs) or user story (for features)
    - Acceptance criteria checklist
    - Testing plan, risk assessment, and docs impact (from the templates)
-3. Suggest labels (type/area/priority) and apply them if authorized:
+4. Suggest labels (type/area/priority) and apply them if authorized:
    - `gh issue create --title ... --body ... --label "type:...,area:...,priority:..."`
-4. If a Project is configured (or user asks), add it:
+5. If a Project is configured (or user asks), add it:
    - `gh project item-add ... --url <issueUrl>`
-5. If any required template sections are missing after creation, immediately run `issues refine` to fill them in.
-6. Apply `status:needs-triage` if available, then run `issues triage` when batching new issues.
+6. If any required template sections are missing after creation, immediately run `issues refine` to fill them in.
+7. Apply `status:needs-triage` if available, then run `issues triage` when batching new issues.
 
 ### action=breakdown
 
 Given an existing issue (number/URL) or description:
 
+- Before creating or editing any issues, run the multi-repo guard.
 - Start with a documentation review to ground the plan:
   - Read `index.md` to find relevant doc areas.
   - Review applicable docs in `docs/ux/`, `docs/testing/`, `docs/reference/`, `docs/ops/`, `docs/dev/best-practices/`, `docs/decisions/`, and `docs/plans/`.
@@ -166,6 +178,7 @@ Given a set of issues (list, query, or “open issues”):
   - Duplicate? needs info? bug vs enhancement?
   - Priority and scope
   - Next action (close, label, assign, move to project column)
+- Run the multi-repo guard before applying edits.
 - Apply changes via CLI:
   - `gh issue edit` (labels, assignees, milestone, projects) where possible.
 
@@ -173,6 +186,7 @@ Given a set of issues (list, query, or “open issues”):
 
 Close with a reason and optional state:
 
+- Run the multi-repo guard before closing the issue.
 - `gh issue close <id> --comment "..."`
 - If closing as duplicate, reference canonical issue.
 
@@ -183,16 +197,17 @@ Use this when the issue scope is ambiguous or design/algorithm choices are requi
 1. Read the issue and linked references; restate the goal in your own words.
 2. Scan relevant docs and code to identify unknowns (UX, data model, edge cases).
 3. Ensure required template sections exist (testing plan, risk assessment, docs impact, review focus).
-3. Produce a decision list with:
+4. Run the multi-repo guard before editing the issue.
+5. Produce a decision list with:
    - Question
    - Options (2-3)
    - Recommended default (if safe)
-4. Ask the questions and pause for answers.
-5. After answers, update the issue:
+6. Ask the questions and pause for answers.
+7. After answers, update the issue:
    - Decisions section (bulleted)
    - Acceptance criteria aligned to answers
    - Testing plan updates (specs, TP-xx, manual checks)
-6. If any decision remains unknown, stop and request it explicitly.
+8. If any decision remains unknown, stop and request it explicitly.
 
 Stop conditions (always stop and ask):
 
