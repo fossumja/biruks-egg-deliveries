@@ -22,31 +22,19 @@ You are my triage assistant for GitHub issues and PRs.
 - `project` (optional project number to add important items)
 - Shorthand: `triage {query}` maps to `query={query}`; use quotes for multi-word queries.
 
+## Canonical workflow references
+
+- `docs/dev/workflows/triage.md` (Triage steps and required metadata)
+
 ## Procedure
 
-1. Fetch a working set:
-
-- `gh issue list --search "<query>" --limit 50`
-- For PRs: `gh pr list --search "<query>" --limit 50`
-
-2. For each item, classify:
-
-- Type label using repo defaults: `type:bug`, `type:enhancement`, `type:task`, `type:chore`, `type:docs`, `type:security` (only if warranted), `type:ci` (if needed).
-- Area label using existing areas: `area:planner`, `area:run`, `area:home`, `area:csv`, `area:donations`, `area:infra`, `area:docs` (do not invent new area labels; pick the closest match).
-- Priority using repo scheme: `priority:high`, `priority:medium`, `priority:low` based on:
-  - user impact, urgency, reversibility, and scope
-
-3. Apply metadata:
-
-- `gh issue edit <n> --add-label "type:...,priority:...,status:needs-triage"`
-- Assign to `@me` if it's clearly mine and I’m the next actor
-- If `project` provided, add top items to it (`gh project item-add`)
- - If required template sections are missing, run `issues refine` to complete them before implementation.
-
-4. When blocked/needs info:
-
-- Comment with a concise request for missing info
-- Add `status:blocked` or `status:needs-triage`
+1. Follow `docs/dev/workflows/triage.md` → **Triage** for the canonical steps.
+2. Fetch a working set:
+   - `gh issue list --search "<query>" --limit 50`
+   - For PRs: `gh pr list --search "<query>" --limit 50`
+3. Apply labels, priority, and status consistently; add to Projects if requested.
+4. If required template sections are missing, run `issues refine` before implementation.
+5. When blocked/needs info, comment with a concise request and apply `status:blocked` or `status:needs-triage`.
 
 ## Output
 

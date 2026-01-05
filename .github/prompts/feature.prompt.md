@@ -30,6 +30,15 @@ You are my feature delivery assistant.
 - Issue order: data/storage -> export/import -> UI -> tests -> docs -> ops, unless the parent issue specifies otherwise.
 - Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
 - `feature all {issue}` runs the state-aware full lifecycle (start → next loop → finish).
+- Repo ID: derive a short alias from `docs/reference/project-profile.md` when present; otherwise derive from the repo name (for example, `biruks-egg-deliveries` → `BED`).
+
+## Canonical workflow references
+
+- `docs/dev/workflows/feature-delivery.md`
+- `docs/dev/workflows/development.md`
+- `docs/dev/workflows/testing.md`
+- `docs/dev/workflows/quality.md`
+- `docs/dev/workflows/code-review.md`
 
 ## Delegations (use other prompts when appropriate)
 
@@ -65,55 +74,26 @@ Documentation gates (do not skip):
 
 ## Context probes (always do)
 
-- Confirm current branch, working tree cleanliness, and whether a PR already exists.
+- Verify repo ID + repo name, `cwd`, and `git remote -v` match the intended repo.
+- Verify current branch, working tree cleanliness, and whether a PR already exists.
 - If a PR exists, prefer resuming at `feature review` unless work remains.
+- If the user invoked `feature finish` or `feature review`, treat that as authorization for standard push/PR/merge steps once the guard values match; ask only if a mismatch or high-risk action appears.
 
 ## Procedure
 
 ## action=start
 
-1. Read the parent issue and extract child issue links or checklists.
-2. Validate the parent plan against the codebase per `docs/dev/workflows/development.md` and comment if changes are needed.
-3. Ensure each child issue includes a test plan (automated specs + TP-xx/manual checks) and mark it approved before coding.
-   - If missing, run `testing plan` to draft and update the issue, then ask to approve before proceeding.
-4. Confirm design/architecture review is completed and ADR decisions are recorded before coding.
-5. If no child issues are listed:
-   - Search for issues referencing the parent (for example, `#{parent}` in the issue body).
-   - If still missing, ask once whether to create them via `/issues action=breakdown`.
-6. Create or reuse a feature branch:
-   - If a linked branch exists, check it out.
-   - Prefer `gh issue develop <issue>` if available.
-   - Otherwise follow the branch naming convention in `.github/prompts/branch.prompt.md`.
-7. Verify the current branch matches the feature branch; if not, check out the local branch from `origin/<branch>`.
-8. Build an execution order (data/storage -> export/import -> UI -> tests -> docs -> ops) unless the parent issue specifies a different order.
-9. Report the branch name and planned issue order.
+1. Follow `docs/dev/workflows/feature-delivery.md` (Start) and `docs/dev/workflows/development.md` for plan validation.
+2. Ensure child issues exist, test plans are approved, and ADR/design decisions are recorded.
+3. Create or reuse the feature branch via `.github/prompts/branch.prompt.md`.
+4. Report the branch name and planned child issue order.
 
 ## action=next
 
-1. Identify the next open child issue (or ask if multiple are equally valid).
-2. Restate its acceptance criteria, impacted files, test plan (automated specs + TP-xx/manual checks), and unknowns before changes.
-3. Validate the issue plan against the codebase per `docs/dev/workflows/development.md`; update the issue plan and mark it approved if changes are needed.
-   - Ensure the change-impact summary (flows, files, automation, TP-xx packs) is present; add it if missing.
-4. Confirm the test plan is approved; if it changes, update the issue and re-approve before coding (use `testing plan` to re-draft).
-5. Confirm the design/ADR decision is documented; update it if scope changes before coding.
-6. If requirements/ACs change, update the issue, traceability, and test plan, then re-approve before coding.
-7. Sync the branch with the base branch if needed.
-8. Implement the issue, run targeted tests, and update docs if required.
-   - If behavior changes, run `testing scope` via `.github/prompts/testing.prompt.md` to select packs, then execute automated/manual checks and record TP-xx IDs.
-   - Use `.github/prompts/docs.prompt.md` for any documentation updates.
-   - If docs are required but deferred, create a doc child issue and link it in the parent issue's **Docs impact** section.
-9. Run at least one base check (default: `npm run build`) and note results; fix any errors before proceeding. If `public/build-info.json` changes, restore it before committing.
-10. If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
-11. Commit the child issue work so the branch is clean before moving to the next child issue.
-12. Do not push the feature branch yet unless the user explicitly requests it.
-13. Update the child issue status (close or comment with progress and test notes) **only after** base checks pass.
-14. Update the parent issue checklist to reflect completion:
-   - Prefer `python3` or `node` for body edits.
-   - Validate the new body is non-empty before calling `gh issue edit`.
-   - If tooling is missing or validation fails, add a progress comment instead of editing the body.
-15. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-16. If pausing, add or update a **Current context** note in the parent issue or PR (active branch, next child issue, open decisions).
-17. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
+1. Follow `docs/dev/workflows/feature-delivery.md` (Implement child issues) and `docs/dev/workflows/development.md`.
+2. Validate the issue plan, change-impact summary, test plan approval, and ADR decisions before coding.
+3. Implement the change, run tests per `docs/dev/workflows/testing.md`, and update docs per `docs/dev/workflows/docs.md`.
+4. Run a base check, commit the child issue, and update the child + parent issue status (no push unless requested).
 
 ## action=status
 
@@ -123,55 +103,21 @@ Documentation gates (do not skip):
 
 ## action=finish
 
-1. Confirm all child issues are closed and the parent checklist is complete.
-2. Cross-check parent acceptance criteria and child issue outcomes; mark parent checklist items complete if the evidence supports them.
-3. Run the required regression packs per `docs/testing/regression-tests.md`, record TP-xx IDs, and update regression docs if new behavior was introduced.
-4. Run required usage scenarios when behavior affects end-to-end flows; record scenario IDs for validation.
-5. Record validation/UAT sign-off (self-review OK for solo maintainer).
-6. Run the quality workflow if applicable (this is the full check for the feature).
-   - Use `.github/prompts/quality.prompt.md` to run required checks consistently.
-7. Confirm docs impact is resolved:
-   - Docs updated via `docs` prompt, or a doc child issue is created and linked in the parent issue.
-8. Confirm branch protection/rulesets for the base branch so required checks align with available CI.
-9. Review retrospective comments on the parent issue (and recent feature parents); apply low-effort fixes now or create follow-up issues for larger work.
-10. Push the feature branch now (only after all child issues are complete).
-11. Open a PR using `.github/prompts/pr.prompt.md`, linking the parent issue (`Fixes #{parent}`), and note any skipped checks.
-12. Perform a code review using `.github/prompts/pr.prompt.md` and document the review in the PR (comment or review), even if there are no findings.
-13. Ensure the PR Traceability section is completed and matches the tests executed.
-14. Ensure validation/UAT sign-off is recorded with scenario IDs when applicable.
-15. After merge, ensure the feature branch is deleted (or run `/branch action=delete name=<branch>` and prune refs).
-16. Capture a brief retrospective note (what worked, what hurt, next improvement) in the parent issue or PR.
-17. Update prompts/workflows with any process learnings and refresh the prompt catalog if needed.
-18. Suggest release workflow if requested.
+1. Follow `docs/dev/workflows/feature-delivery.md` (Finish) plus testing + quality workflows.
+2. Verify docs impact is resolved and required regression packs/scenarios are recorded.
+3. Run the multi-repo guard before push/PR/merge, then proceed without an extra confirmation if values match.
+4. Push and open a PR via `.github/prompts/pr.prompt.md`, then review/merge per `docs/dev/workflows/code-review.md` and clean up the branch.
 
 ## action=review
 
-1. Confirm the feature branch is clean and pushed; if not, commit and push before reviewing.
-2. Confirm a PR exists for the feature and includes Review Evidence.
-3. Run the code review per `docs/dev/workflows/code-review.md` and `pr review`.
-   - If self-reviewing and approvals are blocked, leave a formal PR comment with the evidence summary.
-4. Verify required checks are complete (`gh pr checks`) and note any skips/waivers.
-5. Confirm branch protection requirements are satisfied (approvals, checks).
-   - If approvals are required and you cannot self-approve, stop and ask whether to adjust rulesets.
-6. Ask for explicit confirmation before merge.
-7. Merge via `pr merge` (prefer squash) and ensure the branch is deleted.
-8. Run merge cleanup per `pr merge` (switch to base, delete local branch if merged, prune refs).
+1. Follow `docs/dev/workflows/code-review.md` for the review steps and evidence checklist.
+2. Verify checks and branch protection requirements, then run the multi-repo guard.
+3. Merge via `.github/prompts/pr.prompt.md` and perform cleanup (no extra confirmation needed when `feature review` was invoked).
 
 ## action=all
 
-1. Determine the parent issue (from input or current workstream); ask if unclear.
-2. If the feature branch/workflow has not started, run `feature start` for the parent issue.
-3. Read the parent issue and collect child issue links.
-4. If open child issues remain:
-   - Determine the next open child issue (respecting the preferred order).
-   - Run `feature next` for that child issue.
-5. If the child issue completes:
-   - Commit the work.
-   - Update the child issue and parent checklist.
-   - Record the child retrospective.
-6. Repeat steps 4–5 until no open child issues remain.
-7. When all child issues are complete, run `feature finish`.
-8. Stop and ask when requirements are unclear, a decision is needed, or a high-risk action is required.
+1. Follow `docs/dev/workflows/feature-delivery.md` for the state-aware `feature all` flow.
+2. Stop and ask when requirements are unclear, a decision is needed, or a high-risk action is required.
 
 ## Output
 

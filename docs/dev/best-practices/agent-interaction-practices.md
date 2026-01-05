@@ -4,7 +4,7 @@ Guidance for using instructions, prompts, templates, and workflows together so a
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: Reference
 - **Scope**: agent interactions and workflow discipline in this repo
 - **Non-goals**: replacing system/developer instructions or code standards
@@ -21,6 +21,7 @@ Guidance for using instructions, prompts, templates, and workflows together so a
 
 - Use prompts as the primary interface for repeated workflows (`feature`, `issues`, `develop`).
 - Keep prompts aligned with workflow docs; update the workflow whenever prompt behavior changes.
+- Keep full procedures in workflow docs; prompts should be concise summaries with guardrails and references.
 - When delegating, verify the target prompt is current before relying on it.
 - Avoid duplicate prompts that do the same job; extend existing ones instead.
 - Keep prompts concise, but require clear Inputs/Defaults/Stop conditions so short user commands stay safe.
@@ -89,6 +90,7 @@ Review Evidence
 - Use one command per tool call; avoid multi-command `zsh -lc` strings.
 - Separate `gh` calls from `python3` heredocs (use files or scripts).
 - Treat destructive actions as high risk; warn and request explicit confirmation.
+- Prefer to proceed without extra confirmations for standard workflow steps once guard checks match; ask only for mismatches, ambiguity, or high-risk actions.
 
 ## Documentation discipline
 

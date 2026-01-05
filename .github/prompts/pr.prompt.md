@@ -25,84 +25,52 @@ You are my pull request management assistant.
 - If checks are required and not finished, prefer auto-merge / merge queue behavior instead of manual waiting
 - Shorthand: `pr create`, `pr review {pr}`, `pr update {pr}`, `pr merge {pr}` map to their respective actions.
 - Stop and ask if Review Evidence or Traceability sections are missing or incomplete.
+- Repo ID: derive a short alias from `docs/reference/project-profile.md` when present; otherwise derive from the repo name (for example, `biruks-egg-deliveries` → `BED`).
+
+## Canonical workflow references
+
+- `docs/dev/workflows/feature-delivery.md` (PR create/merge context)
+- `docs/dev/workflows/code-review.md` (review evidence)
+- `docs/dev/workflows/quality.md` (required checks)
+
+## Multi-repo guard (mutating actions only)
+
+Before PR create/update/merge, restate and verify:
+
+- Repo ID + repo name
+- `cwd`
+- `git remote -v`
+- Current branch
+- Target PR number (if applicable)
+
+If the user explicitly requested a PR create/update/merge action, proceed when the values match; ask only when mismatched or high-risk.
 
 ## action=create
 
-1. Infer base branch:
-   - If the current branch has `gh-merge-base` configured, respect it
-   - Else default to repo default branch (detect via `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`)
-2. Derive title/body from:
-   - branch name
-   - recent commits
-   - diff summary
-3. If an issue number is present in branch name or input, add `Closes #<n>` to body.
-4. Ensure the PR body includes Review Evidence and Traceability sections (per `.github/pull_request_template.md`); if missing, update the body before creating.
-5. Create PR:
-
-- Draft if requested: `gh pr create --draft`
-- Otherwise: `gh pr create --title ... --body ... --base <base>`
-
-5. Apply labels if appropriate (type/area/priority) using `gh pr edit --add-label ...`
+1. Follow `docs/dev/workflows/feature-delivery.md` for PR creation expectations.
+2. Run the multi-repo guard before creating the PR.
+3. Ensure Review Evidence and Traceability sections are present before creating.
+4. Create the PR with `gh pr create` and apply labels if needed.
 
 ## action=review
 
 Given `pr=<id>` (or current branch):
 
-1. Fetch PR details and diff:
-
-- `gh pr view <id> --json title,body,files,commits,labels,author,baseRefName,headRefName`
-- `gh pr diff <id>`
-
-2. Review checklist (short, practical) and align with `docs/dev/workflows/code-review.md`:
-
-- Correctness: does it match the issue/AC?
-- Traceability: PR Traceability section maps ACs to evidence and matches tests run.
-- Tests: added/updated? do they cover edge cases?
-- Validation: usage scenarios run and sign-off recorded when applicable.
-- DX: clear names, low complexity, no dead code
-- Security: input validation, auth boundaries, secrets, SSRF/XSS
-- UI (if applicable): a11y basics, keyboard nav, i18n, perf hotspots
-
-3. Document the review (even if no findings) using a formal GitHub review or PR comment.
-   - Prefer `gh pr review <id> --approve --body-file <file>` for self-reviews with no findings.
-   - Use `--request-changes` when findings block the merge.
-   - Include a short evidence summary:
-     - Acceptance criteria coverage (what was verified).
-     - Test coverage (commands, TP-xx packs, manual checks).
-     - Risks/gaps (known issues, deferred checks).
-
-4. Output:
-
-- “Approve / Request changes” recommendation
-- Specific actionable comments grouped by severity (blocker / should / nit)
-  Optionally apply review via `gh pr review` if you are configured to do so.
-  If this is a self-review, leave a formal review summary even when there are no findings.
+1. Follow `docs/dev/workflows/code-review.md` for the canonical review steps and evidence checklist.
+2. Use `gh pr view` and `gh pr diff` to gather context.
+3. Document the review via `gh pr review` or a PR comment, including evidence summary.
 
 ## action=update
 
-- Update PR branch with base branch changes:
-  - merge-style default: `gh pr update-branch <id>`
-  - rebase only if requested: `gh pr update-branch <id> --rebase`
+1. Run the multi-repo guard before updating the PR branch.
+2. Update the PR branch using `gh pr update-branch` (rebase only when requested).
 
 ## action=merge
 
-1. Confirm merge method preference:
-
-- Squash merge is the default recommendation for short-lived feature branches.
-2. Confirm required checks, Review Evidence, and Traceability are complete; document any waivers before merge.
-
-3. Merge via CLI:
-
-- `gh pr merge <id> --squash --delete-branch`
-- If checks pending, `gh pr merge <id> --auto` (and add `--squash` if required/allowed)
-- If branch deletion is blocked, follow with `/branch action=delete name=<branch>`.
-
-4. Cleanup after merge:
-   - Switch to the base branch and pull.
-   - Delete the local feature branch (only if merged).
-   - Prune refs (`git fetch --prune`) and confirm `git status -sb` is clean.
-
-5. Summarize what merged and which issue(s) closed.
+1. Follow `docs/dev/workflows/feature-delivery.md` for merge and cleanup expectations.
+2. Run the multi-repo guard before merging.
+3. Confirm required checks, Review Evidence, and Traceability are complete; document waivers if needed.
+4. Merge via `gh pr merge` (prefer squash) and ensure branch deletion + cleanup without extra confirmation when merge was explicitly requested.
 
 ## Output
 

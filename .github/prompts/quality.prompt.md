@@ -22,6 +22,10 @@ Make the repo "green" with consistent formatting, linting, and tests, without ex
 - Tests: unit tests at minimum; e2e optional
 - Shorthand: `quality check` and `quality fix` map to `action=check` and `action=fix`; add `scope={scope}` when needed.
 
+## Canonical workflow references
+
+- `docs/dev/workflows/quality.md`
+
 ## V-model alignment
 
 - When running as part of `feature finish`, record results for PR Review Evidence and Traceability.
@@ -29,30 +33,13 @@ Make the repo "green" with consistent formatting, linting, and tests, without ex
 
 ## action=check
 
-1. Discover scripts:
-
-- read `package.json` scripts
-
-2. Run the closest equivalents:
-
-- format check (prettier)
-- lint
-- typecheck
-- tests
-
-3. Summarize failures by category with the exact command to reproduce.
+1. Follow `docs/dev/workflows/quality.md` to select and run quality gates.
+2. Summarize failures with exact repro commands.
 
 ## action=fix
 
-1. Fix the smallest set of issues to get passing gates:
-
-- formatting first
-- then lint
-- then type errors
-- then tests
-
+1. Follow `docs/dev/workflows/quality.md` to fix in the recommended order.
 2. Prefer targeted changes; avoid refactors unless requested.
-3. If you need to choose tools, prefer widely adopted defaults and add them with minimal config files.
 
 ## Output
 

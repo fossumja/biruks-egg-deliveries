@@ -4,7 +4,7 @@ This catalog lists documentation, prompts, and instructions with their purpose a
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-23
+- **Last updated**: 2026-01-05
 - **Type**: Reference
 - **Scope**: documentation inventory, purpose map, and deprecation tracking
 - **Non-goals**: editing doc content or redefining standards
@@ -61,9 +61,11 @@ Use this file to find the right doc quickly, confirm ownership, and spot duplica
 
 | Path | Purpose | Owner |
 | --- | --- | --- |
+| `docs/reference/agent-pack-portability.md` | Portable vs project-specific agent guidance. | repo maintainers |
 | `docs/reference/data-model.md` | Data model reference for storage and export. | repo maintainers |
 | `docs/reference/csv-format.md` | CSV schema and compatibility rules. | repo maintainers |
 | `docs/reference/glossary.md` | Canonical terminology. | repo maintainers |
+| `docs/reference/project-profile.md` | Repo identity and defaults used by prompts. | repo maintainers |
 | `docs/data/BiruksEggDeliveries-2025-12-22.csv` | Sample data snapshot for reference. | repo maintainers |
 | `docs/data/BiruksEggDeliveries-2025-12-17.csv` | Sample data snapshot for reference. | repo maintainers |
 

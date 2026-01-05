@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -38,12 +38,13 @@ Use this workflow to set up and run the app locally during active development.
 - Require a change-impact summary (flows, files, automation, TP-xx packs) in the issue before coding.
 - Perform a design/architecture review and decide whether an ADR is required; record the decision.
 - Use short-lived feature branches off `main`; delete them after merge.
-- Respect branch protection and rulesets on `main`; confirm required checks are available before planning a merge.
+- Respect branch protection and rulesets on `main`; verify required checks are available before planning a merge.
 - Capture process learnings by updating prompts/workflows and the prompt catalog when gaps are discovered.
 - In sandboxed environments, base checks and Karma may require escalated permissions; rerun with approval if blocked.
 - Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
-- Before starting new work or switching branches, confirm the working tree is clean or ask the user how to handle existing changes.
+- Before starting new work or switching branches, check the working tree; ask the user how to handle existing changes only if it is not clean.
 - Use one command per tool call; avoid multi-command `zsh -lc` strings and repo-external temp files.
+- Confirm repo ID + name, `cwd`, and `git remote -v` before any mutating action (push/merge/issue edits).
 
 ## ADR trigger checklist
 
@@ -75,14 +76,32 @@ If none apply, document the design decision in the issue (comment or checklist n
    - Explicitly mark the updated plan as approved and continue unless a blocking decision remains.
    - If the test plan changes, update it in the issue and re-approve before continuing.
    - If requirements/ACs change, update the issue, traceability notes, and re-approve before continuing.
-4. Set up the branch (if needed):
-   - Use `.github/prompts/branch.prompt.md` for branch creation or sync.
+4. Set up or sync the branch (canonical branching procedure):
+   - Use `.github/prompts/branch.prompt.md` to execute these steps.
+   - If an issue number/URL is available, prefer:
+     - `gh issue develop <issue>` (use `--base <base>` when needed).
+   - Otherwise create a branch:
+     - `git fetch origin`
+     - `git checkout <base>`
+     - `git pull --ff-only`
+     - `git checkout -b <newBranch>`
+     - Push upstream only when explicitly requested for feature branches: `git push -u origin <newBranch>`.
+   - Sync as needed:
+     - `git fetch origin`
+     - Merge default: `git merge origin/<base>` (use rebase only when requested).
+     - If rebased and already pushed: `git push --force-with-lease` (confirm first).
+   - Cleanup after merge:
+     - `git branch -d <branch>` (use `-D` only with confirmation).
+     - `git push origin --delete <branch>`.
+     - `git fetch --prune`.
+   - Treat remote deletes, force deletes, and rebasing shared branches as high risk; confirm before proceeding.
 5. Read the repo overview:
    - Review `README.md` for setup and dev server commands.
 6. Prepare dependencies:
    - Install dependencies per `README.md`.
 7. Start the dev server:
    - Run the documented start command.
+   - If multiple instances are running, use a distinct port (e.g., `ng serve --port 4201`).
 8. Make changes and validate:
    - Use targeted checks (lint/test) when the change affects behavior.
    - Use the testing workflow (`testing scope`) to select regression packs when behavior changes, then run automated/manual checks and record the TP-xx IDs.
@@ -115,7 +134,7 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Design/architecture review completed and ADR decision recorded.
 - Change-control followed when requirements/ACs changed, with re-approval recorded.
 - High-risk actions were confirmed explicitly before execution.
-- Working tree state was confirmed before switching workstreams.
+- Working tree state was checked before switching workstreams; questions were raised only when dirty.
 
 ## Outputs
 
@@ -132,12 +151,13 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Added testing workflow integration so behavior changes drive regression packs and test updates.
 - Added a sandbox note for base checks and Karma requiring escalated permissions.
 - Added explicit confirmation requirement for high-risk actions.
-- Added a worktree cleanliness confirmation step before switching tasks.
+- Clarified that worktree cleanliness is checked and only prompts when dirty.
 - Added a regression-testing plan detail check to prevent under-specified test coverage issues.
 - Added a test-plan approval requirement to align with V-model planning gates.
 - Added a design/architecture review gate with ADR decision guidance.
 - Added change-control guidance for requirements/AC updates and re-approval.
 - Added a change-impact summary requirement to map flows, files, automation, and TP-xx packs before coding.
+- Added a canonical branching procedure so prompts can reference workflows instead of duplicating branch steps.
 
 ## Related docs
 

@@ -4,7 +4,7 @@ Use this workflow to discover, choose, and run prompts consistently. It includes
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: How-to
 - **Scope**: prompt discovery and usage
 - **Non-goals**: writing new prompts or changing workflows without review
@@ -40,6 +40,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Update this catalog and `index.md` when prompts are added or behavior changes.
 - Follow the prompt/instruction structure in `docs/dev/best-practices/documentation-style-guide.md`, including a single H1 after front matter.
 - Apply the prompt clarity checklist in `docs/dev/best-practices/agent-interaction-practices.md` when adding or updating prompts.
+- When a workflow exists, keep the full step-by-step procedure in the workflow doc and keep prompts as concise summaries with guardrails and references.
 
 ## Steps
 
@@ -49,7 +50,8 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
    - Run `prompts release` or `/prompts action=find query=release`.
 3. Pick the prompt and use its shorthand syntax.
 4. If you add or edit a prompt, run the prompt quality audit checklist in `docs/dev/best-practices/agent-interaction-practices.md`.
-5. If a needed prompt is missing, add it under `.github/prompts/` and update this catalog.
+5. If prompt steps duplicate a workflow, consolidate the procedure into the workflow and keep the prompt as a short, guarded summary that references the workflow section.
+6. If a needed prompt is missing, add it under `.github/prompts/` and update this catalog.
 
 ## Prompt catalog
 
@@ -110,6 +112,7 @@ The prompt library is the primary interface for repeatable workflows. Use the ca
 - Added the `develop` prompt for end-to-end V-model delivery.
 - Added a prompt quality audit step to keep prompt updates consistent and safe.
 - Added guidance to use `testing plan` for drafting issue test plans when needed.
+- Added a consolidation rule so workflow docs remain the canonical source of procedural steps.
 
 ## Related docs
 

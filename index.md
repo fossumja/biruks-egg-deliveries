@@ -4,7 +4,7 @@ This file describes the folder layout for the entire repo and where new files sh
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: Reference
 - **Scope**: repository structure and documentation locations
 - **Non-goals**: detailed file-by-file inventories
@@ -46,7 +46,7 @@ This file describes the folder layout for the entire repo and where new files sh
 - Agent terminal practices: `docs/dev/best-practices/agent-terminal-practices.md`
 - Developer workflows: `docs/dev/workflows/development.md`, `docs/dev/workflows/feature-delivery.md`, `docs/dev/workflows/code-review.md`, `docs/dev/workflows/docs.md`, `docs/dev/workflows/prompts.md`, `docs/dev/workflows/quality.md`, `docs/dev/workflows/testing.md`, `docs/dev/workflows/release.md`, `docs/dev/workflows/triage.md`
 - Operations runbooks: `docs/ops/deployment.md`, `docs/ops/backup-restore.md`, `docs/ops/runbook.md`
-- Reference docs: `docs/reference/data-model.md`, `docs/reference/csv-format.md`, `docs/reference/glossary.md`, `docs/reference/documentation-inventory.md`
+- Reference docs: `docs/reference/data-model.md`, `docs/reference/csv-format.md`, `docs/reference/glossary.md`, `docs/reference/agent-pack-portability.md`, `docs/reference/project-profile.md`, `docs/reference/documentation-inventory.md`
 - Documentation inventory: `docs/reference/documentation-inventory.md`
 - Decisions (ADRs): `docs/decisions/`
 - Active planning: `docs/plans/documentation-refresh-plan.md`

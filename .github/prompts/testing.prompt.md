@@ -31,6 +31,10 @@ You are my testing workflow assistant.
 - Include usage scenarios when running full regression.
 - If an issue is provided and the test plan is missing, draft and write the plan into the issue.
 
+## Canonical workflow references
+
+- `docs/dev/workflows/testing.md`
+
 ## V-model alignment
 
 - Ensure the issue test plan is approved before executing packs; stop and ask if it is missing.
@@ -41,38 +45,26 @@ You are my testing workflow assistant.
 
 ## action=scope
 
-1. Read `docs/testing/regression-tests.md` and `docs/dev/workflows/testing.md`.
-2. Map changes to test packs using the change-impact map.
-3. If change inputs are missing, ask for them once.
-4. If the issue lacks a change-impact summary (flows, files, automation, TP-xx packs), stop and request it before proceeding.
-5. If the issue lacks an approved test plan, stop and request it before proceeding.
-6. Output the recommended pack list and test tier.
+1. Follow `docs/dev/workflows/testing.md` to map changes to packs and select a tier.
+2. Require a change-impact summary and approved test plan before proceeding.
+3. Output the recommended pack list and tier.
 
 ## action=plan
 
-1. Confirm the test tier and pack list.
-2. Enumerate automated specs to add/update (paths).
-3. Provide automated test commands, using `npm test -- --watch=false --browsers=ChromeHeadless --include <spec>` when possible.
-4. List the manual checks required for each pack.
-5. Call out any required fixtures or data resets.
-6. If an issue is provided and the Testing plan section is missing or incomplete:
-   - Update the issue body with the drafted plan.
-   - Ask whether to mark the test plan approved (self-approval OK for solo work).
+1. Follow `docs/dev/workflows/testing.md` to draft the issue test plan.
+2. Enumerate automated specs, commands, and manual checks.
+3. If the issue plan is missing, update it and ask to mark it approved.
 
 ## action=run
 
-1. Execute automated test commands in the planned order.
-2. Report failures immediately with reproduction commands.
-3. Summarize which manual checks remain.
-4. Do not claim manual checks are complete unless explicitly confirmed.
+1. Follow `docs/dev/workflows/testing.md` to execute automated tests and manual checks.
+2. Report failures with repro commands and note remaining manual checks.
 
 ## action=report
 
-1. Summarize packs run (with TP-xx IDs), commands used, and outcomes.
-2. Update docs when test coverage or packs changed, including automation notes in `docs/testing/regression-tests.md`.
-3. Suggest follow-up issues for any failures.
-4. Provide a short PR-ready evidence summary (AC coverage, TP-xx IDs, usage-scenario IDs, and known gaps).
-5. If an issue is provided, add a short test-results comment or update the issue Testing plan/results section.
+1. Follow `docs/dev/workflows/testing.md` to report packs, commands, outcomes, and updates.
+2. Provide a PR-ready evidence summary and follow-up issues for failures.
+3. Update the issue test results when applicable.
 
 ## Output
 

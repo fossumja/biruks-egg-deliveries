@@ -27,12 +27,28 @@ You are my branching workflow assistant.
   - `ci/<slug>` for pipeline work
 - Slug rules: lowercase, hyphens; no spaces; keep it short
 - Shorthand: `branch {action} {name}` maps to `action={action} name={name}`; if `{name}` starts with `#` or looks like a URL, treat it as `issue={id}`.
+- Repo ID: derive a short alias from `docs/reference/project-profile.md` when present; otherwise derive from the repo name (for example, `biruks-egg-deliveries` → `BED`).
+
+## Canonical workflow references
+
+- `docs/dev/workflows/development.md` (Branching procedure)
 
 ## Workflow guardrails
 
 - If the working tree is not clean, stop and ask how to proceed before switching branches.
 - For feature work, avoid pushing a new branch until `feature finish` unless the user explicitly requests a push.
 - Treat remote deletes, force deletes, and rebases of shared branches as high-risk: summarize impact and ask for confirmation.
+
+## Multi-repo guard (mutating actions only)
+
+Before create/sync/delete actions, restate and verify:
+
+- Repo ID + repo name
+- `cwd`
+- `git remote -v`
+- Current branch
+
+If the user explicitly requested the branch action, proceed when values match; ask only when mismatched or high-risk.
 
 ## Special GitHub CLI integration
 
@@ -43,44 +59,11 @@ If an `issue` number/URL is provided:
 
 ## Procedure
 
-1. Detect current branch, default branch, and remote (`origin`):
-
-- `git status -sb`
-- `git remote -v`
-- `git symbolic-ref refs/remotes/origin/HEAD` (if needed)
-
-2. Action: create
-
-- If issue provided: use `gh issue develop`
-- Else:
-  - `git fetch origin`
-  - `git checkout <base>`
-  - `git pull --ff-only`
-  - `git checkout -b <newBranch>`
-  - Push upstream: `git push -u origin <newBranch>` (skip this for feature branches unless explicitly requested)
-
-3. Action: sync (merge or rebase)
-
-- Prefer merge from base for most teams; use rebase only when explicitly requested.
-- Merge:
-  - `git fetch origin`
-  - `git merge origin/<base>`
-- Rebase:
-  - `git fetch origin`
-  - `git rebase origin/<base>`
-  - If rebased and already pushed: force push **with lease**: `git push --force-with-lease`
-
-4. Action: cleanup/delete
-
-- Only delete if:
-  - branch is merged, or you confirm deletion
-- Delete local:
-  - `git branch -d <branch>` (or `-D` only with confirmation)
-- Delete remote:
-  - `git push origin --delete <branch>`
-- Prune stale refs:
-  - `git fetch --prune`
-- If the remote branch is already gone, report it and proceed.
+1. Confirm current branch, default branch, and remotes:
+   - `git status -sb`
+   - `git remote -v`
+2. Follow `docs/dev/workflows/development.md` (Branching procedure) for create/sync/delete steps.
+3. Treat remote deletes, force deletes, and rebases of shared branches as high risk; confirm before proceeding.
 
 ## Output
 
