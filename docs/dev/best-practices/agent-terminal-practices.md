@@ -4,7 +4,7 @@ This guide documents how agents should choose and run terminal commands in this 
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-03
+- **Last updated**: 2026-01-05
 - **Type**: Reference
 - **Scope**: terminal command selection, approvals, and settings alignment
 - **Non-goals**: redefining system or developer instructions, changing sandbox rules
@@ -26,7 +26,7 @@ Use editor settings as guidance when they are provided, but do not treat them as
 
 When running 2–5 Codex instances across multiple clones, use a consistent, low-friction guard to prevent cross-repo mistakes:
 
-- Use a short **repo ID** derived from the repo name (example: `biruks-egg-deliveries` → `BED`) and include it in confirmations for mutating actions.
+- Use a short **repo ID** from `docs/reference/project-profile.md` when present; otherwise derive from the repo name (example: `biruks-egg-deliveries` → `BED`) and include it in confirmations for mutating actions.
 - Before any mutating action, confirm:
   - Repo ID + repo name
   - `cwd`
@@ -97,6 +97,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 ## What changed / Why
 
 - Added a rule to avoid `gh` calls inside Python heredocs, which can trigger approval prompts.
+- Clarified that repo ID should come from `docs/reference/project-profile.md` when available.
 
 ## Related docs
 

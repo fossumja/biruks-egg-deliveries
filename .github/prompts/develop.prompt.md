@@ -26,7 +26,7 @@ You are my senior end-to-end delivery assistant.
 - If no issue exists, create one via `issues all` first.
 - Use `feature all` to implement all child issues, then `feature review` to review+merge.
 - Stop and ask when requirements or V-model gates are unclear.
-- Repo ID: derive a short alias from the repo name (for example, `biruks-egg-deliveries` → `BED`) and use it in confirmations.
+- Repo ID: derive a short alias from `docs/reference/project-profile.md` when present; otherwise derive from the repo name (for example, `biruks-egg-deliveries` → `BED`).
 
 ## Multi-repo guard (mutating actions only)
 

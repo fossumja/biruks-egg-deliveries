@@ -30,7 +30,7 @@ You are my feature delivery assistant.
 - Issue order: data/storage -> export/import -> UI -> tests -> docs -> ops, unless the parent issue specifies otherwise.
 - Shorthand: `feature start {issue}`, `feature next`, `feature status`, `feature finish`, `feature review` map to their respective actions.
 - `feature all {issue}` runs the state-aware full lifecycle (start → next loop → finish).
-- Repo ID: derive a short alias from the repo name (for example, `biruks-egg-deliveries` → `BED`) and use it in confirmations.
+- Repo ID: derive a short alias from `docs/reference/project-profile.md` when present; otherwise derive from the repo name (for example, `biruks-egg-deliveries` → `BED`).
 
 ## Delegations (use other prompts when appropriate)
 
