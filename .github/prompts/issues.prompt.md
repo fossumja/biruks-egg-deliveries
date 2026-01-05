@@ -70,6 +70,10 @@ Before creating, editing, or closing issues (including triage bulk edits), resta
 
 Before delegating, confirm the target prompt exists and is up to date. If it is missing or stale, update it before relying on it.
 
+## Canonical workflow references
+
+- `docs/dev/workflows/triage.md` (Issue creation, refinement, breakdown, triage)
+
 ## Decision aids
 
 - Use **action=create** when the request is new and has a clear problem statement + outcome.
@@ -107,80 +111,28 @@ Refinement question categories (default set):
 
 ### action=create
 
-1. Run the multi-repo guard before creating the issue.
-2. Infer a good title (imperative, < 72 chars) if missing.
-3. Write a complete issue body including:
-   - Context
-   - Repro steps (for bugs) or user story (for features)
-   - Acceptance criteria checklist
-   - Testing plan, risk assessment, and docs impact (from the templates)
-4. Suggest labels (type/area/priority) and apply them if authorized:
-   - `gh issue create --title ... --body ... --label "type:...,area:...,priority:..."`
-5. If a Project is configured (or user asks), add it:
-   - `gh project item-add ... --url <issueUrl>`
-6. If any required template sections are missing after creation, immediately run `issues refine` to fill them in.
-7. Apply `status:needs-triage` if available, then run `issues triage` when batching new issues.
+1. Follow `docs/dev/workflows/triage.md` → **Issue creation** for the canonical steps.
+2. Run the multi-repo guard before creating the issue.
+3. Ensure the issue includes required sections (testing plan, risk, docs impact, change-impact summary).
+4. Apply labels and `status:needs-triage` when available; add to Projects if requested.
+5. If required sections are missing, run `issues refine` before implementation.
 
 ### action=breakdown
 
 Given an existing issue (number/URL) or description:
 
-- Before creating or editing any issues, run the multi-repo guard.
-- Start with a documentation review to ground the plan:
-  - Read `index.md` to find relevant doc areas.
-  - Review applicable docs in `docs/ux/`, `docs/testing/`, `docs/reference/`, `docs/ops/`, `docs/dev/best-practices/`, `docs/decisions/`, and `docs/plans/`.
-  - Summarize documented behavior, constraints, and prior decisions before proposing issues.
-- Perform a thorough codebase scan to confirm current implementation:
-  - Use `rg` to locate relevant models, services, components, templates, tests, and scripts.
-  - Identify storage, import/export, and UI entry points that may be affected.
-  - List all likely impacted files and any cross-feature impacts or risks.
-- Issue content must include:
-  - **Impacted files** (explicit file paths)
-  - **Potential supporting files** (paths that may be useful but are not confirmed)
-  - **Architectural guidance** (recommended boundaries, ownership, and integration points)
-  - **Unknowns** (call out gaps where more investigation is needed)
-  - For regression/testing-plan issues, also include:
-    - **Pack updates (proposed)** with TP-xx IDs
-    - **Manual checks to add**
-    - **Automation references** (existing specs)
-    - **Usage-scenario updates** (if applicable)
-    - **Change-impact map updates**
-- Decide the issue structure:
-  - If work spans multiple areas, multiple deliverables, or 3+ distinct workstreams, create a parent feature issue plus child issues.
-  - Otherwise, create a single feature issue with a detailed breakdown.
-- When creating a parent feature issue:
-  - Title: `Feature: <short name>`
-  - Body includes context, goals, non-goals, UX notes, data changes, risks, and acceptance criteria.
-  - Label with `type:enhancement`, one `area:*`, and a priority label.
-- When creating child issues (activities):
-  - Create 3-8 issues covering UI, data/storage, CSV/export, tests, docs, and ops as applicable.
-  - Use `type:task` or `type:enhancement` plus `area:*` and priority labels.
-  - Link each child to the parent (checklist in the parent body or links in each child).
-  - Update the parent issue after child creation to include the real issue URLs.
-- Bugs discovered during planning:
-  - Create separate bug issues with `type:bug` and the appropriate `area:*`.
-- If the scope is ambiguous, ask once before creating multiple issues.
-- Produce a task breakdown when creating a single issue:
-  - Implementation tasks
-  - Tests
-  - Docs
-  - CI/CD impact
-  - Risk notes
-- After creating issues:
-  - Apply labels at creation time; if default GitHub labels were used as a fallback, replace them with the repo label scheme.
-  - Remove default labels (`enhancement`, `documentation`, `bug`) when the custom `type:*` labels are present.
+- Follow `docs/dev/workflows/triage.md` → **Issue breakdown** for the canonical steps.
+- Run the multi-repo guard before creating or editing issues.
+- Ensure issue bodies include impacted files, supporting files, architecture guidance, and unknowns.
+- Create parent + child issues when work spans multiple areas; link children in the parent checklist.
 
 ### action=triage
 
 Given a set of issues (list, query, or “open issues”):
 
-- Batch evaluate:
-  - Duplicate? needs info? bug vs enhancement?
-  - Priority and scope
-  - Next action (close, label, assign, move to project column)
+- Follow `docs/dev/workflows/triage.md` → **Triage** for the canonical steps.
 - Run the multi-repo guard before applying edits.
-- Apply changes via CLI:
-  - `gh issue edit` (labels, assignees, milestone, projects) where possible.
+- Apply labels, priority, and status consistently via CLI.
 
 ### action=close
 
@@ -194,20 +146,9 @@ Close with a reason and optional state:
 
 Use this when the issue scope is ambiguous or design/algorithm choices are required.
 
-1. Read the issue and linked references; restate the goal in your own words.
-2. Scan relevant docs and code to identify unknowns (UX, data model, edge cases).
-3. Ensure required template sections exist (testing plan, risk assessment, docs impact, review focus).
-4. Run the multi-repo guard before editing the issue.
-5. Produce a decision list with:
-   - Question
-   - Options (2-3)
-   - Recommended default (if safe)
-6. Ask the questions and pause for answers.
-7. After answers, update the issue:
-   - Decisions section (bulleted)
-   - Acceptance criteria aligned to answers
-   - Testing plan updates (specs, TP-xx, manual checks)
-8. If any decision remains unknown, stop and request it explicitly.
+1. Follow `docs/dev/workflows/triage.md` → **Issue refinement** for the canonical steps.
+2. Run the multi-repo guard before editing the issue.
+3. Capture decisions, update ACs, and refresh the test plan; stop if any decision remains open.
 
 Stop conditions (always stop and ask):
 
@@ -220,12 +161,8 @@ Stop conditions (always stop and ask):
 
 Run the full issue workflow: create, refine if needed, break down, then triage.
 
-1. Determine whether the issue already exists.
-2. If not, create it via `issues action=create`.
-3. Evaluate clarity; if unclear, run `issues action=refine` and wait for answers.
-4. Run `issues action=breakdown` to create child issues when needed.
-5. Run `issues action=triage` to apply labels and priority.
-6. Stop and ask if any decision is required or a risk gate is triggered.
+1. Follow the triage workflow sequence: create → refine → breakdown → triage.
+2. Stop and ask if any decision is required or a risk gate is triggered.
 
 Stop conditions (always stop and ask):
 

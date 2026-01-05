@@ -4,7 +4,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: How-to
 - **Scope**: creating and updating documentation in this repo
 - **Non-goals**: modifying application code or external tooling
@@ -53,6 +53,11 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 1. Update `index.md` if folders or doc locations changed.
 1. If a new decision is made:
    - Add an ADR in `docs/decisions/` using the ADR template.
+   - Include Context, Decision, Alternatives considered, Consequences, and Follow-ups.
+   - If the input references a `*PLAN.md` file:
+     - Extract the decision and rationale from the plan.
+     - Update `README.md`, `docs/user/user-guide.md`, `docs/ux/ux-overview.md`, or `docs/architecture/architecture-overview.md` when the decision affects them.
+     - Write the ADR and move the original plan to `deprecated/docs/` (do not delete it).
 1. Re-run a quick markdown pass:
    - Blank lines around headings and lists.
    - Single H1 and consistent heading levels.
@@ -77,6 +82,7 @@ Use this workflow to create or update docs in a consistent, markdownlint-safe wa
 - Added an explicit H1 requirement for prompt and instruction files to match the style guide.
 - Added a checklist item to verify prompt/instruction H1s during doc updates.
 - Added a docs-impact gate to ensure docs updates are completed or tracked with a doc child issue.
+- Added ADR handling details (including plan-file conversion) so prompts can reference this workflow.
 
 ## Related docs
 

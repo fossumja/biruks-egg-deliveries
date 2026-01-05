@@ -4,7 +4,7 @@ Use this workflow to set up and run the app locally during active development.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: How-to
 - **Scope**: local development workflow
 - **Non-goals**: CI/release procedures
@@ -76,8 +76,25 @@ If none apply, document the design decision in the issue (comment or checklist n
    - Explicitly mark the updated plan as approved and continue unless a blocking decision remains.
    - If the test plan changes, update it in the issue and re-approve before continuing.
    - If requirements/ACs change, update the issue, traceability notes, and re-approve before continuing.
-4. Set up the branch (if needed):
-   - Use `.github/prompts/branch.prompt.md` for branch creation or sync.
+4. Set up or sync the branch (canonical branching procedure):
+   - Use `.github/prompts/branch.prompt.md` to execute these steps.
+   - If an issue number/URL is available, prefer:
+     - `gh issue develop <issue>` (use `--base <base>` when needed).
+   - Otherwise create a branch:
+     - `git fetch origin`
+     - `git checkout <base>`
+     - `git pull --ff-only`
+     - `git checkout -b <newBranch>`
+     - Push upstream only when explicitly requested for feature branches: `git push -u origin <newBranch>`.
+   - Sync as needed:
+     - `git fetch origin`
+     - Merge default: `git merge origin/<base>` (use rebase only when requested).
+     - If rebased and already pushed: `git push --force-with-lease` (confirm first).
+   - Cleanup after merge:
+     - `git branch -d <branch>` (use `-D` only with confirmation).
+     - `git push origin --delete <branch>`.
+     - `git fetch --prune`.
+   - Treat remote deletes, force deletes, and rebasing shared branches as high risk; confirm before proceeding.
 5. Read the repo overview:
    - Review `README.md` for setup and dev server commands.
 6. Prepare dependencies:
@@ -140,6 +157,7 @@ If none apply, document the design decision in the issue (comment or checklist n
 - Added a design/architecture review gate with ADR decision guidance.
 - Added change-control guidance for requirements/AC updates and re-approval.
 - Added a change-impact summary requirement to map flows, files, automation, and TP-xx packs before coding.
+- Added a canonical branching procedure so prompts can reference workflows instead of duplicating branch steps.
 
 ## Related docs
 
