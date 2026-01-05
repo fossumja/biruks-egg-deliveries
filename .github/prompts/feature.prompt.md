@@ -74,8 +74,8 @@ Documentation gates (do not skip):
 
 ## Context probes (always do)
 
-- Confirm repo ID + repo name, `cwd`, and `git remote -v` match the intended repo.
-- Confirm current branch, working tree cleanliness, and whether a PR already exists.
+- Verify repo ID + repo name, `cwd`, and `git remote -v` match the intended repo.
+- Verify current branch, working tree cleanliness, and whether a PR already exists.
 - If a PR exists, prefer resuming at `feature review` unless work remains.
 - If the user invoked `feature finish` or `feature review`, treat that as authorization for standard push/PR/merge steps once the guard values match; ask only if a mismatch or high-risk action appears.
 
@@ -104,7 +104,7 @@ Documentation gates (do not skip):
 ## action=finish
 
 1. Follow `docs/dev/workflows/feature-delivery.md` (Finish) plus testing + quality workflows.
-2. Confirm docs impact is resolved and required regression packs/scenarios are recorded.
+2. Verify docs impact is resolved and required regression packs/scenarios are recorded.
 3. Run the multi-repo guard before push/PR/merge, then proceed without an extra confirmation if values match.
 4. Push and open a PR via `.github/prompts/pr.prompt.md`, then review/merge per `docs/dev/workflows/code-review.md` and clean up the branch.
 

@@ -41,12 +41,14 @@ You are my branching workflow assistant.
 
 ## Multi-repo guard (mutating actions only)
 
-Before create/sync/delete actions, restate and confirm:
+Before create/sync/delete actions, restate and verify:
 
 - Repo ID + repo name
 - `cwd`
 - `git remote -v`
 - Current branch
+
+If the user explicitly requested the branch action, proceed when values match; ask only when mismatched or high-risk.
 
 ## Special GitHub CLI integration
 

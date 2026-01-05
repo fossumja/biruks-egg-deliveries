@@ -41,7 +41,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - If data import/export/backup/restore is affected, require a backup/restore verification (or document a waiver) before merge.
 - If docs are updated or added, update `index.md` and documentation inventory entries as needed.
 - Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
-- Before switching branches or starting the feature, confirm the working tree is clean or ask the user how to handle existing changes.
+- Before switching branches or starting the feature, check the working tree; ask the user how to handle existing changes only if it is not clean.
 - Confirm repo ID + name, `cwd`, and `git remote -v` before any mutating action (push/merge/issue edits).
 - If the user invokes `feature finish` or `feature review`, treat that as authorization for standard push/PR/merge steps unless a mismatch or high-risk action is detected.
 
@@ -113,7 +113,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Cross-check parent acceptance criteria against child outcomes and mark parent checklist items complete when satisfied.
 7. Cleanup after merge:
    - Ensure the feature branch is deleted (auto-delete or `/branch action=delete name={branch}`).
-   - Delete the local feature branch once merge is confirmed.
+- Delete the local feature branch once merge is complete.
    - Prune refs with `git fetch --prune` and switch back to `main`.
 
 ## Checks
@@ -145,7 +145,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Child issues are closed only after base checks pass.
 - Feature branch is pushed only at finish unless explicitly requested earlier.
 - High-risk actions were confirmed explicitly before execution.
-- Working tree state was confirmed before switching workstreams.
+- Working tree state was checked before switching workstreams; questions were raised only when dirty.
 - Each child issue was committed before starting the next one.
 
 ## Outputs
@@ -163,7 +163,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Added testing workflow integration so behavior changes include pack selection and test updates.
 - Added a retrospective follow-up step so learnings are applied or tracked.
 - Added explicit confirmation requirement for high-risk actions.
-- Added a worktree cleanliness confirmation step before switching tasks.
+- Clarified that worktree cleanliness is checked and only prompts when dirty.
 - Added guidance to commit each child issue before moving on to keep the feature branch clean.
 - Required code reviews to be documented as part of feature finish.
 - Added an explicit test-plan approval gate and review-evidence requirement for automated specs.

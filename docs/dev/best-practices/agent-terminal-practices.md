@@ -12,7 +12,7 @@ This guide documents how agents should choose and run terminal commands in this 
 
 ## Summary
 
-Use editor settings as guidance when they are provided, but do not treat them as authoritative over sandbox or approval rules. Prefer commands that align with the auto-approve list to reduce prompts, and ask before running unusual or destructive commands. For high-risk actions, warn the user and get explicit confirmation before proceeding.
+Use editor settings as guidance when they are provided, but do not treat them as authoritative over sandbox or approval rules. Prefer commands that align with the auto-approve list to reduce prompts, and proceed without extra confirmation on standard workflow steps when guard values match. For high-risk actions, warn the user and get explicit confirmation before proceeding.
 
 ## Inputs
 
@@ -76,7 +76,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 
 ### Settings usage
 
-- If a `settings.json` snippet is provided, confirm any assumptions you plan to rely on.
+- If a `settings.json` snippet is provided, verify any assumptions you plan to rely on; ask only if a mismatch or risk is detected.
 - Do not assume access to user settings unless they are shared in the current session.
 - Record any deviations from settings and explain why.
 - If VS Code uses `zsh -lc`, remember the inner command is opaque to prefix rules; structure commands so rule matching still works.
@@ -86,7 +86,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 1. Confirm the sandbox and approval policy from the environment context.
 2. Note any provided editor settings that affect command approvals.
 3. Choose tools that align with repo standards and the auto-approve list.
-4. Ask before using commands outside the list unless required to complete the task.
+4. Use commands outside the list only when required to complete the task; ask only if the command is high risk or ambiguous.
 5. Call out high-risk actions early and confirm the user wants to proceed.
 6. Check for uncommitted changes before switching branches or starting new work, and ask the user how to proceed if the tree is dirty.
 7. When possible, keep commands single-purpose so approval rules can match the real tool.
@@ -102,6 +102,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 - Clarified that repo ID should come from `docs/reference/project-profile.md` when available.
 - Noted that explicit workflow invocations (feature finish/review) count as authorization after guard checks.
 - Clarified that extra confirmations should be avoided when guard values match and no high-risk action is involved.
+- Clarified that non-standard commands should only prompt when high risk or ambiguous.
 
 ## Related docs
 
