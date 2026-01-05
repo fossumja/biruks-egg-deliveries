@@ -35,13 +35,15 @@ You are my pull request management assistant.
 
 ## Multi-repo guard (mutating actions only)
 
-Before PR create/update/merge, restate and confirm:
+Before PR create/update/merge, restate and verify:
 
 - Repo ID + repo name
 - `cwd`
 - `git remote -v`
 - Current branch
 - Target PR number (if applicable)
+
+If the user explicitly requested a PR create/update/merge action, proceed when the values match; ask only when mismatched or high-risk.
 
 ## action=create
 
@@ -68,7 +70,7 @@ Given `pr=<id>` (or current branch):
 1. Follow `docs/dev/workflows/feature-delivery.md` for merge and cleanup expectations.
 2. Run the multi-repo guard before merging.
 3. Confirm required checks, Review Evidence, and Traceability are complete; document waivers if needed.
-4. Merge via `gh pr merge` (prefer squash) and ensure branch deletion + cleanup.
+4. Merge via `gh pr merge` (prefer squash) and ensure branch deletion + cleanup without extra confirmation when merge was explicitly requested.
 
 ## Output
 

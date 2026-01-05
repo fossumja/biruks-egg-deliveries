@@ -33,6 +33,7 @@ When running 2–5 Codex instances across multiple clones, use a consistent, low
   - `git remote -v`
   - Current branch
   - Target issue/PR number (if applicable)
+- If the user explicitly invoked a workflow action that implies mutation (for example `feature finish`, `feature review`, `pr merge`), treat that as authorization and proceed after the guard unless there is a mismatch or a high-risk action.
 - Mutating actions include:
   - Issue create/edit/close, label or project edits
   - PR create/update/merge
@@ -98,6 +99,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 
 - Added a rule to avoid `gh` calls inside Python heredocs, which can trigger approval prompts.
 - Clarified that repo ID should come from `docs/reference/project-profile.md` when available.
+- Noted that explicit workflow invocations (feature finish/review) count as authorization after guard checks.
 
 ## Related docs
 

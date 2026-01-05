@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -43,6 +43,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - Warn the user and get explicit confirmation before any high-risk action (history rewrites, force pushes, repo settings changes, mass deletions, destructive resets, data purges).
 - Before switching branches or starting the feature, confirm the working tree is clean or ask the user how to handle existing changes.
 - Confirm repo ID + name, `cwd`, and `git remote -v` before any mutating action (push/merge/issue edits).
+- If the user invokes `feature finish` or `feature review`, treat that as authorization for standard push/PR/merge steps unless a mismatch or high-risk action is detected.
 
 ## Branch Protection (One-Time Setup)
 
@@ -99,7 +100,7 @@ Use this once per repo to keep `main` safe without blocking work.
    - Run required usage scenarios when behavior affects end-to-end flows (see `docs/testing/usage-scenario-tests.md`) and record the scenario IDs.
    - Record validation/UAT sign-off (self-review OK for solo maintainer).
    - Confirm automated coverage was added/updated for any new behavior; list the relevant specs in the PR Review Evidence.
-   - Restate repo ID + name, `cwd`, `git remote -v`, and target issue/PR before push/PR/merge.
+   - Restate repo ID + name, `cwd`, `git remote -v`, and target issue/PR before push/PR/merge; if values match, proceed without an extra confirmation.
    - Push the feature branch now (only after all child issues are complete).
    - Open a PR linked to the parent issue.
    - Run `feature review` to perform the review + merge flow (or use `pr review` and `pr merge` manually).
@@ -173,6 +174,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Documented required status checks (unit-tests, pr-body-validation) and staged rollout guidance.
 - Folded `feature-all` into the `feature` prompt and clarified the state-aware flow.
 - Added a docs-impact gate to ensure documentation updates are completed or tracked with a doc child issue.
+- Clarified that feature finish/review invocation authorizes standard push/PR/merge steps after guard checks.
 
 ## Related docs
 
