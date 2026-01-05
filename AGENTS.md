@@ -5,7 +5,7 @@ Follow them alongside system and developer instructions.
 
 - **Status**: Stable
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-04
+- **Last updated**: 2026-01-05
 - **Type**: Reference
 - **Scope**: agent behavior and repo-specific standards
 - **Non-goals**: replace system/developer instructions or code-level standards
@@ -60,6 +60,7 @@ Canonical workflows:
 ## Safety for high-risk actions
 
 - If a task requires a high-risk or potentially irreversible change, **warn the user and get explicit confirmation before proceeding**.
+- If the user explicitly invokes a workflow action that implies mutation (for example `feature finish`, `feature review`, `pr merge`), proceed after guard checks without extra confirmation unless a mismatch or high-risk action is detected.
 - High-risk actions include:
   - History rewrites (for example `git filter-repo`, BFG, rebasing shared branches).
   - Force pushes or destructive branch/tag deletes (including mass branch cleanup).
@@ -104,3 +105,4 @@ Canonical workflows:
 - Added a docs-impact gate so documentation updates are completed or tracked with a doc child issue.
 - Added a change-impact summary gate to capture impacted flows, files, automation, and TP-xx packs before coding.
 - Added explicit merge cleanup steps (delete local branch, prune refs) in merge workflows/prompts.
+- Clarified that explicit workflow invocations authorize standard mutations after guard checks.

@@ -90,6 +90,7 @@ Review Evidence
 - Use one command per tool call; avoid multi-command `zsh -lc` strings.
 - Separate `gh` calls from `python3` heredocs (use files or scripts).
 - Treat destructive actions as high risk; warn and request explicit confirmation.
+- Prefer to proceed without extra confirmations for standard workflow steps once guard checks match; ask only for mismatches, ambiguity, or high-risk actions.
 
 ## Documentation discipline
 

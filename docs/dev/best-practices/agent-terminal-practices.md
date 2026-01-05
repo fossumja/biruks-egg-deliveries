@@ -34,6 +34,7 @@ When running 2–5 Codex instances across multiple clones, use a consistent, low
   - Current branch
   - Target issue/PR number (if applicable)
 - If the user explicitly invoked a workflow action that implies mutation (for example `feature finish`, `feature review`, `pr merge`), treat that as authorization and proceed after the guard unless there is a mismatch or a high-risk action.
+- Prefer not to ask for extra confirmations on standard workflow steps when guard values match; ask only for mismatches, ambiguity, or high-risk actions.
 - Mutating actions include:
   - Issue create/edit/close, label or project edits
   - PR create/update/merge
@@ -100,6 +101,7 @@ When confirmation is needed, summarize the impact and offer a safer alternative 
 - Added a rule to avoid `gh` calls inside Python heredocs, which can trigger approval prompts.
 - Clarified that repo ID should come from `docs/reference/project-profile.md` when available.
 - Noted that explicit workflow invocations (feature finish/review) count as authorization after guard checks.
+- Clarified that extra confirmations should be avoided when guard values match and no high-risk action is involved.
 
 ## Related docs
 
