@@ -49,6 +49,7 @@ Use this file to find the right doc quickly, confirm ownership, and spot duplica
 | Path | Purpose | Owner |
 | --- | --- | --- |
 | `docs/dev/workflows/development.md` | Daily development flow and branch hygiene. | repo maintainers |
+| `docs/dev/workflows/bootstrap.md` | Bootstrap a new repo with the agent pack. | repo maintainers |
 | `docs/dev/workflows/feature-delivery.md` | Feature delivery from issue breakdown to PR. | repo maintainers |
 | `docs/dev/workflows/docs.md` | Documentation update workflow and prompt usage. | repo maintainers |
 | `docs/dev/workflows/prompts.md` | Prompt catalog and usage guidance. | repo maintainers |

@@ -59,3 +59,4 @@ Use this checklist after copying the portable core:
 - `docs/reference/documentation-inventory.md`
 - `docs/dev/best-practices/agent-terminal-practices.md`
 - `docs/dev/workflows/prompts.md`
+- `docs/dev/workflows/bootstrap.md`

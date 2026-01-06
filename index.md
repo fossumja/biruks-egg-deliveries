@@ -44,7 +44,7 @@ This file describes the folder layout for the entire repo and where new files sh
 - Testing plans: `docs/testing/regression-tests.md`, `docs/testing/usage-scenario-tests.md`
 - Developer standards: `docs/dev/best-practices/angular-standards.md`, `docs/dev/best-practices/typescript-standards.md`, `docs/dev/best-practices/testing-practices.md`, `docs/dev/best-practices/accessibility.md`, `docs/dev/best-practices/documentation-style-guide.md`, `docs/dev/best-practices/agent-interaction-practices.md`
 - Agent terminal practices: `docs/dev/best-practices/agent-terminal-practices.md`
-- Developer workflows: `docs/dev/workflows/development.md`, `docs/dev/workflows/feature-delivery.md`, `docs/dev/workflows/code-review.md`, `docs/dev/workflows/docs.md`, `docs/dev/workflows/prompts.md`, `docs/dev/workflows/quality.md`, `docs/dev/workflows/testing.md`, `docs/dev/workflows/release.md`, `docs/dev/workflows/triage.md`
+- Developer workflows: `docs/dev/workflows/development.md`, `docs/dev/workflows/bootstrap.md`, `docs/dev/workflows/feature-delivery.md`, `docs/dev/workflows/code-review.md`, `docs/dev/workflows/docs.md`, `docs/dev/workflows/prompts.md`, `docs/dev/workflows/quality.md`, `docs/dev/workflows/testing.md`, `docs/dev/workflows/release.md`, `docs/dev/workflows/triage.md`
 - Operations runbooks: `docs/ops/deployment.md`, `docs/ops/backup-restore.md`, `docs/ops/runbook.md`
 - Reference docs: `docs/reference/data-model.md`, `docs/reference/csv-format.md`, `docs/reference/glossary.md`, `docs/reference/agent-pack-portability.md`, `docs/reference/project-profile.md`, `docs/reference/documentation-inventory.md`
 - Documentation inventory: `docs/reference/documentation-inventory.md`
