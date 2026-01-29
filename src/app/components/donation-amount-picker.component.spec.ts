@@ -33,7 +33,7 @@ describe('DonationAmountPickerComponent', () => {
 
   it('blocks save when the amount exceeds the max', () => {
     const saveSpy = spyOn(component.save, 'emit');
-    component.onAmountInputChange('10000');
+    component.onAmountInputChange('100000');
     fixture.detectChanges();
 
     const saveButton = fixture.nativeElement.querySelector(

@@ -1352,11 +1352,11 @@ describe('RoutePlannerComponent', () => {
       donationAmount: 4,
     };
 
-    component.onRunEntryDonationAmountChange('10000');
+    component.onRunEntryDonationAmountChange('100000');
     fixture.detectChanges();
 
     expect(component.runEntryAmountError).toBe(
-      'Donation amount must be between $0 and $9999.'
+      'Donation amount must be between $0 and $99999.'
     );
 
     const saveButton = fixture.nativeElement.querySelector(
