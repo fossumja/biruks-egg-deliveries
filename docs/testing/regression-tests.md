@@ -194,7 +194,7 @@ Scope:
 - Hidden menu donation and delivery flows.
 - Date validation and allowed year range tied to the selected tax year.
 - Donation type selection and amount handling.
-- Donation amount validation (required when Donated, None keeps amount at 0, 0–9999 cap, decimals).
+- Donation amount validation (required when Donated, None keeps amount at 0, 0–99999 cap, decimals).
 - Totals and receipts inclusion.
 - Accessibility and keyboard navigation for one-off dialogs.
 

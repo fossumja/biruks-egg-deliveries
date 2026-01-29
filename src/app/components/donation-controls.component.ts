@@ -48,7 +48,7 @@ export class DonationControlsComponent implements OnInit, OnChanges {
   amountValue = 0;
   qtyLocal = 0;
   private amountTouched = false;
-  private readonly donationAmountMax = 9999;
+  private readonly donationAmountMax = 99999;
 
   ngOnInit(): void {
     this.normalizeLegacyDonation();
@@ -118,7 +118,12 @@ export class DonationControlsComponent implements OnInit, OnChanges {
       return;
     }
     this.donationMethodChange.emit(method);
-    if (!this.amountTouched || this.amountValue === 0) {
+    const existingAmount = this.donation?.amount;
+    const hasCustomAmount =
+      existingAmount != null &&
+      Number(existingAmount) > 0 &&
+      existingAmount !== nextSuggested;
+    if (!this.amountTouched && !hasCustomAmount) {
       this.amountValue = nextSuggested;
       this.amountTouched = false;
       this.amountChange.emit(nextSuggested);

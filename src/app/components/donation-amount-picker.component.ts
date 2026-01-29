@@ -17,7 +17,7 @@ export class DonationAmountPickerComponent {
 
   readonly amountInput = signal('');
   readonly amountError = signal('');
-  private readonly donationAmountMax = 9999;
+  private readonly donationAmountMax = 99999;
 
   constructor() {
     effect(() => {

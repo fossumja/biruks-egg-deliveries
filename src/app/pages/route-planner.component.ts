@@ -78,7 +78,7 @@ export class RoutePlannerComponent {
   oneOffDeliveryTypeError = '';
   showAmountPicker = false;
   selectedAmount = 0;
-  private readonly donationAmountMax = 9999;
+  private readonly donationAmountMax = 99999;
   offScheduleStop: Delivery | null = null;
   offDonationDraft: DonationInfo | null = null;
   offDeliveredQty = 0;

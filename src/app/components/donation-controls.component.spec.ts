@@ -101,6 +101,23 @@ describe('DonationControlsComponent', () => {
     expect(amountSpy).toHaveBeenCalledWith(8);
   });
 
+  it('keeps the custom amount when selecting a method after manual entry', () => {
+    component.donation = {
+      status: 'Donated',
+      amount: 25,
+      suggestedAmount: 8,
+    };
+    component.suggestedAmount = 8;
+    fixture.detectChanges();
+
+    const amountSpy = spyOn(component.amountChange, 'emit');
+
+    component.onDonationMethod('cash');
+
+    expect(component.amountValue).toBe(25);
+    expect(amountSpy).not.toHaveBeenCalled();
+  });
+
   it('resets amount to 0 when moving from a custom amount to None', () => {
     component.donation = {
       status: 'Donated',
