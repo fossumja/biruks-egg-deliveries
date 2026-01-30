@@ -5,7 +5,7 @@ Follow them alongside system and developer instructions.
 
 - **Status**: Stable
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-05
+- **Last updated**: 2026-01-29
 - **Type**: Reference
 - **Scope**: agent behavior and repo-specific standards
 - **Non-goals**: replace system/developer instructions or code-level standards
@@ -104,5 +104,6 @@ Canonical workflows:
 - Added a worktree safety check requirement so agents confirm how to handle existing changes before switching tasks.
 - Added a docs-impact gate so documentation updates are completed or tracked with a doc child issue.
 - Added a change-impact summary gate to capture impacted flows, files, automation, and TP-xx packs before coding.
+- Added a release-notes update gate so feature finish and release flows keep in-app notes current.
 - Added explicit merge cleanup steps (delete local branch, prune refs) in merge workflows/prompts.
 - Clarified that explicit workflow invocations authorize standard mutations after guard checks.

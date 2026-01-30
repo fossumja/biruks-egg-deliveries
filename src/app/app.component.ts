@@ -1,5 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SwUpdate, VersionEvent } from '@angular/service-worker';
+import { Subscription } from 'rxjs';
 import { AppHeaderComponent } from './components/app-header.component';
 import { ToastComponent } from './components/toast.component';
 
@@ -18,6 +20,8 @@ const HOVER_PREF_KEY = 'noHoverEffects';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, OnDestroy {
+  private swUpdate = inject(SwUpdate, { optional: true });
+  private updateSub?: Subscription;
   private blurHandler = (event: Event): void => {
     const target = event.target as HTMLElement | null;
     if (!target) return;
@@ -34,6 +38,9 @@ export class AppComponent implements OnInit, OnDestroy {
   get runLink(): string[] {
     return getCurrentRouteLink(['/run']);
   }
+
+  readonly updateAvailable = signal(false);
+  readonly updateInProgress = signal(false);
 
   ngOnInit(): void {
     const stored = localStorage.getItem('darkModeEnabled');
@@ -54,11 +61,30 @@ export class AppComponent implements OnInit, OnDestroy {
     this.applyHoverPref(prefersNoHover);
 
     this.lockOrientation();
+    this.setupUpdatePrompt();
     document.addEventListener('pointerup', this.blurHandler, { passive: true });
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('pointerup', this.blurHandler);
+    this.updateSub?.unsubscribe();
+  }
+
+  dismissUpdatePrompt(): void {
+    this.updateAvailable.set(false);
+  }
+
+  async reloadForUpdate(): Promise<void> {
+    if (this.updateInProgress()) return;
+    this.updateInProgress.set(true);
+    if (this.swUpdate?.isEnabled) {
+      try {
+        await this.swUpdate.activateUpdate();
+      } catch (err) {
+        console.warn('Service worker update activation failed', err);
+      }
+    }
+    this.performReload();
   }
 
   private applyTheme(enabled: boolean): void {
@@ -88,5 +114,18 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch {
       // Ignore if not supported.
     }
+  }
+
+  private performReload(): void {
+    window.location.reload();
+  }
+
+  private setupUpdatePrompt(): void {
+    if (!this.swUpdate?.isEnabled) return;
+    this.updateSub = this.swUpdate.versionUpdates.subscribe((event: VersionEvent) => {
+      if (event.type === 'VERSION_READY') {
+        this.updateAvailable.set(true);
+      }
+    });
   }
 }

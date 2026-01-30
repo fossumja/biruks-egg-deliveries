@@ -4,7 +4,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-05
+- **Last updated**: 2026-01-30
 - **Type**: How-to
 - **Scope**: feature delivery from issue breakdown to PR
 - **Non-goals**: issue creation/triage, release and deployment
@@ -35,6 +35,7 @@ Use this workflow to deliver a feature tracked by a parent issue and child issue
 - If child issues are missing, use `/issues action=breakdown` to create them.
 - Use the docs prompt and documentation style guide when updating docs.
 - If docs are required but deferred, create a doc child issue and link it in the parent issue's **Docs impact** section.
+- Update `public/release-notes.json` for user-visible changes before `feature finish`.
 - Run quality checks per `docs/dev/workflows/quality.md` before opening a PR.
 - If tests are known failing, skip them only with an explicit PR note and a follow-up issue.
 - Confirm branch protection and rulesets for `main` before merging so required checks match available CI.
@@ -96,6 +97,8 @@ Use this once per repo to keep `main` safe without blocking work.
    - Use `/branch action=sync` as needed.
 6. Finish the feature:
    - Run `/feature action=finish` or `feature finish`.
+   - Update `public/release-notes.json` with a user-friendly summary of the change.
+   - Refresh build info for the Home footer: run `npm run build` (or `node scripts/write-build-info.js`), confirm the timestamp updates after a reload, then restore `public/build-info.json` before committing.
    - Run the required regression packs (per `docs/testing/regression-tests.md`) and record TP-xx IDs; update regression docs if new behavior was added.
    - Run required usage scenarios when behavior affects end-to-end flows (see `docs/testing/usage-scenario-tests.md`) and record the scenario IDs.
    - Record validation/UAT sign-off (self-review OK for solo maintainer).
@@ -135,6 +138,7 @@ Use this once per repo to keep `main` safe without blocking work.
 - Testing status is documented when checks are skipped.
 - Backup/restore verification is documented when data flows change (or a waiver is recorded).
 - Documentation index/inventory updates are included when docs change.
+- Release notes updated for user-visible changes.
 - Testing workflow used for behavior changes, with pack IDs recorded.
 - Regression pack updates were considered for behavior changes, and TP-xx IDs were recorded before the PR.
 - Code review results are documented in the PR.
@@ -175,6 +179,8 @@ Use this once per repo to keep `main` safe without blocking work.
 - Folded `feature-all` into the `feature` prompt and clarified the state-aware flow.
 - Added a docs-impact gate to ensure documentation updates are completed or tracked with a doc child issue.
 - Clarified that feature finish/review invocation authorizes standard push/PR/merge steps after guard checks.
+- Added a release-notes update gate so user-facing changes are reflected in-app.
+- Added a build-info refresh step so the Home footer timestamp updates on feature finish while keeping the repo file clean.
 
 ## Related docs
 

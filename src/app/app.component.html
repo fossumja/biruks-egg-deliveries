@@ -6,5 +6,32 @@
       <router-outlet></router-outlet>
     </main>
   </div>
+  @if (updateAvailable()) {
+    <div class="update-banner card" role="status" aria-live="polite">
+      <div>
+        <div class="update-title">Update available</div>
+        <div class="text-muted update-subtitle">
+          Reload to get the latest version.
+        </div>
+      </div>
+      <div class="update-actions">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="reloadForUpdate()"
+          [disabled]="updateInProgress()"
+        >
+          Reload
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="dismissUpdatePrompt()"
+        >
+          Later
+        </button>
+      </div>
+    </div>
+  }
   <app-toast />
 </div>

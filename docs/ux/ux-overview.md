@@ -4,7 +4,7 @@ Inventory of current screens, shared UI components, and styling touchpoints to k
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-29
+- **Last updated**: 2026-01-30
 - **Type**: Reference
 - **Scope**: UI surfaces, shared components, and styling references
 - **Non-goals**: detailed visual specs (see style guide)
@@ -20,7 +20,7 @@ This document captures the current UI so we can keep the experience consistent w
   - Import CSV, backup CSV, and restore CSV (restore prompts for backup first).
   - Tax year selector with a multi-year warning for export accuracy.
   - “Suggested donation per dozen” setting.
-  - “Keep screen awake” and dark‑mode toggles.
+  - Dark mode toggle; Keep screen awake is temporarily hidden while iPhone wake lock support is unreliable.
   - Help overlay with the in-app guide.
   - Build info / last updated footer.
 
@@ -51,6 +51,8 @@ This document captures the current UI so we can keep the experience consistent w
 - **Services**
   - `StorageService` (Dexie‑backed local DB, suggested rate, wake lock state, etc.).
   - `BackupService` (CSV import/export, route/donation totals).
+- **App shell**
+  - Update available prompt appears near the bottom when a new service worker version is ready.
 - **Components**
   - `AppHeaderComponent` (logo, progress bar, and Home/Planner/Run navigation).
   - `DonationAmountPickerComponent` (shared amount selector used on Run and Planner).

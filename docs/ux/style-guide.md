@@ -4,7 +4,7 @@ This style guide defines an iOS-inspired visual system for the Biruk's Egg Deliv
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-02
+- **Last updated**: 2026-01-30
 - **Type**: Reference
 - **Scope**: visual system, UI components, and interaction patterns
 - **Non-goals**: implementation details for specific Angular components
@@ -523,8 +523,10 @@ If you use Tailwind, map these tokens into the theme so the same values power ut
 - **Layout**:
   - Card with import/backup/restore actions and timestamps.
   - Tax year selector card with multi-year warning when needed.
-  - Settings cards for dark mode, wake lock, suggested donation, and help.
+  - Settings cards for dark mode, suggested donation, and help.
+  - Keep screen awake is temporarily hidden while iPhone wake lock support is unreliable.
   - Build info card at the bottom.
+  - Update available prompt appears near the bottom when a new service worker version is ready.
 
 Example markup:
 

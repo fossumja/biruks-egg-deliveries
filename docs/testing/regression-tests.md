@@ -4,7 +4,7 @@ This plan defines modular regression packs for the entire app so testing is reli
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-30
+- **Last updated**: 2026-01-30
 - **Type**: How-to
 - **Scope**: end-to-end regression coverage across all app features
 - **Non-goals**: performance/load testing, backend API testing
@@ -356,11 +356,12 @@ Device matrix (minimum regression target):
 Notes:
 
 - Update these minimums when support policy changes or the device fleet shifts.
-- Wake lock is expected to be unsupported on iOS; confirm the fallback message.
+- The Keep screen awake toggle is currently hidden on Home while iOS wake lock support is unreliable.
 
 Manual checks:
 
-- Wake lock: toggle on/off and confirm the UI state and localStorage value update.
+- Wake lock: UI is currently hidden; validate toggle behavior via automated tests until re-enabled.
+- Service worker update: confirm the Update available prompt appears and Reload refreshes to the latest build.
 - Share/download: run Backup CSV and confirm the share sheet or download fallback.
 - Restore: follow the two-step backup-then-restore flow; confirm routes and history reload.
 - Maps: open a stop and confirm the deep link opens a maps app.

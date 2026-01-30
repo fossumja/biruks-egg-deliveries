@@ -4,6 +4,7 @@ import { HomeComponent } from './home.component';
 import { StorageService } from '../services/storage.service';
 import { BackupService } from '../services/backup.service';
 import { BuildInfoService } from '../services/build-info.service';
+import { ReleaseNotesService } from '../services/release-notes.service';
 import { ToastService } from '../services/toast.service';
 import { normalizeEventDate } from '../utils/date-utils';
 import { Delivery } from '../models/delivery.model';
@@ -139,6 +140,45 @@ class BuildInfoServiceStub {
   }
 }
 
+class ReleaseNotesServiceStub {
+  notes = [
+    {
+      version: 'v2025.11.0',
+      date: '2025-11-15',
+      summary: 'Older release.'
+    },
+    {
+      version: 'v2026.1.1',
+      date: '2026-01-29',
+      summary: 'Newer release.'
+    },
+    {
+      version: 'v2025.12.0',
+      date: '2025-12-30',
+      summary: 'Older release.'
+    },
+    {
+      version: 'v2026.1.2',
+      date: '2026-01-29',
+      summary: 'Newest release.'
+    },
+    {
+      version: 'v2026.1.0',
+      date: '2026-01-03',
+      summary: 'January release.'
+    },
+    {
+      version: 'v2025.10.0',
+      date: '2025-10-01',
+      summary: 'Oldest release.'
+    }
+  ];
+
+  async load() {
+    return this.notes;
+  }
+}
+
 class ToastServiceStub {
   messages: string[] = [];
 
@@ -155,7 +195,10 @@ describe('HomeComponent restore', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeComponent, RouterTestingModule]
+      imports: [HomeComponent, RouterTestingModule],
+      providers: [
+        { provide: ReleaseNotesService, useClass: ReleaseNotesServiceStub }
+      ]
     })
     .compileComponents();
 
@@ -458,6 +501,7 @@ describe('HomeComponent core actions', () => {
         { provide: StorageService, useClass: StorageServiceStub },
         { provide: BackupService, useClass: BackupServiceStub },
         { provide: BuildInfoService, useClass: BuildInfoServiceStub },
+        { provide: ReleaseNotesService, useClass: ReleaseNotesServiceStub },
         { provide: ToastService, useClass: ToastServiceStub }
       ]
     })
@@ -639,6 +683,12 @@ describe('HomeComponent core actions', () => {
     expect(localStorage.getItem('keepScreenAwake')).toBe('false');
   });
 
+  it('hides the keep screen awake setting when the option is disabled', () => {
+    const content = fixture.nativeElement as HTMLElement;
+
+    expect(content.textContent).not.toContain('Keep screen awake');
+  });
+
   it('toggles the help overlay', () => {
     component.showHelp = false;
     component.toggleHelp();
@@ -647,6 +697,43 @@ describe('HomeComponent core actions', () => {
     const overlay = fixture.nativeElement.querySelector('.help-overlay');
     expect(component.showHelp).toBeTrue();
     expect(overlay).toBeTruthy();
+  });
+
+  it('orders release notes newest first', () => {
+    expect(component.visibleReleaseNotes()[0]?.version).toBe('v2026.1.2');
+  });
+
+  it('limits release notes to the most recent five entries', () => {
+    const visible = component.visibleReleaseNotes();
+    expect(visible.length).toBe(5);
+    expect(visible[4]?.version).toBe('v2025.11.0');
+  });
+
+  it('toggles the release info overlay', () => {
+    component.showReleaseInfo.set(false);
+    component.toggleReleaseInfo();
+    fixture.detectChanges();
+
+    const overlay = fixture.nativeElement.querySelector('.release-overlay');
+    expect(component.showReleaseInfo()).toBeTrue();
+    expect(overlay).toBeTruthy();
+  });
+
+  it('shows a fallback message when release notes are unavailable', async () => {
+    const releaseService = TestBed.inject(
+      ReleaseNotesService
+    ) as unknown as ReleaseNotesServiceStub;
+    releaseService.notes = null as unknown as ReleaseNotesServiceStub['notes'];
+
+    await (component as any).loadReleaseNotes();
+    component.showReleaseInfo.set(true);
+    fixture.detectChanges();
+
+    const message = fixture.nativeElement.querySelector(
+      '.release-overlay .text-muted'
+    ) as HTMLElement;
+
+    expect(message.textContent).toContain('Release notes are unavailable');
   });
 
   it('shows the multi-year warning when data spans years', async () => {
