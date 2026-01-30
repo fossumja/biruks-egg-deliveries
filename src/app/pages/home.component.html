@@ -95,7 +95,8 @@
     <button
       type="button"
       class="btn"
-      [ngClass]="darkModeEnabled ? 'btn-primary' : 'btn-secondary'"
+      [class.btn-primary]="darkModeEnabled"
+      [class.btn-secondary]="!darkModeEnabled"
       (click)="toggleDarkMode()"
       title="Dark mode"
     >
@@ -104,29 +105,34 @@
   </div>
 </section>
 
-<section class="card settings-card">
-  <div class="settings-row">
-    <div>
-      <div class="settings-title">Keep screen awake</div>
-      <div class="text-muted settings-subtitle">
-        Prevents the display from sleeping while you use the app.
+@if (showWakeLockOption()) {
+  <section class="card settings-card">
+    <div class="settings-row">
+      <div>
+        <div class="settings-title">Keep screen awake</div>
+        <div class="text-muted settings-subtitle">
+          Prevents the display from sleeping while you use the app.
+        </div>
       </div>
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="wakeLockActive"
+        [class.btn-secondary]="!wakeLockActive"
+        (click)="toggleWakeLock()"
+        [disabled]="!wakeLockSupported"
+        title="Keep the screen awake while using the app"
+      >
+        {{ wakeLockActive ? "On" : "Off" }}
+      </button>
     </div>
-    <button
-      type="button"
-      class="btn"
-      [ngClass]="wakeLockActive ? 'btn-primary' : 'btn-secondary'"
-      (click)="toggleWakeLock()"
-      [disabled]="!wakeLockSupported"
-      title="Keep the screen awake while using the app"
-    >
-      {{ wakeLockActive ? "On" : "Off" }}
-    </button>
-  </div>
-  <div class="text-muted" *ngIf="!wakeLockSupported">
-    Screen wake lock is not supported on this device/browser.
-  </div>
-</section>
+    @if (!wakeLockSupported) {
+      <div class="text-muted">
+        Screen wake lock is not supported on this device/browser.
+      </div>
+    }
+  </section>
+}
 
 <section class="card settings-card">
   <div class="settings-row">
@@ -157,10 +163,29 @@
     <button
       type="button"
       class="btn"
-      [ngClass]="showHelp ? 'btn-primary' : 'btn-secondary'"
+      [class.btn-primary]="showHelp"
+      [class.btn-secondary]="!showHelp"
       (click)="toggleHelp()"
     >
       {{ showHelp ? "Hide" : "Help" }}
+    </button>
+  </div>
+  <div class="settings-row">
+    <div>
+      <div class="settings-title">Release info</div>
+      <div class="text-muted settings-subtitle">
+        See what’s new in the latest updates.
+      </div>
+    </div>
+    <button
+      type="button"
+      class="btn"
+      [class.btn-primary]="showReleaseInfo()"
+      [class.btn-secondary]="!showReleaseInfo()"
+      (click)="toggleReleaseInfo()"
+      aria-label="Release info"
+    >
+      {{ showReleaseInfo() ? "Hide" : "Info" }}
     </button>
   </div>
 </section>
@@ -267,3 +292,48 @@
     </div>
   </div>
 </div>
+
+@if (showReleaseInfo()) {
+  <div class="help-overlay release-overlay">
+    <div class="help-dialog card release-dialog">
+      <h3>Recent updates</h3>
+      <div class="help-content">
+        @if (visibleReleaseNotes().length) {
+          <div class="release-list">
+            @for (note of visibleReleaseNotes(); track note.version) {
+              <div class="release-note">
+                <div class="release-note-header">
+                  <span class="release-note-version">{{ note.version }}</span>
+                  @if (note.date) {
+                    <span class="text-muted release-note-date">
+                      {{ note.date | date : "MMM d, yyyy" : undefined : "en-US" }}
+                    </span>
+                  }
+                </div>
+                <p class="release-note-summary">
+                  {{ note.summary }}
+                </p>
+                @if (note.highlights?.length) {
+                  <ul>
+                    @for (item of note.highlights; track $index) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-muted">
+            {{
+              releaseNotesError() || "Release notes are unavailable right now."
+            }}
+          </p>
+        }
+      </div>
+      <div class="help-actions">
+        <!-- Release info is controlled by the toggle button. -->
+      </div>
+    </div>
+  </div>
+}

@@ -24,6 +24,7 @@ General rules:
 - ALWAYS inspect `git status -sb` and the diff before doing anything.
 - Generate the commit message from the changes (I won’t type it).
 - If I don’t provide a version tag, propose the next `vYYYY.M.P` and ask me to confirm.
+- Require `public/release-notes.json` to be updated for the version being shipped.
 - Ask whether to run tests before shipping.
 - Require full regression packs (TP-01 through TP-11) and usage scenarios before tagging or deploying; if skipping, get explicit confirmation and record a waiver (what was skipped, why, who approved) in release notes or a PR comment.
 - If any command fails, stop and report the error and repo state.
@@ -46,8 +47,11 @@ Supported commands I will say to you:
      - Proposed next tag (`vYYYY.M.P`) with reasoning
      - Draft release notes (Summary / Changes / Notes / Device checklist for TP-11)
      - Regression pack readiness (TP-01 through TP-11 + usage scenarios)
+     - Release notes update status (confirm `public/release-notes.json` is updated)
    - Ask: "Update docs before release? (yes/no)"
      - If yes, pause and invoke the docs workflow (`/docs action=update`) then re-check status.
+   - Ask: "Are release notes updated for this version? (yes/no)"
+     - If no, stop and request an update before shipping.
    - Do NOT run git/build/deploy commands.
 
 2. "ship it" (optionally with a version, e.g. "ship it v2025.12.0")
@@ -59,15 +63,17 @@ Supported commands I will say to you:
    2. If no version was provided:
       - Inspect existing tags to detect `vYYYY.M.P`.
       - Propose the next tag and ask for confirmation.
-   3. Ask: "Run tests before shipping? (yes/no)"
+   3. Ask: "Are release notes updated for this version? (yes/no)"
+      - If no, stop and request an update before shipping.
+   4. Ask: "Run tests before shipping? (yes/no)"
       - If yes, run `npm test` and stop on failures.
-   4. Ask: "Run full regression packs (TP-01 through TP-11) and usage scenarios? (yes/no)"
+   5. Ask: "Run full regression packs (TP-01 through TP-11) and usage scenarios? (yes/no)"
       - If no, stop and request explicit approval to proceed without full regression.
-   5. Stage all changes, commit, tag, and push default branch + tags.
-   6. Build and deploy:
+   6. Stage all changes, commit, tag, and push default branch + tags.
+   7. Build and deploy:
       - Run the build command.
       - If build succeeds, run the deploy command so `gh-pages` reflects this tag.
-   7. Report:
+   8. Report:
       - Commit SHA
       - Tag name
       - Confirmation that GH Pages was deployed from that tag
@@ -78,9 +84,10 @@ Supported commands I will say to you:
    Behavior:
 
    1. Run the same non-mutating release prep as "status".
-   2. Stage all changes and commit with the proposed message.
-   3. Push the default branch.
-   4. Report that GH Pages remains on the previous deployed tag.
+   2. Confirm release notes are updated for this version; stop if missing.
+   3. Stage all changes and commit with the proposed message.
+   4. Push the default branch.
+   5. Report that GH Pages remains on the previous deployed tag.
 
 4. "roll it back"
    Meaning: deploy the previous tag to GH Pages.

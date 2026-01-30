@@ -251,3 +251,33 @@
   gap: var(--spacing-2);
   text-align: left;
 }
+
+.release-list {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.release-note {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-3);
+}
+
+.release-note:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.release-note-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  align-items: baseline;
+}
+
+.release-note-version {
+  font-weight: var(--font-weight-semibold);
+}
+
+.release-note-summary {
+  margin: var(--spacing-1) 0;
+}

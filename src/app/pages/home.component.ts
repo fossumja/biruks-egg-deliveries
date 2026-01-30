@@ -1,5 +1,5 @@
-import { DatePipe, NgClass, NgIf } from '@angular/common';
-import { Component, inject, OnDestroy } from '@angular/core';
+import { DatePipe, NgIf } from '@angular/common';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Papa from 'papaparse';
@@ -15,6 +15,10 @@ import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { Route } from '../models/route.model';
 import { BackupService } from '../services/backup.service';
 import { BuildInfo, BuildInfoService } from '../services/build-info.service';
+import {
+  ReleaseNote,
+  ReleaseNotesService
+} from '../services/release-notes.service';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 import { getEventYear, normalizeEventDate } from '../utils/date-utils';
@@ -22,7 +26,7 @@ import { getEventYear, normalizeEventDate } from '../utils/date-utils';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, NgClass, FormsModule, DatePipe],
+  imports: [NgIf, FormsModule, DatePipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -34,6 +38,7 @@ export class HomeComponent implements OnDestroy {
   private backupService = inject(BackupService);
   private toast = inject(ToastService);
   private buildInfoService = inject(BuildInfoService);
+  private releaseNotesService = inject(ReleaseNotesService);
 
   routes: Route[] = [];
   lastBackupAt?: string;
@@ -44,6 +49,7 @@ export class HomeComponent implements OnDestroy {
   pendingRestoreAfterBackup = false;
   showRestoreHint = false;
   showHelp = false;
+  readonly showReleaseInfo = signal(false);
   errorMessage = '';
   selectedRouteDate: string | null = null;
   selectedRouteSummary?: Route;
@@ -51,11 +57,19 @@ export class HomeComponent implements OnDestroy {
   wakeLockSupported =
     typeof navigator !== 'undefined' && 'wakeLock' in navigator;
   wakeLockActive = false;
+  // Keep screen awake is hidden until iOS wake lock support is reliable.
+  readonly showWakeLockOption = signal(false);
   private wakeLockKey = 'keepScreenAwake';
   suggestedRate = 4;
   private suggestedKey = 'suggestedDonationRate';
   darkModeEnabled = false;
   buildInfo?: BuildInfo | null;
+  readonly releaseNotes = signal<ReleaseNote[]>([]);
+  readonly releaseNotesError = signal('');
+  private readonly releaseNotesLimit = 5;
+  readonly visibleReleaseNotes = computed(() =>
+    this.releaseNotes().slice(0, this.releaseNotesLimit)
+  );
   plannerReorderDefaultEnabled = false;
   taxYearOptions: number[] = [];
   selectedTaxYear = new Date().getFullYear();
@@ -81,6 +95,7 @@ export class HomeComponent implements OnDestroy {
     this.autoselectRoute();
     await this.resumeIfNeeded();
     this.buildInfo = await this.buildInfoService.load();
+    await this.loadReleaseNotes();
 
     if (this.wakeLockSupported) {
       this.visibilityHandler = () => {
@@ -958,6 +973,67 @@ export class HomeComponent implements OnDestroy {
 
   toggleHelp(): void {
     this.showHelp = !this.showHelp;
+    if (this.showHelp) {
+      this.showReleaseInfo.set(false);
+    }
+  }
+
+  toggleReleaseInfo(): void {
+    const next = !this.showReleaseInfo();
+    this.showReleaseInfo.set(next);
+    if (next) {
+      this.showHelp = false;
+    }
+  }
+
+  private async loadReleaseNotes(): Promise<void> {
+    const notes = await this.releaseNotesService.load();
+    if (!notes?.length) {
+      this.releaseNotes.set([]);
+      this.releaseNotesError.set('Release notes are unavailable right now.');
+      return;
+    }
+    const ordered = this.orderReleaseNotes(notes);
+    this.releaseNotes.set(ordered);
+    this.releaseNotesError.set('');
+  }
+
+  private orderReleaseNotes(notes: ReleaseNote[]): ReleaseNote[] {
+    return notes
+      .slice()
+      .sort(
+        (a, b) => {
+          const dateDiff =
+            this.parseReleaseDate(b.date) - this.parseReleaseDate(a.date);
+          if (dateDiff !== 0) return dateDiff;
+          return this.compareReleaseVersions(b.version, a.version);
+        }
+      );
+  }
+
+  private parseReleaseDate(value?: string): number {
+    if (!value) return 0;
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+
+  private compareReleaseVersions(a: string, b: string): number {
+    const aParts = this.parseReleaseVersion(a);
+    const bParts = this.parseReleaseVersion(b);
+    for (let index = 0; index < Math.max(aParts.length, bParts.length); index += 1) {
+      const aValue = aParts[index] ?? 0;
+      const bValue = bParts[index] ?? 0;
+      if (aValue !== bValue) return aValue - bValue;
+    }
+    return 0;
+  }
+
+  private parseReleaseVersion(value: string): number[] {
+    const raw = value?.startsWith('v') ? value.slice(1) : value;
+    return raw
+      .split('.')
+      .map((part) => Number(part))
+      .map((part) => (Number.isFinite(part) ? Math.trunc(part) : 0));
   }
 
   onRestoreClick(input: HTMLInputElement): void {

@@ -4,7 +4,7 @@ How to use the app day‑to‑day: importing routes, planning, running deliverie
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2025-12-26
+- **Last updated**: 2026-01-30
 - **Type**: How-to
 - **Scope**: end‑to‑end app usage for delivery weeks
 - **Non-goals**: developer setup or architectural detail
@@ -67,11 +67,12 @@ The Home page has four main sections:
 
 - **Settings**
   - **Dark mode**: toggle between light and dark themes.
-  - **Keep screen awake**: attempts to keep your screen on while using the app (depending on device support).
+  - **Keep screen awake**: temporarily hidden on iPhone while wake lock support is unreliable; may return later.
   - **Suggested donation/dozen**: the per‑dozen donation amount used when suggesting donation amounts on the Planner and Run pages.
 
 - **Build info**
   - Shows when the app was built and deployed, so you can see if your PWA is up to date.
+  - If an **Update available** prompt appears, tap **Reload** to apply the latest version.
 
 ---
 

@@ -105,8 +105,10 @@ Documentation gates (do not skip):
 
 1. Follow `docs/dev/workflows/feature-delivery.md` (Finish) plus testing + quality workflows.
 2. Verify docs impact is resolved and required regression packs/scenarios are recorded.
-3. Run the multi-repo guard before push/PR/merge, then proceed without an extra confirmation if values match.
-4. Push and open a PR via `.github/prompts/pr.prompt.md`, then review/merge per `docs/dev/workflows/code-review.md` and clean up the branch.
+3. Confirm `public/release-notes.json` is updated for user-visible changes before opening the PR.
+4. Refresh build info for the Home footer (`npm run build` or `node scripts/write-build-info.js`), verify the timestamp updates after reload, and restore `public/build-info.json` before commit.
+5. Run the multi-repo guard before push/PR/merge, then proceed without an extra confirmation if values match.
+6. Push and open a PR via `.github/prompts/pr.prompt.md`, then review/merge per `docs/dev/workflows/code-review.md` and clean up the branch.
 
 ## action=review
 
