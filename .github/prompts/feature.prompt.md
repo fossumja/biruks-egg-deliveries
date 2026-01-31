@@ -16,6 +16,11 @@ You are my feature delivery assistant.
 - Keep issue metadata and parent checklists accurate.
 - Minimize back-and-forth by making reasonable defaults explicit.
 - Use the testing workflow for behavior changes and record TP-xx pack IDs.
+- Use the testing workflow for behavior changes and record TP-xx pack IDs.
+
+## Context
+
+- Read `.planning/state.md` and `.planning/project.md` to align with the active phase and vision.
 
 ## Inputs
 
