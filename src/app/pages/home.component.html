@@ -190,13 +190,21 @@
   </div>
 </section>
 
-<section class="card build-card" *ngIf="buildInfo as info">
-  <div class="text-muted small">
-    Installed build
-    {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
-    <span *ngIf="info.commit"> (commit {{ info.commit.slice(0, 7) }})</span>
-  </div>
-</section>
+@if (buildInfo; as info) {
+  <section class="card build-card">
+    <div class="text-muted small">
+      Installed build
+      {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
+      @if (info.commit) {
+        <span> (commit {{ info.commit.slice(0, 7) }})</span>
+      }
+    </div>
+  </section>
+} @else if (buildInfo === null) {
+  <section class="card build-card">
+    <div class="text-muted small">Build info unavailable.</div>
+  </section>
+}
 
 <div class="help-overlay" *ngIf="showHelp">
   <div class="help-dialog card">
