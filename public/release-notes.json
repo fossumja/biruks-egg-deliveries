@@ -1,5 +1,15 @@
 [
   {
+    "version": "v2026.1.3",
+    "date": "2026-01-31",
+    "summary": "Build info now reflects the installed version and checks for updates when you return.",
+    "highlights": [
+      "Home footer now labels the installed build time.",
+      "The app checks for updates on launch and when it becomes active.",
+      "If an update is ready, use the prompt to reload to the newest build."
+    ]
+  },
+  {
     "version": "v2026.1.2",
     "date": "2026-01-29",
     "summary": "Home now includes a Release Info button with recent updates.",
