@@ -204,6 +204,10 @@ describe('HomeComponent restore', () => {
 
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
+    // Prevent sample data from loading and polluting the test DB.
+    spyOn(component as any, 'importSampleDataIfAvailable').and.returnValue(
+      Promise.resolve()
+    );
     storage = TestBed.inject(StorageService);
     backup = TestBed.inject(BackupService);
     await storage.clearAll();
