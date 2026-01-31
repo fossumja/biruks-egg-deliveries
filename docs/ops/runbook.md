@@ -4,7 +4,7 @@ Operational checks and troubleshooting steps for day-to-day app usage.
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-30
+- **Last updated**: 2026-01-31
 - **Type**: How-to
 - **Scope**: operational health checks and common issues
 - **Non-goals**: deep debugging or code-level fixes
@@ -39,8 +39,10 @@ Operational checks and troubleshooting steps for day-to-day app usage.
 
 1. Check build info on Home.
    - Build info is generated during the build/deploy step from `public/build-info.json`.
+   - The footer shows the **installed build** (what is currently running on the device).
 2. If an **Update available** prompt appears, tap **Reload** to refresh to the latest build.
-3. Reload the PWA or reinstall if the build info is stale.
+3. If no prompt appears after a new deploy, fully close and reopen the PWA to force an update check.
+4. Reload the PWA or reinstall if the build info remains stale.
 
 ## Rollback
 
