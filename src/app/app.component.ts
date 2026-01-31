@@ -22,6 +22,8 @@ const HOVER_PREF_KEY = 'noHoverEffects';
 export class AppComponent implements OnInit, OnDestroy {
   private swUpdate = inject(SwUpdate, { optional: true });
   private updateSub?: Subscription;
+  private updateCheckInFlight = false;
+  private visibilityHandler?: () => void;
   private blurHandler = (event: Event): void => {
     const target = event.target as HTMLElement | null;
     if (!target) return;
@@ -62,11 +64,23 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.lockOrientation();
     this.setupUpdatePrompt();
+    void this.requestUpdateCheck();
+    if (typeof document !== 'undefined' && this.swUpdate?.isEnabled) {
+      this.visibilityHandler = (): void => {
+        if (document.visibilityState === 'visible') {
+          void this.requestUpdateCheck();
+        }
+      };
+      document.addEventListener('visibilitychange', this.visibilityHandler, { passive: true });
+    }
     document.addEventListener('pointerup', this.blurHandler, { passive: true });
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('pointerup', this.blurHandler);
+    if (this.visibilityHandler && typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
+    }
     this.updateSub?.unsubscribe();
   }
 
@@ -118,6 +132,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private performReload(): void {
     window.location.reload();
+  }
+
+  private async requestUpdateCheck(): Promise<void> {
+    const swUpdate = this.swUpdate;
+    if (!swUpdate?.isEnabled) return;
+    if (this.updateCheckInFlight) return;
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+    this.updateCheckInFlight = true;
+    try {
+      await swUpdate.checkForUpdate();
+    } catch (err) {
+      console.warn('Service worker update check failed', err);
+    } finally {
+      this.updateCheckInFlight = false;
+    }
   }
 
   private setupUpdatePrompt(): void {
