@@ -11,6 +11,14 @@ Follow them alongside system and developer instructions.
 - **Non-goals**: replace system/developer instructions or code-level standards
 - **Applies to**: all files in this repository
 
+
+## Antigravity Compatibility
+
+- This repository supports hybrid development with VS Code/Codex and Antigravity.
+- Slash commands (e.g., `/feature`, `/issue`) map to wrappers in `.agent/workflows/`.
+- These wrappers reference the canonical prompts in `.github/prompts/`.
+- See `.agent/workflows/codex_compatibility.md` for details.
+
 ## Canonical coding standards
 
 - The canonical Angular / TypeScript / accessibility standards for this repo live in:
@@ -33,6 +41,17 @@ Canonical workflows:
 - `docs/dev/workflows/development.md`
 - `docs/dev/workflows/testing.md`
 - `docs/dev/workflows/code-review.md`
+
+
+## Codex Agent Rules (GSD planning)
+
+- Planning artifacts live in `.planning/` and are the authoritative sources for vision, roadmap, phase plans, verification checklists, and project state.
+- Before implementing scoped work, read `.planning/project.md`, `.planning/roadmap.md`, `.planning/state.md`, and the active phase plan.
+- Do not implement work outside the active phase scope; update the phase plan or roadmap first if scope changes.
+- If a change affects behavior or scope, update the active phase plan before making code changes.
+- Update docs and tests alongside code changes, or open a doc/test child issue and record the deferral.
+- Run the phase verification checklist before declaring done; if you cannot run a check, provide the exact command and the reason it is blocked.
+- Prefer small, scoped commits with clear messages (use `.github/prompts/commit.prompt.md` for Conventional Commits).
 
 ## Prompt and workflow helpers
 

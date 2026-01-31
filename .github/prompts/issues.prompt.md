@@ -172,8 +172,13 @@ Stop conditions (always stop and ask):
 - Implementation choices affect UX/styling or core calculations.
 - A high-risk action is required (history rewrite, ruleset change, data purge).
 - The issue needs user-provided artifacts (designs, CSV samples, logs).
+- Produce clean, actionable issue bodies that require minimal human edit.
 
-## Output
+## Context
+
+- Read `.planning/roadmap.md` and `.planning/state.md` to align new issues with the plan.
+
+## Inputsput
 
 Return:
 
