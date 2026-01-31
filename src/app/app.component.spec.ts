@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 class SwUpdateStub {
   isEnabled = true;
   versionUpdates = new Subject<VersionReadyEvent>();
+  checkForUpdate = jasmine.createSpy().and.resolveTo(false);
   activateUpdate = jasmine.createSpy().and.resolveTo();
 }
 
@@ -41,6 +42,42 @@ describe('AppComponent', () => {
 
     const banner = fixture.nativeElement.querySelector('.update-banner');
     expect(banner).toBeTruthy();
+  });
+
+  it('checks for updates on init and when the tab becomes visible', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const swUpdate = TestBed.inject(SwUpdate) as unknown as SwUpdateStub;
+    fixture.detectChanges();
+
+    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
+    const initialPromise = swUpdate.checkForUpdate.calls.mostRecent()
+      .returnValue as Promise<boolean>;
+    await initialPromise;
+
+    const originalDescriptor = Object.getOwnPropertyDescriptor(document, 'visibilityState');
+    let visibilityState = 'hidden';
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => visibilityState
+    });
+
+    try {
+      document.dispatchEvent(new Event('visibilitychange'));
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
+
+      visibilityState = 'visible';
+      document.dispatchEvent(new Event('visibilitychange'));
+      const visibilityPromise = swUpdate.checkForUpdate.calls.mostRecent()
+        .returnValue as Promise<boolean>;
+      await visibilityPromise;
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(2);
+    } finally {
+      if (originalDescriptor) {
+        Object.defineProperty(document, 'visibilityState', originalDescriptor);
+      } else {
+        delete (document as { visibilityState?: string }).visibilityState;
+      }
+    }
   });
 
   it('reloads when the update prompt action runs', async () => {

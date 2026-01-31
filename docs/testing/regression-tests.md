@@ -4,7 +4,7 @@ This plan defines modular regression packs for the entire app so testing is reli
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-30
+- **Last updated**: 2026-01-31
 - **Type**: How-to
 - **Scope**: end-to-end regression coverage across all app features
 - **Non-goals**: performance/load testing, backend API testing
@@ -362,6 +362,7 @@ Manual checks:
 
 - Wake lock: UI is currently hidden; validate toggle behavior via automated tests until re-enabled.
 - Service worker update: confirm the Update available prompt appears and Reload refreshes to the latest build.
+- Build info: confirm the Home footer shows the installed build time after the reload.
 - Share/download: run Backup CSV and confirm the share sheet or download fallback.
 - Restore: follow the two-step backup-then-restore flow; confirm routes and history reload.
 - Maps: open a stop and confirm the deep link opens a maps app.
@@ -369,7 +370,7 @@ Manual checks:
 - Gestures: swipe to reveal the Planner hidden menu; drag reorder works only when enabled.
 - PWA assets: app icon and splash screen assets render correctly.
 - Offline cache: load the app, go offline, refresh, and confirm the app shell and core screens load.
-- Service worker update: after a new deploy, reload and confirm the app updates to the latest build (prompt or refresh flow).
+- Service worker update: after a new deploy, reopen the app and confirm the update prompt appears, then reload.
 
 ## Change-impact map
 

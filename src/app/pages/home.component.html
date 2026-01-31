@@ -192,7 +192,7 @@
 
 <section class="card build-card" *ngIf="buildInfo as info">
   <div class="text-muted small">
-    Application updated
+    Installed build
     {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
     <span *ngIf="info.commit"> (commit {{ info.commit.slice(0, 7) }})</span>
   </div>

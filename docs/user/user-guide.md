@@ -4,7 +4,7 @@ How to use the app day‑to‑day: importing routes, planning, running deliverie
 
 - **Status**: Draft
 - **Owner**: repo maintainers
-- **Last updated**: 2026-01-30
+- **Last updated**: 2026-01-31
 - **Type**: How-to
 - **Scope**: end‑to‑end app usage for delivery weeks
 - **Non-goals**: developer setup or architectural detail
@@ -71,8 +71,9 @@ The Home page has four main sections:
   - **Suggested donation/dozen**: the per‑dozen donation amount used when suggesting donation amounts on the Planner and Run pages.
 
 - **Build info**
-  - Shows when the app was built and deployed, so you can see if your PWA is up to date.
-  - If an **Update available** prompt appears, tap **Reload** to apply the latest version.
+  - Shows the **installed build** time (what is currently running on your device).
+  - The app checks for updates when it opens and when you return to it.
+  - If an **Update available** prompt appears, tap **Reload** to install the latest version and update the build time.
 
 ---
 
