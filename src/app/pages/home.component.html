@@ -190,21 +190,7 @@
   </div>
 </section>
 
-@if (buildInfo; as info) {
-  <section class="card build-card">
-    <div class="text-muted small">
-      Installed build
-      {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
-      @if (info.commit) {
-        <span> (commit {{ info.commit.slice(0, 7) }})</span>
-      }
-    </div>
-  </section>
-} @else if (buildInfo === null) {
-  <section class="card build-card">
-    <div class="text-muted small">Build info unavailable.</div>
-  </section>
-}
+
 
 <div class="help-overlay" *ngIf="showHelp">
   <div class="help-dialog card">
@@ -339,6 +325,19 @@
           </p>
         }
       </div>
+      @if (buildInfo; as info) {
+        <div class="build-info-footer text-muted small" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
+          Installed build:
+          {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
+          @if (info.commit) {
+            <span> (commit {{ info.commit.slice(0, 7) }})</span>
+          }
+        </div>
+      } @if (buildInfo === null) {
+        <div class="build-info-footer text-muted small" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
+          Build info unavailable.
+        </div>
+      }
       <div class="help-actions">
         <!-- Release info is controlled by the toggle button. -->
       </div>

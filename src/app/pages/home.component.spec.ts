@@ -224,10 +224,11 @@ describe('HomeComponent restore', () => {
   it('shows a fallback message when build info is unavailable', async () => {
     component.ngOnInit = async () => {};
     component.buildInfo = null;
+    component.showReleaseInfo.set(true);
     fixture.detectChanges();
 
-    const card = fixture.nativeElement.querySelector('.build-card');
-    expect(card?.textContent).toContain('Build info unavailable.');
+    const footer = fixture.nativeElement.querySelector('.build-info-footer');
+    expect(footer?.textContent).toContain('Build info unavailable.');
   });
 
   it('restores one-off rows with normalized EventDate values', async () => {
