@@ -674,13 +674,11 @@ export class HomeComponent implements OnDestroy {
 
       // Attach one-off donations.
       oneOffDonationRows.forEach((row) => {
-        const baseRowId = (
-          row['BaseRowId'] ||
-          row['baseRowId'] ||
-          row['BaseRowID'] ||
-          row['RunBaseRowId'] ||
-          ''
-        ).trim();
+        const baseRowId = this.safeGet(row, [
+          'BaseRowId',
+          'baseRowId',
+          'RunBaseRowId',
+        ]).trim();
         if (!baseRowId) return;
         const targets = byBaseId.get(baseRowId);
         if (!targets || !targets.length) return;
@@ -736,13 +734,11 @@ export class HomeComponent implements OnDestroy {
 
       // Attach one-off deliveries.
       oneOffDeliveryRows.forEach((row) => {
-        const baseRowId = (
-          row['BaseRowId'] ||
-          row['baseRowId'] ||
-          row['BaseRowID'] ||
-          row['RunBaseRowId'] ||
-          ''
-        ).trim();
+        const baseRowId = this.safeGet(row, [
+          'BaseRowId',
+          'baseRowId',
+          'RunBaseRowId',
+        ]).trim();
         if (!baseRowId) return;
         const targets = byBaseId.get(baseRowId);
         if (!targets || !targets.length) return;
@@ -1157,5 +1153,17 @@ export class HomeComponent implements OnDestroy {
     } else {
       this.currentRoute = currentRoute;
     }
+  }
+
+  private safeGet(row: Record<string, string>, keys: string[]): string {
+    for (const key of keys) {
+      if (row[key]) return row[key];
+      // Case-insensitive fallback
+      const found = Object.keys(row).find(
+        (k) => k.toLowerCase() === key.toLowerCase()
+      );
+      if (found && row[found]) return row[found];
+    }
+    return '';
   }
 }
