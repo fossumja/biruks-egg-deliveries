@@ -477,44 +477,39 @@ export class HomeComponent implements OnDestroy {
       headers.find((h) => h.toLowerCase() === 'delivery order') ?? null;
 
     rows.forEach((row, rawIndex) => {
-      const routeDateRaw =
-        (scheduleHeader ? row[scheduleHeader] : undefined) ||
-        row['Schedule'] ||
-        row['schedule'] ||
-        row['Date'] ||
-        row['date'] ||
-        row['\ufeffSchedule'] ||
-        row['\ufeffschedule'] ||
-        '';
+      const routeDateRaw = this.safeGet(row, [
+        'Schedule',
+        'schedule',
+        '\ufeffSchedule',
+        '\ufeffschedule',
+        'Date',
+        'date',
+      ]);
       const routeDate = (routeDateRaw || '').trim();
       if (!routeDate) {
         const rowNumber = rawIndex + 2; // +1 for header row, +1 for zero index
         throw new Error(`Row ${rowNumber}: Missing value for "Schedule".`);
       }
       const scheduleId = routeDate.replace(/\s+/g, '') || 'Schedule';
-      const plannedRaw = row['Dozens'] || row['dozens'] || row['Qty'] || '0';
+      const plannedRaw = this.safeGet(row, ['Dozens', 'dozens', 'Qty']);
       const planned = Number(plannedRaw);
       if (Number.isNaN(planned)) {
         const rowNumber = rawIndex + 2;
         throw new Error(`Row ${rowNumber}: "Dozens" must be a number.`);
       }
-      const deliveryOrderRaw =
-        (deliveryOrderHeader ? row[deliveryOrderHeader] : undefined) ||
-        row['Delivery Order'] ||
-        row['delivery order'] ||
-        row['Order'];
+      const deliveryOrderRaw = this.safeGet(row, [
+        'Delivery Order',
+        'delivery order',
+        'Order',
+        'OrderIndex',
+      ]);
       const deliveryOrder = deliveryOrderRaw
         ? Number(deliveryOrderRaw) || 0
         : rawIndex;
       const baseRowId =
-        (
-          row['BaseRowId'] ||
-          row['baseRowId'] ||
-          row['BaseRowID'] ||
-          ''
-        ).trim() || `ROW_${rawIndex}`;
-      const subscribedRaw = (row['Subscribed'] || row['subscribed'] || '')
-        .toString()
+        (this.safeGet(row, ['BaseRowId', 'baseRowId', 'BaseRowID']) || '').trim() ||
+        `ROW_${rawIndex}`;
+      const subscribedRaw = (this.safeGet(row, ['Subscribed', 'subscribed', 'Sub']) || '')
         .trim()
         .toLowerCase();
       const subscribed =
@@ -531,14 +526,14 @@ export class HomeComponent implements OnDestroy {
         baseRowId,
         week: scheduleId,
         routeDate,
-        name: (row['Name'] || row['name'] || '').trim(),
-        address: (row['Address'] || row['address'] || '').trim(),
-        city: (row['City'] || row['city'] || '').trim(),
-        state: (row['State'] || row['state'] || '').trim(),
-        zip: (row['ZIP'] || row['Zip'] || row['zip'] || '').trim() || undefined,
+        name: (this.safeGet(row, ['Name', 'name']) || '').trim(),
+        address: (this.safeGet(row, ['Address', 'address']) || '').trim(),
+        city: (this.safeGet(row, ['City', 'city']) || '').trim(),
+        state: (this.safeGet(row, ['State', 'state']) || '').trim(),
+        zip: (this.safeGet(row, ['ZIP', 'Zip', 'zip']) || '').trim() || undefined,
         dozens: planned,
         originalDozens: planned,
-        notes: (row['Notes'] || row['notes'] || '').trim() || undefined,
+        notes: (this.safeGet(row, ['Notes', 'notes']) || '').trim() || undefined,
         sortIndex: 0,
         deliveryOrder,
         status: statusBlank,
@@ -595,19 +590,34 @@ export class HomeComponent implements OnDestroy {
     row: Record<string, string>,
     plannedDozens: number
   ): DonationInfo {
-    const statusRaw = (row['DonationStatus'] || row['donationstatus']) as
-      | DonationStatus
-      | undefined;
-    const methodRaw = (row['DonationMethod'] || row['donationmethod']) as
-      | DonationMethod
-      | undefined;
-    const amountRaw = row['DonationAmount'] || row['donationamount'];
+    const statusRaw = this.safeGet(row, [
+      'DonationStatus',
+      'donationstatus',
+      'RunDonationStatus',
+    ]) as DonationStatus;
+    const methodRaw = this.safeGet(row, [
+      'DonationMethod',
+      'donationmethod',
+      'RunDonationMethod',
+    ]) as DonationMethod;
+    const amountRaw = this.safeGet(row, [
+      'DonationAmount',
+      'donationamount',
+      'RunDonationAmount',
+    ]);
+    const taxableRaw = this.safeGet(row, [
+      'TaxableAmount',
+      'taxableamount',
+      'RunTaxableAmount',
+    ]);
     const amount = amountRaw ? Number(amountRaw) : undefined;
-    const status: DonationStatus = statusRaw ?? 'NoDonation';
+    const taxable = taxableRaw ? Number(taxableRaw) : undefined;
+    const status: DonationStatus = statusRaw || 'NoDonation';
     return {
       status,
       method: methodRaw,
       amount,
+      taxableAmount: taxable,
       suggestedAmount: plannedDozens * this.storage.getSuggestedRate(),
     };
   }
@@ -674,43 +684,40 @@ export class HomeComponent implements OnDestroy {
 
       // Attach one-off donations.
       oneOffDonationRows.forEach((row) => {
-        const baseRowId = this.safeGet(row, [
+        const baseRowId = (this.safeGet(row, [
           'BaseRowId',
           'baseRowId',
           'RunBaseRowId',
-        ]).trim();
+        ]) || '').trim();
         if (!baseRowId) return;
         const targets = byBaseId.get(baseRowId);
-        if (!targets || !targets.length) return;
-        const dateRaw = (row['EventDate'] ||
-          row['eventdate'] ||
-          row['Date'] ||
-          row['date'] ||
-          '') as string;
+        if (!targets || targets.length === 0) return;
+        const dateRaw = this.safeGet(row, ['EventDate', 'eventdate', 'Date', 'date']);
         const normalizedDate = this.coerceEventDate(dateRaw);
-        const statusRaw = (row['RunDonationStatus'] ||
-          row['DonationStatus'] ||
-          row['donationstatus'] ||
-          '') as DonationStatus;
+        const statusRaw = this.safeGet(row, [
+          'RunDonationStatus',
+          'DonationStatus',
+          'donationstatus',
+        ]) as DonationStatus;
         const status: DonationStatus = statusRaw || 'NotRecorded';
-        const methodRaw = (row['RunDonationMethod'] ||
-          row['DonationMethod'] ||
-          row['donationmethod'] ||
-          '') as DonationMethod;
-        const suggestedRaw =
-          row['SuggestedAmount'] || row['suggestedamount'] || '';
-        const amountRaw =
-          row['RunDonationAmount'] ||
-          row['DonationAmount'] ||
-          row['donationamount'] ||
-          '';
+        const methodRaw = this.safeGet(row, [
+          'RunDonationMethod',
+          'DonationMethod',
+          'donationmethod',
+        ]) as DonationMethod;
+        const suggestedRaw = this.safeGet(row, ['SuggestedAmount', 'suggestedamount']);
+        const amountRaw = this.safeGet(row, [
+          'RunDonationAmount',
+          'DonationAmount',
+          'donationamount',
+        ]);
         const suggested = suggestedRaw ? Number(suggestedRaw) : undefined;
         const amount = amountRaw ? Number(amountRaw) : suggested;
-        const taxableRaw =
-          row['RunTaxableAmount'] ||
-          row['TaxableAmount'] ||
-          row['taxableamount'] ||
-          '';
+        const taxableRaw = this.safeGet(row, [
+          'RunTaxableAmount',
+          'TaxableAmount',
+          'taxableamount',
+        ]);
         const taxable = taxableRaw ? Number(taxableRaw) : undefined;
 
         const donationBase = {
@@ -734,51 +741,43 @@ export class HomeComponent implements OnDestroy {
 
       // Attach one-off deliveries.
       oneOffDeliveryRows.forEach((row) => {
-        const baseRowId = this.safeGet(row, [
+        const baseRowId = (this.safeGet(row, [
           'BaseRowId',
           'baseRowId',
           'RunBaseRowId',
-        ]).trim();
+        ]) || '').trim();
         if (!baseRowId) return;
         const targets = byBaseId.get(baseRowId);
-        if (!targets || !targets.length) return;
-        const dateRaw = (row['EventDate'] ||
-          row['eventdate'] ||
-          row['Date'] ||
-          row['date'] ||
-          '') as string;
+        if (!targets || targets.length === 0) return;
+        const dateRaw = this.safeGet(row, ['EventDate', 'eventdate', 'Date', 'date']);
         const normalizedDate = this.coerceEventDate(dateRaw);
-        const dozensRaw =
-          row['RunDozens'] ||
-          row['Dozens'] ||
-          row['dozens'] ||
-          row['Qty'] ||
-          '';
+        const dozensRaw = this.safeGet(row, ['RunDozens', 'Dozens', 'dozens', 'Qty']);
         const deliveredDozens = dozensRaw ? Number(dozensRaw) || 0 : 0;
 
-        const statusRaw = (row['RunDonationStatus'] ||
-          row['DonationStatus'] ||
-          row['donationstatus'] ||
-          '') as DonationStatus;
+        const statusRaw = this.safeGet(row, [
+          'RunDonationStatus',
+          'DonationStatus',
+          'donationstatus',
+        ]) as DonationStatus;
         const status: DonationStatus = statusRaw || 'NotRecorded';
-        const methodRaw = (row['RunDonationMethod'] ||
-          row['DonationMethod'] ||
-          row['donationmethod'] ||
-          '') as DonationMethod;
-        const suggestedRaw =
-          row['SuggestedAmount'] || row['suggestedamount'] || '';
-        const amountRaw =
-          row['RunDonationAmount'] ||
-          row['DonationAmount'] ||
-          row['donationamount'] ||
-          '';
+        const methodRaw = this.safeGet(row, [
+          'RunDonationMethod',
+          'DonationMethod',
+          'donationmethod',
+        ]) as DonationMethod;
+        const suggestedRaw = this.safeGet(row, ['SuggestedAmount', 'suggestedamount']);
+        const amountRaw = this.safeGet(row, [
+          'RunDonationAmount',
+          'DonationAmount',
+          'donationamount',
+        ]);
         const suggested = suggestedRaw ? Number(suggestedRaw) : undefined;
         const amount = amountRaw ? Number(amountRaw) : suggested;
-        const taxableRaw =
-          row['RunTaxableAmount'] ||
-          row['TaxableAmount'] ||
-          row['taxableamount'] ||
-          '';
+        const taxableRaw = this.safeGet(row, [
+          'RunTaxableAmount',
+          'TaxableAmount',
+          'taxableamount',
+        ]);
         const taxable = taxableRaw ? Number(taxableRaw) : undefined;
 
         const donationBase: DonationInfo | undefined =
@@ -832,21 +831,19 @@ export class HomeComponent implements OnDestroy {
           (row['ScheduleId'] || row['scheduleid'] || '').toString().trim() ||
           routeDate.replace(/\s+/g, '') ||
           'Schedule';
-        const runStatusRaw = (row['RunStatus'] || row['runstatus'] || '')
-          .toString()
-          .trim()
-          .toLowerCase();
-        const status =
-          runStatusRaw === 'endedearly' || runStatusRaw === 'ended_early'
+        const statusRaw = (this.safeGet(row, ['RunStatus', 'runstatus']) || '').toLowerCase();
+        const status: DeliveryRun['status'] =
+          statusRaw === 'endedearly' || statusRaw === 'ended_early'
             ? 'endedEarly'
-            : runStatusRaw === 'completed'
+            : statusRaw === 'completed'
             ? 'completed'
             : undefined;
-        const completedRaw = (row['RunCompletedAt'] ||
-          row['runcompletedat'] ||
-          row['EventDate'] ||
-          row['eventdate'] ||
-          '') as string;
+        const completedRaw = this.safeGet(row, [
+          'RunCompletedAt',
+          'runcompletedat',
+          'EventDate',
+          'eventdate',
+        ]);
         const normalizedCompleted = this.coerceEventDate(completedRaw);
         const normalizedRoute = this.coerceEventDate(routeDate);
         const runDateIso =
@@ -863,61 +860,66 @@ export class HomeComponent implements OnDestroy {
         runsMap.set(runId, newRun);
       }
 
-      const baseRowId = (
-        row['RunBaseRowId'] ||
-        row['BaseRowId'] ||
-        row['baseRowId'] ||
-        row['BaseRowID'] ||
-        ''
-      ).trim();
+      const baseRowId = (this.safeGet(row, [
+        'RunBaseRowId',
+        'BaseRowId',
+        'baseRowId',
+        'BaseRowID',
+      ]) || '').trim();
       if (!baseRowId) return;
 
       const run = runsMap.get(runId);
-      const eventDateRaw = (row['EventDate'] ||
-        row['eventdate'] ||
-        row['RunCompletedAt'] ||
-        row['runcompletedat'] ||
-        '') as string;
+      const eventDateRaw = this.safeGet(row, [
+        'EventDate',
+        'eventdate',
+        'RunCompletedAt',
+        'runcompletedat',
+      ]);
       const normalizedEventDate = this.coerceEventDate(eventDateRaw);
       const eventDate = normalizedEventDate ?? run?.date;
 
-      const deliveryOrderRaw =
-        row['RunDeliveryOrder'] ||
-        row['deliveryorder'] ||
-        row['RunOrder'] ||
-        '';
+      const deliveryOrderRaw = this.safeGet(row, [
+        'RunDeliveryOrder',
+        'deliveryorder',
+        'RunOrder',
+        'Order',
+      ]);
       const deliveryOrder = Number(deliveryOrderRaw) || 0;
 
-      const entryStatusRaw = (row['RunEntryStatus'] || row['status'] || '')
-        .toString()
-        .toLowerCase();
-      const entryStatus =
-        entryStatusRaw === 'skipped' ? 'skipped' : 'delivered';
+      const entryStatusRaw = (this.safeGet(row, ['RunEntryStatus', 'status']) || '').toLowerCase();
+      const entryStatus = entryStatusRaw === 'skipped' ? 'skipped' : 'delivered';
 
-      const dozens =
-        Number(row['RunDozens'] || row['dozens'] || row['Dozens'] || 0) || 0;
+      const dozensRaw = this.safeGet(row, ['RunDozens', 'dozens', 'Dozens', 'Qty']);
+      const dozens = Number(dozensRaw) || 0;
 
-      const donationStatusRaw = (row['RunDonationStatus'] ||
-        row['donationstatus'] ||
-        'NotRecorded') as DonationStatus;
+      const donationStatusRaw = this.safeGet(row, [
+        'RunDonationStatus',
+        'donationstatus',
+      ]) as DonationStatus;
       const donationStatus: DonationStatus = donationStatusRaw || 'NotRecorded';
 
-      const donationMethodRaw = (row['RunDonationMethod'] ||
-        row['donationmethod'] ||
-        '') as DonationMethod;
+      const donationMethodRaw = this.safeGet(row, [
+        'RunDonationMethod',
+        'donationmethod',
+      ]) as DonationMethod;
 
-      const donationAmount =
-        Number(row['RunDonationAmount'] || row['donationamount'] || 0) || 0;
+      const donationAmountRaw = this.safeGet(row, [
+        'RunDonationAmount',
+        'donationamount',
+      ]);
+      const donationAmount = Number(donationAmountRaw) || 0;
 
-      const taxableAmount =
-        Number(row['RunTaxableAmount'] || row['taxableamount'] || 0) || 0;
+      const taxableAmountRaw = this.safeGet(row, [
+        'RunTaxableAmount',
+        'taxableamount',
+      ]);
+      const taxableAmount = Number(taxableAmountRaw) || 0;
 
-      const name = (row['Name'] || row['name'] || '').trim();
-      const address = (row['Address'] || row['address'] || '').trim();
-      const city = (row['City'] || row['city'] || '').trim();
-      const state = (row['State'] || row['state'] || '').trim();
-      const zip =
-        (row['ZIP'] || row['Zip'] || row['zip'] || '').trim() || undefined;
+      const name = (this.safeGet(row, ['Name', 'name']) || '').trim();
+      const address = (this.safeGet(row, ['Address', 'address']) || '').trim();
+      const city = (this.safeGet(row, ['City', 'city']) || '').trim();
+      const state = (this.safeGet(row, ['State', 'state']) || '').trim();
+      const zip = (this.safeGet(row, ['ZIP', 'Zip', 'zip']) || '').trim() || undefined;
 
       runEntries.push({
         id: crypto.randomUUID(),
@@ -1155,15 +1157,21 @@ export class HomeComponent implements OnDestroy {
     }
   }
 
-  private safeGet(row: Record<string, string>, keys: string[]): string {
+  private safeGet(row: Record<string, string>, keys: string[]): string | undefined {
+    const clean = (s: string) => s.replace(/^\ufeff/, '').toLowerCase();
     for (const key of keys) {
-      if (row[key]) return row[key];
-      // Case-insensitive fallback
-      const found = Object.keys(row).find(
-        (k) => k.toLowerCase() === key.toLowerCase()
-      );
-      if (found && row[found]) return row[found];
+      if (row[key] !== undefined && row[key] !== '') return row[key];
+      // Case-insensitive/BOM fallback
+      const target = clean(key);
+      const found = Object.keys(row).find((k) => clean(k) === target);
+      if (
+        found !== undefined &&
+        row[found] !== undefined &&
+        row[found] !== ''
+      ) {
+        return row[found];
+      }
     }
-    return '';
+    return undefined;
   }
 }
