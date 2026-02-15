@@ -1,0 +1,122 @@
+
+> biruks-egg-deliveries@0.0.0 test:ci
+> ng test --watch=false --browsers=ChromeHeadless --code-coverage --include=src/app/pages/home.component.spec.ts
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+[32m31 01 2026 13:57:36.189:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m31 01 2026 13:57:36.190:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m31 01 2026 13:57:36.193:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m31 01 2026 13:57:36.989:INFO [Chrome Headless 144.0.0.0 (Mac OS 10.15.7)]: [39mConnected on socket VHMnOfvo9VwM2WxyAAAB with id 69744083
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 0 of 26[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 0 of 26[32m SUCCESS[39m (0 secs / 0 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 1 of 26[32m SUCCESS[39m (0 secs / 0.091 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 1 of 26[32m SUCCESS[39m (0 secs / 0.091 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[32m SUCCESS[39m (0 secs / 0.097 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[32m SUCCESS[39m (0 secs / 0.097 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 4 of 26[32m SUCCESS[39m (0 secs / 0.117 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 4 of 26[32m SUCCESS[39m (0 secs / 0.117 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 5 of 26[32m SUCCESS[39m (0 secs / 0.121 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 5 of 26[32m SUCCESS[39m (0 secs / 0.121 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 6 of 26[32m SUCCESS[39m (0 secs / 0.126 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 6 of 26[32m SUCCESS[39m (0 secs / 0.126 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore shows a fallback message when build info is unavailable FAILED[39m
+	Expected undefined to contain 'Build info unavailable.'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:230:31)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 7 of 26[31m (1 FAILED)[39m (0 secs / 0.134 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 7 of 26[31m (1 FAILED)[39m (0 secs / 0.134 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore recomputes totals from restored receipts FAILED[39m
+	Expected 8 to be close to 17, 5.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:317:37)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected 2 to be 3.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:318:35)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected 0 to be close to 5, 5.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:319:36)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 8 of 26[31m (2 FAILED)[39m (0 secs / 0.149 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 8 of 26[31m (2 FAILED)[39m (0 secs / 0.149 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 9 of 26[31m (2 FAILED)[39m (0 secs / 0.154 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 10 of 26[31m (2 FAILED)[39m (0 secs / 0.157 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 11 of 26[31m (2 FAILED)[39m (0 secs / 0.159 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 12 of 26[31m (2 FAILED)[39m (0 secs / 0.162 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 13 of 26[31m (2 FAILED)[39m (0 secs / 0.164 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 14 of 26[31m (2 FAILED)[39m (0 secs / 0.165 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 15 of 26[31m (2 FAILED)[39m (0 secs / 0.166 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 16 of 26[31m (2 FAILED)[39m (0 secs / 0.167 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[31m (2 FAILED)[39m (0 secs / 0.168 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[31m (2 FAILED)[39m (0 secs / 0.169 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[31m (2 FAILED)[39m (0 secs / 0.171 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 20 of 26[31m (2 FAILED)[39m (0 secs / 0.172 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 21 of 26[31m (2 FAILED)[39m (0 secs / 0.173 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[31m (2 FAILED)[39m (0 secs / 0.174 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 23 of 26[31m (2 FAILED)[39m (0 secs / 0.176 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 24 of 26[31m (2 FAILED)[39m (0 secs / 0.177 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 25 of 26[31m (2 FAILED)[39m (0 secs / 0.178 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[31m (2 FAILED)[39m (0 secs / 0.179 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[31m (2 FAILED)[39m (0.198 secs / 0.179 secs)
+[31mTOTAL: 2 FAILED, 24 SUCCESS[39m
+✔ Browser application bundle generation complete.
+
+=============================== Coverage summary ===============================
+Statements   : 61.63% ( 1004/1629 )
+Branches     : 37.89% ( 479/1264 )
+Functions    : 58.16% ( 178/306 )
+Lines        : 63.75% ( 941/1476 )
+================================================================================
+✔ Browser application bundle generation complete.

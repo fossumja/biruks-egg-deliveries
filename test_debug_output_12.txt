@@ -1,0 +1,123 @@
+
+> biruks-egg-deliveries@0.0.0 test:ci
+> ng test --watch=false --browsers=ChromeHeadless --code-coverage --include=src/app/pages/home.component.spec.ts
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+[32m01 02 2026 06:38:26.818:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m01 02 2026 06:38:26.819:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m01 02 2026 06:38:26.821:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m01 02 2026 06:38:29.194:INFO [Chrome Headless 144.0.0.0 (Mac OS 10.15.7)]: [39mConnected on socket 1npVD8eCYD4I2RoDAAAB with id 48754337
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 0 of 26[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 1 of 26[32m SUCCESS[39m (0 secs / 0.083 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[32m SUCCESS[39m (0 secs / 0.087 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.09 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 4 of 26[32m SUCCESS[39m (0 secs / 0.094 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 5 of 26[32m SUCCESS[39m (0 secs / 0.096 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 6 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 7 of 26[32m SUCCESS[39m (0 secs / 0.101 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 8 of 26[32m SUCCESS[39m (0 secs / 0.102 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 9 of 26[32m SUCCESS[39m (0 secs / 0.103 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 10 of 26[32m SUCCESS[39m (0 secs / 0.105 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 11 of 26[32m SUCCESS[39m (0 secs / 0.106 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 12 of 26[32m SUCCESS[39m (0 secs / 0.107 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 13 of 26[32m SUCCESS[39m (0 secs / 0.109 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 14 of 26[32m SUCCESS[39m (0 secs / 0.111 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 15 of 26[32m SUCCESS[39m (0 secs / 0.112 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 16 of 26[32m SUCCESS[39m (0 secs / 0.113 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.114 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.114 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'RESTORE_ATTACH: id=f6c144f9-edaa-4c12-b68c-591419c20246 base=c1 count=1 date=2025-01-01T18:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.114 secs)
+WARN: 'RESTORE_ATTACH: id=f6c144f9-edaa-4c12-b68c-591419c20246 base=c1 count=1 date=2025-01-01T18:00:00.000Z'
+[1A[2KWARN: [36m'RESTORE_ATTACH_DELIVERY: id=f6c144f9-edaa-4c12-b68c-591419c20246 base=c1 count=1 date=2025-01-01T18:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.114 secs)
+WARN: 'RESTORE_ATTACH_DELIVERY: id=f6c144f9-edaa-4c12-b68c-591419c20246 base=c1 count=1 date=2025-01-01T18:00:00.000Z'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[32m SUCCESS[39m (0 secs / 0.192 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[32m SUCCESS[39m (0 secs / 0.192 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'RESTORE_ATTACH: id=b8d513a3-1cb1-404c-b55d-c37ec3cb4fcd base=c1 count=1 date=2025-02-01T18:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[32m SUCCESS[39m (0 secs / 0.192 secs)
+WARN: 'RESTORE_ATTACH: id=b8d513a3-1cb1-404c-b55d-c37ec3cb4fcd base=c1 count=1 date=2025-02-01T18:00:00.000Z'
+[1A[2KWARN: [36m'RESTORE_ATTACH_DELIVERY: id=b8d513a3-1cb1-404c-b55d-c37ec3cb4fcd base=c1 count=1 date=2025-03-01T18:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[32m SUCCESS[39m (0 secs / 0.192 secs)
+WARN: 'RESTORE_ATTACH_DELIVERY: id=b8d513a3-1cb1-404c-b55d-c37ec3cb4fcd base=c1 count=1 date=2025-03-01T18:00:00.000Z'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[32m SUCCESS[39m (0 secs / 0.201 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[32m SUCCESS[39m (0 secs / 0.201 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'RESTORE_ATTACH: id=9b40efcd-5d46-43c2-a50a-f65fd71fc6af base=c1 count=1 date=2025-06-15T17:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[32m SUCCESS[39m (0 secs / 0.201 secs)
+WARN: 'RESTORE_ATTACH: id=9b40efcd-5d46-43c2-a50a-f65fd71fc6af base=c1 count=1 date=2025-06-15T17:00:00.000Z'
+[1A[2KWARN: [36m'RESTORE_ATTACH_DELIVERY: id=9b40efcd-5d46-43c2-a50a-f65fd71fc6af base=c1 count=1 date=2023-07-16T17:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[32m SUCCESS[39m (0 secs / 0.201 secs)
+WARN: 'RESTORE_ATTACH_DELIVERY: id=9b40efcd-5d46-43c2-a50a-f65fd71fc6af base=c1 count=1 date=2023-07-16T17:00:00.000Z'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 20 of 26[32m SUCCESS[39m (0 secs / 0.204 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 20 of 26[32m SUCCESS[39m (0 secs / 0.204 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 21 of 26[32m SUCCESS[39m (0 secs / 0.208 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 21 of 26[32m SUCCESS[39m (0 secs / 0.208 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'RESTORE_ATTACH: id=9b6ba78c-8752-4b7e-a11a-ec89de5f40ae base=c1 count=1 date=2025-01-03T12:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'RESTORE_ATTACH: id=9b6ba78c-8752-4b7e-a11a-ec89de5f40ae base=c1 count=1 date=2025-01-03T12:00:00.000Z'
+[1A[2KWARN: [36m'RESTORE_ATTACH: id=b9463b95-0830-4fe6-8512-2fc5915857bf base=c3 count=1 date=2025-02-03T12:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'RESTORE_ATTACH: id=b9463b95-0830-4fe6-8512-2fc5915857bf base=c3 count=1 date=2025-02-03T12:00:00.000Z'
+[1A[2KWARN: [36m'RESTORE_ATTACH_DELIVERY: id=9b6ba78c-8752-4b7e-a11a-ec89de5f40ae base=c1 count=1 date=2025-01-04T12:00:00.000Z'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[32m SUCCESS[39m (0 secs / 0.211 secs)
+WARN: 'RESTORE_ATTACH_DELIVERY: id=9b6ba78c-8752-4b7e-a11a-ec89de5f40ae base=c1 count=1 date=2025-01-04T12:00:00.000Z'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 23 of 26[32m SUCCESS[39m (0 secs / 0.233 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 23 of 26[32m SUCCESS[39m (0 secs / 0.233 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 24 of 26[32m SUCCESS[39m (0 secs / 0.236 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 24 of 26[32m SUCCESS[39m (0 secs / 0.236 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 25 of 26[32m SUCCESS[39m (0 secs / 0.24 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 25 of 26[32m SUCCESS[39m (0 secs / 0.24 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[32m SUCCESS[39m (0 secs / 0.243 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[32m SUCCESS[39m (0.268 secs / 0.243 secs)
+[32mTOTAL: 26 SUCCESS[39m
+✔ Browser application bundle generation complete.
+
+=============================== Coverage summary ===============================
+Statements   : 61.5% ( 1008/1639 )
+Branches     : 36.83% ( 421/1143 )
+Functions    : 57.98% ( 178/307 )
+Lines        : 63.56% ( 944/1485 )
+================================================================================
+✔ Browser application bundle generation complete.

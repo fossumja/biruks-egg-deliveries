@@ -1,0 +1,1580 @@
+unit-tests	Run unit tests (CI)	﻿2026-01-31T19:58:57.6197475Z ##[group]Run npm run test:ci
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.6197775Z [36;1mnpm run test:ci[0m
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.6243054Z shell: /usr/bin/bash -e {0}
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.6243299Z env:
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.6243473Z   CI: true
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.6243656Z   CHROME_BIN: google-chrome
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.6243884Z ##[endgroup]
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.7277005Z 
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.7277720Z > biruks-egg-deliveries@0.0.0 test:ci
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.7278353Z > ng test --watch=false --browsers=ChromeHeadless --code-coverage
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:57.7278664Z 
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:58.2293862Z [1m[33m[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`[39m[22m
+unit-tests	Run unit tests (CI)	2026-01-31T19:58:59.2555127Z - Generating browser application bundles (phase: setup)...
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:12.2881244Z ✔ Browser application bundle generation complete.
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:12.3451841Z [32m31 01 2026 19:59:12.335:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:12.3453671Z [32m31 01 2026 19:59:12.340:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:12.3480832Z [32m31 01 2026 19:59:12.347:INFO [launcher]: [39mStarting browser ChromeHeadless
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:26.5625031Z [32m31 01 2026 19:59:26.562:INFO [Chrome Headless 144.0.0.0 (Linux 0.0.0)]: [39mConnected on socket V6yoHXwpTQX442clAAAB with id 80666479
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.6631731Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 0 of 151 SUCCESS (0 secs / 0 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.6911543Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 1 of 151 SUCCESS (0 secs / 0.023 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.6933437Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.7620152Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.7621070Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.7621907Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.8860585Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.8862300Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.8863708Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.8865664Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.8867096Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.8868601Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9210475Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9212028Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9213119Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9214863Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9215957Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9216952Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9261329Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9263304Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9264857Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9268574Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9270180Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 151 SUCCESS (0 secs / 0.025 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9271581Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9380232Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 3 of 151 SUCCESS (0 secs / 0.267 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9422630Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9424754Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 3 of 151 SUCCESS (0 secs / 0.267 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9426110Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9574588Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 4 of 151 SUCCESS (0 secs / 0.286 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9604784Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9606149Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 4 of 151 SUCCESS (0 secs / 0.286 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9608897Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9751547Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 5 of 151 SUCCESS (0 secs / 0.304 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9774105Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9776187Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 5 of 151 SUCCESS (0 secs / 0.304 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9777209Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9937187Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 6 of 151 SUCCESS (0 secs / 0.323 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9965976Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9966795Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 6 of 151 SUCCESS (0 secs / 0.323 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:28.9967589Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0002757Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0006936Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 6 of 151 SUCCESS (0 secs / 0.323 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0013171Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0038211Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 7 of 151 SUCCESS (0 secs / 0.333 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0060039Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0060875Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 7 of 151 SUCCESS (0 secs / 0.333 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0061405Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0182407Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 8 of 151 SUCCESS (0 secs / 0.347 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0325218Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0327964Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 8 of 151 SUCCESS (0 secs / 0.347 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0330366Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0419742Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0421622Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 8 of 151 SUCCESS (0 secs / 0.347 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0423106Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0424810Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0426230Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 8 of 151 SUCCESS (0 secs / 0.347 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0427729Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0464555Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0497457Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0498426Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0499272Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0536740Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0538292Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0540882Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0542796Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0544157Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0545146Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0547000Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0548294Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0549779Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0551635Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0553024Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0554414Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0556274Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0557608Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0558950Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0560959Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0562417Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0563841Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0565734Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0566705Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0567685Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0569755Z [1A[2KWARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0570867Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0572009Z WARN: 'Another connection wants to delete database 'BiruksEggDeliveriesDB'. Closing db now to resume the delete request.'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0606148Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0607324Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 151 SUCCESS (0 secs / 0.375 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0608080Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0679584Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0707166Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0708098Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0708870Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0784583Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0786578Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0789823Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0796302Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0797781Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0799242Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0811724Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0812890Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0813859Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0818958Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0820569Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0821960Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0857139Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0859767Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0861289Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0863152Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0864560Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 151 SUCCESS (0 secs / 0.396 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0866068Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0919577Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 11 of 151 SUCCESS (0 secs / 0.419 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0937846Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0938772Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 11 of 151 SUCCESS (0 secs / 0.419 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0939803Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0988574Z [1A[2KWARN: 'The query {"routeDate":"2025-03-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0990251Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 11 of 151 SUCCESS (0 secs / 0.419 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0991813Z WARN: 'The query {"routeDate":"2025-03-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0994216Z [1A[2KWARN: 'The query {"routeDate":"2025-03-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0995542Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 11 of 151 SUCCESS (0 secs / 0.419 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.0996758Z WARN: 'The query {"routeDate":"2025-03-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1025126Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 12 of 151 SUCCESS (0 secs / 0.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1043595Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1044923Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 12 of 151 SUCCESS (0 secs / 0.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1046889Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1152232Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 13 of 151 SUCCESS (0 secs / 0.442 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1170388Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1171424Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 13 of 151 SUCCESS (0 secs / 0.442 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1172217Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1221086Z [1A[2KWARN: 'The query {"routeDate":"2025-04-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1222536Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 13 of 151 SUCCESS (0 secs / 0.442 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1223991Z WARN: 'The query {"routeDate":"2025-04-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1225909Z [1A[2KWARN: 'The query {"routeDate":"2025-04-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1227089Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 13 of 151 SUCCESS (0 secs / 0.442 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1228026Z WARN: 'The query {"routeDate":"2025-04-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1272530Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 14 of 151 SUCCESS (0 secs / 0.454 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1290831Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1291653Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 14 of 151 SUCCESS (0 secs / 0.454 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1292326Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1335804Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1354120Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1355100Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1355951Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1443983Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1445587Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1447087Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1449184Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1450800Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1452283Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1491976Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1493448Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1495158Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1501291Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1503775Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1505292Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1542804Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1544751Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1546832Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1549174Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1550822Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 151 SUCCESS (0 secs / 0.461 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1552283Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1623608Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 16 of 151 SUCCESS (0 secs / 0.489 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1659203Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1660495Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 16 of 151 SUCCESS (0 secs / 0.489 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1661356Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1825720Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 17 of 151 SUCCESS (0 secs / 0.508 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1858471Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 18 of 151 SUCCESS (0 secs / 0.511 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1884306Z [1A[2KWARN: 'build-info fetch failed', Error: network
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1884892Z Error: network
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1885930Z     at UserContext.<anonymous> (http://localhost:9876/_karma_webpack_/webpack:/src/app/services/build-info.service.spec.ts:50:58)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1887009Z     at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1888181Z     at asyncGeneratorStep (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1889842Z     at _next (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1891339Z     at executor (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:22:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1892603Z     at new ZoneAwarePromise (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone.js:2701:25)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1893534Z     at UserContext.apply (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:14:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1894576Z     at _ZoneDelegate.invoke (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone.js:398:28)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1896032Z     at ProxyZoneSpec.onInvoke (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1896953Z     at _ZoneDelegate.invoke (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone.js:397:34)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1897719Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 18 of 151 SUCCESS (0 secs / 0.511 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1898216Z WARN: 'build-info fetch failed', Error: network
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1898497Z Error: network
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1899040Z     at UserContext.<anonymous> (http://localhost:9876/_karma_webpack_/webpack:/src/app/services/build-info.service.spec.ts:50:58)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1900434Z     at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1901606Z     at asyncGeneratorStep (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1903256Z     at _next (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1904773Z     at executor (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:22:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1906112Z     at new ZoneAwarePromise (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone.js:2701:25)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1907637Z     at UserContext.apply (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:14:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1908936Z     at _ZoneDelegate.invoke (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone.js:398:28)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1910075Z     at ProxyZoneSpec.onInvoke (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1910935Z     at _ZoneDelegate.invoke (http://localhost:9876/_karma_webpack_/webpack:/node_modules/zone.js/fesm2015/zone.js:397:34)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1912323Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 19 of 151 SUCCESS (0 secs / 0.514 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.1913528Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 20 of 151 SUCCESS (0 secs / 0.515 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3271551Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3273227Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 20 of 151 SUCCESS (0 secs / 0.515 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3274426Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3503428Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3655520Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3657915Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3660056Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3666045Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3667491Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3668625Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3693138Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3694944Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3696386Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3700098Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3702757Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3704275Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3764658Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3766090Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3767813Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3769886Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3770886Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 151 SUCCESS (0 secs / 0.673 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3771989Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3912441Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 22 of 151 SUCCESS (0 secs / 0.713 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3971560Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3972396Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 22 of 151 SUCCESS (0 secs / 0.713 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3972911Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3993079Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3994013Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 22 of 151 SUCCESS (0 secs / 0.713 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.3994787Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4114283Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 23 of 151 SUCCESS (0 secs / 0.733 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4159724Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4160744Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 23 of 151 SUCCESS (0 secs / 0.733 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4161562Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4325563Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 24 of 151 SUCCESS (0 secs / 0.754 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4371605Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4372877Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 24 of 151 SUCCESS (0 secs / 0.754 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.4374307Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6150284Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0) HomeComponent restore falls back to route or run dates when EventDate is missing FAILED
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6151468Z 	Expected undefined to be '2025-01-01T12:00:00.000Z'.
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6151966Z 	    at <Jasmine>
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6152585Z 	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:277:50)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6153210Z 	    at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6154032Z 	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6155039Z 	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6155676Z 	Expected undefined to be '2025-01-01T12:00:00.000Z'.
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6155991Z 	    at <Jasmine>
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6156352Z 	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:278:51)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6156767Z 	    at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6157230Z 	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6157941Z 	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6158663Z 	Expected undefined to be '2025-01-01T12:00:00.000Z'.
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6159117Z 	    at <Jasmine>
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6160021Z 	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:279:61)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6160697Z 	    at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6161478Z 	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6162223Z 	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6163008Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 25 of 151 (1 FAILED) (0 secs / 0.935 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6230659Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6233167Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 25 of 151 (1 FAILED) (0 secs / 0.935 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6234019Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6300930Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 26 of 151 (1 FAILED) (0 secs / 0.947 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6347479Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6348504Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 26 of 151 (1 FAILED) (0 secs / 0.947 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6349555Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6422775Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 27 of 151 (1 FAILED) (0 secs / 0.958 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6469525Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6470779Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 27 of 151 (1 FAILED) (0 secs / 0.958 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6471534Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6526405Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 28 of 151 (1 FAILED) (0 secs / 0.969 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6575574Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6576607Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 28 of 151 (1 FAILED) (0 secs / 0.969 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6577347Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6654399Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 29 of 151 (1 FAILED) (0 secs / 0.981 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6674918Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6675801Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 29 of 151 (1 FAILED) (0 secs / 0.981 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6676517Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6817797Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 30 of 151 (1 FAILED) (0 secs / 0.997 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6838368Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6839596Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 30 of 151 (1 FAILED) (0 secs / 0.997 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6840488Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6967864Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 31 of 151 (1 FAILED) (0 secs / 1.012 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6986048Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6987046Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 31 of 151 (1 FAILED) (0 secs / 1.012 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.6987593Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7084491Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 32 of 151 (1 FAILED) (0 secs / 1.023 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7102390Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7103516Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 32 of 151 (1 FAILED) (0 secs / 1.023 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7104378Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7207639Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 33 of 151 (1 FAILED) (0 secs / 1.035 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7224044Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7224985Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 33 of 151 (1 FAILED) (0 secs / 1.035 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7225699Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7301485Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7302904Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 33 of 151 (1 FAILED) (0 secs / 1.035 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7304314Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7306232Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7307652Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 33 of 151 (1 FAILED) (0 secs / 1.035 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7309205Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7373939Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 34 of 151 (1 FAILED) (0 secs / 1.051 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7467843Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7469276Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 34 of 151 (1 FAILED) (0 secs / 1.051 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7470909Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7472755Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7474169Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 34 of 151 (1 FAILED) (0 secs / 1.051 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7475281Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7504388Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 35 of 151 (1 FAILED) (0 secs / 1.063 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7560623Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7561569Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 35 of 151 (1 FAILED) (0 secs / 1.063 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7562392Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7563131Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7564046Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 35 of 151 (1 FAILED) (0 secs / 1.063 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7564636Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7618733Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 36 of 151 (1 FAILED) (0 secs / 1.074 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7636564Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7637598Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 36 of 151 (1 FAILED) (0 secs / 1.074 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7638500Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7706735Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7708228Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 36 of 151 (1 FAILED) (0 secs / 1.074 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7709956Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7712030Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7713561Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 36 of 151 (1 FAILED) (0 secs / 1.074 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7715082Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7778348Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7780114Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 36 of 151 (1 FAILED) (0 secs / 1.074 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7781451Z WARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7783186Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7784406Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 36 of 151 (1 FAILED) (0 secs / 1.074 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7785473Z WARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7810007Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 37 of 151 (1 FAILED) (0 secs / 1.093 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7827108Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7828032Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 37 of 151 (1 FAILED) (0 secs / 1.093 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7828533Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.7926393Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 38 of 151 (1 FAILED) (0 secs / 1.105 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8480245Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 39 of 151 (1 FAILED) (0 secs / 1.16 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8525802Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 40 of 151 (1 FAILED) (0 secs / 1.163 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8555037Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 41 of 151 (1 FAILED) (0 secs / 1.166 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8580336Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 42 of 151 (1 FAILED) (0 secs / 1.168 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8704672Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 43 of 151 (1 FAILED) (0 secs / 1.179 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8733552Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 44 of 151 (1 FAILED) (0 secs / 1.181 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8876753Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 45 of 151 (1 FAILED) (0 secs / 1.194 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8903554Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 46 of 151 (1 FAILED) (0 secs / 1.196 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8943479Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 47 of 151 (1 FAILED) (0 secs / 1.199 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8978038Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 48 of 151 (1 FAILED) (0 secs / 1.202 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.8999633Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 49 of 151 (1 FAILED) (0 secs / 1.204 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9021396Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 50 of 151 (1 FAILED) (0 secs / 1.206 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9045061Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 51 of 151 (1 FAILED) (0 secs / 1.209 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9137410Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 52 of 151 (1 FAILED) (0 secs / 1.218 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9503762Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 53 of 151 (1 FAILED) (0 secs / 1.231 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9582925Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 54 of 151 (1 FAILED) (0 secs / 1.237 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9648836Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9671158Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9672200Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9673039Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9757920Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9759689Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9761186Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9764097Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9765584Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9766844Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9794011Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9797317Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9798945Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9801151Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9802606Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9804109Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9887601Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9889782Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9891268Z WARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9893190Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9894611Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9896106Z WARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9934654Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9936116Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9937671Z WARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9939759Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9941239Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9942710Z WARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9961267Z [1A[2KLOG: '
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9962039Z === Snapshot: run1-baseline ==='
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9964253Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9964954Z LOG: '
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9965433Z === Snapshot: run1-baseline ==='
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9973107Z [1A[2KLOG: 'baseRowId=c1 donation=8.00 dozens=2'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9973990Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9974798Z LOG: 'baseRowId=c1 donation=8.00 dozens=2'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9977165Z [1A[2KLOG: 'baseRowId=c2 donation=4.00 dozens=1'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9978478Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9980689Z LOG: 'baseRowId=c2 donation=4.00 dozens=1'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9981507Z [1A[2KLOG: 'baseRowId=c3 donation=6.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9982492Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9983357Z LOG: 'baseRowId=c3 donation=6.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9984133Z [1A[2KLOG: 'baseRowId=c4 donation=0.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9985073Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9985925Z LOG: 'baseRowId=c4 donation=0.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9986579Z [1A[2KLOG: 'CSV rows:', '[
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9997269Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9997620Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9998033Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9998423Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9998772Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9999161Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:29.9999724Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0000065Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0000384Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0000713Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0001052Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0001525Z     "DeliveredAt": "2025-01-01T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0001993Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0002371Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0002809Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0003240Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0003968Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0004388Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0004949Z     "TotalDozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0005426Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0005861Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0006140Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0006427Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0006791Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0007157Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0007490Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0007874Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0008230Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0008557Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0008882Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0009202Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0009721Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0010060Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0010420Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0010776Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0011202Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0011644Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0012011Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0012389Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0012782Z     "TotalDozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0013201Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0014289Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0014913Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0015232Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0015625Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0016001Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0016353Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0016758Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0017129Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0017464Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0017815Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0018148Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0018491Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0018956Z     "DeliveredAt": "2025-01-01T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0019614Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0019990Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0020415Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0020829Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0021232Z     "DonationAmount": "4",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0021622Z     "TotalDonation": "4.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0022006Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0022405Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0022803Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0023073Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0023357Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0023712Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0024083Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0024417Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0024801Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0025163Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0025495Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0025818Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0026132Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0026444Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0026779Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0027184Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0027534Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0027967Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0028400Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0029036Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0029600Z     "TotalDonation": "4.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0029994Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0030424Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0030830Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0031097Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0031384Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0031749Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0032102Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0032444Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0032845Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0033212Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0033559Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0033888Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0034216Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0034543Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0035118Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0035489Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0035860Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0036285Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0036741Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0037129Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0037525Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0037926Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0038347Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0038745Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0039019Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0039501Z     "Date": "2025-02-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0040007Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0040382Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0040737Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0041131Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0041485Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0041802Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0042135Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0042475Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0042813Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0043147Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0043515Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0043887Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0044321Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0044745Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0045142Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0045540Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0045938Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0046350Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0046752Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0047017Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0047314Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0047693Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0048076Z     "Name": "Devin",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0048428Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0048812Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0049167Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0049690Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0050014Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0050340Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0050673Z     "Status": "skipped",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0051045Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0051495Z     "SkippedAt": "2025-02-01T12:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0052025Z     "SkippedReason": "Unsubscribed",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0052541Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0052979Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0053369Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0053768Z     "TotalDonation": "0.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0054163Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0054582Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0082558Z   }
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0082911Z ]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0083588Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0084314Z LOG: 'CSV rows:', '[
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0084621Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0084812Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0085053Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0085468Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0085731Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0086077Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0086565Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0086815Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0087022Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0087218Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0087412Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0087784Z     "DeliveredAt": "2025-01-01T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0088163Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0088396Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0088677Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0089066Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0089533Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0089860Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0090212Z     "TotalDozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0090465Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0090717Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0091237Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0091562Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0091931Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0092163Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0092503Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0092871Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0093209Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0093569Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0093938Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0094297Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0094604Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0094807Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0095018Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0095235Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0095485Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0095746Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0096029Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0096433Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0096836Z     "TotalDozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0097252Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0097700Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0098057Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0098383Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0098786Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0099186Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0099928Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0100366Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0100749Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0101073Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0101417Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0101748Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0102114Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0102604Z     "DeliveredAt": "2025-01-01T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0102930Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0103240Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0103685Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0104130Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0104559Z     "DonationAmount": "4",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0104976Z     "TotalDonation": "4.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0105298Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0105553Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0105795Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0105959Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0106132Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0106352Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0106578Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0106889Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0107284Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0107647Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0107991Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0108264Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0108452Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0108738Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0109091Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0109598Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0109967Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0110420Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0110846Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0111080Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0111344Z     "TotalDonation": "4.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0111727Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0111983Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0112907Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0113207Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0113533Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0113901Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0114247Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0114571Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0114956Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0115312Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0115641Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0115955Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0116266Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0116577Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0116912Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0117264Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0117611Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0118034Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0118449Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0119152Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0119806Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0120248Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0120648Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0120973Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0121294Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0121538Z     "Date": "2025-02-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0121934Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0122239Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0122472Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0122872Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0123261Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0123622Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0123950Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0124145Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0124335Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0124533Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0124741Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0124951Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0125329Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0125691Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0126035Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0126466Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0126879Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0127333Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0127598Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0127765Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0127932Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0128200Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0128593Z     "Name": "Devin",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0128930Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0129163Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0129619Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0129827Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0130031Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0130212Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0130406Z     "Status": "skipped",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0130624Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0130957Z     "SkippedAt": "2025-02-01T12:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0131492Z     "SkippedReason": "Unsubscribed",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0132020Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0132489Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0132914Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0133187Z     "TotalDonation": "0.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0133415Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0133671Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0134106Z   }
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0134398Z ]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0134949Z [1A[2KLOG: '
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0135431Z === Snapshot: between-run1-and-run2 ==='
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0136385Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0136955Z LOG: '
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0137216Z === Snapshot: between-run1-and-run2 ==='
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0137669Z [1A[2KLOG: 'baseRowId=c1 donation=16.00 dozens=3'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0138484Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0139225Z LOG: 'baseRowId=c1 donation=16.00 dozens=3'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0140341Z [1A[2KLOG: 'baseRowId=c2 donation=8.00 dozens=1'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0141274Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0142320Z LOG: 'baseRowId=c2 donation=8.00 dozens=1'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0143091Z [1A[2KLOG: 'baseRowId=c3 donation=6.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0144028Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0144733Z LOG: 'baseRowId=c3 donation=6.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0145452Z [1A[2KLOG: 'baseRowId=c4 donation=0.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0146308Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0147068Z LOG: 'baseRowId=c4 donation=0.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0147588Z [1A[2KLOG: 'CSV rows:', '[
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0147947Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0148237Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0148802Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0149161Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0149656Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0150050Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0150456Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0150792Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0151142Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0151428Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0151628Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0152036Z     "DeliveredAt": "2025-01-01T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0152399Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0152627Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0153052Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0153556Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0153966Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0154254Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0154539Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0154987Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0155422Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0155726Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0156041Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0156272Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0156477Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0156765Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0157135Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0157442Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0157712Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0158031Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0158253Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0158437Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0158620Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0158823Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0159021Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0159582Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0159980Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0160210Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0160428Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0160653Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0160927Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0161360Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0161646Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0161934Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0162151Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0162522Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0162871Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0163103Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0163310Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0163488Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0163675Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0163859Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0164050Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0164299Z     "DeliveredAt": "2025-01-01T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0164560Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0164765Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0165002Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0165235Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0165462Z     "DonationAmount": "4",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0165718Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0166081Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0166485Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0166890Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0167166Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0167734Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0168017Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0168233Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0168472Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0168880Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0169092Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0169278Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0169676Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0169866Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0170046Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0170390Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0170658Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0170975Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0171397Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0171701Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0172104Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0172692Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0172929Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0173223Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0173622Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0173788Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0174053Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0174356Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0174569Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0174771Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0174986Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0175193Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0175397Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0175820Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0176028Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0176220Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0176411Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0176623Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0176982Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0177244Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0177541Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0177909Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0178135Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0178364Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0178657Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0179076Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0179512Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0179763Z     "Date": "2025-02-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0179986Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0180196Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0180399Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0180803Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0181184Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0181519Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0181863Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0182192Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0182532Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0182824Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0183034Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0183232Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0183489Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0183881Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0184294Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0184703Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0185049Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0185394Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0185745Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0186027Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0186221Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0186436Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0186646Z     "Name": "Devin",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0186839Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0187194Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0187573Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0187915Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0188263Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0188608Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0188964Z     "Status": "skipped",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0189541Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0190004Z     "SkippedAt": "2025-02-01T12:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0190573Z     "SkippedReason": "Unsubscribed",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0190904Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0191259Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0191930Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0192343Z     "TotalDonation": "0.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0192582Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0192827Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0193069Z   }
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0193361Z ]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0194112Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0194895Z LOG: 'CSV rows:', '[
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0195258Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0195586Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0196000Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0196397Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0196765Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0197189Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0197579Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0198164Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0198527Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0198961Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0199480Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0199991Z     "DeliveredAt": "2025-01-01T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0200472Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0200841Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0201284Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0201732Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0202164Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0202580Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0203005Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0203463Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0203891Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0204138Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0204315Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0204543Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0204756Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0204953Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0205192Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0205398Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0205585Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0205869Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0206220Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0206567Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0206931Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0207308Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0207692Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0207998Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0208256Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0208555Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0208962Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0209549Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0210015Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0210447Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0210755Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0211068Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0211475Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0211873Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0212253Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0212676Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0213065Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0213401Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0213756Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0214099Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0214468Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0214953Z     "DeliveredAt": "2025-01-01T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0215410Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0215699Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0216151Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0216612Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0217029Z     "DonationAmount": "4",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0217431Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0217832Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0218260Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0218665Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0218940Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0219244Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0219943Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0220320Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0220663Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0221075Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0221727Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0222080Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0222443Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0222794Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0223146Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0223351Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0223675Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0224061Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0224527Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0224995Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0225413Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0225839Z     "TotalDonation": "8.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0226270Z     "TotalDozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0226723Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0227005Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0227173Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0227526Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0227737Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0228093Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0228460Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0228894Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0229271Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0229796Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0230140Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0230483Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0230830Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0231172Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0231384Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0231585Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0231971Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0232253Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0232470Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0232686Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0232902Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0233138Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0233376Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0233622Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0233911Z     "Date": "2025-02-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0234271Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0234632Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0234973Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0235348Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0235694Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0236007Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0236323Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0236627Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0236935Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0237256Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0237617Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0237964Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0238376Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0238796Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0239165Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0239721Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0240101Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0240516Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0240909Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0241174Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0241445Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0241800Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0242162Z     "Name": "Devin",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0242493Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0242861Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0243207Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0243518Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0243835Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0244136Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0244453Z     "Status": "skipped",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0244808Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0245224Z     "SkippedAt": "2025-02-01T12:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0245718Z     "SkippedReason": "Unsubscribed",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0246199Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0246625Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0246981Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0247343Z     "TotalDonation": "0.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0247723Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0248138Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0248542Z   }
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0249005Z ]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0249571Z [1A[2KLOG: '
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0249945Z === Snapshot: after-run2 ==='
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0250757Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0251394Z LOG: '
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0251748Z === Snapshot: after-run2 ==='
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0252396Z [1A[2KLOG: 'baseRowId=c1 donation=28.00 dozens=6'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0253272Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0254056Z LOG: 'baseRowId=c1 donation=28.00 dozens=6'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0254722Z [1A[2KLOG: 'baseRowId=c2 donation=16.00 dozens=3'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0255659Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0256310Z LOG: 'baseRowId=c2 donation=16.00 dozens=3'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0256988Z [1A[2KLOG: 'baseRowId=c3 donation=6.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0257908Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0258459Z LOG: 'baseRowId=c3 donation=6.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0259223Z [1A[2KLOG: 'baseRowId=c4 donation=0.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0260227Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0260949Z LOG: 'baseRowId=c4 donation=0.00 dozens=0'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0261540Z [1A[2KLOG: 'CSV rows:', '[
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0261920Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0262239Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0262572Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0262932Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0263146Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0263373Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0263582Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0263932Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0264138Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0264323Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0264515Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0264781Z     "DeliveredAt": "2025-01-01T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0265074Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0265446Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0265937Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0266332Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0266767Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0267177Z     "TotalDonation": "28.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0267602Z     "TotalDozens": "6",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0267935Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0268171Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0268329Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0268498Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0268797Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0269184Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0269727Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0270083Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0270290Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0270477Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0270663Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0270856Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0271045Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0271479Z     "DeliveredAt": "2025-01-08T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0271753Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0271957Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0272253Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0272597Z     "DonationMethod": "ach",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0272826Z     "DonationAmount": "12",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0273128Z     "TotalDonation": "28.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0273430Z     "TotalDozens": "6",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0273673Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0273903Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0274062Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0274312Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0274697Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0275098Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0275318Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0275539Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0275742Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0276364Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0276687Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0277025Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0277258Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0277531Z     "DeliveredAt": "2025-01-01T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0277858Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0278166Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0278409Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0278653Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0278882Z     "DonationAmount": "4",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0279247Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0279838Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0280278Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0280730Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0281037Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0281356Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0282019Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0282417Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0282759Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0283144Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0283537Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0283865Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0284191Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0284498Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0284820Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0285267Z     "DeliveredAt": "2025-01-08T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0285711Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0286053Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0286459Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0286902Z     "DonationMethod": "paypal",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0287333Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0287717Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0288096Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0288505Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0288923Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0289184Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0289649Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0290009Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0290373Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0290698Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0291073Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0291424Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0291743Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0292058Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0292386Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0292704Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0293010Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0293317Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0293624Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0294073Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0294512Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0294895Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0295296Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0295711Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0296167Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0296473Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0296711Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0297024Z     "Date": "2025-02-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0297428Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0297823Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0298186Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0298474Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0298779Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0299048Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0299234Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0299650Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0299993Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0300344Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0300593Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0300798Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0301043Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0301354Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0301751Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0302153Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0302553Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0302979Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0303371Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0303637Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0304123Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0304494Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0304858Z     "Name": "Devin",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0305203Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0305578Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0305924Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0306238Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0306453Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0306640Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0306834Z     "Status": "skipped",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0307037Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0307286Z     "SkippedAt": "2025-02-01T12:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0307576Z     "SkippedReason": "Unsubscribed",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0307855Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0308093Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0308495Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0308887Z     "TotalDonation": "0.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0309295Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0309742Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0309982Z   }
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0310145Z ]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0310560Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 55 of 151 (1 FAILED) (0 secs / 1.243 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0310980Z LOG: 'CSV rows:', '[
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0311168Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0311337Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0311556Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0311772Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0311963Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0312189Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0312397Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0312584Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0312765Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0312945Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0313140Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0313407Z     "DeliveredAt": "2025-01-01T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0313666Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0313872Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0314113Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0314355Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0314574Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0314791Z     "TotalDonation": "28.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0315012Z     "TotalDozens": "6",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0315252Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0315475Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0315635Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0315802Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0316015Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0316217Z     "Name": "Alice",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0316567Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0316965Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0317334Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0317657Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0317997Z     "Dozens": "2",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0318345Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0318694Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0319077Z     "DeliveredAt": "2025-01-08T08:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0319591Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0320001Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0320413Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0320857Z     "DonationMethod": "ach",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0321279Z     "DonationAmount": "12",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0321694Z     "TotalDonation": "28.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0322102Z     "TotalDozens": "6",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0322501Z     "TotalTaxableDonation": "5.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0322917Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0323217Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0323527Z     "Date": "2025-01-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0323919Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0324301Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0324664Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0325096Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0325502Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0325789Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0326027Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0326209Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0326402Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0326841Z     "DeliveredAt": "2025-01-01T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0327105Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0327310Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0327550Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0327780Z     "DonationMethod": "cash",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0328008Z     "DonationAmount": "4",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0328227Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0328453Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0328746Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0328978Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0329138Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0329307Z     "Date": "2025-01-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0329790Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0330000Z     "Name": "Bob",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0330189Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0330579Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0330778Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0330964Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0331149Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0331340Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0331524Z     "Status": "delivered",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0331796Z     "DeliveredAt": "2025-01-08T08:15:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0332065Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0332277Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0332650Z     "DonationStatus": "Donated",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0333126Z     "DonationMethod": "paypal",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0333556Z     "DonationAmount": "8",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0333964Z     "TotalDonation": "16.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0334375Z     "TotalDozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0334801Z     "TotalTaxableDonation": "4.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0335486Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0335855Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0336285Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0336897Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0337428Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0337914Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0338547Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0339054Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0339823Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0340393Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0340871Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0341378Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0341958Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0342407Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0342930Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0343680Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0344324Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0344957Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0404225Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0404651Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0404920Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0405166Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0405339Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0405510Z     "Date": "2025-02-08",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0405739Z     "Delivery Order": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0405952Z     "Name": "Carla",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0406163Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0406387Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0406593Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0406778Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0406960Z     "Dozens": "3",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0407140Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0407315Z     "Status": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0407499Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0407699Z     "SkippedAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0407895Z     "SkippedReason": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0408139Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0408405Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0408636Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0408862Z     "TotalDonation": "6.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0409086Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0409578Z     "TotalTaxableDonation": "6.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0409993Z   },
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0410247Z   {
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0410522Z     "Date": "2025-02-01",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0410859Z     "Delivery Order": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0411208Z     "Name": "Devin",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0411523Z     "Address": "123 Main St",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0412155Z     "City": "Testville",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0412377Z     "State": "TS",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0412575Z     "ZIP": "12345",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0412768Z     "Dozens": "1",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0412947Z     "Notes": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0413143Z     "Status": "skipped",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0413358Z     "DeliveredAt": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0413615Z     "SkippedAt": "2025-02-01T12:00:00.000Z",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0413911Z     "SkippedReason": "Unsubscribed",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0414197Z     "DonationStatus": "NoDonation",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0414451Z     "DonationMethod": "",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0414675Z     "DonationAmount": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0414900Z     "TotalDonation": "0.00",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0415119Z     "TotalDozens": "0",
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0415359Z     "TotalTaxableDonation": "0.00"
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0415728Z   }
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0415894Z ]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0416574Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0417159Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0417671Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0418267Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0419963Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0421462Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0422702Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0423817Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0424599Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0425387Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0426413Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0427178Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0427974Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0429007Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0430060Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0430850Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0431899Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0432659Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0433438Z WARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0434456Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0435205Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0435986Z WARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0437035Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0437980Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0438761Z WARN: 'The query {"routeDate":"2025-01-08","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0440052Z [1A[2KWARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0440835Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 56 of 151 (1 FAILED) (0 secs / 1.275 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0441607Z WARN: 'The query {"routeDate":"2025-01-08","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0442683Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 57 of 151 (1 FAILED) (0 secs / 1.308 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0567832Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 58 of 151 (1 FAILED) (0 secs / 1.331 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0582214Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0584855Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 58 of 151 (1 FAILED) (0 secs / 1.331 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0585731Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0627959Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 59 of 151 (1 FAILED) (0 secs / 1.336 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0633040Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0634037Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 59 of 151 (1 FAILED) (0 secs / 1.336 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0634895Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0681184Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 60 of 151 (1 FAILED) (0 secs / 1.34 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0682558Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0683424Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 60 of 151 (1 FAILED) (0 secs / 1.34 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0683991Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0712379Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 61 of 151 (1 FAILED) (0 secs / 1.342 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0714598Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0715192Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 61 of 151 (1 FAILED) (0 secs / 1.342 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0715458Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0749053Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 62 of 151 (1 FAILED) (0 secs / 1.345 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0788838Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 63 of 151 (1 FAILED) (0 secs / 1.348 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0817553Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 64 of 151 (1 FAILED) (0 secs / 1.351 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0846843Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 65 of 151 (1 FAILED) (0 secs / 1.354 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0878564Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 66 of 151 (1 FAILED) (0 secs / 1.357 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0906968Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 67 of 151 (1 FAILED) (0 secs / 1.36 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0943908Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 68 of 151 (1 FAILED) (0 secs / 1.362 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0970287Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 69 of 151 (1 FAILED) (0 secs / 1.364 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0988560Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0989561Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 69 of 151 (1 FAILED) (0 secs / 1.364 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.0990248Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1096795Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 70 of 151 (1 FAILED) (0 secs / 1.376 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1111458Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1112171Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 70 of 151 (1 FAILED) (0 secs / 1.376 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1112356Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1182280Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 71 of 151 (1 FAILED) (0 secs / 1.384 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1196866Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1197513Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 71 of 151 (1 FAILED) (0 secs / 1.384 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1197819Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1274298Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 72 of 151 (1 FAILED) (0 secs / 1.393 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1290181Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1291401Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 72 of 151 (1 FAILED) (0 secs / 1.393 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1291709Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1364867Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1365486Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 72 of 151 (1 FAILED) (0 secs / 1.393 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1366377Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1368288Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1368882Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 72 of 151 (1 FAILED) (0 secs / 1.393 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1369949Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1439573Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 73 of 151 (1 FAILED) (0 secs / 1.409 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1457785Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1459605Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 73 of 151 (1 FAILED) (0 secs / 1.409 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1460519Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1540940Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 74 of 151 (1 FAILED) (0 secs / 1.419 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1556157Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1557796Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 74 of 151 (1 FAILED) (0 secs / 1.419 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1558691Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1648155Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1665907Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1666917Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1667705Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1752733Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1754240Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1755692Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1757607Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1758695Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1760112Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1794493Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1796178Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1797576Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1799606Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1800773Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1801602Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1834319Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1835758Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1837209Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1839121Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1840660Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 75 of 151 (1 FAILED) (0 secs / 1.43 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1841786Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.1902436Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2013882Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2014905Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2015729Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2095764Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2097206Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2098617Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2100765Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2102105Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2102966Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2139219Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2140981Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2142655Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2144495Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2145574Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2146556Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2177873Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2180926Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2182790Z WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2184835Z [1A[2KWARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2186286Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 76 of 151 (1 FAILED) (0 secs / 1.455 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2187555Z WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2211694Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 77 of 151 (1 FAILED) (0 secs / 1.485 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2238157Z [1A[2KWARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2238765Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 77 of 151 (1 FAILED) (0 secs / 1.485 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2239262Z WARN: 'Storage persistence not granted'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2321586Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 78 of 151 (1 FAILED) (0 secs / 1.495 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2381603Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 79 of 151 (1 FAILED) (0 secs / 1.499 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2414228Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 80 of 151 (1 FAILED) (0 secs / 1.502 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2462253Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 81 of 151 (1 FAILED) (0 secs / 1.505 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2493488Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 82 of 151 (1 FAILED) (0 secs / 1.508 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2528873Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 83 of 151 (1 FAILED) (0 secs / 1.511 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2558017Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 84 of 151 (1 FAILED) (0 secs / 1.514 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2574787Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 85 of 151 (1 FAILED) (0 secs / 1.515 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2787968Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 86 of 151 (1 FAILED) (0 secs / 1.535 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2845891Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 87 of 151 (1 FAILED) (0 secs / 1.54 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2881268Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 88 of 151 (1 FAILED) (0 secs / 1.543 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2937943Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 89 of 151 (1 FAILED) (0 secs / 1.549 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.2986787Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 90 of 151 (1 FAILED) (0 secs / 1.553 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3026297Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 91 of 151 (1 FAILED) (0 secs / 1.557 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3074092Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 92 of 151 (1 FAILED) (0 secs / 1.561 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3122917Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 93 of 151 (1 FAILED) (0 secs / 1.564 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3160607Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 94 of 151 (1 FAILED) (0 secs / 1.567 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3205450Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 95 of 151 (1 FAILED) (0 secs / 1.572 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3252663Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 96 of 151 (1 FAILED) (0 secs / 1.576 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3298441Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 97 of 151 (1 FAILED) (0 secs / 1.579 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3328669Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 98 of 151 (1 FAILED) (0 secs / 1.582 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3366815Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 99 of 151 (1 FAILED) (0 secs / 1.586 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3399983Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 100 of 151 (1 FAILED) (0 secs / 1.589 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3451947Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 101 of 151 (1 FAILED) (0 secs / 1.593 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.3484694Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 102 of 151 (1 FAILED) (0 secs / 1.597 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.4602659Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 103 of 151 (1 FAILED) (0 secs / 1.708 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.4658046Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 104 of 151 (1 FAILED) (0 secs / 1.712 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5487804Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 105 of 151 (1 FAILED) (0 secs / 1.795 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5546852Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 106 of 151 (1 FAILED) (0 secs / 1.8 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5610882Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 107 of 151 (1 FAILED) (0 secs / 1.806 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5668579Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 108 of 151 (1 FAILED) (0 secs / 1.811 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5714295Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 109 of 151 (1 FAILED) (0 secs / 1.815 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5758798Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 110 of 151 (1 FAILED) (0 secs / 1.819 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.5826852Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 111 of 151 (1 FAILED) (0 secs / 1.824 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6027967Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 112 of 151 (1 FAILED) (0 secs / 1.845 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6084700Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 113 of 151 (1 FAILED) (0 secs / 1.849 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6137255Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 114 of 151 (1 FAILED) (0 secs / 1.854 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6174212Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 115 of 151 (1 FAILED) (0 secs / 1.857 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6262298Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 116 of 151 (1 FAILED) (0 secs / 1.865 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6312200Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 117 of 151 (1 FAILED) (0 secs / 1.868 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6345841Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 118 of 151 (1 FAILED) (0 secs / 1.872 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6379576Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 119 of 151 (1 FAILED) (0 secs / 1.875 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6422853Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 120 of 151 (1 FAILED) (0 secs / 1.879 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6472469Z [1A[2KLOG: 'openOffScheduleDelivery fired for', 'delivery-1'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6476183Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 120 of 151 (1 FAILED) (0 secs / 1.879 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6477764Z LOG: 'openOffScheduleDelivery fired for', 'delivery-1'
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6481840Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 121 of 151 (1 FAILED) (0 secs / 1.883 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6518033Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 122 of 151 (1 FAILED) (0 secs / 1.887 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6554568Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 123 of 151 (1 FAILED) (0 secs / 1.89 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6647744Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 124 of 151 (1 FAILED) (0 secs / 1.899 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6700421Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 125 of 151 (1 FAILED) (0 secs / 1.903 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6737272Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 126 of 151 (1 FAILED) (0 secs / 1.907 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6784439Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 127 of 151 (1 FAILED) (0 secs / 1.91 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6816472Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 128 of 151 (1 FAILED) (0 secs / 1.913 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6850909Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 129 of 151 (1 FAILED) (0 secs / 1.916 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6886108Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 130 of 151 (1 FAILED) (0 secs / 1.92 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.6929699Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 131 of 151 (1 FAILED) (0 secs / 1.924 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7019134Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 132 of 151 (1 FAILED) (0 secs / 1.932 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7059585Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 133 of 151 (1 FAILED) (0 secs / 1.936 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7093621Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 134 of 151 (1 FAILED) (0 secs / 1.939 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7139066Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 135 of 151 (1 FAILED) (0 secs / 1.942 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7169305Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 136 of 151 (1 FAILED) (0 secs / 1.945 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7199848Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 137 of 151 (1 FAILED) (0 secs / 1.948 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7291961Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 138 of 151 (1 FAILED) (0 secs / 1.957 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7417576Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 139 of 151 (1 FAILED) (0 secs / 1.968 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7460733Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 140 of 151 (1 FAILED) (0 secs / 1.971 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7543162Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 141 of 151 (1 FAILED) (0 secs / 1.979 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7577999Z [1A[2KERROR: 'Copy failed', Error: copy failed
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7578608Z Error: copy failed
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7579762Z     at Object.<anonymous> (http://localhost:9876/_karma_webpack_/webpack:/src/app/pages/route-planner.component.spec.ts:1464:42)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7581704Z     at SpyStrategy.exec (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:9310:39)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7584096Z     at SpyStrategyDispatcher.exec (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8847:23)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7586406Z     at spy (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8709:46)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7588399Z     at http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8718:16
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7590698Z     at Object.writeText (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8773:20)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7592382Z     at http://localhost:9876/_karma_webpack_/webpack:/src/app/pages/route-planner.component.ts:648:35
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7593327Z     at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7594512Z     at asyncGeneratorStep (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7596203Z     at _next (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7597604Z Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 141 of 151 (1 FAILED) (0 secs / 1.979 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7598452Z ERROR: 'Copy failed', Error: copy failed
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7598949Z Error: copy failed
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7600156Z     at Object.<anonymous> (http://localhost:9876/_karma_webpack_/webpack:/src/app/pages/route-planner.component.spec.ts:1464:42)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7602222Z     at SpyStrategy.exec (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:9310:39)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7605166Z     at SpyStrategyDispatcher.exec (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8847:23)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7607475Z     at spy (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8709:46)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7609798Z     at http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8718:16
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7612065Z     at Object.writeText (http://localhost:9876/base/node_modules/karma-jasmine/node_modules/jasmine-core/lib/jasmine-core/jasmine.js?86d98e11f43f2c8cfac9fb4806ed6c0aced74cbe:8773:20)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7614151Z     at http://localhost:9876/_karma_webpack_/webpack:/src/app/pages/route-planner.component.ts:648:35
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7615029Z     at Generator.next (<anonymous>)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7616195Z     at asyncGeneratorStep (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7617884Z     at _next (http://localhost:9876/_karma_webpack_/webpack:/node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7619752Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 142 of 151 (1 FAILED) (0 secs / 1.982 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7633598Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 143 of 151 (1 FAILED) (0 secs / 1.985 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7662580Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 144 of 151 (1 FAILED) (0 secs / 1.987 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7692415Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 145 of 151 (1 FAILED) (0 secs / 1.989 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7763115Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 146 of 151 (1 FAILED) (0 secs / 1.995 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7823023Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 147 of 151 (1 FAILED) (0 secs / 1.999 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7892457Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 148 of 151 (1 FAILED) (0 secs / 2.005 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7960731Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 149 of 151 (1 FAILED) (0 secs / 2.011 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.7997855Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 150 of 151 (1 FAILED) (0 secs / 2.013 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.8008165Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 151 of 151 (1 FAILED) (0 secs / 2.014 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.8529544Z [1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 151 of 151 (1 FAILED) (2.19 secs / 2.014 secs)
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.8550396Z TOTAL: 1 FAILED, 150 SUCCESS
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:30.8581986Z ✔ Browser application bundle generation complete.
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2127792Z 
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2128588Z =============================== Coverage summary ===============================
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2129580Z Statements   : 73.09% ( 2508/3431 )
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2130078Z Branches     : 52.27% ( 1197/2290 )
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2130428Z Functions    : 75.54% ( 451/597 )
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2130764Z Lines        : 75.51% ( 2390/3165 )
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.2131181Z ================================================================================
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.3044508Z ✔ Browser application bundle generation complete.
+unit-tests	Run unit tests (CI)	2026-01-31T19:59:31.6703408Z ##[error]Process completed with exit code 1.

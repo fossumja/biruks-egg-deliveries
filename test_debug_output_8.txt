@@ -1,0 +1,151 @@
+
+> biruks-egg-deliveries@0.0.0 test:ci
+> ng test --watch=false --browsers=ChromeHeadless --code-coverage --include=src/app/pages/home.component.spec.ts
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+[32m31 01 2026 14:10:35.573:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m31 01 2026 14:10:35.573:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m31 01 2026 14:10:35.575:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m31 01 2026 14:10:38.183:INFO [Chrome Headless 144.0.0.0 (Mac OS 10.15.7)]: [39mConnected on socket vfnaKxaqcsrmem6vAAAB with id 52553657
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 0 of 26[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 1 of 26[32m SUCCESS[39m (0 secs / 0.058 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[32m SUCCESS[39m (0 secs / 0.061 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[32m SUCCESS[39m (0 secs / 0.064 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 4 of 26[32m SUCCESS[39m (0 secs / 0.066 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 5 of 26[32m SUCCESS[39m (0 secs / 0.075 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 6 of 26[32m SUCCESS[39m (0 secs / 0.077 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 7 of 26[32m SUCCESS[39m (0 secs / 0.078 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 8 of 26[32m SUCCESS[39m (0 secs / 0.081 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 9 of 26[32m SUCCESS[39m (0 secs / 0.083 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 10 of 26[32m SUCCESS[39m (0 secs / 0.085 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 11 of 26[32m SUCCESS[39m (0 secs / 0.087 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 12 of 26[32m SUCCESS[39m (0 secs / 0.088 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 13 of 26[32m SUCCESS[39m (0 secs / 0.09 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 14 of 26[32m SUCCESS[39m (0 secs / 0.092 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 15 of 26[32m SUCCESS[39m (0 secs / 0.093 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 16 of 26[32m SUCCESS[39m (0 secs / 0.097 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[32m SUCCESS[39m (0 secs / 0.099 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore round-trips totals across backup export and restore FAILED[39m
+	Error: DEBUG_MAP: {"baseRowId":"c1","byBaseIdKeys":["c1","c2","c3","c4"],"rowKeys":["RowType","Schedule","BaseRowId","Name","Address","City","State","ZIP","Dozens","Delivery Order","RunId","RouteDate","ScheduleId","RunStatus","RunBaseRowId","RunDeliveryOrder","RunEntryStatus","RunDozens","RunDonationStatus","RunDonationMethod","RunDonationAmount","RunTaxableAmount","RunCompletedAt","EventDate","SuggestedAmount","TotalDonation","TotalDozens","TotalDeductibleContribution"]}
+	    at forEach (src/app/pages/home.component.ts:694:17)
+	    at Array.forEach (<anonymous>)
+	    at src/app/pages/home.component.ts:687:26
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at apply (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+	    at ZoneImpl.run (node_modules/zone.js/fesm2015/zone.js:113:43)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[31m (1 FAILED)[39m (0 secs / 0.287 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[31m (1 FAILED)[39m (0 secs / 0.287 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore recomputes totals from restored receipts FAILED[39m
+	Error: DEBUG_MAP: {"baseRowId":"c1","byBaseIdKeys":["c1"],"rowKeys":["RowType","BaseRowId","RunBaseRowId","Schedule","Name","Address","City","State","ZIP","Dozens","Delivery Order","RunId","RouteDate","ScheduleId","RunStatus","RunEntryStatus","RunDozens","RunDonationStatus","RunDonationMethod","RunDonationAmount","RunTaxableAmount","RunCompletedAt","SuggestedAmount","EventDate"]}
+	    at forEach (src/app/pages/home.component.ts:694:17)
+	    at Array.forEach (<anonymous>)
+	    at src/app/pages/home.component.ts:687:26
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at apply (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+	    at ZoneImpl.run (node_modules/zone.js/fesm2015/zone.js:113:43)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[31m (2 FAILED)[39m (0 secs / 0.291 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[31m (2 FAILED)[39m (0 secs / 0.291 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 20 of 26[31m (2 FAILED)[39m (0 secs / 0.294 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 20 of 26[31m (2 FAILED)[39m (0 secs / 0.294 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore falls back to route or run dates when EventDate is missing FAILED[39m
+	Error: DEBUG_MAP: {"baseRowId":"c1","byBaseIdKeys":["c1"],"rowKeys":["RowType","BaseRowId","RunBaseRowId","Schedule","Name","Address","City","State","ZIP","Dozens","Delivery Order","RunId","RouteDate","ScheduleId","RunStatus","RunEntryStatus","RunDozens","RunDonationStatus","RunDonationMethod","RunDonationAmount","RunTaxableAmount","RunCompletedAt","SuggestedAmount","EventDate"]}
+	    at forEach (src/app/pages/home.component.ts:694:17)
+	    at Array.forEach (<anonymous>)
+	    at src/app/pages/home.component.ts:687:26
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at apply (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+	    at ZoneImpl.run (node_modules/zone.js/fesm2015/zone.js:113:43)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 21 of 26[31m (3 FAILED)[39m (0 secs / 0.3 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 21 of 26[31m (3 FAILED)[39m (0 secs / 0.3 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[31m (3 FAILED)[39m (0 secs / 0.304 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[31m (3 FAILED)[39m (0 secs / 0.304 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore restores one-off rows with normalized EventDate values FAILED[39m
+	Error: DEBUG_MAP: {"baseRowId":"c1","byBaseIdKeys":["c1"],"rowKeys":["RowType","BaseRowId","RunBaseRowId","Schedule","Name","Address","City","State","ZIP","Dozens","Delivery Order","RunId","RouteDate","ScheduleId","RunStatus","RunEntryStatus","RunDozens","RunDonationStatus","RunDonationMethod","RunDonationAmount","RunTaxableAmount","RunCompletedAt","SuggestedAmount","EventDate"]}
+	    at forEach (src/app/pages/home.component.ts:694:17)
+	    at Array.forEach (<anonymous>)
+	    at src/app/pages/home.component.ts:687:26
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at apply (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+	    at ZoneImpl.run (node_modules/zone.js/fesm2015/zone.js:113:43)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 23 of 26[31m (4 FAILED)[39m (0 secs / 0.308 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 23 of 26[31m (4 FAILED)[39m (0 secs / 0.308 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent CSV parsing accepts CSVs missing optional columns FAILED[39m
+	Expected '' to be 'NoDonation'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:476:44)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 24 of 26[31m (5 FAILED)[39m (0 secs / 0.311 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 24 of 26[31m (5 FAILED)[39m (0 secs / 0.311 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 25 of 26[31m (5 FAILED)[39m (0 secs / 0.315 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 25 of 26[31m (5 FAILED)[39m (0 secs / 0.315 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[31m (5 FAILED)[39m (0 secs / 0.318 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[31m (5 FAILED)[39m (0.347 secs / 0.318 secs)
+[31mTOTAL: 5 FAILED, 21 SUCCESS[39m
+✔ Browser application bundle generation complete.
+
+=============================== Coverage summary ===============================
+Statements   : 52.25% ( 856/1638 )
+Branches     : 28.3% ( 330/1166 )
+Functions    : 53.09% ( 163/307 )
+Lines        : 53.63% ( 796/1484 )
+================================================================================
+✔ Browser application bundle generation complete.

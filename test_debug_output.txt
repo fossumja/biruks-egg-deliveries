@@ -1,0 +1,179 @@
+
+> biruks-egg-deliveries@0.0.0 test:ci
+> ng test --watch=false --browsers=ChromeHeadless --code-coverage --include=src/app/pages/home.component.spec.ts
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+[32m31 01 2026 14:04:25.633:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m31 01 2026 14:04:25.634:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m31 01 2026 14:04:25.636:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m31 01 2026 14:04:26.811:INFO [Chrome Headless 144.0.0.0 (Mac OS 10.15.7)]: [39mConnected on socket J5eu9H33sRkLN0OzAAAB with id 79245380
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 0 of 26[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 0 of 26[32m SUCCESS[39m (0 secs / 0 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore falls back to route or run dates when EventDate is missing FAILED[39m
+	Expected undefined to be '2025-01-01T18:00:00.000Z'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:277:50)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected undefined to be '2025-01-01T18:00:00.000Z'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:278:51)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected undefined to be '2025-01-01T18:00:00.000Z'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:279:61)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 1 of 26[31m (1 FAILED)[39m (0 secs / 0.1 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 1 of 26[31m (1 FAILED)[39m (0 secs / 0.1 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore recomputes totals from restored receipts FAILED[39m
+	Expected 8 to be close to 17, 5.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:318:37)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected 2 to be 3.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:319:35)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected 0 to be close to 5, 5.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:320:36)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"delivered"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2KWARN: [36m'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 2 of 26[31m (2 FAILED)[39m (0 secs / 0.107 secs)
+WARN: 'The query {"routeDate":"2025-01-01","status":"skipped"} on deliveries would benefit from a compound index [routeDate+status]'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore round-trips totals across backup export and restore FAILED[39m
+	Expected 8 to be close to 16, 5.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:415:31)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected 2 to be 3.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:416:29)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected 0 to be close to 5, 5.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:417:30)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[31m (3 FAILED)[39m (0 secs / 0.124 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 3 of 26[31m (3 FAILED)[39m (0 secs / 0.124 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 4 of 26[31m (3 FAILED)[39m (0 secs / 0.127 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 4 of 26[31m (3 FAILED)[39m (0 secs / 0.127 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 5 of 26[31m (3 FAILED)[39m (0 secs / 0.137 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 5 of 26[31m (3 FAILED)[39m (0 secs / 0.137 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent restore restores one-off rows with normalized EventDate values FAILED[39m
+	Expected undefined to be '2025-06-15T17:00:00.000Z'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:250:50)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected undefined to be '2023-07-16T17:00:00.000Z'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:251:51)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected undefined to be '2023-07-16T17:00:00.000Z'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:252:61)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 6 of 26[31m (4 FAILED)[39m (0 secs / 0.155 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 6 of 26[31m (4 FAILED)[39m (0 secs / 0.155 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 7 of 26[31m (4 FAILED)[39m (0 secs / 0.16 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 7 of 26[31m (4 FAILED)[39m (0 secs / 0.16 secs)
+WARN: 'Storage persistence not granted'
+[1A[2K[31mChrome Headless 144.0.0.0 (Mac OS 10.15.7) HomeComponent CSV parsing accepts CSVs missing optional columns FAILED[39m
+	Expected '' to be 'NoDonation'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/pages/home.component.spec.ts:476:44)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 8 of 26[31m (5 FAILED)[39m (0 secs / 0.167 secs)
+[1A[2KWARN: [36m'Storage persistence not granted'[39m
+Chrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 8 of 26[31m (5 FAILED)[39m (0 secs / 0.167 secs)
+WARN: 'Storage persistence not granted'
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 9 of 26[31m (5 FAILED)[39m (0 secs / 0.171 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 10 of 26[31m (5 FAILED)[39m (0 secs / 0.176 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 11 of 26[31m (5 FAILED)[39m (0 secs / 0.179 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 12 of 26[31m (5 FAILED)[39m (0 secs / 0.18 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 13 of 26[31m (5 FAILED)[39m (0 secs / 0.182 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 14 of 26[31m (5 FAILED)[39m (0 secs / 0.184 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 15 of 26[31m (5 FAILED)[39m (0 secs / 0.186 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 16 of 26[31m (5 FAILED)[39m (0 secs / 0.187 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 17 of 26[31m (5 FAILED)[39m (0 secs / 0.189 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 18 of 26[31m (5 FAILED)[39m (0 secs / 0.19 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 19 of 26[31m (5 FAILED)[39m (0 secs / 0.192 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 20 of 26[31m (5 FAILED)[39m (0 secs / 0.193 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 21 of 26[31m (5 FAILED)[39m (0 secs / 0.194 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 22 of 26[31m (5 FAILED)[39m (0 secs / 0.195 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 23 of 26[31m (5 FAILED)[39m (0 secs / 0.196 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 24 of 26[31m (5 FAILED)[39m (0 secs / 0.197 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 25 of 26[31m (5 FAILED)[39m (0 secs / 0.198 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[31m (5 FAILED)[39m (0 secs / 0.2 secs)
+[1A[2KChrome Headless 144.0.0.0 (Mac OS 10.15.7): Executed 26 of 26[31m (5 FAILED)[39m (0.219 secs / 0.2 secs)
+[31mTOTAL: 5 FAILED, 21 SUCCESS[39m
+✔ Browser application bundle generation complete.
+
+=============================== Coverage summary ===============================
+Statements   : 58.62% ( 958/1634 )
+Branches     : 33.21% ( 388/1168 )
+Functions    : 56.86% ( 174/306 )
+Lines        : 60.43% ( 895/1481 )
+================================================================================
+✔ Browser application bundle generation complete.

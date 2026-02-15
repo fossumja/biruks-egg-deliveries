@@ -1,0 +1,33 @@
+
+> biruks-egg-deliveries@0.0.0 test:ci
+> ng test --watch=false --browsers=ChromeHeadless --code-coverage --include=src/app/pages/home.component.spec.ts
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Error: [96msrc/app/pages/home.component.ts[0m:[93m701[0m:[93m26[0m - [91merror[0m[90m TS18048: [0m'targets' is possibly 'undefined'.
+
+[7m701[0m         if (!targets || !targets.length) return;
+[7m   [0m [91m                         ~~~~~~~[0m
+
+
+Error: [96msrc/app/pages/home.component.ts[0m:[93m738[0m:[93m9[0m - [91merror[0m[90m TS18048: [0m'targets' is possibly 'undefined'.
+
+[7m738[0m         targets.forEach((d) => {
+[7m   [0m [91m        ~~~~~~~[0m
+
+
+
+[32m31 01 2026 14:06:25.860:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m31 01 2026 14:06:25.860:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[91m31 01 2026 14:06:25.860:ERROR [karma-server]: [39mError: Found 1 load error
+    at Server.<anonymous> (/Users/fossum/Library/CloudStorage/OneDrive-Personal/Projects/biruks-egg-deliveries/node_modules/karma/lib/server.js:243:26)
+    at Object.onceWrapper (node:events:621:28)
+    at Server.emit (node:events:519:35)
+    at emitListeningNT (node:net:1982:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+✔ Browser application bundle generation complete.
+✔ Browser application bundle generation complete.

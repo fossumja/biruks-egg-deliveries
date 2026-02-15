@@ -12,13 +12,16 @@ This file tracks the current phase, active work, decisions, and known risks. Kee
 
 ## Current Phase
 
-- **Phase**: Phase 01 (Adaptation)
-- **Focus**: Adapting workflows to Antigravity and adopting GSD Planning.
+- **Focus**: Maintenance & Feature Delivery
+- **Phase**: Phase 02 (Execution)
+
+## Done
+- Adaptation of workflows to Antigravity (Complete).
+- GSD Planning adoption (Complete).
+- UI Refactor: "Release Info" UI consolidated (Complete).
 
 ## In Progress
-
-- Adopting GSD Planning structure (matches Cozy Coffee).
-- Creating wrapper workflows for Antigravity.
+- (None - ready for new features)
 
 ## Known Risks
 
