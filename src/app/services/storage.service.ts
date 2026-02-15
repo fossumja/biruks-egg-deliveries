@@ -577,6 +577,13 @@ export class StorageService {
   }
 
   async saveSortOrder(deliveries: Delivery[]): Promise<void> {
+    if (!deliveries.length) return;
+    const routeDates = new Set(deliveries.map((delivery) => delivery.routeDate));
+    if (routeDates.size > 1) {
+      throw new Error(
+        'Sort order update rejected: deliveries span multiple schedules.'
+      );
+    }
     const now = new Date().toISOString();
     const updated = deliveries.map((d, idx) => ({
       ...d,

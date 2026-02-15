@@ -202,6 +202,23 @@ describe('StorageService regression tests', () => {
     });
   });
 
+  it('rejects saveSortOrder when deliveries span multiple schedules', async () => {
+    await createStorageWithMiniRoute();
+
+    await storage.addDelivery('2025-02-01', {
+      name: 'Other Schedule Stop',
+      dozens: 1
+    });
+
+    const weekA = await storage.getDeliveriesByRoute('2025-01-01');
+    const weekB = await storage.getDeliveriesByRoute('2025-02-01');
+    await expectAsync(
+      storage.saveSortOrder([weekA[0], weekB[0]])
+    ).toBeRejectedWithError(
+      'Sort order update rejected: deliveries span multiple schedules.'
+    );
+  });
+
   it('resetDelivery preserves unsubscribed state', async () => {
     const unsubscribed = buildDelivery({
       id: 'unsub-1',

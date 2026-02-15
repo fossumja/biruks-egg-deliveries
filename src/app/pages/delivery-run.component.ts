@@ -319,7 +319,11 @@ export class DeliveryRunComponent {
       this.toast.show('Backup ready');
     } catch (err) {
       console.error(err);
-      this.toast.show('Backup failed', 'error');
+      const reason =
+        err instanceof Error && err.message.trim()
+          ? err.message.trim()
+          : 'Backup failed';
+      this.toast.show(reason, 'error');
       return;
     }
 

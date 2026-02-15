@@ -177,8 +177,11 @@ export class HomeComponent implements OnDestroy {
       this.toast.show('Backup ready');
     } catch (err) {
       console.error(err);
-      this.errorMessage = 'Export failed. Please try again.';
-      this.toast.show('Backup failed', 'error');
+      this.errorMessage = this.readErrorMessage(
+        err,
+        'Export failed. Please try again.'
+      );
+      this.toast.show(this.errorMessage, 'error');
     } finally {
       this.isExporting = false;
     }
@@ -386,7 +389,11 @@ export class HomeComponent implements OnDestroy {
       return true;
     } catch (err) {
       console.error('Backup before import failed', err);
-      this.toast.show('Backup failed. Restore cancelled.', 'error');
+      const reason = this.readErrorMessage(err, 'Export failed.');
+      this.toast.show(
+        `Backup failed before restore: ${reason}`,
+        'error'
+      );
       return false;
     } finally {
       this.isExporting = false;
@@ -1173,5 +1180,12 @@ export class HomeComponent implements OnDestroy {
       }
     }
     return undefined;
+  }
+
+  private readErrorMessage(error: unknown, fallback: string): string {
+    if (error instanceof Error && error.message.trim()) {
+      return error.message.trim();
+    }
+    return fallback;
   }
 }

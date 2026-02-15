@@ -129,7 +129,14 @@ class StorageServiceStub {
 }
 
 class BackupServiceStub {
+  nextExportError: Error | null = null;
+
   async exportAll(_taxYear?: number): Promise<void> {
+    if (this.nextExportError) {
+      const error = this.nextExportError;
+      this.nextExportError = null;
+      throw error;
+    }
     localStorage.setItem('lastBackupAt', '2025-01-05T00:00:00.000Z');
   }
 }
@@ -194,6 +201,8 @@ describe('HomeComponent restore', () => {
   let backup: BackupService;
 
   beforeEach(async () => {
+    localStorage.clear();
+
     await TestBed.configureTestingModule({
       imports: [HomeComponent, RouterTestingModule],
       providers: [
@@ -215,6 +224,7 @@ describe('HomeComponent restore', () => {
 
   afterEach(async () => {
     await storage.clearAll();
+    localStorage.clear();
   });
 
   it('should create', () => {
@@ -492,6 +502,7 @@ describe('HomeComponent core actions', () => {
   let fixture: ComponentFixture<HomeComponent>;
   let storage: StorageServiceStub;
   let backupService: BackupServiceStub;
+  let toastService: ToastServiceStub;
   let originalWakeLock: unknown;
   let hadWakeLock = false;
 
@@ -524,7 +535,8 @@ describe('HomeComponent core actions', () => {
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
     storage = TestBed.inject(StorageService) as unknown as StorageServiceStub;
-    backupService = TestBed.inject(BackupService) as BackupServiceStub;
+    backupService = TestBed.inject(BackupService) as unknown as BackupServiceStub;
+    toastService = TestBed.inject(ToastService) as unknown as ToastServiceStub;
     fixture.detectChanges();
     await fixture.whenStable();
   });
@@ -577,6 +589,15 @@ describe('HomeComponent core actions', () => {
 
     expect(exportSpy).toHaveBeenCalledWith(2024);
     expect(component.lastBackupAt).toBe('2025-01-05T00:00:00.000Z');
+  });
+
+  it('shows export failure reason when backup fails', async () => {
+    backupService.nextExportError = new Error('Disk quota exceeded');
+
+    await component.exportCsv();
+
+    expect(component.errorMessage).toBe('Disk quota exceeded');
+    expect(toastService.messages.at(-1)).toBe('Disk quota exceeded');
   });
 
   it('persists tax year selection', () => {

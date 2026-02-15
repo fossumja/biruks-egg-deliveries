@@ -380,6 +380,67 @@ describe('BackupService totals with mini route', () => {
     expect(revokeSpy).not.toHaveBeenCalled();
   });
 
+  it('falls back to download when share throws', async () => {
+    const navigatorShare = navigator as unknown as NavigatorShare;
+    const hadShare = 'share' in navigator;
+    const hadCanShare = 'canShare' in navigator;
+    const originalShare = navigatorShare.share;
+    const originalCanShare = navigatorShare.canShare;
+    const originalCreateElement = document.createElement.bind(document);
+
+    const shareSpy = jasmine
+      .createSpy('share')
+      .and.returnValue(Promise.reject(new Error('Share sheet failed')));
+    const canShareSpy = jasmine.createSpy('canShare').and.returnValue(true);
+    Object.defineProperty(navigator, 'share', {
+      value: shareSpy,
+      configurable: true
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      value: canShareSpy,
+      configurable: true
+    });
+
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:backup');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+    const anchor = document.createElement('a');
+    const clickSpy = spyOn(anchor, 'click');
+    const createSpy = spyOn(document, 'createElement').and.callFake((tagName: string) => {
+      if (tagName === 'a') {
+        return anchor;
+      }
+      return originalCreateElement(tagName);
+    });
+
+    try {
+      await backup.exportAll();
+    } finally {
+      if (hadShare) {
+        Object.defineProperty(navigator, 'share', {
+          value: originalShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['share'];
+      }
+      if (hadCanShare) {
+        Object.defineProperty(navigator, 'canShare', {
+          value: originalCanShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['canShare'];
+      }
+    }
+
+    expect(canShareSpy).toHaveBeenCalled();
+    expect(shareSpy).toHaveBeenCalled();
+    expect(createObjectUrlSpy).toHaveBeenCalled();
+    expect(createSpy).toHaveBeenCalledWith('a');
+    expect(clickSpy).toHaveBeenCalled();
+    expect(revokeSpy).toHaveBeenCalledWith('blob:backup');
+  });
+
   it('falls back to download when share is unavailable', async () => {
     const navigatorShare = navigator as unknown as NavigatorShare;
     const hadShare = 'share' in navigator;
@@ -433,6 +494,67 @@ describe('BackupService totals with mini route', () => {
     expect(createSpy).toHaveBeenCalledWith('a');
     expect(clickSpy).toHaveBeenCalled();
     expect(revokeSpy).toHaveBeenCalledWith('blob:backup');
+  });
+
+  it('exports a diagnostic snapshot when CSV generation fails', async () => {
+    const navigatorShare = navigator as unknown as NavigatorShare;
+    const hadShare = 'share' in navigator;
+    const hadCanShare = 'canShare' in navigator;
+    const originalShare = navigatorShare.share;
+    const originalCanShare = navigatorShare.canShare;
+    const originalCreateElement = document.createElement.bind(document);
+
+    Object.defineProperty(navigator, 'share', {
+      value: undefined,
+      configurable: true
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      value: undefined,
+      configurable: true
+    });
+
+    spyOn<any>(backup as any, 'toCsv').and.throwError('Bad row formatting');
+
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:diagnostic');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+    const anchor = document.createElement('a');
+    const clickSpy = spyOn(anchor, 'click');
+    const createSpy = spyOn(document, 'createElement').and.callFake((tagName: string) => {
+      if (tagName === 'a') {
+        return anchor;
+      }
+      return originalCreateElement(tagName);
+    });
+
+    try {
+      await expectAsync(backup.exportAll()).toBeRejectedWithError(
+        /Export failed: Bad row formatting\./
+      );
+    } finally {
+      if (hadShare) {
+        Object.defineProperty(navigator, 'share', {
+          value: originalShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['share'];
+      }
+      if (hadCanShare) {
+        Object.defineProperty(navigator, 'canShare', {
+          value: originalCanShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['canShare'];
+      }
+    }
+
+    expect(createObjectUrlSpy).toHaveBeenCalled();
+    expect(createSpy).toHaveBeenCalledWith('a');
+    expect(clickSpy).toHaveBeenCalled();
+    expect(anchor.download).toContain('BiruksEggDeliveries-diagnostic-');
+    expect(anchor.download.endsWith('.json')).toBeTrue();
+    expect(revokeSpy).toHaveBeenCalledWith('blob:diagnostic');
   });
 
   it('includes the selected tax year in the export filename', async () => {

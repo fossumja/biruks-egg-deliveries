@@ -1,51 +1,72 @@
 import { Injectable } from '@angular/core';
 import Papa from 'papaparse';
 import { Delivery } from '../models/delivery.model';
+import { CsvImportState } from '../models/csv-import-state.model';
+import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { StorageService } from './storage.service';
 import { getEventYear, normalizeEventDate } from '../utils/date-utils';
+
+interface ExportDiagnosticPayload {
+  taxYear?: number;
+  deliveries: Delivery[];
+  importState: CsvImportState | null;
+  runEntries: RunSnapshotEntry[];
+  runs: DeliveryRun[];
+  error: unknown;
+}
 
 @Injectable({ providedIn: 'root' })
 export class BackupService {
   constructor(private storage: StorageService) {}
 
   async exportAll(taxYear?: number): Promise<void> {
-    const deliveries = await this.storage.getAllDeliveries();
-    const importState = await this.storage.getImportState('default');
-    const runEntries = await this.storage.getAllRunEntries();
     const exportTaxYear = this.resolveExportTaxYear(taxYear);
-    const totalsMap = this.computeTotalsByBase(
-      deliveries,
-      runEntries,
-      importState ?? undefined,
-      exportTaxYear
-    );
-    const runs = await this.storage.getAllRuns();
-    const csv = importState
-      ? this.toCsvWithImportStateAndHistory(
-          deliveries,
-          importState,
-          totalsMap,
-          runs,
-          runEntries
-        )
-      : this.toCsv(deliveries, totalsMap);
-    const filename = this.buildExportFilename(exportTaxYear);
-    const file = new File([csv], filename, { type: 'text/csv' });
+    let deliveries: Delivery[] = [];
+    let importState: CsvImportState | null = null;
+    let runEntries: RunSnapshotEntry[] = [];
+    let runs: DeliveryRun[] = [];
 
-    if (navigator.share && typeof navigator.share === 'function' && (navigator as any).canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file], title: "Biruk's Egg Deliveries", text: 'Backup CSV' });
-    } else {
-      const url = URL.createObjectURL(file);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(url);
+    try {
+      deliveries = await this.storage.getAllDeliveries();
+      importState = (await this.storage.getImportState('default')) ?? null;
+      runEntries = await this.storage.getAllRunEntries();
+      const totalsMap = this.computeTotalsByBase(
+        deliveries,
+        runEntries,
+        importState ?? undefined,
+        exportTaxYear
+      );
+      runs = await this.storage.getAllRuns();
+      const csv = importState
+        ? this.toCsvWithImportStateAndHistory(
+            deliveries,
+            importState,
+            totalsMap,
+            runs,
+            runEntries
+          )
+        : this.toCsv(deliveries, totalsMap);
+      const filename = this.buildExportFilename(exportTaxYear);
+      const file = new File([csv], filename, { type: 'text/csv' });
+
+      await this.deliverFile(file, filename);
+      this.persistLastBackupAt();
+    } catch (error) {
+      const diagnosticFile = this.tryExportDiagnosticSnapshot({
+        taxYear: exportTaxYear,
+        deliveries,
+        importState,
+        runEntries,
+        runs,
+        error
+      });
+      const reason = this.normalizeSentence(this.errorMessage(error));
+      const diagnosticHint = diagnosticFile
+        ? ` Diagnostic snapshot was saved as ${diagnosticFile}.`
+        : ' Diagnostic snapshot could not be generated.';
+      throw new Error(`Export failed: ${reason}.${diagnosticHint}`);
     }
-
-    const now = new Date().toISOString();
-    localStorage.setItem('lastBackupAt', now);
   }
 
   private toCsv(
@@ -693,5 +714,130 @@ export class BackupService {
     const yearSuffix =
       typeof taxYear === 'number' ? `-tax-year-${taxYear}` : '';
     return `BiruksEggDeliveries-${datePart}${yearSuffix}.csv`;
+  }
+
+  private buildDiagnosticFilename(taxYear?: number): string {
+    const datePart = new Date().toISOString().slice(0, 10);
+    const yearSuffix =
+      typeof taxYear === 'number' ? `-tax-year-${taxYear}` : '';
+    return `BiruksEggDeliveries-diagnostic-${datePart}${yearSuffix}.json`;
+  }
+
+  private async deliverFile(file: File, filename: string): Promise<void> {
+    if (this.canShareFiles(file)) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "Biruk's Egg Deliveries",
+          text: 'Backup CSV'
+        });
+        return;
+      } catch (error) {
+        console.warn('Share export failed, falling back to direct download.', error);
+      }
+    }
+    this.downloadFile(file, filename);
+  }
+
+  private canShareFiles(file: File): boolean {
+    if (typeof navigator === 'undefined') return false;
+    if (typeof navigator.share !== 'function') return false;
+    const canShare = (navigator as { canShare?: (data: ShareData) => boolean }).canShare;
+    return canShare?.({ files: [file] }) === true;
+  }
+
+  private downloadFile(file: File, filename: string): void {
+    const url = URL.createObjectURL(file);
+    try {
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  private persistLastBackupAt(): void {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      const now = new Date().toISOString();
+      localStorage.setItem('lastBackupAt', now);
+    } catch (error) {
+      console.warn('Backup export succeeded but timestamp update failed.', error);
+    }
+  }
+
+  private tryExportDiagnosticSnapshot(payload: ExportDiagnosticPayload): string | null {
+    try {
+      const filename = this.buildDiagnosticFilename(payload.taxYear);
+      const snapshot = {
+        exportedAt: new Date().toISOString(),
+        selectedTaxYear:
+          typeof localStorage === 'undefined'
+            ? null
+            : localStorage.getItem('selectedTaxYear'),
+        taxYear: payload.taxYear,
+        error: this.describeError(payload.error),
+        counts: {
+          deliveries: payload.deliveries.length,
+          runEntries: payload.runEntries.length,
+          runs: payload.runs.length,
+          importRows: Object.keys(payload.importState?.rowsByBaseRowId ?? {}).length
+        },
+        data: {
+          deliveries: payload.deliveries,
+          importState: payload.importState,
+          runEntries: payload.runEntries,
+          runs: payload.runs
+        }
+      };
+      const content = JSON.stringify(snapshot, null, 2);
+      const file = new File([content], filename, { type: 'application/json' });
+      this.downloadFile(file, filename);
+      return filename;
+    } catch (diagnosticError) {
+      console.error('Failed to export diagnostic snapshot.', diagnosticError);
+      return null;
+    }
+  }
+
+  private describeError(error: unknown): {
+    name: string;
+    message: string;
+    stack?: string;
+  } {
+    if (error instanceof Error) {
+      return {
+        name: error.name || 'Error',
+        message: this.errorMessage(error),
+        stack: error.stack
+      };
+    }
+    return {
+      name: 'UnknownError',
+      message: this.errorMessage(error)
+    };
+  }
+
+  private errorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      const message = error.message?.trim();
+      return message ? message : 'Unknown export error';
+    }
+    if (typeof error === 'string') {
+      const message = error.trim();
+      return message ? message : 'Unknown export error';
+    }
+    if (error == null) return 'Unknown export error';
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return String(error);
+    }
+  }
+
+  private normalizeSentence(text: string): string {
+    return text.trim().replace(/[.?!]+$/g, '');
   }
 }

@@ -1,5 +1,18 @@
 [
   {
+    "version": "v2026.2.0",
+    "date": "2026-02-15",
+    "summary": "Backups are more reliable and route ordering now protects data integrity.",
+    "highlights": [
+      "Backup export now falls back to direct CSV download if sharing fails.",
+      "Export failures now show specific error details instead of a generic failure message.",
+      "When CSV export fails, the app attempts a diagnostic JSON snapshot export.",
+      "Editing order from All Schedules no longer rewrites order across other schedules.",
+      "Storage now rejects mixed-schedule reorder writes to prevent accidental global reindexing.",
+      "Release process note: Manual TP/device and usage-scenario checks were waived by the repo owner on 2026-02-15."
+    ]
+  },
+  {
     "version": "v2026.1.3",
     "date": "2026-01-31",
     "summary": "Build info is more reliable and reports when it can’t be loaded.",

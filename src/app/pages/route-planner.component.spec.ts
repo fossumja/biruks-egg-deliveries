@@ -74,7 +74,10 @@ class StorageServiceStub {
 
   getDeliveriesByRoute(routeDate: string): Promise<Delivery[]> {
     return Promise.resolve(
-      this.deliveries.filter((delivery) => delivery.routeDate === routeDate)
+      this.deliveries
+        .filter((delivery) => delivery.routeDate === routeDate)
+        .slice()
+        .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0))
     );
   }
 
@@ -99,7 +102,15 @@ class StorageServiceStub {
   }
 
   saveSortOrder(deliveries: Delivery[]): Promise<void> {
-    this.deliveries = deliveries.map((delivery) => ({ ...delivery }));
+    const byId = new Map(this.deliveries.map((delivery) => [delivery.id, { ...delivery }]));
+    deliveries.forEach((delivery, index) => {
+      byId.set(delivery.id, {
+        ...delivery,
+        sortIndex: index,
+        deliveryOrder: index,
+      });
+    });
+    this.deliveries = Array.from(byId.values());
     return Promise.resolve();
   }
 
@@ -695,6 +706,57 @@ describe('RoutePlannerComponent', () => {
     expect(updateSpy).toHaveBeenCalled();
     expect(saveSpy).toHaveBeenCalled();
     expect(component.deliveries[0].id).toBe('delivery-2');
+  });
+
+  it('only reorders the selected schedule when editing from all schedules', async () => {
+    const weekAFirst = createDelivery({
+      id: 'week-a-1',
+      routeDate: 'Week A',
+      name: 'Alpha',
+      deliveryOrder: 0,
+      sortIndex: 0,
+    });
+    const weekASecond = createDelivery({
+      id: 'week-a-2',
+      routeDate: 'Week A',
+      name: 'Beta',
+      deliveryOrder: 1,
+      sortIndex: 1,
+    });
+    const weekBOnly = createDelivery({
+      id: 'week-b-1',
+      routeDate: 'Week B',
+      name: 'Gamma',
+      deliveryOrder: 0,
+      sortIndex: 0,
+    });
+    storage.routes = [createRoute('Week A'), createRoute('Week B')];
+    storage.deliveries = [weekAFirst, weekASecond, weekBOnly];
+
+    component.routeDate = component.ALL_SCHEDULES;
+    component.deliveries = [weekAFirst, weekASecond, weekBOnly];
+    component.filteredDeliveries = [weekAFirst, weekASecond, weekBOnly];
+    component.openEdit(weekASecond);
+    component.editDraft.deliveryOrder = 1;
+
+    const saveSpy = spyOn(storage, 'saveSortOrder').and.callThrough();
+
+    await component.saveEdit();
+
+    expect(saveSpy).toHaveBeenCalled();
+    const reorderedBatch = saveSpy.calls.mostRecent().args[0] as Delivery[];
+    expect(reorderedBatch.length).toBe(2);
+    expect(reorderedBatch.every((delivery) => delivery.routeDate === 'Week A')).toBeTrue();
+
+    const weekAAfter = storage.deliveries
+      .filter((delivery) => delivery.routeDate === 'Week A')
+      .slice()
+      .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0));
+    expect(weekAAfter.map((delivery) => delivery.id)).toEqual(['week-a-2', 'week-a-1']);
+
+    const weekBAfter = storage.deliveries.find((delivery) => delivery.id === 'week-b-1');
+    expect(weekBAfter?.deliveryOrder).toBe(0);
+    expect(weekBAfter?.sortIndex).toBe(0);
   });
 
   it('blocks one-off donation save when date is missing', () => {

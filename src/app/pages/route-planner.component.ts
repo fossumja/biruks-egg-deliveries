@@ -911,6 +911,9 @@ export class RoutePlannerComponent {
     if (this.showSearch && this.searchTerm.trim()) {
       return;
     }
+    if (this.routeDate === this.ALL_SCHEDULES) {
+      return;
+    }
     moveItemInArray(this.deliveries, event.previousIndex, event.currentIndex);
     this.deliveries = this.deliveries.map((d, idx) => ({
       ...d,
@@ -2069,7 +2072,7 @@ export class RoutePlannerComponent {
       // overwrite fields like ZIP or notes with stale values.
       Object.assign(stop, updates);
       // Then reorder within this.deliveries based on requestedOrder.
-      const list = [...this.deliveries];
+      const list = this.deliveries.filter((d) => d.routeDate === stop.routeDate);
       const currentIdx = list.findIndex(d => d.id === stop.id);
       if (currentIdx !== -1) {
         const [removed] = list.splice(currentIdx, 1);
