@@ -742,8 +742,16 @@ export class BackupService {
   private canShareFiles(file: File): boolean {
     if (typeof navigator === 'undefined') return false;
     if (typeof navigator.share !== 'function') return false;
-    const canShare = (navigator as { canShare?: (data: ShareData) => boolean }).canShare;
-    return canShare?.({ files: [file] }) === true;
+    const nav = navigator as Navigator & {
+      canShare?: (data: ShareData) => boolean;
+    };
+    if (typeof nav.canShare !== 'function') return false;
+    try {
+      return nav.canShare({ files: [file] }) === true;
+    } catch (error) {
+      console.warn('navigator.canShare check failed; skipping share path.', error);
+      return false;
+    }
   }
 
   private downloadFile(file: File, filename: string): void {

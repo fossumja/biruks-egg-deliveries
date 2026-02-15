@@ -1,5 +1,17 @@
 [
   {
+    "version": "v2026.2.1",
+    "date": "2026-02-15",
+    "summary": "Export is fixed on iPhone and Home now has a one-tap route order repair tool.",
+    "highlights": [
+      "Fixed iPhone/Safari export failure caused by a Navigator.canShare binding error.",
+      "Export now safely falls back to direct download if file-share capability checks fail.",
+      "Home now includes a Repair button that restores route order from run-history snapshots after confirmation.",
+      "Route repair only applies when a usable dense snapshot exists; otherwise it skips instead of guessing.",
+      "Release waiver: Full TP-01 through TP-11 manual/device checks and usage-scenario checks were skipped for this release (approved by repo owner on 2026-02-15)."
+    ]
+  },
+  {
     "version": "v2026.2.0",
     "date": "2026-02-15",
     "summary": "Backups are more reliable and route ordering now protects data integrity.",
@@ -9,6 +21,7 @@
       "When CSV export fails, the app attempts a diagnostic JSON snapshot export.",
       "Editing order from All Schedules no longer rewrites order across other schedules.",
       "Storage now rejects mixed-schedule reorder writes to prevent accidental global reindexing.",
+      "Home now includes a Repair button that restores route order from run-history snapshots after a confirmation prompt.",
       "Release process note: Manual TP/device and usage-scenario checks were waived by the repo owner on 2026-02-15."
     ]
   },

@@ -380,6 +380,63 @@ describe('BackupService totals with mini route', () => {
     expect(revokeSpy).not.toHaveBeenCalled();
   });
 
+  it('calls navigator.canShare with navigator context', async () => {
+    const navigatorShare = navigator as unknown as NavigatorShare;
+    const hadShare = 'share' in navigator;
+    const hadCanShare = 'canShare' in navigator;
+    const originalShare = navigatorShare.share;
+    const originalCanShare = navigatorShare.canShare;
+
+    const shareSpy = jasmine
+      .createSpy('share')
+      .and.callFake(() => Promise.resolve());
+    const canShareFn = function (this: Navigator, _data: ShareData): boolean {
+      if (this !== navigator) {
+        throw new TypeError(
+          'Can only call Navigator.canShare on instances of Navigator'
+        );
+      }
+      return true;
+    };
+
+    Object.defineProperty(navigator, 'share', {
+      value: shareSpy,
+      configurable: true
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      value: canShareFn,
+      configurable: true
+    });
+
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:backup');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+
+    try {
+      await backup.exportAll();
+    } finally {
+      if (hadShare) {
+        Object.defineProperty(navigator, 'share', {
+          value: originalShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['share'];
+      }
+      if (hadCanShare) {
+        Object.defineProperty(navigator, 'canShare', {
+          value: originalCanShare,
+          configurable: true
+        });
+      } else {
+        delete (navigator as unknown as { [key: string]: unknown })['canShare'];
+      }
+    }
+
+    expect(shareSpy).toHaveBeenCalled();
+    expect(createObjectUrlSpy).not.toHaveBeenCalled();
+    expect(revokeSpy).not.toHaveBeenCalled();
+  });
+
   it('falls back to download when share throws', async () => {
     const navigatorShare = navigator as unknown as NavigatorShare;
     const hadShare = 'share' in navigator;

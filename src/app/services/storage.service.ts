@@ -105,6 +105,23 @@ class AppDB extends Dexie {
   }
 }
 
+export interface RouteOrderRepairRouteResult {
+  routeDate: string;
+  runId: string;
+  changedCount: number;
+  totalStops: number;
+}
+
+export interface RouteOrderRepairSkipResult {
+  routeDate: string;
+  reason: string;
+}
+
+export interface RouteOrderRepairResult {
+  repaired: RouteOrderRepairRouteResult[];
+  skipped: RouteOrderRepairSkipResult[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class StorageService {
   private db: AppDB;
@@ -593,6 +610,178 @@ export class StorageService {
       updatedAt: now
     }));
     await this.db.deliveries.bulkPut(updated);
+  }
+
+  async repairRouteOrderFromSnapshots(
+    routeDate?: string
+  ): Promise<RouteOrderRepairResult> {
+    const allDeliveries = await this.db.deliveries.toArray();
+    const targetRoutes = routeDate
+      ? [routeDate]
+      : Array.from(new Set(allDeliveries.map((delivery) => delivery.routeDate)));
+    const routeSet = new Set(targetRoutes);
+    const runs = await this.db.runs.toArray();
+    const runMetaById = new Map<string, { routeDate?: string; date?: string }>();
+    runs.forEach((run) => {
+      runMetaById.set(run.id, {
+        routeDate: run.routeDate,
+        date: run.date
+      });
+    });
+    const runEntries = await this.db.runEntries.toArray();
+    const runEntriesByRouteAndRun = new Map<string, Map<string, RunSnapshotEntry[]>>();
+
+    runEntries.forEach((entry) => {
+      const runMeta = runMetaById.get(entry.runId);
+      const fallback = this.parseRunId(entry.runId);
+      const resolvedRoute = runMeta?.routeDate ?? fallback?.routeDate;
+      if (!resolvedRoute) return;
+      if (!routeSet.has(resolvedRoute)) return;
+      const byRun =
+        runEntriesByRouteAndRun.get(resolvedRoute) ?? new Map<string, RunSnapshotEntry[]>();
+      const list = byRun.get(entry.runId) ?? [];
+      list.push(entry);
+      byRun.set(entry.runId, list);
+      runEntriesByRouteAndRun.set(resolvedRoute, byRun);
+    });
+
+    const repaired: RouteOrderRepairRouteResult[] = [];
+    const skipped: RouteOrderRepairSkipResult[] = [];
+    const now = new Date().toISOString();
+
+    await this.db.transaction('rw', this.db.deliveries, async () => {
+      for (const targetRoute of targetRoutes) {
+        const currentRouteDeliveries = allDeliveries
+          .filter((delivery) => delivery.routeDate === targetRoute)
+          .slice()
+          .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0));
+        if (!currentRouteDeliveries.length) {
+          skipped.push({
+            routeDate: targetRoute,
+            reason: 'No deliveries found for this schedule.'
+          });
+          continue;
+        }
+
+        const entriesByRun = runEntriesByRouteAndRun.get(targetRoute);
+        if (!entriesByRun || !entriesByRun.size) {
+          skipped.push({
+            routeDate: targetRoute,
+            reason: 'No run snapshot found for this schedule.'
+          });
+          continue;
+        }
+
+        const baseRowIds = new Set(
+          currentRouteDeliveries.map((delivery) => delivery.baseRowId)
+        );
+        const candidates = Array.from(entriesByRun.entries())
+          .map(([runId, entries]) => {
+            const runMeta = runMetaById.get(runId);
+            const fallback = this.parseRunId(runId);
+            const timestampSource = runMeta?.date ?? fallback?.timestamp;
+            const orderByBaseRowId = new Map<string, number>();
+            entries.forEach((entry) => {
+              if (!entry.baseRowId) return;
+              if (!Number.isFinite(entry.deliveryOrder)) return;
+              orderByBaseRowId.set(entry.baseRowId, Math.trunc(entry.deliveryOrder));
+            });
+            const overlapCount = Array.from(orderByBaseRowId.keys()).filter((baseRowId) =>
+              baseRowIds.has(baseRowId)
+            ).length;
+            return {
+              runId,
+              timestampMs: timestampSource
+                ? Date.parse(timestampSource)
+                : Number.NEGATIVE_INFINITY,
+              orderByBaseRowId,
+              overlapCount,
+              isDense: this.isDenseOrderSnapshot(orderByBaseRowId)
+            };
+          })
+          .filter((candidate) => candidate.isDense && candidate.overlapCount > 0)
+          .sort((a, b) => b.timestampMs - a.timestampMs);
+
+        const selected = candidates[0];
+        if (!selected) {
+          skipped.push({
+            routeDate: targetRoute,
+            reason: 'No usable dense run snapshot found for this schedule.'
+          });
+          continue;
+        }
+
+        const currentWithOrder = currentRouteDeliveries.map((delivery, index) => ({
+          delivery,
+          currentOrder: Number.isFinite(delivery.deliveryOrder)
+            ? Math.trunc(delivery.deliveryOrder)
+            : Number.isFinite(delivery.sortIndex)
+              ? Math.trunc(delivery.sortIndex)
+              : index
+        }));
+
+        const knownStops = currentWithOrder
+          .filter((item) => selected.orderByBaseRowId.has(item.delivery.baseRowId))
+          .sort(
+            (a, b) =>
+              (selected.orderByBaseRowId.get(a.delivery.baseRowId) ?? 0) -
+              (selected.orderByBaseRowId.get(b.delivery.baseRowId) ?? 0)
+          )
+          .map((item) => item.delivery);
+
+        const unknownStops = currentWithOrder
+          .filter((item) => !selected.orderByBaseRowId.has(item.delivery.baseRowId))
+          .sort((a, b) => a.currentOrder - b.currentOrder)
+          .map((item) => item.delivery);
+
+        const merged = [...knownStops, ...unknownStops];
+        const updated = merged.map((delivery, index) => ({
+          ...delivery,
+          sortIndex: index,
+          deliveryOrder: index,
+          updatedAt: now,
+          synced: false
+        }));
+
+        let changedCount = 0;
+        for (let i = 0; i < updated.length; i += 1) {
+          const before = currentRouteDeliveries[i];
+          const after = updated[i];
+          if (!before) {
+            changedCount += 1;
+            continue;
+          }
+          if (before.id !== after.id) {
+            changedCount += 1;
+            continue;
+          }
+          if (
+            before.deliveryOrder !== after.deliveryOrder ||
+            before.sortIndex !== after.sortIndex
+          ) {
+            changedCount += 1;
+          }
+        }
+
+        if (!changedCount) {
+          skipped.push({
+            routeDate: targetRoute,
+            reason: 'Current order already matches the latest usable snapshot.'
+          });
+          continue;
+        }
+
+        await this.db.deliveries.bulkPut(updated);
+        repaired.push({
+          routeDate: targetRoute,
+          runId: selected.runId,
+          changedCount,
+          totalStops: updated.length
+        });
+      }
+    });
+
+    return { repaired, skipped };
   }
 
   async completeRun(routeDate: string, endedEarly: boolean): Promise<void> {
@@ -1172,6 +1361,29 @@ export class StorageService {
     } catch (err) {
       console.warn('Storage persistence request failed', err);
     }
+  }
+
+  private parseRunId(
+    runId: string
+  ): { routeDate: string; timestamp: string } | null {
+    if (!runId || runId === 'oneoff') return null;
+    const splitIndex = runId.lastIndexOf('_');
+    if (splitIndex <= 0 || splitIndex >= runId.length - 1) return null;
+    const routeDate = runId.slice(0, splitIndex);
+    const timestamp = runId.slice(splitIndex + 1);
+    if (!routeDate) return null;
+    if (Number.isNaN(Date.parse(timestamp))) return null;
+    return { routeDate, timestamp };
+  }
+
+  private isDenseOrderSnapshot(orderByBaseRowId: Map<string, number>): boolean {
+    if (!orderByBaseRowId.size) return false;
+    const orders = Array.from(orderByBaseRowId.values());
+    const unique = new Set(orders);
+    if (unique.size !== orders.length) return false;
+    const min = Math.min(...orders);
+    const max = Math.max(...orders);
+    return min === 0 && max === orders.length - 1;
   }
 
   private deriveWeekFromRoute(routeDate: string): string {

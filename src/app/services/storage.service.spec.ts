@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import Dexie from 'dexie';
 import { StorageService } from './storage.service';
 import { Delivery, DonationInfo } from '../models/delivery.model';
+import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { createStorageWithMiniRoute } from '../../testing/test-db.utils';
 import { normalizeEventDate } from '../utils/date-utils';
@@ -46,6 +47,26 @@ const buildDelivery = (overrides: Partial<Delivery> = {}): Delivery => {
     synced: overrides.synced ?? false
   };
 };
+
+const buildRunEntry = (
+  runId: string,
+  baseRowId: string,
+  deliveryOrder: number
+): RunSnapshotEntry => ({
+  id: `${runId}_${baseRowId}`,
+  runId,
+  baseRowId,
+  name: baseRowId,
+  address: '',
+  city: '',
+  state: '',
+  status: 'delivered',
+  dozens: 1,
+  deliveryOrder,
+  donationStatus: 'NoDonation',
+  donationAmount: 0,
+  taxableAmount: 0
+});
 
 describe('StorageService regression tests', () => {
   let storage: StorageService;
@@ -217,6 +238,137 @@ describe('StorageService regression tests', () => {
     ).toBeRejectedWithError(
       'Sort order update rejected: deliveries span multiple schedules.'
     );
+  });
+
+  it('repairs corrupted route orders from latest usable dense snapshots', async () => {
+    const deliveries = [
+      buildDelivery({
+        id: 'a-1',
+        baseRowId: 'A1',
+        routeDate: 'Week A',
+        runId: 'Week A',
+        sortIndex: 0,
+        deliveryOrder: 0
+      }),
+      buildDelivery({
+        id: 'a-2',
+        baseRowId: 'A2',
+        routeDate: 'Week A',
+        runId: 'Week A',
+        sortIndex: 1,
+        deliveryOrder: 1
+      }),
+      buildDelivery({
+        id: 'b-1',
+        baseRowId: 'B1',
+        routeDate: 'Week B',
+        runId: 'Week B',
+        sortIndex: 90,
+        deliveryOrder: 90
+      }),
+      buildDelivery({
+        id: 'b-2',
+        baseRowId: 'B2',
+        routeDate: 'Week B',
+        runId: 'Week B',
+        sortIndex: 20,
+        deliveryOrder: 20
+      }),
+      buildDelivery({
+        id: 'b-3',
+        baseRowId: 'B3',
+        routeDate: 'Week B',
+        runId: 'Week B',
+        sortIndex: 60,
+        deliveryOrder: 60
+      }),
+      buildDelivery({
+        id: 'o-1',
+        baseRowId: 'O1',
+        routeDate: 'Oddballs',
+        runId: 'Oddballs',
+        sortIndex: 40,
+        deliveryOrder: 40
+      }),
+      buildDelivery({
+        id: 'o-2',
+        baseRowId: 'O2',
+        routeDate: 'Oddballs',
+        runId: 'Oddballs',
+        sortIndex: 70,
+        deliveryOrder: 70
+      })
+    ];
+    const runs: DeliveryRun[] = [
+      {
+        id: 'Week B_2026-02-05T18:38:27.961Z',
+        date: '2026-02-05T18:38:27.961Z',
+        weekType: 'WeekB',
+        label: 'Week B'
+      },
+      {
+        id: 'Oddballs_2026-02-12T13:33:20.707Z',
+        date: '2026-02-12T13:33:20.707Z',
+        weekType: 'Oddballs',
+        label: 'Oddballs'
+      },
+      {
+        id: 'Oddballs_2026-02-05T12:14:45.239Z',
+        date: '2026-02-05T12:14:45.239Z',
+        weekType: 'Oddballs',
+        label: 'Oddballs'
+      }
+    ];
+    const runEntries = [
+      buildRunEntry('Week B_2026-02-05T18:38:27.961Z', 'B1', 0),
+      buildRunEntry('Week B_2026-02-05T18:38:27.961Z', 'B2', 1),
+      buildRunEntry('Week B_2026-02-05T18:38:27.961Z', 'B3', 2),
+      // Latest Oddballs snapshot is sparse/corrupt and should be ignored.
+      buildRunEntry('Oddballs_2026-02-12T13:33:20.707Z', 'O1', 40),
+      buildRunEntry('Oddballs_2026-02-12T13:33:20.707Z', 'O2', 70),
+      // Older Oddballs snapshot is dense and should be used.
+      buildRunEntry('Oddballs_2026-02-05T12:14:45.239Z', 'O1', 0),
+      buildRunEntry('Oddballs_2026-02-05T12:14:45.239Z', 'O2', 1)
+    ];
+
+    await storage.restoreAllFromBackup(
+      deliveries,
+      {
+        id: 'default',
+        headers: ['Schedule', 'BaseRowId', 'Delivery Order'],
+        rowsByBaseRowId: {}
+      },
+      runs,
+      runEntries
+    );
+
+    const result = await storage.repairRouteOrderFromSnapshots();
+    const repairedRoutes = result.repaired.map((route) => route.routeDate);
+
+    expect(repairedRoutes).toContain('Week B');
+    expect(repairedRoutes).toContain('Oddballs');
+    expect(result.skipped.some((item) => item.routeDate === 'Week A')).toBeTrue();
+
+    const repairedWeekB = await storage.getDeliveriesByRoute('Week B');
+    expect(repairedWeekB.map((delivery) => delivery.baseRowId)).toEqual([
+      'B1',
+      'B2',
+      'B3'
+    ]);
+    repairedWeekB.forEach((delivery, index) => {
+      expect(delivery.sortIndex).toBe(index);
+      expect(delivery.deliveryOrder).toBe(index);
+    });
+
+    const repairedOddballs = await storage.getDeliveriesByRoute('Oddballs');
+    expect(repairedOddballs.map((delivery) => delivery.baseRowId)).toEqual([
+      'O1',
+      'O2'
+    ]);
+    repairedOddballs.forEach((delivery, index) => {
+      expect(delivery.sortIndex).toBe(index);
+      expect(delivery.deliveryOrder).toBe(index);
+    });
   });
 
   it('resetDelivery preserves unsubscribed state', async () => {

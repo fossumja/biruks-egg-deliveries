@@ -46,6 +46,7 @@ export class HomeComponent implements OnDestroy {
   lastRestoreAt?: string;
   isImporting = false;
   isExporting = false;
+  isRepairingRouteOrder = false;
   pendingRestoreAfterBackup = false;
   showRestoreHint = false;
   showHelp = false;
@@ -184,6 +185,50 @@ export class HomeComponent implements OnDestroy {
       this.toast.show(this.errorMessage, 'error');
     } finally {
       this.isExporting = false;
+    }
+  }
+
+  async repairRouteOrder(): Promise<void> {
+    if (this.isImporting || this.isExporting || this.isRepairingRouteOrder) {
+      return;
+    }
+    const approved = window.confirm(
+      "Did Josh say it's okay to push this button yet? If yes, proceed."
+    );
+    if (!approved) {
+      return;
+    }
+
+    this.isRepairingRouteOrder = true;
+    this.errorMessage = '';
+    try {
+      const result = await this.storage.repairRouteOrderFromSnapshots();
+      if (result.repaired.length) {
+        const routeList = result.repaired
+          .map((item) => item.routeDate)
+          .join(', ');
+        const updatedStops = result.repaired.reduce(
+          (sum, item) => sum + item.changedCount,
+          0
+        );
+        this.toast.show(
+          `Route order repair complete for ${routeList}. Updated ${updatedStops} stops.`
+        );
+      } else {
+        const reason =
+          result.skipped[0]?.reason ?? 'No route order changes were needed.';
+        this.toast.show(`Route order repair skipped: ${reason}`);
+      }
+      await this.refreshRoutes();
+    } catch (err) {
+      console.error('Route order repair failed', err);
+      this.errorMessage = this.readErrorMessage(
+        err,
+        'Route order repair failed. Please try again.'
+      );
+      this.toast.show(this.errorMessage, 'error');
+    } finally {
+      this.isRepairingRouteOrder = false;
     }
   }
 

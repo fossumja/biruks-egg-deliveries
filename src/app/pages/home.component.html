@@ -24,6 +24,16 @@
     >
       Restore CSV
     </button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="repairRouteOrder()"
+      [disabled]="isImporting || isExporting || isRepairingRouteOrder"
+      aria-label="Repair route order from run snapshots"
+      title="Repair route order from run snapshots"
+    >
+      {{ isRepairingRouteOrder ? "Repairing…" : "Repair" }}
+    </button>
     <input
       #fileInput
       type="file"

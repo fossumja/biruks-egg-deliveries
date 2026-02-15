@@ -95,6 +95,17 @@ class StorageServiceStub {
   runEntries: RunSnapshotEntry[] = [];
   runs: DeliveryRun[] = [];
   suggestedRate = 4;
+  repairResult = {
+    repaired: [
+      {
+        routeDate: 'Week B',
+        runId: 'Week B_2026-02-05T18:38:27.961Z',
+        changedCount: 3,
+        totalStops: 3
+      }
+    ],
+    skipped: []
+  };
 
   getSuggestedRate(): number {
     return this.suggestedRate;
@@ -125,6 +136,18 @@ class StorageServiceStub {
 
   async getDeliveriesByRoute(routeDate: string): Promise<Delivery[]> {
     return this.deliveries.filter((delivery) => delivery.routeDate === routeDate);
+  }
+
+  async repairRouteOrderFromSnapshots(): Promise<{
+    repaired: Array<{
+      routeDate: string;
+      runId: string;
+      changedCount: number;
+      totalStops: number;
+    }>;
+    skipped: Array<{ routeDate: string; reason: string }>;
+  }> {
+    return this.repairResult;
   }
 }
 
@@ -598,6 +621,31 @@ describe('HomeComponent core actions', () => {
 
     expect(component.errorMessage).toBe('Disk quota exceeded');
     expect(toastService.messages.at(-1)).toBe('Disk quota exceeded');
+  });
+
+  it('repairs route order when confirmed', async () => {
+    const confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+    const repairSpy = spyOn(storage, 'repairRouteOrderFromSnapshots').and.callThrough();
+    const refreshRoutesSpy = spyOn(component as any, 'refreshRoutes').and.resolveTo();
+
+    await component.repairRouteOrder();
+
+    expect(confirmSpy).toHaveBeenCalledWith(
+      "Did Josh say it's okay to push this button yet? If yes, proceed."
+    );
+    expect(repairSpy).toHaveBeenCalled();
+    expect(refreshRoutesSpy).toHaveBeenCalled();
+    expect(toastService.messages.at(-1)).toContain('Route order repair complete');
+  });
+
+  it('does not repair route order when confirmation is declined', async () => {
+    const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+    const repairSpy = spyOn(storage, 'repairRouteOrderFromSnapshots').and.callThrough();
+
+    await component.repairRouteOrder();
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(repairSpy).not.toHaveBeenCalled();
   });
 
   it('persists tax year selection', () => {
