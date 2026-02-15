@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1769739370311,
+  "timestamp": 1771183963609,
   "index": "/biruks-egg-deliveries/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/biruks-egg-deliveries/favicon.ico",
         "/biruks-egg-deliveries/index.html",
-        "/biruks-egg-deliveries/main-2RGUFCAB.js",
+        "/biruks-egg-deliveries/main-OMJZPFSF.js",
         "/biruks-egg-deliveries/manifest.webmanifest",
         "/biruks-egg-deliveries/polyfills-B6TNHZQ6.js",
         "/biruks-egg-deliveries/styles-UVH3EO5Y.css"
@@ -72,7 +72,22 @@
       "patterns": []
     }
   ],
-  "dataGroups": [],
+  "dataGroups": [
+    {
+      "name": "build-info",
+      "patterns": [
+        "\\/build-info\\.json"
+      ],
+      "strategy": "freshness",
+      "maxSize": 1,
+      "maxAge": 86400000,
+      "timeoutMs": 5000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
   "hashTable": {
     "/biruks-egg-deliveries/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
     "/biruks-egg-deliveries/icons/25095738__biruks-egg-project-orange.png": "d5c687baf7bb4df2cd18dec193ddaa634144c639",
@@ -115,8 +130,8 @@
     "/biruks-egg-deliveries/icons/icon-512x512.png": "4a1b10456e31c1b12deec632c461bb928549fbac",
     "/biruks-egg-deliveries/icons/icon-72x72.png": "ac5d6ec22e9a16bd7743a0ec074c4092f44adfd2",
     "/biruks-egg-deliveries/icons/icon-96x96.png": "5c1997c8c5aff379fa081c7bdf1ca4afa1d4e7dc",
-    "/biruks-egg-deliveries/index.html": "d8b3c371f043f2a81be78297211c826d381839ca",
-    "/biruks-egg-deliveries/main-2RGUFCAB.js": "b53b7a5acc011d5f98707776e19bee37cd4cb511",
+    "/biruks-egg-deliveries/index.html": "80275582951dccc1b0904255d6264d28bae4f721",
+    "/biruks-egg-deliveries/main-OMJZPFSF.js": "58f85b58503f81157f5ff38ac4027fd584ef4188",
     "/biruks-egg-deliveries/manifest.webmanifest": "9a8063c2b30bca26e6fe4fa9c8255d88d2cf6181",
     "/biruks-egg-deliveries/polyfills-B6TNHZQ6.js": "bf76ac291d7f51c1139b7edcf86b359a30c08c64",
     "/biruks-egg-deliveries/styles-UVH3EO5Y.css": "4a0d10f09b6f830c10a06546439fb4a0fd750338"
