@@ -17,11 +17,13 @@ import {
 } from '../../testing/scenario-runner';
 import { miniRouteFixture } from '../../testing/fixtures/mini-route.fixture';
 import {
+  buildCsvFile,
   buildBackupCsvFile,
   buildBackupDeliveryRow,
   buildBackupOneOffDonationRow,
   buildBackupOneOffDeliveryRow,
-  buildBackupRunEntryRow
+  buildBackupRunEntryRow,
+  defaultBackupHeaders
 } from '../../testing/fixtures/csv-fixture-builder';
 import { buildFileInputEvent } from '../../testing/spec-helpers';
 
@@ -116,6 +118,18 @@ class StorageServiceStub {
   }
 
   async importDeliveries(_deliveries: Delivery[]): Promise<void> {}
+
+  async updateDeliveryFields(
+    id: string,
+    updates: Partial<Delivery>
+  ): Promise<void> {
+    const index = this.deliveries.findIndex((delivery) => delivery.id === id);
+    if (index < 0) return;
+    this.deliveries[index] = {
+      ...this.deliveries[index],
+      ...updates
+    };
+  }
 
   async getRoutes(): Promise<Route[]> {
     return this.routes;
@@ -334,6 +348,106 @@ describe('HomeComponent restore', () => {
     expect(c1Totals?.donation ?? 0).toBeCloseTo(17, 5);
     expect(c1Totals?.dozens ?? 0).toBe(3);
     expect(c1Totals?.taxable ?? 0).toBeCloseTo(5, 5);
+  });
+
+  it('warns, repairs invalid dozens from run history, and downloads a repair report', async () => {
+    const rows = [
+      buildBackupDeliveryRow({
+        BaseRowId: 'c1',
+        Name: 'Alice',
+        Schedule: '2025-01-01',
+        Dozens: ''
+      }),
+      buildBackupRunEntryRow({
+        RunBaseRowId: 'c1',
+        RunEntryStatus: 'delivered',
+        RunDozens: '7'
+      })
+    ];
+    const file = buildCsvFile(defaultBackupHeaders, rows, 'user-backup.csv');
+    const confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+    let downloadedObject: Blob | null = null;
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.callFake(
+      (object: Blob): string => {
+        downloadedObject = object;
+        return 'blob:restore-repair';
+      }
+    );
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+    const anchor = document.createElement('a');
+    const clickSpy = spyOn(anchor, 'click');
+    const originalCreateElement = document.createElement.bind(document);
+    spyOn(document, 'createElement').and.callFake((tagName: string): HTMLElement => {
+      if (tagName.toLowerCase() === 'a') {
+        return anchor;
+      }
+      return originalCreateElement(tagName);
+    });
+
+    const restoreResult = await (component as any).restoreFromBackupFile(file);
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(restoreResult.canceled).toBeFalse();
+    expect(restoreResult.repairCount).toBe(1);
+    expect(restoreResult.repairReportFileName).toContain('restore-repair');
+    expect(createObjectUrlSpy).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    expect(revokeSpy).toHaveBeenCalledWith('blob:restore-repair');
+    expect(downloadedObject).toBeTruthy();
+    if (!downloadedObject) {
+      fail('Expected restore repair report to be downloaded.');
+      return;
+    }
+    const reportBlob = downloadedObject as Blob;
+    const reportRaw = await reportBlob.text();
+    const report = JSON.parse(reportRaw) as {
+      issueCount: number;
+      sourceFilename: string;
+      issues: Array<{
+        rowNumber: number;
+        baseRowId: string;
+        fallbackDozens: number;
+        fallbackSource: string;
+      }>;
+    };
+    expect(report.issueCount).toBe(1);
+    expect(report.sourceFilename).toBe('user-backup.csv');
+    expect(report.issues[0]).toEqual(
+      jasmine.objectContaining({
+        baseRowId: 'c1',
+        fallbackDozens: 7,
+        fallbackSource: 'run-history'
+      })
+    );
+
+    const deliveries = await storage.getAllDeliveries();
+    expect(deliveries[0].dozens).toBe(7);
+  });
+
+  it('cancels restore when fallback warning is declined', async () => {
+    const rows = [
+      buildBackupDeliveryRow({
+        BaseRowId: 'c1',
+        Name: 'Alice',
+        Schedule: '2025-01-01',
+        Dozens: ''
+      }),
+      buildBackupRunEntryRow({
+        RunBaseRowId: 'c1',
+        RunEntryStatus: 'delivered',
+        RunDozens: '7'
+      })
+    ];
+    const file = buildBackupCsvFile(rows);
+    const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+
+    const restoreResult = await (component as any).restoreFromBackupFile(file);
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(restoreResult.canceled).toBeTrue();
+    expect(restoreResult.repairCount).toBe(0);
+    const deliveries = await storage.getAllDeliveries();
+    expect(deliveries.length).toBe(0);
   });
 
   it('round-trips totals across backup export and restore', async () => {
@@ -705,6 +819,49 @@ describe('HomeComponent core actions', () => {
     expect(confirmSpy).toHaveBeenCalled();
     expect(restoreSpy).not.toHaveBeenCalled();
     expect(input.value).toBe('');
+  });
+
+  it('applies reviewed repaired rows to deliveries and clears the review list', async () => {
+    storage.deliveries = [
+      createDelivery({
+        id: 'delivery-1',
+        baseRowId: 'base-1',
+        dozens: 1,
+        originalDozens: 1,
+        status: ''
+      })
+    ];
+    component.restoreRepairReviewRows = [
+      {
+        id: 'repair-1',
+        rowNumber: 84,
+        baseRowId: 'base-1',
+        name: 'Alice',
+        schedule: 'Week A',
+        fallbackSource: 'run-history',
+        suggestedDozens: 7,
+        editedDozens: 9,
+        deliveryIds: ['delivery-1']
+      }
+    ];
+    const updateSpy = spyOn(storage, 'updateDeliveryFields').and.callThrough();
+    const refreshRoutesSpy = spyOn(component as any, 'refreshRoutes').and.resolveTo();
+
+    await component.applyRestoreRepairReview();
+
+    expect(updateSpy).toHaveBeenCalledWith(
+      'delivery-1',
+      jasmine.objectContaining({
+        dozens: 9,
+        originalDozens: 9,
+        status: ''
+      })
+    );
+    expect(component.restoreRepairReviewRows.length).toBe(0);
+    expect(refreshRoutesSpy).toHaveBeenCalled();
+    expect(toastService.messages.at(-1)).toContain(
+      'Applied repaired-row updates'
+    );
   });
 
   it('updates suggested rate and persists to storage', () => {

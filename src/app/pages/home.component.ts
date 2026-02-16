@@ -22,6 +22,45 @@ import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 import { getEventYear, normalizeEventDate } from '../utils/date-utils';
 
+interface IndexedBackupRow {
+  row: Record<string, string>;
+  rowNumber: number;
+}
+
+interface RestoreDozensRepairIssue {
+  rowNumber: number;
+  baseRowId: string;
+  name: string;
+  schedule: string;
+  originalDozens: string;
+  fallbackDozens: number;
+  fallbackSource: 'run-history' | 'default-zero';
+}
+
+interface RestoreDozensRepairTarget {
+  row: Record<string, string>;
+  issue: RestoreDozensRepairIssue;
+}
+
+interface RestoreResult {
+  canceled: boolean;
+  repairCount: number;
+  repairReportFileName?: string;
+  repairedRows: RestoreRepairReviewRow[];
+}
+
+interface RestoreRepairReviewRow {
+  id: string;
+  rowNumber: number;
+  baseRowId: string;
+  name: string;
+  schedule: string;
+  fallbackSource: 'run-history' | 'default-zero';
+  suggestedDozens: number;
+  editedDozens: number;
+  deliveryIds: string[];
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -50,6 +89,8 @@ export class HomeComponent implements OnDestroy {
   showHelp = false;
   readonly showReleaseInfo = signal(false);
   errorMessage = '';
+  restoreRepairReviewRows: RestoreRepairReviewRow[] = [];
+  isApplyingRestoreReview = false;
   selectedRouteDate: string | null = null;
   selectedRouteSummary?: Route;
   currentRoute?: string;
@@ -677,7 +718,7 @@ export class HomeComponent implements OnDestroy {
     return Number.isNaN(parsed.getTime()) ? undefined : normalized;
   }
 
-  private async restoreFromBackupFile(file: File): Promise<void> {
+  private async restoreFromBackupFile(file: File): Promise<RestoreResult> {
     const text = await file.text();
     const parsed = await new Promise<Papa.ParseResult<Record<string, string>>>(
       (resolve, reject) => {
@@ -692,30 +733,56 @@ export class HomeComponent implements OnDestroy {
 
     const headers = parsed.meta.fields ?? [];
     const rows = parsed.data;
+    const indexedRows: IndexedBackupRow[] = rows.map((row, idx) => ({
+      row,
+      rowNumber: idx + 2, // +1 for header row, +1 for zero index
+    }));
 
     const rowTypeHeader =
       headers.find((h) => h.toLowerCase() === 'rowtype') ?? null;
 
-    const deliveryRows: Record<string, string>[] = [];
-    const runEntryRows: Record<string, string>[] = [];
-    const oneOffDonationRows: Record<string, string>[] = [];
-    const oneOffDeliveryRows: Record<string, string>[] = [];
+    const deliveryRowsIndexed: IndexedBackupRow[] = [];
+    const runEntryRowsIndexed: IndexedBackupRow[] = [];
+    const oneOffDonationRowsIndexed: IndexedBackupRow[] = [];
+    const oneOffDeliveryRowsIndexed: IndexedBackupRow[] = [];
 
-    rows.forEach((row) => {
+    indexedRows.forEach((indexed) => {
+      const row = indexed.row;
       const rawType = rowTypeHeader
         ? row[rowTypeHeader] ?? row['RowType'] ?? row['rowtype']
         : row['RowType'] ?? row['rowtype'];
       const v = (rawType ?? '').toString().toLowerCase();
       if (!v || v === 'delivery') {
-        deliveryRows.push(row);
+        deliveryRowsIndexed.push(indexed);
       } else if (v === 'runentry') {
-        runEntryRows.push(row);
+        runEntryRowsIndexed.push(indexed);
       } else if (v === 'oneoffdonation') {
-        oneOffDonationRows.push(row);
+        oneOffDonationRowsIndexed.push(indexed);
       } else if (v === 'oneoffdelivery') {
-        oneOffDeliveryRows.push(row);
+        oneOffDeliveryRowsIndexed.push(indexed);
       }
     });
+
+    const repairTargets = this.buildRestoreDozensRepairTargets(
+      deliveryRowsIndexed,
+      runEntryRowsIndexed
+    );
+    if (repairTargets.length > 0) {
+      const warning = this.buildRestoreFallbackWarningMessage(
+        repairTargets.map((target) => target.issue)
+      );
+      const proceed = window.confirm(warning);
+      if (!proceed) {
+        this.toast.show('Restore canceled. Backup file was not changed.');
+        return { canceled: true, repairCount: 0, repairedRows: [] };
+      }
+      this.applyRestoreDozensRepairs(repairTargets);
+    }
+
+    const deliveryRows = deliveryRowsIndexed.map((item) => item.row);
+    const runEntryRows = runEntryRowsIndexed.map((item) => item.row);
+    const oneOffDonationRows = oneOffDonationRowsIndexed.map((item) => item.row);
+    const oneOffDeliveryRows = oneOffDeliveryRowsIndexed.map((item) => item.row);
 
     const deliveries = this.normalizeRows(deliveryRows, headers);
 
@@ -1008,6 +1075,216 @@ export class HomeComponent implements OnDestroy {
     localStorage.removeItem('lastImportAt');
     this.lastBackupAt = undefined;
     this.lastImportAt = undefined;
+    const repairIssues = repairTargets.map((target) => target.issue);
+    const repairedRows = this.buildRestoreRepairReviewRows(
+      repairIssues,
+      deliveries
+    );
+    const repairReportFileName =
+      repairIssues.length > 0
+        ? this.downloadRestoreRepairReport(file.name, repairIssues) ?? undefined
+        : undefined;
+    return {
+      canceled: false,
+      repairCount: repairIssues.length,
+      repairReportFileName,
+      repairedRows
+    };
+  }
+
+  private buildRestoreRepairReviewRows(
+    issues: RestoreDozensRepairIssue[],
+    deliveries: Delivery[]
+  ): RestoreRepairReviewRow[] {
+    const deliveryIdsByBase = new Map<string, string[]>();
+    deliveries.forEach((delivery) => {
+      const baseRowId = delivery.baseRowId;
+      if (!baseRowId) return;
+      const list = deliveryIdsByBase.get(baseRowId) ?? [];
+      list.push(delivery.id);
+      deliveryIdsByBase.set(baseRowId, list);
+    });
+
+    return issues.map((issue, index) => {
+      const deliveryIds = deliveryIdsByBase.get(issue.baseRowId) ?? [];
+      return {
+        id: `${issue.baseRowId || 'row'}-${issue.rowNumber}-${index}`,
+        rowNumber: issue.rowNumber,
+        baseRowId: issue.baseRowId,
+        name: issue.name,
+        schedule: issue.schedule,
+        fallbackSource: issue.fallbackSource,
+        suggestedDozens: issue.fallbackDozens,
+        editedDozens: issue.fallbackDozens,
+        deliveryIds
+      };
+    });
+  }
+
+  private buildRestoreDozensRepairTargets(
+    deliveryRows: IndexedBackupRow[],
+    runEntryRows: IndexedBackupRow[]
+  ): RestoreDozensRepairTarget[] {
+    const runHistoryDozensByBase = this.inferRunHistoryDozensByBase(runEntryRows);
+    const targets: RestoreDozensRepairTarget[] = [];
+    deliveryRows.forEach(({ row, rowNumber }) => {
+      const rawDozens = this.safeGetRaw(row, ['Dozens', 'dozens', 'Qty']);
+      const rawDozensTrimmed = rawDozens?.trim() ?? '';
+      const parsedDozens = Number(rawDozensTrimmed);
+      const isInvalidDozens =
+        rawDozensTrimmed === '' || Number.isNaN(parsedDozens);
+      if (!isInvalidDozens) {
+        return;
+      }
+      const baseRowId = (
+        this.safeGetRaw(row, ['BaseRowId', 'baseRowId', 'BaseRowID']) || ''
+      ).trim();
+      const fallbackDozens = runHistoryDozensByBase.get(baseRowId) ?? 0;
+      const issue: RestoreDozensRepairIssue = {
+        rowNumber,
+        baseRowId,
+        name: (this.safeGetRaw(row, ['Name', 'name']) || '').trim(),
+        schedule: (this.safeGetRaw(row, ['Schedule', 'schedule', 'Date', 'date']) || '')
+          .trim(),
+        originalDozens: rawDozens ?? '',
+        fallbackDozens,
+        fallbackSource: runHistoryDozensByBase.has(baseRowId)
+          ? 'run-history'
+          : 'default-zero'
+      };
+      targets.push({ row, issue });
+    });
+    return targets;
+  }
+
+  private inferRunHistoryDozensByBase(
+    runEntryRows: IndexedBackupRow[]
+  ): Map<string, number> {
+    const countsByBase = new Map<string, Map<number, number>>();
+    runEntryRows.forEach(({ row }) => {
+      const baseRowId = (
+        this.safeGetRaw(row, ['RunBaseRowId', 'BaseRowId', 'baseRowId', 'BaseRowID']) ||
+        ''
+      ).trim();
+      if (!baseRowId) {
+        return;
+      }
+      const status = (
+        this.safeGetRaw(row, ['RunEntryStatus', 'status']) || ''
+      ).trim().toLowerCase();
+      if (status !== 'delivered') {
+        return;
+      }
+      const dozensRaw = this.safeGetRaw(row, ['RunDozens', 'Dozens', 'dozens', 'Qty']);
+      const dozens = Number(dozensRaw);
+      if (!Number.isFinite(dozens)) {
+        return;
+      }
+      const normalizedDozens = Math.max(0, Math.trunc(dozens));
+      const baseCounts = countsByBase.get(baseRowId) ?? new Map<number, number>();
+      baseCounts.set(normalizedDozens, (baseCounts.get(normalizedDozens) ?? 0) + 1);
+      countsByBase.set(baseRowId, baseCounts);
+    });
+
+    const inferred = new Map<string, number>();
+    countsByBase.forEach((counts, baseRowId) => {
+      let bestDozens: number | null = null;
+      let bestCount = -1;
+      counts.forEach((count, dozens) => {
+        if (
+          count > bestCount ||
+          (count === bestCount && (bestDozens == null || dozens > bestDozens))
+        ) {
+          bestCount = count;
+          bestDozens = dozens;
+        }
+      });
+      if (bestDozens != null) {
+        inferred.set(baseRowId, bestDozens);
+      }
+    });
+
+    return inferred;
+  }
+
+  private applyRestoreDozensRepairs(
+    targets: RestoreDozensRepairTarget[]
+  ): void {
+    targets.forEach(({ row, issue }) => {
+      this.setRowValue(row, ['Dozens', 'dozens', 'Qty'], issue.fallbackDozens.toString());
+    });
+  }
+
+  private buildRestoreFallbackWarningMessage(
+    issues: RestoreDozensRepairIssue[]
+  ): string {
+    const preview = issues
+      .slice(0, 5)
+      .map((issue) => {
+        const baseHint = issue.baseRowId ? `${issue.baseRowId} · ` : '';
+        const name = issue.name || 'Unnamed';
+        const schedule = issue.schedule || 'Unknown schedule';
+        const original = issue.originalDozens.trim() ? issue.originalDozens : '(blank)';
+        const source =
+          issue.fallbackSource === 'run-history' ? 'run history' : 'default 0';
+        return `Row ${issue.rowNumber}: ${baseHint}${name} (${schedule}) "${original}" -> ${issue.fallbackDozens} (${source})`;
+      })
+      .join('\n');
+    const moreCount = issues.length - 5;
+    const more = moreCount > 0 ? `\n...and ${moreCount} more row(s).` : '';
+    const plural = issues.length === 1 ? '' : 's';
+    return (
+      `Restore found ${issues.length} row${plural} with invalid "Dozens" values.\n\n` +
+      'If you continue, restore will repair these values using run history when possible, otherwise 0.\n' +
+      'A restore-repair JSON report will be downloaded after restore.\n\n' +
+      `${preview}${more}\n\n` +
+      'Continue with fallback repairs?'
+    );
+  }
+
+  private downloadRestoreRepairReport(
+    sourceFilename: string,
+    issues: RestoreDozensRepairIssue[]
+  ): string | null {
+    if (
+      typeof document === 'undefined' ||
+      typeof URL === 'undefined' ||
+      typeof URL.createObjectURL !== 'function'
+    ) {
+      return null;
+    }
+    try {
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const sourceBase = this.sanitizeFilenamePart(
+        sourceFilename.replace(/\.[^.]+$/, '')
+      );
+      const filename = `${sourceBase}-restore-repair-${stamp}.json`;
+      const report = {
+        reportVersion: 1,
+        createdAt: new Date().toISOString(),
+        sourceFilename,
+        issueCount: issues.length,
+        issues
+      };
+      const blob = new Blob([JSON.stringify(report, null, 2)], {
+        type: 'application/json'
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      return filename;
+    } catch (error) {
+      console.warn('Restore repair report export failed.', error);
+      return null;
+    }
+  }
+
+  private sanitizeFilenamePart(value: string): string {
+    const cleaned = value.trim().replace(/\s+/g, '-').replace(/[^A-Za-z0-9._-]/g, '');
+    return cleaned || 'backup';
   }
 
   changeSuggested(delta: number): void {
@@ -1127,14 +1404,30 @@ export class HomeComponent implements OnDestroy {
 
     this.isImporting = true;
     this.errorMessage = '';
+    this.restoreRepairReviewRows = [];
     try {
-      await this.restoreFromBackupFile(file);
+      const restoreResult = await this.restoreFromBackupFile(file);
+      if (restoreResult?.canceled) {
+        return;
+      }
       await this.refreshRoutes();
       localStorage.removeItem('currentRoute');
       this.currentRoute = undefined;
       this.autoselectRoute();
       await this.refreshTaxYearOptions();
-      this.toast.show('Restore complete');
+      const repairCount = restoreResult?.repairCount ?? 0;
+      this.restoreRepairReviewRows = restoreResult?.repairedRows ?? [];
+      if (repairCount > 0) {
+        const plural = repairCount === 1 ? '' : 's';
+        const reportHint = restoreResult?.repairReportFileName
+          ? ` Repair report: ${restoreResult.repairReportFileName}`
+          : '';
+        this.toast.show(
+          `Restore complete with ${repairCount} fallback repair${plural}.${reportHint}`
+        );
+      } else {
+        this.toast.show('Restore complete');
+      }
     } catch (err: unknown) {
       console.error('Restore failed', err);
       const reason =
@@ -1153,6 +1446,70 @@ export class HomeComponent implements OnDestroy {
     } finally {
       this.isImporting = false;
       input.value = '';
+    }
+  }
+
+  updateRestoreRepairDozens(
+    row: RestoreRepairReviewRow,
+    value: number | string
+  ): void {
+    row.editedDozens = this.normalizeNonNegativeWholeNumber(
+      value,
+      row.suggestedDozens
+    );
+  }
+
+  dismissRestoreRepairReview(): void {
+    this.restoreRepairReviewRows = [];
+  }
+
+  async applyRestoreRepairReview(): Promise<void> {
+    if (!this.restoreRepairReviewRows.length || this.isApplyingRestoreReview) {
+      return;
+    }
+    this.isApplyingRestoreReview = true;
+    this.errorMessage = '';
+    try {
+      const deliveries = await this.storage.getAllDeliveries();
+      const deliveryById = new Map(deliveries.map((delivery) => [delivery.id, delivery]));
+      let updatedStops = 0;
+      for (const reviewRow of this.restoreRepairReviewRows) {
+        const normalizedDozens = this.normalizeNonNegativeWholeNumber(
+          reviewRow.editedDozens,
+          reviewRow.suggestedDozens
+        );
+        reviewRow.editedDozens = normalizedDozens;
+        for (const deliveryId of reviewRow.deliveryIds) {
+          const existing = deliveryById.get(deliveryId);
+          if (!existing) continue;
+          await this.storage.updateDeliveryFields(deliveryId, {
+            dozens: normalizedDozens,
+            originalDozens: normalizedDozens,
+            status: existing.status
+          });
+          updatedStops += 1;
+        }
+      }
+
+      this.restoreRepairReviewRows = [];
+      await this.refreshRoutes();
+      if (updatedStops > 0) {
+        this.toast.show(
+          `Applied repaired-row updates to ${updatedStops} stop${updatedStops === 1 ? '' : 's'}.`
+        );
+      } else {
+        this.toast.show('No repaired-row updates were applied.');
+      }
+    } catch (err) {
+      console.error('Failed to apply repaired-row updates', err);
+      const reason = this.readErrorMessage(
+        err,
+        'Failed to apply repaired-row updates.'
+      );
+      this.errorMessage = reason;
+      this.toast.show(reason, 'error');
+    } finally {
+      this.isApplyingRestoreReview = false;
     }
   }
 
@@ -1223,10 +1580,56 @@ export class HomeComponent implements OnDestroy {
     return undefined;
   }
 
+  private safeGetRaw(row: Record<string, string>, keys: string[]): string | undefined {
+    const clean = (s: string) => s.replace(/^\ufeff/, '').toLowerCase();
+    for (const key of keys) {
+      if (row[key] !== undefined) return row[key];
+      const target = clean(key);
+      const found = Object.keys(row).find((k) => clean(k) === target);
+      if (found !== undefined && row[found] !== undefined) {
+        return row[found];
+      }
+    }
+    return undefined;
+  }
+
+  private setRowValue(
+    row: Record<string, string>,
+    keys: string[],
+    value: string
+  ): void {
+    const clean = (s: string) => s.replace(/^\ufeff/, '').toLowerCase();
+    for (const key of keys) {
+      if (Object.prototype.hasOwnProperty.call(row, key)) {
+        row[key] = value;
+        return;
+      }
+      const target = clean(key);
+      const found = Object.keys(row).find((k) => clean(k) === target);
+      if (found !== undefined) {
+        row[found] = value;
+        return;
+      }
+    }
+    row[keys[0]] = value;
+  }
+
   private readErrorMessage(error: unknown, fallback: string): string {
     if (error instanceof Error && error.message.trim()) {
       return error.message.trim();
     }
     return fallback;
+  }
+
+  private normalizeNonNegativeWholeNumber(
+    value: number | string,
+    fallback = 0
+  ): number {
+    const parsed =
+      typeof value === 'number' ? value : Number((value ?? '').toString());
+    if (!Number.isFinite(parsed)) {
+      return Math.max(0, Math.trunc(fallback));
+    }
+    return Math.max(0, Math.trunc(parsed));
   }
 }

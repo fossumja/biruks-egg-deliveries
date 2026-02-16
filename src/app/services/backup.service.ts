@@ -191,6 +191,16 @@ export class BackupService {
 
     const deliveryMap = new Map<string, Delivery>();
     deliveries.forEach((d) => deliveryMap.set(`${d.baseRowId}||${d.runId}`, d));
+    const deliveryByBaseRowId = new Map<string, Delivery>();
+    deliveries.forEach((delivery) => {
+      const baseRowId = delivery.baseRowId;
+      if (!baseRowId || deliveryByBaseRowId.has(baseRowId)) return;
+      deliveryByBaseRowId.set(baseRowId, delivery);
+    });
+    const baseDozensHeaderIndex = baseHeaders.findIndex((header) => {
+      const normalized = header.toLowerCase();
+      return normalized === 'dozens' || normalized === 'qty';
+    });
 
     const rows: string[][] = [];
     Object.entries(state.rowsByBaseRowId).forEach(([baseRowId, originalValues]) => {
@@ -199,6 +209,10 @@ export class BackupService {
       while (paddedOriginal.length < baseHeaders.length) paddedOriginal.push('');
       for (let i = 0; i < baseHeaders.length; i++) {
         rowVals[i] = paddedOriginal[i];
+      }
+      const currentDelivery = deliveryByBaseRowId.get(baseRowId);
+      if (baseDozensHeaderIndex >= 0 && currentDelivery) {
+        rowVals[baseDozensHeaderIndex] = String(currentDelivery.dozens ?? 0);
       }
 
       runIds.forEach((runId, idx) => {
@@ -297,6 +311,16 @@ export class BackupService {
         finalHeaders.push(col);
       }
     });
+    const deliveryByBaseRowId = new Map<string, Delivery>();
+    deliveries.forEach((delivery) => {
+      const baseRowId = delivery.baseRowId;
+      if (!baseRowId || deliveryByBaseRowId.has(baseRowId)) return;
+      deliveryByBaseRowId.set(baseRowId, delivery);
+    });
+    const baseDozensHeaderIndex = baseHeaders.findIndex((header) => {
+      const normalized = header.toLowerCase();
+      return normalized === 'dozens' || normalized === 'qty';
+    });
 
     const rows: string[][] = [];
 
@@ -310,6 +334,11 @@ export class BackupService {
       for (let i = 0; i < baseHeaders.length; i++) {
         const targetIndex = 1 + i;
         rowVals[targetIndex] = paddedOriginal[i];
+      }
+      const currentDelivery = deliveryByBaseRowId.get(baseRowId);
+      if (baseDozensHeaderIndex >= 0 && currentDelivery) {
+        const targetIndex = 1 + baseDozensHeaderIndex;
+        rowVals[targetIndex] = String(currentDelivery.dozens ?? 0);
       }
 
       const totals = totalsMap.get(baseRowId);

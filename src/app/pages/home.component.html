@@ -56,6 +56,67 @@
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
 </section>
 
+@if (restoreRepairReviewRows.length) {
+  <section class="card settings-card restore-review-card">
+    <div class="settings-title">Review repaired rows</div>
+    <div class="text-muted settings-subtitle">
+      Restore applied fallback values to invalid Dozens rows. Review and adjust
+      these values before continuing.
+    </div>
+    <div class="restore-review-list">
+      @for (row of restoreRepairReviewRows; track row.id) {
+        <div class="restore-review-item">
+          <div class="restore-review-meta">
+            <div class="restore-review-name">{{ row.name || "Unnamed customer" }}</div>
+            <div class="text-muted restore-review-detail">
+              Row {{ row.rowNumber }} ·
+              {{ row.baseRowId || "No BaseRowId" }} ·
+              {{ row.schedule || "Unknown schedule" }}
+            </div>
+            <div class="text-muted restore-review-detail">
+              Fallback source:
+              {{
+                row.fallbackSource === "run-history"
+                  ? "Run history"
+                  : "Default 0"
+              }}
+            </div>
+          </div>
+          <label class="restore-review-input">
+            Dozens
+            <input
+              class="form-control compact"
+              type="number"
+              min="0"
+              step="1"
+              [ngModel]="row.editedDozens"
+              (ngModelChange)="updateRestoreRepairDozens(row, $event)"
+            />
+          </label>
+        </div>
+      }
+    </div>
+    <div class="restore-review-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="applyRestoreRepairReview()"
+        [disabled]="isApplyingRestoreReview"
+      >
+        {{ isApplyingRestoreReview ? "Applying…" : "Apply repaired rows" }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="dismissRestoreRepairReview()"
+        [disabled]="isApplyingRestoreReview"
+      >
+        Dismiss
+      </button>
+    </div>
+  </section>
+}
+
 <section class="card settings-card tax-year-card">
   <div class="settings-row">
     <div>

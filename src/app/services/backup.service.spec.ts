@@ -268,6 +268,40 @@ describe('BackupService totals with mini route', () => {
     expect(headers).toContain('SuggestedAmount');
   });
 
+  it('writes delivery Dozens from current data when import-state Dozens is blank', async () => {
+    const deliveries = await storage.getAllDeliveries();
+    const target = deliveries.find((delivery) => delivery.baseRowId === 'c1');
+    if (!target) {
+      fail('Expected a delivery for baseRowId c1.');
+      return;
+    }
+    target.dozens = 12;
+
+    const importState = {
+      headers: ['BaseRowId', 'Name', 'Dozens'],
+      rowsByBaseRowId: {
+        c1: ['c1', 'Alice', ''],
+        c2: ['c2', 'Bob', '1']
+      },
+      mode: 'baseline' as const
+    };
+
+    const csv = (backup as any).toCsvWithImportStateAndHistory(
+      deliveries,
+      importState,
+      new Map<string, { donation: number; dozens: number; taxable: number }>(),
+      [],
+      []
+    ) as string;
+
+    const parsed = Papa.parse(csv, { header: true });
+    const rows = parsed.data as Record<string, string>[];
+    const c1Row = rows.find(
+      (row) => row['RowType'] === 'Delivery' && row['BaseRowId'] === 'c1'
+    );
+    expect(c1Row?.['Dozens']).toBe('12');
+  });
+
   it('exports totals that include runs and one-offs', async () => {
     const rate = storage.getSuggestedRate();
     await storage.markDelivered('c1-r1', 2);
