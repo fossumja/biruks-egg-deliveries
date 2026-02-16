@@ -1,5 +1,16 @@
 [
   {
+    "version": "v2026.2.3",
+    "date": "2026-02-16",
+    "summary": "Home backup buttons now fit reliably on small screens.",
+    "highlights": [
+      "Import CSV, Backup CSV, and Restore CSV now use a responsive grid layout instead of a forced single row.",
+      "Button labels can wrap cleanly so larger text settings and narrow phones do not overflow horizontally.",
+      "On small screens, actions automatically reflow to 2-column and then 1-column layouts for readability and tap safety.",
+      "Release waiver: Full TP-01 through TP-11 manual/device checks and usage-scenario checks were skipped for this release (approved by repo owner on 2026-02-15)."
+    ]
+  },
+  {
     "version": "v2026.2.2",
     "date": "2026-02-16",
     "summary": "Permanent route-order guardrails are live and export diagnostics are much deeper.",
