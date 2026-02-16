@@ -1,5 +1,19 @@
 [
   {
+    "version": "v2026.2.2",
+    "date": "2026-02-16",
+    "summary": "Permanent route-order guardrails are live and export diagnostics are much deeper.",
+    "highlights": [
+      "Route Planner now blocks reorder actions in All Schedules view so global route order cannot be rewritten there.",
+      "Order edits now only reorder within a single schedule and use canonical storage order when saving.",
+      "Storage now rejects sort-order writes with missing schedule rows, duplicate deliveries, mixed schedules, or out-of-schedule IDs.",
+      "Diagnostic JSON exports now include app/build metadata, runtime environment, export attempt context, and route order integrity summaries.",
+      "The update popup is now high-visibility at the top of the app with stronger copy and contrast.",
+      "The temporary Home Repair button was removed after permanent guardrails shipped.",
+      "Release waiver: Full TP-01 through TP-11 manual/device checks and usage-scenario checks were skipped for this release (approved by repo owner on 2026-02-15)."
+    ]
+  },
+  {
     "version": "v2026.2.1",
     "date": "2026-02-15",
     "summary": "Export is fixed on iPhone and Home now has a one-tap route order repair tool.",
