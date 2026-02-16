@@ -553,6 +553,20 @@ describe('RoutePlannerComponent', () => {
     expect(saveSpy).toHaveBeenCalled();
   });
 
+  it('blocks reorder toggle while viewing all schedules', () => {
+    component.routeDate = component.ALL_SCHEDULES;
+    component.reorderEnabled = true;
+    const toastSpy = spyOn(toast, 'show').and.callThrough();
+
+    component.toggleReorder();
+
+    expect(component.reorderEnabled).toBeFalse();
+    expect(toastSpy).toHaveBeenCalledWith(
+      'Reordering is only available when viewing a single schedule.',
+      'error'
+    );
+  });
+
   it('opens a row when swiped left past the threshold', () => {
     const stop = createDelivery();
     const startEvent = createPointerEvent(100, 100);
@@ -708,7 +722,7 @@ describe('RoutePlannerComponent', () => {
     expect(component.deliveries[0].id).toBe('delivery-2');
   });
 
-  it('only reorders the selected schedule when editing from all schedules', async () => {
+  it('does not reorder route order when editing from all schedules', async () => {
     const weekAFirst = createDelivery({
       id: 'week-a-1',
       routeDate: 'Week A',
@@ -743,16 +757,13 @@ describe('RoutePlannerComponent', () => {
 
     await component.saveEdit();
 
-    expect(saveSpy).toHaveBeenCalled();
-    const reorderedBatch = saveSpy.calls.mostRecent().args[0] as Delivery[];
-    expect(reorderedBatch.length).toBe(2);
-    expect(reorderedBatch.every((delivery) => delivery.routeDate === 'Week A')).toBeTrue();
+    expect(saveSpy).not.toHaveBeenCalled();
 
     const weekAAfter = storage.deliveries
       .filter((delivery) => delivery.routeDate === 'Week A')
       .slice()
       .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0));
-    expect(weekAAfter.map((delivery) => delivery.id)).toEqual(['week-a-2', 'week-a-1']);
+    expect(weekAAfter.map((delivery) => delivery.id)).toEqual(['week-a-1', 'week-a-2']);
 
     const weekBAfter = storage.deliveries.find((delivery) => delivery.id === 'week-b-1');
     expect(weekBAfter?.deliveryOrder).toBe(0);

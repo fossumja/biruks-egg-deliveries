@@ -37,27 +37,94 @@
 .update-banner {
   position: fixed;
   left: 50%;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--spacing-2));
+  top: calc(env(safe-area-inset-top, 0px) + var(--spacing-3));
   transform: translateX(-50%);
-  width: min(420px, calc(100% - (var(--spacing-4) * 2)));
-  z-index: 2100;
+  width: min(680px, calc(100% - (var(--spacing-4) * 2)));
+  z-index: 2600;
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1);
   padding: var(--spacing-3);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+  border: 2px solid #c2410c;
+  background:
+    linear-gradient(130deg, rgba(255, 237, 213, 0.96), rgba(254, 215, 170, 0.92)),
+    var(--color-surface);
+  box-shadow:
+    0 22px 48px rgba(15, 23, 42, 0.28),
+    0 0 0 6px rgba(251, 146, 60, 0.22);
+  animation: update-banner-enter 200ms ease-out;
+}
+
+.update-headline {
+  width: fit-content;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7c2d12;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(194, 65, 12, 0.35);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
 }
 
 .update-title {
   font-weight: var(--font-weight-semibold);
+  color: #431407;
 }
 
 .update-subtitle {
   font-size: var(--font-size-sm);
+  color: #7c2d12;
+  margin-top: 0.2rem;
 }
 
 .update-actions {
   display: flex;
   gap: var(--spacing-2);
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  margin-top: var(--spacing-1);
+}
+
+[data-theme='dark'] .update-banner {
+  border-color: #fb923c;
+  background:
+    linear-gradient(130deg, rgba(124, 45, 18, 0.96), rgba(67, 20, 7, 0.94)),
+    var(--color-surface);
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.52),
+    0 0 0 5px rgba(251, 146, 60, 0.2);
+}
+
+[data-theme='dark'] .update-headline {
+  color: #fed7aa;
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(251, 146, 60, 0.5);
+}
+
+[data-theme='dark'] .update-title {
+  color: #ffedd5;
+}
+
+[data-theme='dark'] .update-subtitle {
+  color: #fdba74;
+}
+
+@media (max-width: 640px) {
+  .update-banner {
+    top: calc(env(safe-area-inset-top, 0px) + var(--spacing-2));
+    width: calc(100% - (var(--spacing-2) * 2));
+    padding: var(--spacing-2);
+  }
+}
+
+@keyframes update-banner-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }

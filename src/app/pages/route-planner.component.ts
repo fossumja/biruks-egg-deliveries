@@ -1521,7 +1521,34 @@ export class RoutePlannerComponent {
     this.editingStop = null;
   }
 
+  canEditOrderInCurrentView(): boolean {
+    return (
+      !this.viewingRun &&
+      !this.viewingAllReceipts &&
+      this.routeDate !== this.ALL_SCHEDULES
+    );
+  }
+
+  getEditOrderMax(): number {
+    if (!this.editingStop) {
+      return Math.max(1, this.deliveries.length);
+    }
+    const targetRoute = this.editDraft.routeDate || this.editingStop.routeDate;
+    const routeCount = this.deliveries.filter(
+      (delivery) => delivery.routeDate === targetRoute
+    ).length;
+    return Math.max(1, routeCount);
+  }
+
   toggleReorder(): void {
+    if (this.routeDate === this.ALL_SCHEDULES) {
+      this.toast.show(
+        'Reordering is only available when viewing a single schedule.',
+        'error'
+      );
+      this.reorderEnabled = false;
+      return;
+    }
     this.reorderEnabled = !this.reorderEnabled;
   }
 
@@ -1602,6 +1629,9 @@ export class RoutePlannerComponent {
       const route =
         key === this.ALL_SCHEDULES ? this.ALL_SCHEDULES : key.slice('route:'.length);
       this.routeDate = route === this.ALL_SCHEDULES ? this.ALL_SCHEDULES : route;
+      if (this.routeDate === this.ALL_SCHEDULES) {
+        this.reorderEnabled = false;
+      }
       if (this.routeDate && this.routeDate !== this.ALL_SCHEDULES) {
         this.persistRouteSelection();
         localStorage.removeItem('currentRunId');
@@ -2032,8 +2062,10 @@ export class RoutePlannerComponent {
     if (!this.editingStop) return;
     const stop = this.editingStop;
     const targetRoute = this.editDraft.routeDate || stop.routeDate;
+    const originalOrder = (stop.deliveryOrder ?? stop.sortIndex ?? 0) + 1;
+    const canEditOrder = this.canEditOrderInCurrentView();
     const requestedOrderRaw = this.editDraft.deliveryOrder || 1;
-    const currentList = this.deliveries.filter(d => d.routeDate === stop.routeDate);
+    const currentList = await this.storage.getDeliveriesByRoute(stop.routeDate);
     const maxOrder = currentList.length || 1;
     const requestedOrder = Math.min(Math.max(1, requestedOrderRaw), maxOrder);
     const updates: Partial<Delivery> = {
@@ -2071,19 +2103,28 @@ export class RoutePlannerComponent {
       // Reflect updates in local state so subsequent sort saving doesn't
       // overwrite fields like ZIP or notes with stale values.
       Object.assign(stop, updates);
-      // Then reorder within this.deliveries based on requestedOrder.
-      const list = this.deliveries.filter((d) => d.routeDate === stop.routeDate);
-      const currentIdx = list.findIndex(d => d.id === stop.id);
-      if (currentIdx !== -1) {
-        const [removed] = list.splice(currentIdx, 1);
-        const newIdx = requestedOrder - 1;
-        list.splice(newIdx, 0, removed);
-        // Re-index sortIndex and deliveryOrder so they stay dense.
-        list.forEach((d, idx) => {
-          d.sortIndex = idx;
-          d.deliveryOrder = idx;
-        });
-        await this.storage.saveSortOrder(list);
+      if (!canEditOrder) {
+        if (requestedOrder !== originalOrder) {
+          this.toast.show(
+            'Open a single schedule to change order.',
+            'error'
+          );
+        }
+      } else if (requestedOrder !== originalOrder) {
+        // Reorder within this route using canonical route order from storage.
+        const list = await this.storage.getDeliveriesByRoute(stop.routeDate);
+        const currentIdx = list.findIndex((delivery) => delivery.id === stop.id);
+        if (currentIdx !== -1) {
+          const [removed] = list.splice(currentIdx, 1);
+          const newIdx = requestedOrder - 1;
+          list.splice(newIdx, 0, removed);
+          // Re-index sortIndex and deliveryOrder so they stay dense.
+          list.forEach((delivery, idx) => {
+            delivery.sortIndex = idx;
+            delivery.deliveryOrder = idx;
+          });
+          await this.storage.saveSortOrder(list);
+        }
       }
     }
     await this.loadDeliveries();

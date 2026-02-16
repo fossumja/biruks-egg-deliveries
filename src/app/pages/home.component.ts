@@ -14,7 +14,6 @@ import { DeliveryRun } from '../models/delivery-run.model';
 import { RunSnapshotEntry } from '../models/run-snapshot-entry.model';
 import { Route } from '../models/route.model';
 import { BackupService } from '../services/backup.service';
-import { BuildInfo, BuildInfoService } from '../services/build-info.service';
 import {
   ReleaseNote,
   ReleaseNotesService
@@ -37,7 +36,6 @@ export class HomeComponent implements OnDestroy {
   private router = inject(Router);
   private backupService = inject(BackupService);
   private toast = inject(ToastService);
-  private buildInfoService = inject(BuildInfoService);
   private releaseNotesService = inject(ReleaseNotesService);
 
   routes: Route[] = [];
@@ -64,7 +62,6 @@ export class HomeComponent implements OnDestroy {
   suggestedRate = 4;
   private suggestedKey = 'suggestedDonationRate';
   darkModeEnabled = false;
-  buildInfo?: BuildInfo | null;
   readonly releaseNotes = signal<ReleaseNote[]>([]);
   readonly releaseNotesError = signal('');
   private readonly releaseNotesLimit = 5;
@@ -95,7 +92,6 @@ export class HomeComponent implements OnDestroy {
     this.applyTheme(this.darkModeEnabled);
     this.autoselectRoute();
     await this.resumeIfNeeded();
-    this.buildInfo = await this.buildInfoService.load();
     await this.loadReleaseNotes();
 
     if (this.wakeLockSupported) {

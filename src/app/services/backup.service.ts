@@ -14,6 +14,42 @@ interface ExportDiagnosticPayload {
   runEntries: RunSnapshotEntry[];
   runs: DeliveryRun[];
   error: unknown;
+  exportContext: ExportAttemptContext;
+}
+
+type ExportFailureStep =
+  | 'load-deliveries'
+  | 'load-import-state'
+  | 'load-run-entries'
+  | 'compute-totals'
+  | 'load-runs'
+  | 'build-csv'
+  | 'create-file'
+  | 'share-check'
+  | 'share'
+  | 'download'
+  | 'persist-backup-timestamp'
+  | 'diagnostic-export'
+  | 'unknown';
+
+interface ExportAttemptContext {
+  shareSupported: boolean;
+  canShareSupported: boolean;
+  shareAttempted: boolean;
+  shareSucceeded: boolean;
+  downloadFallbackAttempted: boolean;
+  downloadFallbackSucceeded: boolean;
+  failedStep: ExportFailureStep | null;
+  canShareError?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+  shareError?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,22 +58,29 @@ export class BackupService {
 
   async exportAll(taxYear?: number): Promise<void> {
     const exportTaxYear = this.resolveExportTaxYear(taxYear);
+    const exportContext = this.createExportAttemptContext();
     let deliveries: Delivery[] = [];
     let importState: CsvImportState | null = null;
     let runEntries: RunSnapshotEntry[] = [];
     let runs: DeliveryRun[] = [];
 
     try {
+      exportContext.failedStep = 'load-deliveries';
       deliveries = await this.storage.getAllDeliveries();
+      exportContext.failedStep = 'load-import-state';
       importState = (await this.storage.getImportState('default')) ?? null;
+      exportContext.failedStep = 'load-run-entries';
       runEntries = await this.storage.getAllRunEntries();
+      exportContext.failedStep = 'compute-totals';
       const totalsMap = this.computeTotalsByBase(
         deliveries,
         runEntries,
         importState ?? undefined,
         exportTaxYear
       );
+      exportContext.failedStep = 'load-runs';
       runs = await this.storage.getAllRuns();
+      exportContext.failedStep = 'build-csv';
       const csv = importState
         ? this.toCsvWithImportStateAndHistory(
             deliveries,
@@ -48,18 +91,25 @@ export class BackupService {
           )
         : this.toCsv(deliveries, totalsMap);
       const filename = this.buildExportFilename(exportTaxYear);
+      exportContext.failedStep = 'create-file';
       const file = new File([csv], filename, { type: 'text/csv' });
 
-      await this.deliverFile(file, filename);
+      await this.deliverFile(file, filename, exportContext);
+      exportContext.failedStep = 'persist-backup-timestamp';
       this.persistLastBackupAt();
+      exportContext.failedStep = null;
     } catch (error) {
-      const diagnosticFile = this.tryExportDiagnosticSnapshot({
+      if (!exportContext.failedStep) {
+        exportContext.failedStep = 'unknown';
+      }
+      const diagnosticFile = await this.tryExportDiagnosticSnapshot({
         taxYear: exportTaxYear,
         deliveries,
         importState,
         runEntries,
         runs,
-        error
+        error,
+        exportContext
       });
       const reason = this.normalizeSentence(this.errorMessage(error));
       const diagnosticHint = diagnosticFile
@@ -723,23 +773,36 @@ export class BackupService {
     return `BiruksEggDeliveries-diagnostic-${datePart}${yearSuffix}.json`;
   }
 
-  private async deliverFile(file: File, filename: string): Promise<void> {
-    if (this.canShareFiles(file)) {
+  private async deliverFile(
+    file: File,
+    filename: string,
+    context: ExportAttemptContext
+  ): Promise<void> {
+    if (this.canShareFiles(file, context)) {
+      context.shareAttempted = true;
       try {
+        context.failedStep = 'share';
         await navigator.share({
           files: [file],
           title: "Biruk's Egg Deliveries",
           text: 'Backup CSV'
         });
+        context.shareSucceeded = true;
+        context.failedStep = null;
         return;
       } catch (error) {
+        context.shareError = this.describeError(error);
         console.warn('Share export failed, falling back to direct download.', error);
       }
     }
+    context.downloadFallbackAttempted = true;
+    context.failedStep = 'download';
     this.downloadFile(file, filename);
+    context.downloadFallbackSucceeded = true;
+    context.failedStep = null;
   }
 
-  private canShareFiles(file: File): boolean {
+  private canShareFiles(file: File, context: ExportAttemptContext): boolean {
     if (typeof navigator === 'undefined') return false;
     if (typeof navigator.share !== 'function') return false;
     const nav = navigator as Navigator & {
@@ -749,6 +812,8 @@ export class BackupService {
     try {
       return nav.canShare({ files: [file] }) === true;
     } catch (error) {
+      context.failedStep = 'share-check';
+      context.canShareError = this.describeError(error);
       console.warn('navigator.canShare check failed; skipping share path.', error);
       return false;
     }
@@ -776,11 +841,23 @@ export class BackupService {
     }
   }
 
-  private tryExportDiagnosticSnapshot(payload: ExportDiagnosticPayload): string | null {
+  private async tryExportDiagnosticSnapshot(
+    payload: ExportDiagnosticPayload
+  ): Promise<string | null> {
     try {
       const filename = this.buildDiagnosticFilename(payload.taxYear);
+      const buildInfo = await this.readBuildInfoForDiagnostics();
       const snapshot = {
+        diagnosticSchemaVersion: 2,
         exportedAt: new Date().toISOString(),
+        app: {
+          releaseVersion: buildInfo.releaseVersion,
+          buildCommit: buildInfo.buildCommit,
+          buildInfoSource: buildInfo.source,
+          buildInfoError: buildInfo.error ?? null
+        },
+        runtime: this.collectRuntimeInfo(),
+        exportContext: payload.exportContext,
         selectedTaxYear:
           typeof localStorage === 'undefined'
             ? null
@@ -793,6 +870,7 @@ export class BackupService {
           runs: payload.runs.length,
           importRows: Object.keys(payload.importState?.rowsByBaseRowId ?? {}).length
         },
+        orderIntegritySummary: this.buildOrderIntegritySummary(payload.deliveries),
         data: {
           deliveries: payload.deliveries,
           importState: payload.importState,
@@ -847,5 +925,212 @@ export class BackupService {
 
   private normalizeSentence(text: string): string {
     return text.trim().replace(/[.?!]+$/g, '');
+  }
+
+  private createExportAttemptContext(): ExportAttemptContext {
+    const nav = typeof navigator === 'undefined' ? null : navigator;
+    const shareSupported = typeof nav?.share === 'function';
+    const canShareSupported =
+      shareSupported &&
+      typeof (nav as Navigator & { canShare?: unknown })?.canShare === 'function';
+    return {
+      shareSupported,
+      canShareSupported,
+      shareAttempted: false,
+      shareSucceeded: false,
+      downloadFallbackAttempted: false,
+      downloadFallbackSucceeded: false,
+      failedStep: null
+    };
+  }
+
+  private async readBuildInfoForDiagnostics(): Promise<{
+    releaseVersion: string | null;
+    buildCommit: string | null;
+    source: string;
+    error?: string;
+  }> {
+    if (typeof fetch !== 'function') {
+      return {
+        releaseVersion: null,
+        buildCommit: null,
+        source: 'unavailable',
+        error: 'Fetch API unavailable.'
+      };
+    }
+    const buildInfoUrl = this.resolveBuildInfoUrl();
+    try {
+      const response = await fetch(buildInfoUrl, { cache: 'no-store' });
+      if (!response.ok) {
+        return {
+          releaseVersion: null,
+          buildCommit: null,
+          source: buildInfoUrl,
+          error: `HTTP ${response.status}`
+        };
+      }
+      const payload = (await response.json()) as {
+        version?: unknown;
+        commit?: unknown;
+      };
+      const releaseVersion =
+        typeof payload.version === 'string' ? payload.version : null;
+      const buildCommit =
+        typeof payload.commit === 'string'
+          ? payload.commit
+          : payload.commit == null
+            ? null
+            : String(payload.commit);
+      return {
+        releaseVersion,
+        buildCommit,
+        source: buildInfoUrl
+      };
+    } catch (error) {
+      return {
+        releaseVersion: null,
+        buildCommit: null,
+        source: buildInfoUrl,
+        error: this.errorMessage(error)
+      };
+    }
+  }
+
+  private collectRuntimeInfo(): {
+    userAgent: string | null;
+    platform: string | null;
+    language: string | null;
+    timezone: string | null;
+    isStandalonePwa: boolean;
+    serviceWorkerControllerPresent: boolean;
+  } {
+    const nav = typeof navigator === 'undefined' ? null : navigator;
+    let timezone: string | null = null;
+    try {
+      timezone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
+    } catch {
+      timezone = null;
+    }
+    return {
+      userAgent: nav?.userAgent ?? null,
+      platform: nav?.platform ?? null,
+      language: nav?.language ?? null,
+      timezone,
+      isStandalonePwa: this.isStandalonePwa(),
+      serviceWorkerControllerPresent: Boolean(nav?.serviceWorker?.controller)
+    };
+  }
+
+  private isStandalonePwa(): boolean {
+    let displayModeStandalone = false;
+    try {
+      displayModeStandalone =
+        typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(display-mode: standalone)').matches;
+    } catch {
+      displayModeStandalone = false;
+    }
+    const nav =
+      typeof navigator === 'undefined'
+        ? null
+        : (navigator as Navigator & { standalone?: boolean });
+    const iosStandalone = Boolean(nav?.standalone);
+    return displayModeStandalone || iosStandalone;
+  }
+
+  private resolveBuildInfoUrl(): string {
+    if (typeof document === 'undefined') {
+      return 'build-info.json';
+    }
+    try {
+      return new URL('build-info.json', document.baseURI).toString();
+    } catch {
+      return 'build-info.json';
+    }
+  }
+
+  private buildOrderIntegritySummary(
+    deliveries: Delivery[]
+  ): Array<{
+    routeDate: string;
+    stopCount: number;
+    minOrder: number | null;
+    maxOrder: number | null;
+    duplicateOrderValues: number[];
+    duplicateOrderCount: number;
+    gapCount: number;
+    isDense: boolean;
+    alphabeticalMatchRatio: number;
+    likelyAlphabeticalOrder: boolean;
+  }> {
+    const byRoute = new Map<string, Delivery[]>();
+    deliveries.forEach((delivery) => {
+      const routeDate = delivery.routeDate || 'UNKNOWN_ROUTE';
+      const list = byRoute.get(routeDate) ?? [];
+      list.push(delivery);
+      byRoute.set(routeDate, list);
+    });
+
+    return Array.from(byRoute.entries())
+      .map(([routeDate, items]) => {
+        const normalized = items.map((delivery, index) => ({
+          delivery,
+          order: this.resolveOrderValue(delivery, index)
+        }));
+        const orders = normalized.map((item) => item.order);
+        const unique = new Set(orders);
+        const duplicateOrderValues = Array.from(unique)
+          .filter((value) => orders.filter((order) => order === value).length > 1)
+          .sort((a, b) => a - b);
+        const minOrder = orders.length ? Math.min(...orders) : null;
+        const maxOrder = orders.length ? Math.max(...orders) : null;
+        const expectedCount =
+          minOrder == null || maxOrder == null ? 0 : maxOrder - minOrder + 1;
+        const gapCount = expectedCount > 0 ? expectedCount - unique.size : 0;
+        const isDense =
+          minOrder != null &&
+          minOrder === 0 &&
+          maxOrder != null &&
+          maxOrder === items.length - 1 &&
+          duplicateOrderValues.length === 0;
+
+        const byOrder = normalized
+          .slice()
+          .sort((a, b) => a.order - b.order);
+        const byName = normalized
+          .slice()
+          .sort((a, b) => {
+            const nameA = (a.delivery.name ?? '').toLocaleLowerCase();
+            const nameB = (b.delivery.name ?? '').toLocaleLowerCase();
+            const nameCmp = nameA.localeCompare(nameB);
+            return nameCmp !== 0 ? nameCmp : a.order - b.order;
+          });
+        const exactRankMatches = byOrder.filter(
+          (item, index) => byName[index]?.delivery.id === item.delivery.id
+        ).length;
+        const alphabeticalMatchRatio =
+          items.length > 0 ? exactRankMatches / items.length : 0;
+
+        return {
+          routeDate,
+          stopCount: items.length,
+          minOrder,
+          maxOrder,
+          duplicateOrderValues,
+          duplicateOrderCount: duplicateOrderValues.length,
+          gapCount: gapCount > 0 ? gapCount : 0,
+          isDense,
+          alphabeticalMatchRatio,
+          likelyAlphabeticalOrder: items.length > 0 && alphabeticalMatchRatio >= 0.9
+        };
+      })
+      .sort((a, b) => a.routeDate.localeCompare(b.routeDate));
+  }
+
+  private resolveOrderValue(delivery: Delivery, fallback: number): number {
+    const raw = delivery.deliveryOrder ?? delivery.sortIndex ?? fallback;
+    const numeric = Number(raw);
+    return Number.isFinite(numeric) ? Math.trunc(numeric) : fallback;
   }
 }

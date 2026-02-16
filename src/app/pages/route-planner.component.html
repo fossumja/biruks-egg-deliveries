@@ -29,6 +29,7 @@
       class="btn btn-secondary icon-btn btn-reorder"
       type="button"
       (click)="toggleReorder()"
+      [disabled]="routeDate === ALL_SCHEDULES"
       [class.active]="reorderEnabled"
       [attr.aria-pressed]="reorderEnabled"
       [attr.aria-label]="reorderEnabled ? 'Disable reordering' : 'Enable reordering'"
@@ -354,10 +355,14 @@
               class="form-control"
               type="number"
               min="1"
-              [max]="deliveries.length"
+              [max]="getEditOrderMax()"
+              [disabled]="!canEditOrderInCurrentView()"
               [(ngModel)]="editDraft.deliveryOrder"
               name="editOrder"
             />
+            <small class="text-muted" *ngIf="!canEditOrderInCurrentView()">
+              Open a single schedule view to edit route order.
+            </small>
           </label>
           <label>
             Dozen

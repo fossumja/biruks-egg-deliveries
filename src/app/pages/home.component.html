@@ -24,16 +24,6 @@
     >
       Restore CSV
     </button>
-    <button
-      type="button"
-      class="btn btn-secondary"
-      (click)="repairRouteOrder()"
-      [disabled]="isImporting || isExporting || isRepairingRouteOrder"
-      aria-label="Repair route order from run snapshots"
-      title="Repair route order from run snapshots"
-    >
-      {{ isRepairingRouteOrder ? "Repairing…" : "Repair" }}
-    </button>
     <input
       #fileInput
       type="file"
@@ -335,19 +325,6 @@
           </p>
         }
       </div>
-      @if (buildInfo; as info) {
-        <div class="build-info-footer text-muted small" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
-          Installed build:
-          {{ info.builtAt | date : "yyyy-MM-dd HH:mm:ss" : undefined : "en-US" }}
-          @if (info.commit) {
-            <span> (commit {{ info.commit.slice(0, 7) }})</span>
-          }
-        </div>
-      } @if (buildInfo === null) {
-        <div class="build-info-footer text-muted small" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
-          Build info unavailable.
-        </div>
-      }
       <div class="help-actions">
         <!-- Release info is controlled by the toggle button. -->
       </div>

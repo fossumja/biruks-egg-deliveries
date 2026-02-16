@@ -571,8 +571,21 @@ describe('BackupService totals with mini route', () => {
     });
 
     spyOn<any>(backup as any, 'toCsv').and.throwError('Bad row formatting');
+    spyOn<any>(backup as any, 'readBuildInfoForDiagnostics').and.callFake(
+      async () => ({
+        releaseVersion: '2026.02.15',
+        buildCommit: 'abcdef1',
+        source: 'build-info.json'
+      })
+    );
 
-    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:diagnostic');
+    let downloadedObject: unknown = null;
+    const createObjectUrlSpy = spyOn(URL, 'createObjectURL').and.callFake(
+      (object: Blob): string => {
+        downloadedObject = object;
+        return 'blob:diagnostic';
+      }
+    );
     const revokeSpy = spyOn(URL, 'revokeObjectURL');
     const anchor = document.createElement('a');
     const clickSpy = spyOn(anchor, 'click');
@@ -612,6 +625,77 @@ describe('BackupService totals with mini route', () => {
     expect(anchor.download).toContain('BiruksEggDeliveries-diagnostic-');
     expect(anchor.download.endsWith('.json')).toBeTrue();
     expect(revokeSpy).toHaveBeenCalledWith('blob:diagnostic');
+    expect(downloadedObject instanceof File).toBeTrue();
+    if (!(downloadedObject instanceof File)) {
+      fail('Expected diagnostic export to use a File object.');
+      return;
+    }
+
+    const diagnosticRaw = await downloadedObject.text();
+    const diagnostic = JSON.parse(diagnosticRaw) as {
+      diagnosticSchemaVersion: number;
+      app: {
+        releaseVersion: string | null;
+        buildCommit: string | null;
+        buildInfoSource: string;
+      };
+      runtime: {
+        isStandalonePwa: boolean;
+        serviceWorkerControllerPresent: boolean;
+      };
+      exportContext: {
+        failedStep: string | null;
+        shareSupported: boolean;
+        canShareSupported: boolean;
+        shareAttempted: boolean;
+        downloadFallbackAttempted: boolean;
+      };
+      orderIntegritySummary: Array<{
+        routeDate: string;
+        stopCount: number;
+        minOrder: number | null;
+        maxOrder: number | null;
+        duplicateOrderValues: number[];
+        duplicateOrderCount: number;
+        gapCount: number;
+        isDense: boolean;
+        alphabeticalMatchRatio: number;
+        likelyAlphabeticalOrder: boolean;
+      }>;
+      counts: {
+        deliveries: number;
+        runEntries: number;
+      };
+      data: {
+        deliveries: Array<{ name?: string; address?: string }>;
+        runEntries: Array<unknown>;
+      };
+    };
+
+    expect(diagnostic.diagnosticSchemaVersion).toBe(2);
+    expect(diagnostic.app.releaseVersion).toBe('2026.02.15');
+    expect(diagnostic.app.buildCommit).toBe('abcdef1');
+    expect(diagnostic.app.buildInfoSource).toBe('build-info.json');
+    expect(typeof diagnostic.runtime.isStandalonePwa).toBe('boolean');
+    expect(typeof diagnostic.runtime.serviceWorkerControllerPresent).toBe('boolean');
+    expect(diagnostic.exportContext.failedStep).toBe('build-csv');
+    expect(diagnostic.exportContext.shareSupported).toBeFalse();
+    expect(diagnostic.exportContext.canShareSupported).toBeFalse();
+    expect(diagnostic.exportContext.shareAttempted).toBeFalse();
+    expect(diagnostic.exportContext.downloadFallbackAttempted).toBeFalse();
+    expect(diagnostic.orderIntegritySummary.length).toBeGreaterThan(0);
+    expect(diagnostic.orderIntegritySummary[0]).toEqual(
+      jasmine.objectContaining({
+        routeDate: jasmine.any(String),
+        stopCount: jasmine.any(Number),
+        duplicateOrderValues: jasmine.any(Array),
+        likelyAlphabeticalOrder: jasmine.any(Boolean)
+      })
+    );
+    expect(diagnostic.counts.deliveries).toBe(diagnostic.data.deliveries.length);
+    expect(diagnostic.counts.runEntries).toBe(diagnostic.data.runEntries.length);
+    expect((diagnostic.data.deliveries[0]?.name ?? '').length).toBeGreaterThan(0);
+    expect((diagnostic.data.deliveries[0]?.address ?? '').length).toBeGreaterThan(0);
   });
 
   it('includes the selected tax year in the export filename', async () => {

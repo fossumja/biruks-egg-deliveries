@@ -601,6 +601,35 @@ export class StorageService {
         'Sort order update rejected: deliveries span multiple schedules.'
       );
     }
+    const payloadIds = deliveries.map((delivery) => delivery.id);
+    const uniquePayloadIds = new Set(payloadIds);
+    if (uniquePayloadIds.size !== payloadIds.length) {
+      throw new Error(
+        'Sort order update rejected: payload contains duplicate deliveries.'
+      );
+    }
+    const [routeDate] = Array.from(routeDates);
+    if (!routeDate) {
+      throw new Error(
+        'Sort order update rejected: deliveries are missing schedule values.'
+      );
+    }
+    const currentRouteDeliveries = await this.db.deliveries
+      .where('routeDate')
+      .equals(routeDate)
+      .toArray();
+    if (currentRouteDeliveries.length !== deliveries.length) {
+      throw new Error(
+        'Sort order update rejected: payload must include every delivery in the schedule.'
+      );
+    }
+    const currentIds = new Set(currentRouteDeliveries.map((delivery) => delivery.id));
+    const hasUnexpectedId = payloadIds.some((id) => !currentIds.has(id));
+    if (hasUnexpectedId) {
+      throw new Error(
+        'Sort order update rejected: payload includes deliveries outside the selected schedule.'
+      );
+    }
     const now = new Date().toISOString();
     const updated = deliveries.map((d, idx) => ({
       ...d,

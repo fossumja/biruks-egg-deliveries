@@ -3,7 +3,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HomeComponent } from './home.component';
 import { StorageService } from '../services/storage.service';
 import { BackupService } from '../services/backup.service';
-import { BuildInfoService } from '../services/build-info.service';
 import { ReleaseNotesService } from '../services/release-notes.service';
 import { ToastService } from '../services/toast.service';
 import { normalizeEventDate } from '../utils/date-utils';
@@ -164,12 +163,6 @@ class BackupServiceStub {
   }
 }
 
-class BuildInfoServiceStub {
-  async load(): Promise<null> {
-    return null;
-  }
-}
-
 class ReleaseNotesServiceStub {
   notes = [
     {
@@ -252,16 +245,6 @@ describe('HomeComponent restore', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('shows a fallback message when build info is unavailable', async () => {
-    component.ngOnInit = async () => {};
-    component.buildInfo = null;
-    component.showReleaseInfo.set(true);
-    fixture.detectChanges();
-
-    const footer = fixture.nativeElement.querySelector('.build-info-footer');
-    expect(footer?.textContent).toContain('Build info unavailable.');
   });
 
   it('restores one-off rows with normalized EventDate values', async () => {
@@ -548,7 +531,6 @@ describe('HomeComponent core actions', () => {
       providers: [
         { provide: StorageService, useClass: StorageServiceStub },
         { provide: BackupService, useClass: BackupServiceStub },
-        { provide: BuildInfoService, useClass: BuildInfoServiceStub },
         { provide: ReleaseNotesService, useClass: ReleaseNotesServiceStub },
         { provide: ToastService, useClass: ToastServiceStub }
       ]

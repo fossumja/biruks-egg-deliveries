@@ -240,6 +240,28 @@ describe('StorageService regression tests', () => {
     );
   });
 
+  it('rejects saveSortOrder when payload omits deliveries in the schedule', async () => {
+    await createStorageWithMiniRoute();
+
+    const weekA = await storage.getDeliveriesByRoute('2025-01-01');
+    await expectAsync(
+      storage.saveSortOrder([weekA[0]])
+    ).toBeRejectedWithError(
+      'Sort order update rejected: payload must include every delivery in the schedule.'
+    );
+  });
+
+  it('rejects saveSortOrder when payload has duplicate deliveries', async () => {
+    await createStorageWithMiniRoute();
+
+    const weekA = await storage.getDeliveriesByRoute('2025-01-01');
+    await expectAsync(
+      storage.saveSortOrder([weekA[0], weekA[0]])
+    ).toBeRejectedWithError(
+      'Sort order update rejected: payload contains duplicate deliveries.'
+    );
+  });
+
   it('repairs corrupted route orders from latest usable dense snapshots', async () => {
     const deliveries = [
       buildDelivery({
