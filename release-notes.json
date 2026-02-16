@@ -1,5 +1,17 @@
 [
   {
+    "version": "v2026.2.4",
+    "date": "2026-02-16",
+    "summary": "Restore now repairs invalid Dozens safely and gives a review screen before finalizing edits.",
+    "highlights": [
+      "Restore now warns when backup rows contain invalid or blank Dozens values and asks before applying fallback repairs.",
+      "When fallback repair runs, the app downloads a restore-repair JSON report so support can inspect exactly what was corrected.",
+      "Home now shows a temporary Review repaired rows panel after restore so you can adjust repaired Dozens and apply those updates in-app.",
+      "Backup export now writes delivery Dozens from current delivery data when old import-state Dozens cells are blank, preventing repeat restore failures.",
+      "Release waiver: Full TP-01 through TP-11 manual/device checks and usage-scenario checks were skipped for this release (approved by repo owner on 2026-02-15)."
+    ]
+  },
+  {
     "version": "v2026.2.3",
     "date": "2026-02-16",
     "summary": "Home backup buttons now fit reliably on small screens.",
