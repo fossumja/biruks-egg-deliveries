@@ -1056,7 +1056,7 @@ export class StorageService {
   async updatePlannedDozens(id: string, dozens: number): Promise<void> {
     const now = new Date().toISOString();
     const existing = await this.db.deliveries.get(id);
-    const originalDozens = existing?.originalDozens ?? existing?.dozens ?? dozens;
+    const originalDozens = dozens; // user's explicit edit becomes the new permanent default
     const donation =
       ((existing?.donation as DonationInfo | undefined) ?? defaultDonation(existing as Delivery));
     donation.suggestedAmount = dozens * this.getSuggestedRate();
@@ -1188,6 +1188,7 @@ export class StorageService {
       this.computeChangeStatus(existing as Delivery, updates as Delivery, donation);
     const next: Partial<Delivery> = {
       ...updates,
+      ...(updates.dozens != null ? { originalDozens: updates.dozens } : {}),
       donation,
       status,
       updatedAt: now,

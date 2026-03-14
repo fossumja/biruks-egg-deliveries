@@ -1,5 +1,14 @@
 [
   {
+    "version": "v2026.3.0",
+    "date": "2026-03-14",
+    "summary": "Editing a customer's dozens is now permanent and no longer reverts after the weekly run resets.",
+    "highlights": [
+      "Fixing dozens for a customer on the route edit screen now sticks across weeks instead of reverting to the original import value.",
+      "The app stores the edited value as the new default so the weekly reset uses the updated number going forward."
+    ]
+  },
+  {
     "version": "v2026.2.4",
     "date": "2026-02-16",
     "summary": "Restore now repairs invalid Dozens safely and gives a review screen before finalizing edits.",

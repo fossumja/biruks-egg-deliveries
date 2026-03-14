@@ -279,6 +279,7 @@ class StorageServiceStub {
     const delivery = this.deliveries.find((item) => item.id === id);
     if (delivery) {
       delivery.dozens = dozens;
+      delivery.originalDozens = dozens;
     }
     return Promise.resolve();
   }
