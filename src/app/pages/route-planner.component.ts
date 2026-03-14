@@ -2112,18 +2112,17 @@ export class RoutePlannerComponent {
         }
       } else if (requestedOrder !== originalOrder) {
         // Reorder within this route using canonical route order from storage.
-        const list = await this.storage.getDeliveriesByRoute(stop.routeDate);
-        const currentIdx = list.findIndex((delivery) => delivery.id === stop.id);
+        const currentIdx = currentList.findIndex((delivery) => delivery.id === stop.id);
         if (currentIdx !== -1) {
-          const [removed] = list.splice(currentIdx, 1);
+          const [removed] = currentList.splice(currentIdx, 1);
           const newIdx = requestedOrder - 1;
-          list.splice(newIdx, 0, removed);
+          currentList.splice(newIdx, 0, removed);
           // Re-index sortIndex and deliveryOrder so they stay dense.
-          list.forEach((delivery, idx) => {
+          currentList.forEach((delivery, idx) => {
             delivery.sortIndex = idx;
             delivery.deliveryOrder = idx;
           });
-          await this.storage.saveSortOrder(list);
+          await this.storage.saveSortOrder(currentList);
         }
       }
     }

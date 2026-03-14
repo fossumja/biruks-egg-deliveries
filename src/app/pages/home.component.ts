@@ -1273,7 +1273,9 @@ export class HomeComponent implements OnDestroy {
       const anchor = document.createElement('a');
       anchor.href = url;
       anchor.download = filename;
+      document.body.append(anchor);
       anchor.click();
+      anchor.remove();
       URL.revokeObjectURL(url);
       return filename;
     } catch (error) {

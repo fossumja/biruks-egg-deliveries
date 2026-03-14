@@ -242,9 +242,9 @@ export class BackupService {
 
       const totals = totalsMap.get(baseRowId);
       if (totals) {
-      const donationIdx = finalHeaders.indexOf('TotalDonation');
-      const dozensIdx = finalHeaders.indexOf('TotalDozens');
-      const taxableIdx = finalHeaders.indexOf('TotalDeductibleContribution');
+        const donationIdx = finalHeaders.indexOf('TotalDonation');
+        const dozensIdx = finalHeaders.indexOf('TotalDozens');
+        const taxableIdx = finalHeaders.indexOf('TotalDeductibleContribution');
         if (donationIdx >= 0) rowVals[donationIdx] = totals.donation.toFixed(2);
         if (dozensIdx >= 0) rowVals[dozensIdx] = totals.dozens.toString();
         if (taxableIdx >= 0) rowVals[taxableIdx] = totals.taxable.toFixed(2);
@@ -343,9 +343,9 @@ export class BackupService {
 
       const totals = totalsMap.get(baseRowId);
       if (totals) {
-      const donationIdx = finalHeaders.indexOf('TotalDonation');
-      const dozensIdx = finalHeaders.indexOf('TotalDozens');
-      const taxableIdx = finalHeaders.indexOf('TotalDeductibleContribution');
+        const donationIdx = finalHeaders.indexOf('TotalDonation');
+        const dozensIdx = finalHeaders.indexOf('TotalDozens');
+        const taxableIdx = finalHeaders.indexOf('TotalDeductibleContribution');
         if (donationIdx >= 0) rowVals[donationIdx] = totals.donation.toFixed(2);
         if (dozensIdx >= 0) rowVals[dozensIdx] = totals.dozens.toString();
         if (taxableIdx >= 0) rowVals[taxableIdx] = totals.taxable.toFixed(2);
@@ -854,7 +854,9 @@ export class BackupService {
       const anchor = document.createElement('a');
       anchor.href = url;
       anchor.download = filename;
+      document.body.append(anchor);
       anchor.click();
+      anchor.remove();
     } finally {
       URL.revokeObjectURL(url);
     }
