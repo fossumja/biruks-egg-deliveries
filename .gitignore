@@ -43,3 +43,11 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Claude Code runtime
+.claude/
+
+# App-generated export files
+BiruksEggDeliveries-*.csv
+BiruksEggDeliveries-*.json
+2026 egg project deliveries list.csv
